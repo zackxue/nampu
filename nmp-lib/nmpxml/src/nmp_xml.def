@@ -1,0 +1,4 @@
+LIBRARY	"nmpxml"
+EXPORTS
+
+init_jpf_xml_msg

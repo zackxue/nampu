@@ -1,0 +1,14 @@
+# autoconfSamp pkg-config source file
+#
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+libdir=@prefix@/lib
+includedir=@prefix@/inc
+
+Name: @PACKAGE@
+Description: libnmpxml is a parse xml and merge xml library
+Version: @VERSION@
+Requires:
+Libs: -L@libdir@ -lnmpxml
+Cflags: -I${includedir}

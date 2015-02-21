@@ -1,0 +1,7400 @@
+cscope 15 /mnt/hgfs/work/h264Rtp/h264pack -q 0000000354 0000035716
+	@demo/file.c
+
+1 
+	~<uni°d.h
+>
+
+2 
+	~<sys/ty≥s.h
+>
+
+3 
+	~<sys/°©.h
+>
+
+4 
+	~<f˙é.h
+>
+
+5 
+	~"fûe.h
+"
+
+8 
+	tBYTE
+;
+
+9 
+	tWORD
+;
+
+10 
+	tDWORD
+;
+
+11 
+	tDWORD64
+;
+
+13 
+	s_HI_VIDEO_INFO_S
+
+
+15 
+WORD
+ 
+	mwImageWidth
+;
+
+16 
+WORD
+ 
+	mwImageHeight
+;
+
+17 
+BYTE
+ 
+	mbyEncodeTy≥
+;
+
+18 
+BYTE
+ 
+	mbyFømeR©e
+;
+
+19 
+BYTE
+ 
+	mbyPÆ
+;
+
+20 
+BYTE
+ 
+	mbyRes
+[1];
+
+21 }
+	tHI_VIDEO_INFO_S
+,*
+	tLPHI_VIDEO_INFO_S
+;
+
+23 
+	s_HI_AUDIO_INFO_S
+
+
+25 
+BYTE
+ 
+	mbyAudioSam∂es
+;
+
+26 
+BYTE
+ 
+	mbyEncodeTy≥
+;
+
+27 
+BYTE
+ 
+	mbyAudioCh™√ls
+;
+
+28 
+BYTE
+ 
+	mbyAudioBôs
+;
+
+29 
+BYTE
+ 
+	mbyRes
+[4];
+
+30 }
+	tHI_AUDIO_INFO_S
+, *
+	tLPHI_AUDIO_INFO_S
+;
+
+32 
+	s_HI_FRAME_HEAD_S
+
+
+34 
+WORD
+ 
+	mwFømeFœg
+;
+
+35 
+BYTE
+ 
+	mwFømeTy≥
+;
+
+36 
+BYTE
+ 
+	mbyRsvd
+[1];
+
+37 
+DWORD
+ 
+	mdwFømeNo
+;
+
+38 
+DWORD
+ 
+	mdwTime
+;
+
+39 
+DWORD
+ 
+	mdwFømeSize
+;
+
+40 
+DWORD64
+ 
+	mdw64TimeSèmp
+;
+
+43 
+HI_VIDEO_INFO_S
+ 
+	munVideoInfo
+;
+
+44 
+HI_AUDIO_INFO_S
+ 
+	munAudioInfo
+;
+
+46 }
+	tHI_FRAME_HEAD_S
+, *
+	tLPHI_FRAME_HEAD_S
+;
+
+50 
+	$fûe_›í
+(*
+fûe_«me
+)
+
+52 
+fd
+;
+
+53 if((
+fd
+ = 
+	`›í
+(
+fûe_«me
+, 
+O_RDONLY
+)) < 0)
+
+55 
+	`¥ötf
+("îr: o≥¿fûê%s\n", 
+fûe_«me
+);
+
+57  
+fd
+;
+
+58 
+	}
+}
+
+60 
+	$fûe_˛o£
+(
+fd
+)
+
+62 if(
+fd
+Ë
+	`˛o£
+(fd);
+
+63 
+	}
+}
+
+65 
+	$fûe_ªad
+(
+fd
+, *
+buf
+, 
+size
+)
+
+68 
+HI_FRAME_HEAD_S
+ *
+‰_hód
+ = (HI_FRAME_HEAD_S*)
+buf
+;
+
+70 
+ªt
+ = -1;
+
+71 
+‰_size
+ = 0;
+
+73 
+ªt
+ = 
+	`ªad
+(
+fd
+, 
+‰_hód
+, (
+HI_FRAME_HEAD_S
+));
+
+74 if(
+ªt
+ !(
+HI_FRAME_HEAD_S
+))
+
+76 if(
+	`l£ek
+(
+fd
+, 0, 
+SEEK_SET
+) < 0)
+
+78 
+	`¥ötf
+("îr:Ü£ek fd:%d\n", 
+fd
+);
+
+83 if((
+‰_hód
+->
+dwFømeSize
+Ë&& (‰_hód->dwFømeSizê< 
+size
+))
+
+85 
+‰_size
+ = 
+‰_hód
+->
+dwFømeSize
+;
+
+89 if(
+	`ªad
+(
+fd
+, 
+buf
+ + 0 , 
+‰_size
+) != fr_size)
+
+91 
+	`¥ötf
+("îr:Ñód fd:%d, size:%d\n", 
+fd
+, 
+‰_size
+);
+
+92 if(
+	`l£ek
+(
+fd
+, 0, 
+SEEK_SET
+) < 0)
+
+94 
+	`¥ötf
+("îr:Ü£ek fd:%d\n", 
+fd
+);
+
+100  (
+‰_size
+);
+
+104 
+	}
+}
+
+	@demo/file.h
+
+1 #i‚de‡
+__fûe__
+
+
+2 
+	#__fûe__
+
+
+	)
+
+4 
+fûe_›í
+(*
+fûe_«me
+);
+
+5 
+fûe_˛o£
+(
+fd
+);
+
+7 
+fûe_ªad
+(
+fd
+, *
+buf
+, 
+size
+);
+
+	@demo/main.c
+
+1 
+	~<°dio.h
+>
+
+2 
+	~<°dlib.h
+>
+
+3 
+	~<as£π.h
+>
+
+5 
+	~<uni°d.h
+>
+
+6 
+	~<sys/ty≥s.h
+>
+
+7 
+	~<sys/°©.h
+>
+
+8 
+	~<f˙é.h
+>
+
+9 
+	~<°rög.h
+>
+
+10 
+	~<î∫o.h
+>
+
+12 
+	~"πp.h
+"
+
+13 
+	~"fûe.h
+"
+
+15 
+	~"h264_fûãr.h
+"
+
+18 
+	sπp_ch_s
+ {
+
+19 
+	m±
+;
+
+20 
+	msize
+;
+
+21 }
+	tπp_ch_t
+;
+
+24 
+	$maö
+()
+
+26 
+ªt
+;
+
+27 
+πp_ch_t
+ 
+ch
+;
+
+28 
+πp_ext_Àn
+;
+
+29 
+node_t
+ 
+«l
+;
+
+30 
+node_t
+ 
+pkt
+;
+
+31 
+tmp_buf
+[
+RTP_MTU_SIZE
+];
+
+33 
+ö
+ = 
+	`›í
+("ö.pkt", 
+O_RDONLY
+);
+
+34 
+out
+
+	`›í
+("out.«l", 
+O_CREAT
+|
+O_RDWR
+);
+
+36 
+	`as£π
+((
+ö
+ > 0Ë&& (
+out
+ > 0));
+
+38 
+˘x_∑rm_t
+ 
+∑rm
+;
+
+39 
+∑rm
+.
+ud©a0
+
+	`buf_poﬁ_√w
+(4, 
+NAL_MAX_SIZE
+, 0 );
+
+40 
+∑rm
+.
+_size
+ = 
+blk_mem_size
+;
+
+41 
+∑rm
+.
+_Æloc
+
+blk_mem_Æloc
+;
+
+42 
+∑rm
+.
+_‰ì
+ = 
+blk_mem_‰ì
+;
+
+44 
+h264_u≈ack_˘x_t
+* 
+u≈ack
+ = 
+	`h264_u≈ack_√w
+(&
+∑rm
+);
+
+49 
+ªt
+ = 
+	`ªad
+(
+ö
+, &
+ch
+, (
+πp_ch_t
+));
+
+50 if(
+ªt
+ !(
+πp_ch_t
+))
+
+52 
+	`¥ötf
+("î∏&Éof:(%dËªad in:%d,Ñç_ch_t\n", 
+î∫o
+, 
+ö
+);
+
+56 
+	`¥ötf
+("ch.± :%d\n", 
+ch
+.
+±
+);
+
+57 
+	`¥ötf
+("ch.size:%d\n", 
+ch
+.
+size
+);
+
+59 if(
+ch
+.
+±
+ =96 && ch.
+size
+ <(
+tmp_buf
+))
+
+62 
+πp_ext_Àn
+ = 0;
+
+64 
+πp_pkt_t
+ 
+hdr
+;
+
+65 
+ªt
+ = 
+	`ªad
+(
+ö
+, &
+hdr
+, (
+πp_pkt_t
+));
+
+66 if(
+ªt
+ !(
+πp_pkt_t
+))
+
+68 
+	`¥ötf
+("î∏&Éof:Ñód in:%d,Ñç_pkt_t\n", 
+ö
+);
+
+72 
+	`¥ötf
+("hdr.vîsi⁄ :%d\n", 
+hdr
+.
+vîsi⁄
+);
+
+73 
+	`¥ötf
+("hdr.exãnsi⁄ :%d\n", 
+hdr
+.
+exãnsi⁄
+);
+
+74 
+	`¥ötf
+("hdr.∑ddög :%d\n", 
+hdr
+.
+∑ddög
+);
+
+75 
+	`¥ötf
+("hdr.£q :%d\n", 
+hdr
+.
+£q
+);
+
+76 
+	`¥ötf
+("hdr.c§c_cou¡ :%d\n", 
+hdr
+.
+c§c_cou¡
+);
+
+78 if(
+hdr
+.
+exãnsi⁄
+)
+
+80 
+ext
+;
+
+81 
+ext_¥ofûe
+, 
+ext_Àngth
+;
+
+82 
+ªt
+ = 
+	`ªad
+(
+ö
+, &
+ext
+, ());
+
+83 if(
+ªt
+ != ())
+
+85 
+	`¥ötf
+("î∏&Éof:Ñód in:%d,Éxt\n", 
+ö
+);
+
+89 
+	`¥ötf
+("ext:0x%08x,Örofile:%d,Üength:%d\n"
+
+90 , 
+ext
+
+
+91 , 
+ext_¥ofûe
+ = 
+	`¡ohs
+(
+ext
+&0xffff)
+
+92 , 
+ext_Àngth
+ = 
+	`¡ohs
+((
+ext
+>>16)&0xffff));
+
+94 
+ext_¥ofûe
+ = 
+	`¡ohs
+(
+ext
+&0xffff);
+
+95 
+ext_Àngth
+ = 
+	`¡ohs
+((
+ext
+>>16)&0xffff);
+
+97 
+πp_ext_Àn
+ = (
+ext_¥ofûe
+/8 * 
+ext_Àngth
+);
+
+99 
+ªt
+ = 
+	`ªad
+(
+ö
+, 
+tmp_buf
+, 
+πp_ext_Àn
+);
+
+100 if(
+ªt
+ !
+πp_ext_Àn
+)
+
+102 
+	`¥ötf
+("î∏&Éof:Ñód in:%d,ÑçÉxãnsi⁄\n", 
+ö
+);
+
+105 
+πp_ext_Àn
+ += ();
+
+109 
+pkt
+.
+mem
+.
+hdr_s
+ = 0;
+
+110 
+pkt
+.
+mem
+.
+d©a
+ = 
+tmp_buf
++pkt.mem.
+hdr_s
+;
+
+111 
+pkt
+.
+mem
+.
+d©a_s
+
+	`ªad
+(
+ö
+,Ökt.mem.
+d©a
+, (
+ch
+.
+size
+-(
+πp_pkt_t
+)-
+πp_ext_Àn
+));
+
+112 if(
+pkt
+.
+mem
+.
+d©a_s
+ !(
+ch
+.
+size
+-(
+πp_pkt_t
+)-
+πp_ext_Àn
+))
+
+114 
+	`¥ötf
+("î∏&Éof:Ñód in:%d,Öt\n", 
+ö
+);
+
+118 if(
+ch
+.
+size
+ <(
+tmp_buf
+))
+
+120 
+ªt
+ = 
+	`ªad
+(
+ö
+, &
+tmp_buf
+, 
+ch
+.
+size
+);
+
+125 
+	`¥ötf
+("î∏&Éof: ch.size:%d,Åoÿmax.\n", 
+ch
+.
+size
+);
+
+131 if(
+	`h264_u≈ack_«l
+(
+u≈ack
+, &
+pkt
+, &
+«l
+, 
+NAL_T
+) > 0)
+
+134 
+	`¥ötf
+("«l.mem.hdr_†:%d\n", 
+«l
+.
+mem
+.
+hdr_s
+);
+
+135 
+	`¥ötf
+("«l.mem.d©a_s:%d\n", 
+«l
+.
+mem
+.
+d©a_s
+);
+
+136 
+	`¥ötf
+("«l.mem.d©® :0x%x\n", 
+«l
+.
+mem
+.
+d©a
+);
+
+138 *((*)
+	`mem_hdr
+(&
+«l
+.
+mem
+)) = 0x01000000;
+
+139 
+ªt
+ = 
+	`wrôe
+(
+out
+, 
+	`mem_hdr
+(&
+«l
+.
+mem
+), 
+	`mem_size
+(&nal.mem));
+
+140 if(
+ªt
+ !
+	`mem_size
+(&
+«l
+.
+mem
+))
+
+142 
+	`¥ötf
+("îr: wrôêout:%d\n", 
+out
+);
+
+148 
+	`blk_mem_‰ì
+(&
+«l
+.
+mem
+);
+
+152 
+	`h264_u≈ack_dñ
+(
+u≈ack
+);
+
+154 
+	`˛o£
+(
+ö
+);
+
+155 
+	`˛o£
+(
+out
+);
+
+158 
+	}
+}
+
+163 
+	$maö
+()
+
+165 
+i
+, 
+j
+, 
+k
+;
+
+167 
+‰ame
+[512*1024];
+
+168 
+‰ame_size
+ = 0;
+
+169 
+‰ame_hdr_t
+ 
+hdr
+;
+
+170 
+ba£times
+ = 0;
+
+171 
+fd
+ = 
+	`fûe_›í
+("VideoEnc02.h264");
+
+172 
+	`as£π
+(
+fd
+ > 0);
+
+174 
+h264_Ê_›_t
+ *
+f
+ = 
+	`h264_Ê_›_öô
+();
+
+176 
+i
+ = 0; i < 100*10000; i++)
+
+178 
+‰ame_size
+ = 
+	`fûe_ªad
+(
+fd
+, 
+‰ame
+, (frame));
+
+179 if(
+‰ame_size
+ < 0)
+
+184 
+hdr
+.
+no
+ = 
+i
+;
+
+185 
+hdr
+.
+time°amp
+ = (
+ba£times
+ += 40);
+
+186 
+hdr
+.
+ty≥
+ = 0;
+
+187 
+hdr
+.
+width
+ = 0;
+
+188 
+hdr
+.
+height
+ = 0;
+
+189 
+hdr
+.
+size
+ = 
+‰ame_size
+;
+
+190 
+hdr
+.
+«l_desc
+.
+«l_num
+ = 0;
+
+191 
+hdr
+.
+d©a
+ = 
+‰ame
+;
+
+193 
+	`h264_Ê_›_fûl
+(
+f
+, &
+hdr
+, 0);
+
+195 
+c
+ = 0;
+
+198 
+îr
+ = 0, 
+size
+ = 0;
+
+199 
+πp_mem_t
+ *
+πp
+;
+
+201 if((
+îr
+ = 
+	`h264_Ê_›_puŒ
+(
+f
+, &
+πp
+, &
+size
+)) == 0)
+
+204 
+πp_pkt_t
+ *
+πp_hdr
+ = (πp_pkt_t*)(
+πp
+->
+	`pd©a
+‘ç, &
+size
+));
+
+205 
+	`¥ötf
+("pullÑtp:[mem:%p,data:%p]\tsize:%d\tseq:%d\tmarker:%d\n"
+
+206 , 
+πp
+
+
+207 , 
+πp_hdr
+
+
+208 , 
+size
+
+
+209 , 
+	`¡ohs
+(
+πp_hdr
+->
+£q
+)
+
+210 , 
+πp_hdr
+->
+m¨kî
+);
+
+211 
+c
+++;
+
+212 
+πp
+->
+	`uƒef
+(rtp);
+
+216 if(
+îr
+ =-
+EAGAIN
+)
+
+222 
+	`¥ötf
+("puŒÑç,Éº(%d).\n", 
+îr
+);
+
+224 
+	`¥ötf
+("puŒ => føme_no:%d,Ñç_num:%d\n", 
+i
+, 
+c
+);
+
+228 
+	`¶ìp
+(1);
+
+231 
+	`h264_Ê_›_fö
+(
+f
+);
+
+233 
+	`¥ötf
+("exit.\n");
+
+235 
+	}
+}
+
+	@demo/obj.h
+
+1 #i‚de‡
+__obj_h__
+
+
+2 
+	#__obj_h__
+
+
+	)
+
+4 
+	s__obj
+ {
+
+5 
+	mªf
+;
+
+6 }
+	tobj
+;
+
+8 
+	#BEGIN_NAMESPACE
+
+
+	)
+
+9 
+	#END_NAMESPACE
+
+
+	)
+
+	@inc/buf_pool.h
+
+1 #i‚de‡
+__buf_poﬁ_h__
+
+
+2 
+	#__buf_poﬁ_h__
+
+
+	)
+
+4 
+	eBUF_FLAG_E
+ {
+
+5 
+	mBUF_FLAG_GROWTH
+ = 0x01
+
+6 ,
+	mBUF_FLAG_MUTEX
+ = 0x02
+
+9 
+	tbuf_poﬁ_t
+;
+
+11 
+buf_poﬁ_t
+*
+
+12 
+buf_poﬁ_√w
+(
+num
+, 
+size
+, 
+Êags
+);
+
+13 
+buf_poﬁ_dñ
+(
+buf_poﬁ_t
+ *
+∂
+);
+
+15 *
+buf_√w
+(
+buf_poﬁ_t
+* 
+∂
+);
+
+16 *
+buf_ªf
+(*
+p
+);
+
+17 
+buf_uƒef
+(*
+p
+);
+
+	@inc/h264_filter.h
+
+1 #i‚de‡
+__h264_fûãr_h__
+
+
+2 
+	#__h264_fûãr_h__
+
+
+	)
+
+4 
+	s«l_desc_s
+ {
+
+5 
+uöt32_t
+ 
+	m«l_num
+;
+
+6 
+	s«l_s
+ {
+
+7 
+uöt32_t
+ 
+	m«l_off
+;
+
+8 
+uöt32_t
+ 
+	m«l_size
+;
+
+9 }
+	m«l
+[0];
+
+10 }
+	t«l_desc_t
+;
+
+12 
+	s‰ame_hdr_s
+ {
+
+13 
+uöt32_t
+ 
+	mno
+;
+
+14 
+uöt32_t
+ 
+	mtime°amp
+;
+
+15 
+uöt32_t
+ 
+	mty≥
+;
+
+16 
+uöt16_t
+ 
+	mwidth
+;
+
+17 
+uöt16_t
+ 
+	mheight
+;
+
+18 
+uöt32_t
+ 
+	msize
+;
+
+19 
+«l_desc_t
+ 
+	m«l_desc
+;
+
+20 
+uöt8_t
+ *
+	md©a
+;
+
+21 }
+	t‰ame_hdr_t
+;
+
+23 
+πp_mem_s
+ 
+	tπp_mem_t
+;
+
+24 
+	sπp_mem_s
+ {
+
+26 
+uöt32_t
+ 
+	mhdr_s
+;
+
+27 
+uöt32_t
+ 
+	md©a_s
+;
+
+28 
+uöt8_t
+ *
+	md©a
+;
+
+29 
+uöt32_t
+ 
+	mªf_˙t
+;
+
+31 
+	muöt8_t
+* (*
+	mpd©a
+)(
+πp_mem_t
+ *
+	mo
+, 
+uöt32_t
+ *
+	ml
+);
+
+32 
+	mπp_mem_t
+* (*
+	mªf
+)(
+πp_mem_t
+ *
+	mo
+);
+
+33 (*
+	muƒef
+)(
+πp_mem_t
+ *
+	mo
+);
+
+36 * 
+	th264_Ê_›_t
+;
+
+37 
+h264_Ê_›_t
+ *
+h264_Ê_›_öô
+();
+
+38 
+h264_Ê_›_fö
+(
+h264_Ê_›_t
+ *
+f
+);
+
+39 
+öt32_t
+ 
+h264_Ê_›_fûl
+(
+h264_Ê_›_t
+ *
+f
+, 
+‰ame_hdr_t
+ *
+i
+, 
+uöt32_t
+ 
+i_size
+);
+
+40 
+öt32_t
+ 
+h264_Ê_›_puŒ
+(
+h264_Ê_›_t
+ *
+f
+, 
+πp_mem_t
+ **
+o
+, 
+uöt32_t
+ *
+size
+);
+
+	@inc/h264pack.h
+
+1 #i‚de‡
+__h264∑ck_h__
+
+
+2 
+	#__h264∑ck_h__
+
+
+	)
+
+4 
+	~<°döt.h
+>
+
+6 
+	smem_s
+ {
+
+7 
+uöt32_t
+ 
+	mhdr_s
+;
+
+8 
+uöt32_t
+ 
+	md©a_s
+;
+
+9 
+uöt8_t
+ *
+	md©a
+;
+
+10 }
+	tmem_t
+;
+
+12 
+	#mem_hdr
+(
+m
+Ë((m)->
+d©a
+-(m)->
+hdr_s
+)
+
+	)
+
+13 
+	#mem_d©a
+(
+m
+Ë((m)->
+d©a
+)
+
+	)
+
+14 
+	#mem_size
+(
+m
+Ë((m)->
+hdr_s
++(m)->
+d©a_s
+)
+
+	)
+
+15 
+	#mem_d©a_s
+(
+m
+Ë((m)->
+d©a_s
+)
+
+	)
+
+16 
+	#mem_hdr_s
+(
+m
+Ë((m)->
+hdr_s
+)
+
+	)
+
+17 
+	#mem_dup
+(
+d
+, 
+m
+Ëdo{(d)->
+hdr_s
+ = (m)->hdr_s; (d)->
+d©a_s
+ = (m)->d©a_s; (d)->
+d©a
+ = (m)->d©a;}0)
+
+	)
+
+22 
+	snode_s
+ {
+
+23 
+uöt32_t
+ 
+	mtimes
+;
+
+24 
+uöt16_t
+ 
+	md⁄
+;
+
+25 
+mem_t
+ 
+	mmem
+;
+
+26 }
+	tnode_t
+;
+
+28 
+	snode_¨øy_s
+ {
+
+29 
+	mcou¡
+;
+
+30 
+node_t
+ 
+	mnode
+[0];
+
+31 }
+	tnode_¨øy_t
+;
+
+36 
+	e_PACK_MODE
+ {
+
+37 
+	mPACK_MODE_FUA
+ = 0x00
+
+38 , 
+	mPACK_MODE_FUB
+ = 0x01
+
+39 , 
+	mPACK_MODE_BUTT
+
+
+40 }
+	tPACK_MODE_E
+;
+
+45 
+	s˘x_∑rm_s
+ {
+
+46 *
+	mud©a0
+;
+
+47 *
+	mud©a1
+;
+
+48 (*
+	m_size
+)(
+˘x_∑rm_s
+ *
+	m∑rm
+, *
+	m_u¨gs
+, *
+	md©a_s
+, *
+	mhdr_s
+);
+
+49 
+mem_t
+ (*
+_Æloc
+)(
+˘x_∑rm_s
+ *
+	m∑rm
+, 
+	md©a_s
+, 
+	mhdr_s
+);
+
+50 (*
+	m_‰ì
+)(
+mem_t
+ *
+	mmem
+);
+
+51 }
+	t˘x_∑rm_t
+;
+
+56 
+	th264_∑ck_˘x_t
+;
+
+57 
+	th264_u≈ack_˘x_t
+;
+
+62 
+h264_∑ck_˘x_t
+*
+
+63 
+h264_∑ck_√w
+(
+mode
+, 
+˘x_∑rm_t
+ *
+∑rm
+);
+
+64 
+h264_∑ck_dñ
+(
+h264_∑ck_˘x_t
+ *
+˘x
+);
+
+67 
+h264_∑ck_pkt
+(
+h264_∑ck_˘x_t
+ *
+˘x
+
+
+68 , 
+node_t
+ *
+«l
+
+
+69 , 
+node_¨øy_t
+ **
+pkt
+
+
+70 , *
+_u¨gs
+);
+
+74 
+h264_u≈ack_˘x_t
+*
+
+75 
+h264_u≈ack_√w
+(
+˘x_∑rm_t
+ *
+∑rm
+);
+
+76 
+h264_u≈ack_dñ
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+);
+
+79 
+h264_u≈ack_«l
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+
+
+80 , 
+node_t
+ *
+pkt
+
+
+81 , 
+node_t
+ *
+«l
+
+
+82 , *
+_u¨gs
+);
+
+	@inc/nalu.h
+
+1 #i‚de‡
+__«lu_h__
+
+
+2 
+	#__«lu_h__
+
+
+	)
+
+4 
+	~"h264∑ck.h
+"
+
+7 
+«lu_föd
+ (
+node_t
+ *
+«lus
+, *
+cou¡
+, *
+bô°
+, 
+°_size
+);
+
+	@inc/rtp.h
+
+1 #i‚de‡
+__πp_h__
+
+
+2 
+	#__πp_h__
+
+
+	)
+
+4 
+	~"°döt.h
+"
+
+7 
+πp_pkt_s
+ 
+	tπp_pkt_t
+;
+
+8 
+	sπp_pkt_s
+ {
+
+9 #i‚de‡
+BIGENDIAN
+
+
+10 
+uöt32_t
+ 
+	mc§c_cou¡
+:4;
+
+11 
+uöt32_t
+ 
+	mexãnsi⁄
+:1;
+
+12 
+uöt32_t
+ 
+	m∑ddög
+:1;
+
+13 
+uöt32_t
+ 
+	mvîsi⁄
+:2;
+
+14 
+uöt32_t
+ 
+	m∑ylﬂd_ty≥
+:7;
+
+15 
+uöt32_t
+ 
+	mm¨kî
+:1;
+
+17 
+uöt32_t
+ 
+	mvîsi⁄
+:2;
+
+18 
+uöt32_t
+ 
+	m∑ddög
+:1;
+
+19 
+uöt32_t
+ 
+	mexãnsi⁄
+:1;
+
+20 
+uöt32_t
+ 
+	mc§c_cou¡
+:4;
+
+21 
+uöt32_t
+ 
+	mm¨kî
+:1;
+
+22 
+uöt32_t
+ 
+	m∑ylﬂd_ty≥
+:7;
+
+24 
+uöt16_t
+ 
+	m£q
+;
+
+25 
+uöt32_t
+ 
+	mtime°amp
+;
+
+26 
+uöt32_t
+ 
+	ms§c
+;
+
+27 
+uöt32_t
+ 
+	md©a
+[0];
+
+30 
+	#RTP_PKT_CC
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+c§c_cou¡
+)
+
+	)
+
+31 
+	#RTP_PKT_MARK
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+m¨kî
+)
+
+	)
+
+32 
+	#RTP_PKT_PT
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+∑ylﬂd_ty≥
+)
+
+	)
+
+33 
+	#RTP_PKT_SEQ
+(
+pkt
+Ë
+	`¡ohs
+(((
+πp_pkt_t
+*Ìkt)->
+£q
+)
+
+	)
+
+34 
+	#RTP_PKT_TS
+(
+pkt
+Ë
+	`¡ohl
+(((
+πp_pkt_t
+*Ìkt)->
+time°amp
+)
+
+	)
+
+35 
+	#RTP_PKT_SSRC
+(
+pkt
+Ë
+	`¡ohl
+(((
+πp_pkt_t
+*Ìkt)->
+s§c
+)
+
+	)
+
+36 
+	#RTP_PKT_DATA
+(
+pkt
+Ë(&((
+πp_pkt_t
+*Ìkt)->
+d©a
+[0] + (‘ç_pkt_t*Ìkt)->
+c§c_cou¡
+)
+
+	)
+
+38 
+	#RTPPT_ISDYNAMIC
+(
+±
+Ë’à>96)
+
+	)
+
+	@src/buf_pool.c
+
+1 
+	~<°döt.h
+>
+
+2 
+	~<°dio.h
+>
+
+3 
+	~<°dlib.h
+>
+
+5 
+	~"buf_poﬁ.h
+"
+
+7 
+	#_off£tof
+(
+ty≥
+, 
+f
+Ë((
+size_t
+) \
+
+8 ((*)&((
+ty≥
+ *)0)->
+f
+ - (*)—y≥ *)0))
+
+	)
+
+10 
+	#_c⁄èöî_of
+(
+±r
+, 
+ty≥
+, 
+membî
+) ({ \
+
+11 (
+ty≥
+ *)–(*)(
+±r
+Ë- 
+	`_off£tof
+—y≥,
+membî
+Ë);})
+
+	)
+
+14 
+	#IS_SET
+(
+f
+Ë(
+poﬁ
+->
+Êags
+ & (f))
+
+	)
+
+19 
+	sbuf_s
+ {
+
+20 
+uöt32_t
+ 
+	m¶Ÿ
+;
+
+21 
+uöt32_t
+ 
+	mªf_cout
+;
+
+22 *
+	mow√r
+;
+
+23 
+uöt8_t
+ 
+	md©a
+[0];
+
+24 }
+	tbuf_t
+;
+
+26 
+	s_buf_poﬁ_s
+ {
+
+27 **
+	m±r
+;
+
+28 
+	mnum
+;
+
+29 
+	mu£d
+;
+
+30 
+	msize
+;
+
+31 
+	mÊags
+;
+
+32 
+±hªad_muãx_t
+ 
+	mmuãx
+;
+
+33 }
+	t_buf_poﬁ_t
+;
+
+36 
+buf_poﬁ_t
+ *
+	$buf_poﬁ_√w
+(
+num
+, 
+size
+, 
+Êags
+)
+
+38 
+i
+;
+
+40 if(
+num
+ <0 || 
+size
+ <= 0)
+
+42  
+NULL
+;
+
+45 
+_buf_poﬁ_t
+ *
+poﬁ
+ = (_buf_poﬁ_t*)
+	`ˇŒoc
+(1, (_buf_pool_t));
+
+47 
+poﬁ
+->
+num
+ =Çum;
+
+48 
+poﬁ
+->
+size
+ = size;
+
+49 
+poﬁ
+->
+u£d
+ = 0;
+
+50 
+poﬁ
+->
+Êags
+= flags;
+
+51 
+poﬁ
+->
+±r
+ = 
+	`ˇŒoc
+(1, (*poﬁ->±rË*Öoﬁ->
+num
+);
+
+53 #ifde‡
+_DEBUG
+
+
+54 if(
+	`IS_SET
+(
+BUF_FLAG_GROWTH
+)Ë
+	`¥ötf
+("buf flags: BUF_FLAG_GROWTH\n");
+
+55 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+)Ë
+	`¥ötf
+("buf flags: BUF_FLAG_MUTEX\n");
+
+57 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+58 
+	`±hªad_muãx_öô
+(&
+poﬁ
+->
+muãx
+, 
+NULL
+);
+
+60 
+i
+ = 0; i < 
+poﬁ
+->
+num
+; i++)
+
+63 
+poﬁ
+->
+±r
+[
+i
+] = 
+	`ˇŒoc
+(1,Öoﬁ->
+size
++(
+buf_t
+));
+
+66  
+poﬁ
+;
+
+67 
+	}
+}
+
+69 
+	$buf_poﬁ_dñ
+(
+buf_poﬁ_t
+ *
+∂
+)
+
+71 
+i
+;
+
+72 
+_buf_poﬁ_t
+ *
+poﬁ
+ = (_buf_poﬁ_t*)
+∂
+;
+
+74 if(
+poﬁ
+ =
+NULL
+ ||Öoﬁ->
+num
+ <0 ||Öoﬁ->
+size
+ <= 0)
+
+78 if(!
+poﬁ
+->
+±r
+)
+
+82 
+i
+ = 0; i < 
+poﬁ
+->
+num
+; i++)
+
+84 if(
+poﬁ
+->
+±r
+[
+i
+])
+
+85 
+	`‰ì
+(
+poﬁ
+->
+±r
+[
+i
+]);
+
+88 
+	`‰ì
+(
+poﬁ
+->
+±r
+);
+
+90 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+91 
+	`±hªad_muãx_de°roy
+(&
+poﬁ
+->
+muãx
+);
+
+92 
+	`‰ì
+(
+poﬁ
+);
+
+95 
+	}
+}
+
+97 *
+	$buf_√w
+(
+buf_poﬁ_t
+* 
+∂
+)
+
+99 
+i
+;
+
+100 
+_buf_poﬁ_t
+ *
+poﬁ
+ = (_buf_poﬁ_t*)
+∂
+;
+
+102 if(
+poﬁ
+ =
+NULL
+ ||Öoﬁ->
+num
+ <0 ||Öoﬁ->
+size
+ <= 0)
+
+104  
+NULL
+;
+
+107 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+108 
+	`±hªad_muãx_lock
+(&
+poﬁ
+->
+muãx
+);
+
+110 i‡(
+poﬁ
+->
+num
+ =poﬁ->
+u£d
+)
+
+112 if(
+	`IS_SET
+(
+BUF_FLAG_GROWTH
+))
+
+114 
+poﬁ
+->
+num
+ += 128;
+
+115 
+poﬁ
+->
+±r
+ = 
+	`ªÆloc
+’oﬁ->±r, (*poﬁ->±rË*Öoﬁ->
+num
+);
+
+117 
+i
+ = 
+poﬁ
+->
+u£d
+; i <Öoﬁ->
+num
+; i++)
+
+120 
+poﬁ
+->
+±r
+[
+i
+] = 
+	`ˇŒoc
+(1,Öoﬁ->
+size
++(
+buf_t
+));
+
+125 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+126 
+	`±hªad_muãx_u∆ock
+(&
+poﬁ
+->
+muãx
+);
+
+127  
+NULL
+;
+
+131 
+buf_t
+ *
+buf
+ = (buf_t*)
+poﬁ
+->
+±r
+[poﬁ->
+u£d
+];
+
+133 
+buf
+->
+¶Ÿ
+ = 
+poﬁ
+->
+u£d
+++;
+
+134 
+buf
+->
+ªf_cout
+ = 1;
+
+135 
+buf
+->
+ow√r
+ = (*)
+poﬁ
+;
+
+137 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+138 
+	`±hªad_muãx_u∆ock
+(&
+poﬁ
+->
+muãx
+);
+
+140 #ifde‡
+_DEBUG
+
+
+141 
+	`Ârötf
+(
+°dîr
+, "%s.%d: [num:%d, used:%d, size:%d]add: "
+
+142 , 
+__FILE__
+, 
+__LINE__
+, 
+poﬁ
+->
+num
+,Öoﬁ->
+u£d
+,Öoﬁ->
+size
+);
+
+143 
+i
+ = 0; i < 
+poﬁ
+->
+u£d
+; i++)
+
+145 
+	`Ârötf
+(
+°dîr
+, "%d ", *((*)(
+poﬁ
+->
+±r
+[
+i
+])));
+
+147 
+	`Ârötf
+(
+°dîr
+, "\n");
+
+150  
+buf
+->
+d©a
+;
+
+151 
+	}
+}
+
+153 *
+	$buf_ªf
+(*
+p
+)
+
+155 if(
+p
+ =
+NULL
+)  NULL;
+
+157 
+buf_t
+ *
+buf
+ = 
+	`_c⁄èöî_of
+(
+p
+, buf_t, 
+d©a
+);
+
+159 
+buf
+->
+ªf_cout
+++;
+
+160  
+buf
+;
+
+161 
+	}
+}
+
+163 
+ölöe
+ 
+	$buf_‰ì
+(
+buf_t
+ *
+buf
+)
+
+165 
+i
+;
+
+166 *
+ãmp
+;
+
+168 if(
+buf
+ =
+NULL
+ || buf->
+ow√r
+ == NULL)  -1;
+
+170 
+_buf_poﬁ_t
+ *
+poﬁ
+ = (_buf_poﬁ_t*)
+buf
+->
+ow√r
+;
+
+172 i‡(
+poﬁ
+ =
+NULL
+)  -1;
+
+174 if–(
+i
+=
+buf
+->
+¶Ÿ
+) == -1)  -1;
+
+176 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+177 
+	`±hªad_muãx_lock
+(&
+poﬁ
+->
+muãx
+);
+
+180 i‡(
+i
+ !
+poﬁ
+->
+u£d
+ - 1)
+
+182 
+ãmp
+ = 
+poﬁ
+->
+±r
+[
+i
+];
+
+183 
+poﬁ
+->
+±r
+[
+i
+] =Öoﬁ->±r[poﬁ->
+u£d
+ - 1];
+
+184 
+poﬁ
+->
+±r
+[poﬁ->
+u£d
+ - 1] = 
+ãmp
+;
+
+186 *((*)(
+poﬁ
+->
+±r
+[
+i
+])) = i;
+
+187 *((*)(
+poﬁ
+->
+±r
+[poﬁ->
+u£d
+-1])) = -1;
+
+189 
+poﬁ
+->
+u£d
+--;
+
+191 
+buf
+->
+¶Ÿ
+ = -1;
+
+193 if(
+	`IS_SET
+(
+BUF_FLAG_MUTEX
+))
+
+194 
+	`±hªad_muãx_u∆ock
+(&
+poﬁ
+->
+muãx
+);
+
+196 #ifde‡
+_DEBUG
+
+
+197 
+	`Ârötf
+(
+°dîr
+, "%s.%d: [num:%d, used:%d, size:%d] del: (%d)"
+
+198 , 
+__FILE__
+, 
+__LINE__
+, 
+poﬁ
+->
+num
+,Öoﬁ->
+u£d
+,Öoﬁ->
+size
+,Öool->used);
+
+199 
+i
+ = 0; i < 
+poﬁ
+->
+u£d
+; i++)
+
+201 
+	`Ârötf
+(
+°dîr
+, "%d ", *((*)(
+poﬁ
+->
+±r
+[
+i
+])));
+
+203 
+	`Ârötf
+(
+°dîr
+, "\n");
+
+207 
+	}
+}
+
+209 
+	$buf_uƒef
+(*
+p
+)
+
+211 if(
+p
+ =
+NULL
+) ;
+
+213 
+buf_t
+ *
+buf
+ = 
+	`_c⁄èöî_of
+(
+p
+, buf_t, 
+d©a
+);
+
+215 if((--
+buf
+->
+ªf_cout
+) <= 0)
+
+217 
+	`buf_‰ì
+(
+buf
+);
+
+220 
+	}
+}
+
+	@src/buf_pool.h
+
+1 #i‚de‡
+__buf_poﬁ_h__
+
+
+2 
+	#__buf_poﬁ_h__
+
+
+	)
+
+4 
+	eBUF_FLAG_E
+ {
+
+5 
+	mBUF_FLAG_GROWTH
+ = 0x01
+
+6 ,
+	mBUF_FLAG_MUTEX
+ = 0x02
+
+9 
+	tbuf_poﬁ_t
+;
+
+11 
+buf_poﬁ_t
+*
+
+12 
+buf_poﬁ_√w
+(
+num
+, 
+size
+, 
+Êags
+);
+
+13 
+buf_poﬁ_dñ
+(
+buf_poﬁ_t
+ *
+∂
+);
+
+15 *
+buf_√w
+(
+buf_poﬁ_t
+* 
+∂
+);
+
+16 *
+buf_ªf
+(*
+p
+);
+
+17 
+buf_uƒef
+(*
+p
+);
+
+	@src/ctx.c
+
+1 
+	~<°rög.h
+>
+
+2 
+	~<as£π.h
+>
+
+4 
+	~"∑ck.h
+"
+
+5 
+	~"˘x.h
+"
+
+7 
+h264_∑ck_˘x_t
+*
+
+8 
+	$h264_∑ck_√w
+(
+mode
+, 
+˘x_∑rm_t
+ *
+∑rm
+)
+
+10 
+∑ck_˘x_t
+ *
+_˘x
+ = (∑ck_˘x_t*)
+	`ˇŒoc
+(1, ’ack_˘x_t)+(
+node_t
+)*
+MAX_NODE_NUM
+);
+
+11 
+_˘x
+->
+mode
+ = (modê< 
+PACK_MODE_FUA
+ || modê>
+PACK_MODE_BUTT
+)?PACK_MODE_FUA:mode;
+
+13 
+_˘x
+->
+∑rm
+ = *parm;
+
+15 if(
+_˘x
+->
+mode
+ =
+PACK_MODE_FUA
+)
+
+17 
+_˘x
+->
+∑ck
+.
+¢p
+ = 
+∑ck_¢p
+;
+
+18 
+_˘x
+->
+∑ck
+.
+fu
+ = 
+∑ck_fu_a
+;
+
+19 
+_˘x
+->
+∑ck
+.
+°≠
+ = 
+∑ck_°≠_a
+;
+
+20 
+_˘x
+->
+∑ck
+.
+mèp
+ = 
+∑ck_mèp
+;
+
+22 if(
+_˘x
+->
+mode
+ =
+PACK_MODE_FUB
+)
+
+24 
+_˘x
+->
+∑ck
+.
+¢p
+ = 
+∑ck_¢p
+;
+
+25 
+_˘x
+->
+∑ck
+.
+fu
+ = 
+∑ck_fu_b
+;
+
+26 
+_˘x
+->
+∑ck
+.
+°≠
+ = 
+∑ck_°≠_b
+;
+
+27 
+_˘x
+->
+∑ck
+.
+mèp
+ = 
+∑ck_mèp
+;
+
+30  
+_˘x
+;
+
+31 
+	}
+}
+
+32 
+	$h264_∑ck_dñ
+(
+h264_∑ck_˘x_t
+ *
+˘x
+)
+
+34 if(
+˘x
+)
+
+36 
+	`‰ì
+(
+˘x
+);
+
+38 
+	}
+}
+
+39 
+	$h264_∑ck_pkt
+(
+h264_∑ck_˘x_t
+ *
+˘x
+
+
+40 , 
+node_t
+ *
+«l
+
+
+41 , 
+node_¨øy_t
+ **
+pkt
+
+
+42 , *
+_u¨gs
+)
+
+44 
+	`as£π
+(
+˘x
+ && 
+«l
+ && 
+pkt
+);
+
+46 
+∑ck_˘x_t
+ *
+_˘x
+ = (∑ck_˘x_t*)
+˘x
+;
+
+48 if(
+_˘x
+->
+∑ck
+.
+	`¢p
+(_˘x, 
+«l
+, 
+pkt
+, 
+_u¨gs
+) >= 0)
+
+50  (*
+pkt
+)->
+cou¡
+;
+
+52 if(
+_˘x
+->
+∑ck
+.
+	`fu
+(_˘x, 
+«l
+, 
+pkt
+, 
+_u¨gs
+) >= 0)
+
+54  (*
+pkt
+)->
+cou¡
+;
+
+58 
+	`as£π
+(0);
+
+63 
+	}
+}
+
+64 
+h264_u≈ack_˘x_t
+*
+
+65 
+	$h264_u≈ack_√w
+(
+˘x_∑rm_t
+ *
+∑rm
+)
+
+67 
+u≈ack_˘x_t
+ *
+_˘x
+ = (u≈ack_˘x_t*)
+	`ˇŒoc
+(1, (unpack_ctx_t));
+
+68 
+_˘x
+->
+∑rm
+ = *parm;
+
+69  
+_˘x
+;
+
+70 
+	}
+}
+
+71 
+	$h264_u≈ack_dñ
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+)
+
+73 if(
+˘x
+)
+
+75 
+	`‰ì
+(
+˘x
+);
+
+77 
+	}
+}
+
+89 
+	#HDR_TYPE
+(
+p
+Ë’->
+mem
+.
+d©a
+[0] & 0x1F)
+
+	)
+
+91 
+ölöe
+ 
+	$gë_hdr_size
+(
+u≈ack_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+pkt
+)
+
+93 
+n
+ = 0;
+
+94 
+uöt8_t
+ *
+hdr_°¨t
+ = 
+	`mem_d©a
+(&
+pkt
+->
+mem
+);
+
+95 
+pkt_size
+ = 
+	`mem_d©a_s
+(&
+pkt
+->
+mem
+);
+
+96 
+˘x
+->
+cur_«l_ty≥
+ = (
+hdr_°¨t
+[0] & 0x1F);
+
+98 
+˘x
+->
+cur_«l_ty≥
+)
+
+101 
+n
+ = 1;
+
+104 
+n
+ = 3;
+
+110 
+uöt8_t
+ 
+°¨tBô
+ = (
+hdr_°¨t
+[1] & 0x80);
+
+111 
+uöt8_t
+ 
+ídBô
+ = (
+hdr_°¨t
+[1] & 0x40);
+
+112 if(
+°¨tBô
+)
+
+114 
+n
+ = 1;
+
+115 if(
+pkt_size
+ < 
+n
+)  -1;
+
+116 
+hdr_°¨t
+[1] = (hdr_start[0]&0xE0)+(hdr_start[1]&0x1F);
+
+117 
+˘x
+->
+cur_pkt_is_begö
+ = 1;
+
+123 
+n
+ = 2;
+
+124 if(
+pkt_size
+ < 
+n
+)  -1;
+
+125 
+˘x
+->
+cur_pkt_is_begö
+ = 0;
+
+127 
+˘x
+->
+cur_pkt_is_comp
+ = (
+ídBô
+ != 0);
+
+132 
+˘x
+->
+cur_pkt_is_begö
+ = ctx->
+cur_pkt_is_comp
+ = 1;
+
+136  
+n
+;
+
+137 
+	}
+}
+
+140 
+	$h264_u≈ack_«l
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+
+
+141 , 
+node_t
+ *
+pkt
+
+
+142 , 
+node_t
+ *
+«l
+
+
+143 , *
+_u¨gs
+)
+
+145 
+skù
+;
+
+147 
+u≈ack_˘x_t
+ *
+_˘x
+ = (u≈ack_˘x_t*)
+˘x
+;
+
+149 
+_˘x
+->
+cur_pkt_is_begö
+= 0;
+
+150 
+_˘x
+->
+cur_pkt_is_comp
+ = 0;
+
+152 if((
+skù
+ = 
+	`gë_hdr_size
+(
+_˘x
+, 
+pkt
+)) < 0)
+
+158 if((
+_˘x
+->
+cur_«l_ty≥
+ !
+	`HDR_TYPE
+(
+pkt
+))
+
+159 || (
+_˘x
+->
+cur_times
+ !
+pkt
+->
+times
+)
+
+160 || (
+	`mem_d©a
+(&
+_˘x
+->
+«l_mem
+Ë=
+NULL
+))
+
+163 
+hdr_s
+, 
+d©a_s
+;
+
+165 if(
+	`mem_d©a
+(&
+_˘x
+->
+«l_mem
+))
+
+167 
+	`¥ötf
+("%†===>Éº: skùÇexà«l,Üo° cu∏«l;\n", 
+__FUNCTION__
+);
+
+168 
+_˘x
+->
+∑rm
+.
+	`_‰ì
+(&_˘x->
+«l_mem
+);
+
+170 
+_˘x
+->
+∑rm
+.
+	`_size
+(&_˘x->∑rm, 
+_u¨gs
+, &
+d©a_s
+, &
+hdr_s
+);
+
+171 
+_˘x
+->
+«l_buf_size
+ = 
+d©a_s
+;
+
+172 
+_˘x
+->
+«l_buf_off
+ = 0;
+
+173 
+_˘x
+->
+«l_mem
+ = _˘x->
+∑rm
+.
+	`_Æloc
+(&_˘x->∑rm, 
+d©a_s
+, 
+hdr_s
+);
+
+176 
+_˘x
+->
+cur_times
+ = 
+pkt
+->
+times
+;
+
+180 if(
+	`mem_d©a
+(&
+_˘x
+->
+«l_mem
+)
+
+181 && ((
+_˘x
+->
+«l_buf_off
++(
+	`mem_d©a_s
+(&
+pkt
+->
+mem
+)-
+skù
+)Ë<_˘x->
+«l_buf_size
+))
+
+183 
+	`mem˝y
+(
+	`mem_d©a
+(&
+_˘x
+->
+«l_mem
+)+_˘x->
+«l_buf_off
+, mem_d©a(&
+pkt
+->
+mem
+)+
+skù
+, 
+	`mem_d©a_s
+(&pkt->mem)-skip);
+
+184 
+_˘x
+->
+«l_buf_off
+ +(
+	`mem_d©a_s
+(&
+pkt
+->
+mem
+)-
+skù
+);
+
+188 
+	`¥ötf
+("%†===>Éº:ÇÆ sizê>ÇÆ_buf_size(%d);\n", 
+__FUNCTION__
+, 
+_˘x
+->
+«l_buf_size
+);
+
+191 if(
+_˘x
+->
+cur_pkt_is_comp
+)
+
+193 
+«l
+->
+times
+
+_˘x
+->
+cur_times
+;
+
+194 
+	`mem_dup
+(&
+«l
+->
+mem
+, &
+_˘x
+->
+«l_mem
+);
+
+195 
+	`mem_d©a_s
+(&
+«l
+->
+mem
+Ë
+_˘x
+->
+«l_buf_off
+;
+
+197 
+	`mem_d©a
+(&
+_˘x
+->
+«l_mem
+Ë
+NULL
+;
+
+201 
+	}
+}
+
+	@src/ctx.h
+
+1 #i‚de‡
+__˘x_h__
+
+
+2 
+	#__˘x_h__
+
+
+	)
+
+4 
+	~"h264∑ck.h
+"
+
+17 
+	#RTP_HEADER_SIZE
+ 12
+
+	)
+
+28 
+	shódî_o˘ë
+
+
+30 #ifde‡
+BIGENDIAN
+
+
+31 
+uöt8_t
+ 
+	mf
+ :1;
+
+32 
+uöt8_t
+ 
+	mƒi
+ :2;
+
+33 
+uöt8_t
+ 
+	mty≥
+:5;
+
+35 
+uöt8_t
+ 
+	mty≥
+:5;
+
+36 
+uöt8_t
+ 
+	mƒi
+ :2;
+
+37 
+uöt8_t
+ 
+	mf
+ :1;
+
+40 
+hódî_o˘ë
+ 
+	t«l_hódî_ty≥
+;
+
+41 
+hódî_o˘ë
+ 
+	tfu_ödiˇt‹_ty≥
+;
+
+42 
+hódî_o˘ë
+ 
+	t°≠_hódî_ty≥
+;
+
+43 
+hódî_o˘ë
+ 
+	tmèp_hódî_ty≥
+;
+
+52 
+	shódî_fu
+
+
+54 #ifde‡
+BIGENDIAN
+
+
+55 
+uöt8_t
+ 
+	ms
+ :1;
+
+56 
+uöt8_t
+ 
+	me
+ :1;
+
+57 
+uöt8_t
+ 
+	mr
+ :1;
+
+58 
+uöt8_t
+ 
+	mty≥
+:5;
+
+60 
+uöt8_t
+ 
+	mty≥
+:5;
+
+61 
+uöt8_t
+ 
+	mr
+ :1;
+
+62 
+uöt8_t
+ 
+	me
+ :1;
+
+63 
+uöt8_t
+ 
+	ms
+ :1;
+
+66 
+hódî_fu
+ 
+	tfu_hódî_ty≥
+;
+
+70 
+	g∑ck_˘x_s
+;
+
+71 
+∑ck_˘x_s
+ 
+	t∑ck_˘x_t
+;
+
+72 
+	s∑ck_func_s
+ {
+
+73 (*
+	m¢p
+)(
+∑ck_˘x_t
+ *
+	m˘x
+, 
+node_t
+ *
+	m«l
+, 
+node_¨øy_t
+ **
+	mpkt
+, *
+	m_u¨gs
+);
+
+74 (*
+	mfu
+)(
+∑ck_˘x_t
+ *
+	m˘x
+, 
+node_t
+ *
+	m«l
+, 
+node_¨øy_t
+ **
+	mpkt
+, *
+	m_u¨gs
+);
+
+75 (*
+	m°≠
+)(
+∑ck_˘x_t
+ *
+	m˘x
+, 
+node_t
+ *
+	m«l
+, 
+node_¨øy_t
+ **
+	mpkt
+, *
+	m_u¨gs
+);
+
+76 (*
+	mmèp
+)(
+∑ck_˘x_t
+ *
+	m˘x
+, 
+node_t
+ *
+	m«l
+, 
+node_¨øy_t
+ **
+	mpkt
+, *
+	m_u¨gs
+);
+
+77 }
+	t∑ck_func_t
+;
+
+79 
+	s∑ck_˘x_s
+ {
+
+80 
+˘x_∑rm_t
+ 
+	m∑rm
+;
+
+81 
+PACK_MODE_E
+ 
+	mmode
+;
+
+82 
+∑ck_func_t
+ 
+	m∑ck
+;
+
+83 
+	#MAX_NODE_NUM
+ 200
+
+	)
+
+84 
+node_¨øy_t
+ 
+	m¨øy
+;
+
+88 
+	su≈ack_˘x_s
+ {
+
+89 
+˘x_∑rm_t
+ 
+	m∑rm
+;
+
+90 
+uöt8_t
+ 
+	mcur_«l_ty≥
+;
+
+91 
+uöt8_t
+ 
+	mcur_pkt_is_begö
+;
+
+92 
+uöt8_t
+ 
+	mcur_pkt_is_comp
+;
+
+93 
+uöt32_t
+ 
+	mcur_times
+;
+
+94 
+mem_t
+ 
+	m«l_mem
+;
+
+95 
+	m«l_buf_size
+;
+
+96 
+	m«l_buf_off
+;
+
+97 }
+	tu≈ack_˘x_t
+;
+
+	@src/h264_filter.c
+
+1 
+	~<°rög.h
+>
+
+2 
+	~<°dlib.h
+>
+
+3 
+	~<as£π.h
+>
+
+4 
+	~<î∫o.h
+>
+
+6 
+	~"buf_poﬁ.h
+"
+
+7 
+	~"«lu.h
+"
+
+8 
+	~"h264∑ck.h
+"
+
+9 
+	~"πp.h
+"
+
+11 
+	~"h264_fûãr.h
+"
+
+15 
+	#RTP_MTU_SIZE
+ (1500)
+
+	)
+
+16 
+	#RTP_PAD_SIZE
+ ((
+πp_pkt_t
+)Ë
+
+	)
+
+18 
+	#NAL_MAX_SIZE
+ (1024*512)
+
+	)
+
+19 
+	#NAL_PAD_SIZE
+ (4)
+
+	)
+
+21 
+	eBLK_E
+ {
+
+22 
+	mRTP_T
+
+
+23 ,
+	mNAL_T
+
+
+26 
+	s∑ck_hdl_s
+ {
+
+27 
+h264_∑ck_˘x_t
+ *
+	m∑ck
+;
+
+28 
+buf_poﬁ_t
+ *
+	mbf_poﬁ
+;
+
+29 
+node_¨øy_t
+ *
+	mπp_¨øy
+;
+
+30 
+uöt32_t
+ 
+	mπp_r
+;
+
+31 
+uöt16_t
+ 
+	mπp_£q_no
+;
+
+32 }
+	t∑ck_hdl_t
+;
+
+34 
+	sh264_fûãr_s
+ {
+
+35 
+	m_su≥r
+;
+
+36 
+∑ck_hdl_t
+ 
+	mhdl
+;
+
+37 }
+	th264_fûãr_t
+;
+
+39 
+πp_hdr_fûl
+(
+∑ck_hdl_t
+ *
+hdl
+
+
+40 , *
+πp_buf
+
+
+41 , 
+∑d_size
+
+
+42 , 
+‰ame_hdr_t
+ *
+‰m_hdr
+
+
+43 , 
+m¨kî
+);
+
+45 
+blk_mem_size
+(
+˘x_∑rm_s
+ *
+∑rm
+
+
+46 , *
+_u¨gs
+
+
+47 , *
+d©a_s
+
+
+48 , *
+hdr_s
+);
+
+49 
+mem_t
+
+
+50 
+blk_mem_Æloc
+(
+˘x_∑rm_s
+ *
+∑rm
+
+
+51 , 
+d©a_s
+
+
+52 , 
+hdr_s
+);
+
+54 
+blk_mem_‰ì
+(
+mem_t
+ *
+mem
+);
+
+57 
+uöt8_t
+*
+
+58 
+πp_mem_pd©a
+(
+πp_mem_t
+ *
+mem
+, 
+uöt32_t
+ *
+l
+);
+
+59 
+πp_mem_t
+*
+
+60 
+πp_mem_ªf
+(
+πp_mem_t
+ *
+mem
+);
+
+62 
+πp_mem_uƒef
+(
+πp_mem_t
+ *
+mem
+);
+
+67 
+h264_Ê_›_t
+ *
+	$h264_Ê_›_öô
+()
+
+71 
+h264_fûãr_t
+ *
+Ê
+ = (h264_fûãr_t*)
+	`ˇŒoc
+(1, (h264_filter_t));
+
+73 if(!
+Ê
+Ë 
+NULL
+;
+
+75 
+˘x_∑rm_t
+ 
+∑rm
+;
+
+77 
+∑rm
+.
+ud©a0
+
+	`buf_poﬁ_√w
+(128, 
+RTP_MTU_SIZE
+, 
+BUF_FLAG_GROWTH
+|
+BUF_FLAG_MUTEX
+);
+
+78 
+∑rm
+.
+_size
+ = 
+blk_mem_size
+;
+
+79 
+∑rm
+.
+_Æloc
+
+blk_mem_Æloc
+;
+
+80 
+∑rm
+.
+_‰ì
+ = 
+blk_mem_‰ì
+;
+
+82 
+Ê
+->
+hdl
+.
+bf_poﬁ
+ = (
+buf_poﬁ_t
+*)
+∑rm
+.
+ud©a0
+;
+
+83 
+Ê
+->
+hdl
+.
+∑ck
+ = 
+	`h264_∑ck_√w
+(
+PACK_MODE_FUA
+, &
+∑rm
+);
+
+84 
+	#RTP_ARRAY_NUM
+ 400
+
+	)
+
+85 
+Ê
+->
+hdl
+.
+πp_¨øy
+(
+node_¨øy_t
+*)
+	`ˇŒoc
+(1, (node_array_t)
+
+86 +(
+node_t
+)*
+RTP_ARRAY_NUM
+);
+
+87 
+Ê
+->
+hdl
+.
+πp_r
+ = fl->hdl.
+πp_¨øy
+->
+cou¡
+ = 0;
+
+89  
+Ê
+;
+
+90 
+	}
+}
+
+91 
+	$h264_Ê_›_fö
+(
+h264_Ê_›_t
+ *
+f
+)
+
+94 
+	`as£π
+(
+f
+);
+
+96 
+h264_fûãr_t
+ *
+Ê
+ = (h264_fûãr_t*)
+f
+;
+
+98 if(
+Ê
+->
+hdl
+.
+∑ck
+Ë
+	`h264_∑ck_dñ
+(fl->hdl.pack);
+
+99 if(
+Ê
+->
+hdl
+.
+bf_poﬁ
+Ë
+	`buf_poﬁ_dñ
+(fl->hdl.bf_pool);
+
+100 if(
+Ê
+->
+hdl
+.
+πp_¨øy
+Ë
+	`‰ì
+(fl->hdl.rtp_array);
+
+101 
+	`‰ì
+(
+Ê
+);
+
+102 
+	}
+}
+
+103 
+öt32_t
+ 
+	$h264_Ê_›_fûl
+(
+h264_Ê_›_t
+ *
+f
+, 
+‰ame_hdr_t
+ *
+i
+, 
+uöt32_t
+ 
+i_size
+)
+
+106 
+	`as£π
+(
+f
+ && 
+i
+);
+
+108 
+‰ame_hdr_t
+ *
+hdr
+ = (‰ame_hdr_t*)
+i
+;
+
+109 
+h264_fûãr_t
+ *
+Ê
+ = (h264_fûãr_t*)
+f
+;
+
+111 
+i1
+ = 0, 
+k
+ = 0, 
+cou¡
+ = 0;
+
+112 
+	#IN_NAL_NUM
+ 100
+
+	)
+
+113 
+node_t
+ 
+«lus
+[
+IN_NAL_NUM
+];
+
+115 if(
+hdr
+->
+«l_desc
+.
+«l_num
+ > 0 && hdr->«l_desc.«l_num < 
+IN_NAL_NUM
+)
+
+117 
+i1
+ = 0; i1 < 
+hdr
+->
+«l_desc
+.
+«l_num
+; i1++)
+
+119 
+«lus
+[
+i1
+].
+times
+ = 
+hdr
+->
+time°amp
+;
+
+120 
+«lus
+[
+i1
+].
+mem
+.
+hdr_s
+ = 0;
+
+121 
+«lus
+[
+i1
+].
+mem
+.
+d©a_s
+
+hdr
+->
+«l_desc
+.
+«l
+[i1].
+«l_size
+;
+
+122 
+«lus
+[
+i1
+].
+mem
+.
+d©a
+ = 
+hdr
+->
+«l_desc
+.
+«l
+[i1].
+«l_off
+ + hdr->data;
+
+124 
+cou¡
+ = 
+hdr
+->
+«l_desc
+.
+«l_num
+;
+
+128 
+	`«lu_föd
+ (
+«lus
+, &
+cou¡
+, 
+hdr
+->
+d©a
+, hdr->
+size
+);
+
+132 
+Ê
+->
+hdl
+.
+πp_r
+ = 0;
+
+133 
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+cou¡
+ = 0;
+
+135 
+i1
+ = 0; i1 < 
+cou¡
+; i1++)
+
+137 
+node_¨øy_t
+ *
+¨øy
+ = 
+NULL
+;
+
+139 if(
+	`h264_∑ck_pkt
+(
+Ê
+->
+hdl
+.
+∑ck
+, &
+«lus
+[
+i1
+], &
+¨øy
+, (*)
+RTP_T
+) < 0)
+
+144 
+k
+ = 0; k < 
+¨øy
+->
+cou¡
+; k++)
+
+146 
+	`πp_hdr_fûl
+(&
+Ê
+->
+hdl
+
+
+147 , 
+	`mem_hdr
+(&
+¨øy
+->
+node
+[
+k
+].
+mem
+)
+
+148 , 
+	`mem_hdr_s
+(&
+¨øy
+->
+node
+[
+k
+].
+mem
+)
+
+149 , 
+hdr
+
+
+150 , ((
+i1
+==(
+cou¡
+-1))&&(
+k
+==(
+¨øy
+->count-1)))?1:0);
+
+153 
+	`as£π
+((
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+cou¡
+ + 
+¨øy
+->cou¡Ë< 
+RTP_ARRAY_NUM
+);
+
+154 
+	`mem˝y
+–&
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+node
+[Ê->hdl.πp_¨øy->
+cou¡
+]
+
+155 , &
+¨øy
+->
+node
+[0]
+
+156 , 
+¨øy
+->
+cou¡
+*◊ºay->
+node
+[0]));
+
+157 
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+cou¡
+ +
+¨øy
+->count;
+
+160 
+	`¥ötf
+("fû»=> føme_no:%d,Ñç_num:%d\n", 
+hdr
+->
+no
+, 
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+cou¡
+);
+
+163 
+	}
+}
+
+166 
+öt32_t
+ 
+	$h264_Ê_›_puŒ
+(
+h264_Ê_›_t
+ *
+f
+, 
+πp_mem_t
+ **
+o
+, 
+uöt32_t
+ *
+size
+)
+
+169 
+	`as£π
+(
+f
+);
+
+171 
+h264_fûãr_t
+ *
+Ê
+ = (h264_fûãr_t*)
+f
+;
+
+173 if(
+Ê
+->
+hdl
+.
+πp_r
+ >Ê->hdl.
+πp_¨øy
+->
+cou¡
+)
+
+175  -
+EAGAIN
+;
+
+178 
+πp_mem_t
+ *
+mem
+ = (πp_mem_t*)
+	`ˇŒoc
+(1, (rtp_mem_t));
+
+179 if(
+mem
+)
+
+181 
+mem
+->
+ªf_˙t
+ = 1;
+
+182 
+mem
+->
+pd©a
+ = 
+πp_mem_pd©a
+;
+
+183 
+mem
+->
+ªf
+ = 
+πp_mem_ªf
+;
+
+184 
+mem
+->
+uƒef
+ = 
+πp_mem_uƒef
+;
+
+185 
+	`mem_dup
+(
+mem
+, &
+Ê
+->
+hdl
+.
+πp_¨øy
+->
+node
+[Ê->hdl.
+πp_r
+].mem);
+
+186 *
+o
+ = 
+mem
+;
+
+187 *
+size
+ = 
+	`mem_size
+(
+mem
+);
+
+188 
+Ê
+->
+hdl
+.
+πp_r
+++;
+
+192 *
+o
+ = 
+NULL
+;
+
+193 *
+size
+ = 0;
+
+197 
+	}
+}
+
+201 
+	$πp_hdr_fûl
+(
+∑ck_hdl_t
+ *
+hdl
+
+
+202 , *
+πp_buf
+
+
+203 , 
+∑d_size
+
+
+204 , 
+‰ame_hdr_t
+ *
+‰m_hdr
+
+
+205 , 
+m¨kî
+)
+
+207 if(
+πp_buf
+ =
+NULL
+)  -1;
+
+208 
+πp_pkt_t
+ *
+πp_hdr
+ = (πp_pkt_t*)
+πp_buf
+;
+
+209 
+πp_hdr
+->
+vîsi⁄
+ = 2;
+
+210 
+πp_hdr
+->
+∑ddög
+ = 0;
+
+211 
+πp_hdr
+->
+exãnsi⁄
+ = 0;
+
+212 
+πp_hdr
+->
+c§c_cou¡
+ = 0;
+
+213 
+πp_hdr
+->
+m¨kî
+ = marker & 0x1;
+
+214 
+πp_hdr
+->
+∑ylﬂd_ty≥
+ = 96 & 0x7f;
+
+215 
+πp_hdr
+->
+£q
+ = 
+	`ht⁄s
+(++
+hdl
+->
+πp_£q_no
+);
+
+216 
+πp_hdr
+->
+time°amp
+ = 
+	`ht⁄l
+(
+‰m_hdr
+->timestamp*90000/1000);
+
+217 
+πp_hdr
+->
+s§c
+ = 
+	`ht⁄l
+(0);
+
+219 
+	}
+}
+
+222 
+	$blk_mem_size
+(
+˘x_∑rm_s
+ *
+∑rm
+
+
+223 , *
+_u¨gs
+
+
+224 , *
+d©a_s
+
+
+225 , *
+hdr_s
+)
+
+227 
+t
+ = ()
+_u¨gs
+;
+
+228 
+t
+)
+
+230 
+RTP_T
+:
+
+231 *
+d©a_s
+ = 
+RTP_MTU_SIZE
+ - 
+RTP_PAD_SIZE
+;
+
+232 *
+hdr_s
+ = 
+RTP_PAD_SIZE
+;
+
+234 
+NAL_T
+:
+
+235 *
+d©a_s
+ = 
+NAL_MAX_SIZE
+ - 
+NAL_PAD_SIZE
+;
+
+236 *
+hdr_s
+ = 
+NAL_PAD_SIZE
+;
+
+239  *
+d©a_s
+;
+
+240 
+	}
+}
+
+241 
+mem_t
+
+
+242 
+	$blk_mem_Æloc
+(
+˘x_∑rm_s
+ *
+∑rm
+
+
+243 , 
+d©a_s
+
+
+244 , 
+hdr_s
+)
+
+246 
+mem_t
+ 
+mem
+;
+
+248 
+uöt8_t
+ *
+buf
+ = (uöt8_t*)
+	`buf_√w
+(
+∑rm
+->
+ud©a0
+);
+
+250 
+mem
+.
+d©a_s
+ = data_s;
+
+251 
+mem
+.
+hdr_s
+ = hdr_s;
+
+252 
+mem
+.
+d©a
+ = (
+buf
+ !
+NULL
+)?(buf+
+hdr_s
+):NULL;
+
+254 if(!
+buf
+Ë
+	`as£π
+(0);
+
+256  
+mem
+;
+
+257 
+	}
+}
+
+260 
+	$blk_mem_‰ì
+(
+mem_t
+ *
+mem
+)
+
+262 if(
+mem
+)
+
+264 if(
+	`mem_d©a
+(
+mem
+))
+
+266 
+	`buf_uƒef
+(
+	`mem_hdr
+(
+mem
+));
+
+269 
+	}
+}
+
+272 
+uöt8_t
+*
+
+273 
+	$πp_mem_pd©a
+(
+πp_mem_t
+ *
+mem
+, 
+uöt32_t
+ *
+l
+)
+
+275 if(
+mem
+)
+
+277 *
+l
+ = 
+	`mem_size
+(
+mem
+);
+
+278  
+	`mem_hdr
+(
+mem
+);
+
+280  
+NULL
+;
+
+281 
+	}
+}
+
+283 
+πp_mem_t
+*
+
+284 
+	$πp_mem_ªf
+(
+πp_mem_t
+ *
+mem
+)
+
+286 if(
+mem
+)
+
+288 
+mem
+->
+ªf_˙t
+++;
+
+290  
+mem
+;
+
+291 
+	}
+}
+
+294 
+	$πp_mem_uƒef
+(
+πp_mem_t
+ *
+mem
+)
+
+296 if(
+mem
+)
+
+298 if((--
+mem
+->
+ªf_˙t
+) <= 0)
+
+300 
+	`blk_mem_‰ì
+(
+mem
+);
+
+301 
+	`‰ì
+(
+mem
+);
+
+304 
+	}
+}
+
+	@src/h264_filter.h
+
+1 #i‚de‡
+__h264_fûãr_h__
+
+
+2 
+	#__h264_fûãr_h__
+
+
+	)
+
+4 
+	s«l_desc_s
+ {
+
+5 
+uöt32_t
+ 
+	m«l_num
+;
+
+6 
+	s«l_s
+ {
+
+7 
+uöt32_t
+ 
+	m«l_off
+;
+
+8 
+uöt32_t
+ 
+	m«l_size
+;
+
+9 }
+	m«l
+[0];
+
+10 }
+	t«l_desc_t
+;
+
+12 
+	s‰ame_hdr_s
+ {
+
+13 
+uöt32_t
+ 
+	mno
+;
+
+14 
+uöt32_t
+ 
+	mtime°amp
+;
+
+15 
+uöt32_t
+ 
+	mty≥
+;
+
+16 
+uöt16_t
+ 
+	mwidth
+;
+
+17 
+uöt16_t
+ 
+	mheight
+;
+
+18 
+uöt32_t
+ 
+	msize
+;
+
+19 
+«l_desc_t
+ 
+	m«l_desc
+;
+
+20 
+uöt8_t
+ *
+	md©a
+;
+
+21 }
+	t‰ame_hdr_t
+;
+
+23 
+πp_mem_s
+ 
+	tπp_mem_t
+;
+
+24 
+	sπp_mem_s
+ {
+
+26 
+uöt32_t
+ 
+	mhdr_s
+;
+
+27 
+uöt32_t
+ 
+	md©a_s
+;
+
+28 
+uöt8_t
+ *
+	md©a
+;
+
+29 
+uöt32_t
+ 
+	mªf_˙t
+;
+
+31 
+	muöt8_t
+* (*
+	mpd©a
+)(
+πp_mem_t
+ *
+	mo
+, 
+uöt32_t
+ *
+	ml
+);
+
+32 
+	mπp_mem_t
+* (*
+	mªf
+)(
+πp_mem_t
+ *
+	mo
+);
+
+33 (*
+	muƒef
+)(
+πp_mem_t
+ *
+	mo
+);
+
+36 * 
+	th264_Ê_›_t
+;
+
+37 
+h264_Ê_›_t
+ *
+h264_Ê_›_öô
+();
+
+38 
+h264_Ê_›_fö
+(
+h264_Ê_›_t
+ *
+f
+);
+
+39 
+öt32_t
+ 
+h264_Ê_›_fûl
+(
+h264_Ê_›_t
+ *
+f
+, 
+‰ame_hdr_t
+ *
+i
+, 
+uöt32_t
+ 
+i_size
+);
+
+40 
+öt32_t
+ 
+h264_Ê_›_puŒ
+(
+h264_Ê_›_t
+ *
+f
+, 
+πp_mem_t
+ **
+o
+, 
+uöt32_t
+ *
+size
+);
+
+	@src/h264pack.h
+
+1 #i‚de‡
+__h264∑ck_h__
+
+
+2 
+	#__h264∑ck_h__
+
+
+	)
+
+4 
+	~<°döt.h
+>
+
+6 
+	smem_s
+ {
+
+7 
+uöt32_t
+ 
+	mhdr_s
+;
+
+8 
+uöt32_t
+ 
+	md©a_s
+;
+
+9 
+uöt8_t
+ *
+	md©a
+;
+
+10 }
+	tmem_t
+;
+
+12 
+	#mem_hdr
+(
+m
+Ë((m)->
+d©a
+-(m)->
+hdr_s
+)
+
+	)
+
+13 
+	#mem_d©a
+(
+m
+Ë((m)->
+d©a
+)
+
+	)
+
+14 
+	#mem_size
+(
+m
+Ë((m)->
+hdr_s
++(m)->
+d©a_s
+)
+
+	)
+
+15 
+	#mem_d©a_s
+(
+m
+Ë((m)->
+d©a_s
+)
+
+	)
+
+16 
+	#mem_hdr_s
+(
+m
+Ë((m)->
+hdr_s
+)
+
+	)
+
+17 
+	#mem_dup
+(
+d
+, 
+m
+Ëdo{(d)->
+hdr_s
+ = (m)->hdr_s; (d)->
+d©a_s
+ = (m)->d©a_s; (d)->
+d©a
+ = (m)->d©a;}0)
+
+	)
+
+22 
+	snode_s
+ {
+
+23 
+uöt32_t
+ 
+	mtimes
+;
+
+24 
+uöt16_t
+ 
+	md⁄
+;
+
+25 
+mem_t
+ 
+	mmem
+;
+
+26 }
+	tnode_t
+;
+
+28 
+	snode_¨øy_s
+ {
+
+29 
+	mcou¡
+;
+
+30 
+node_t
+ 
+	mnode
+[0];
+
+31 }
+	tnode_¨øy_t
+;
+
+36 
+	e_PACK_MODE
+ {
+
+37 
+	mPACK_MODE_FUA
+ = 0x00
+
+38 , 
+	mPACK_MODE_FUB
+ = 0x01
+
+39 , 
+	mPACK_MODE_BUTT
+
+
+40 }
+	tPACK_MODE_E
+;
+
+45 
+	s˘x_∑rm_s
+ {
+
+46 *
+	mud©a0
+;
+
+47 *
+	mud©a1
+;
+
+48 (*
+	m_size
+)(
+˘x_∑rm_s
+ *
+	m∑rm
+, *
+	m_u¨gs
+, *
+	md©a_s
+, *
+	mhdr_s
+);
+
+49 
+mem_t
+ (*
+_Æloc
+)(
+˘x_∑rm_s
+ *
+	m∑rm
+, 
+	md©a_s
+, 
+	mhdr_s
+);
+
+50 (*
+	m_‰ì
+)(
+mem_t
+ *
+	mmem
+);
+
+51 }
+	t˘x_∑rm_t
+;
+
+56 
+	th264_∑ck_˘x_t
+;
+
+57 
+	th264_u≈ack_˘x_t
+;
+
+62 
+h264_∑ck_˘x_t
+*
+
+63 
+h264_∑ck_√w
+(
+mode
+, 
+˘x_∑rm_t
+ *
+∑rm
+);
+
+64 
+h264_∑ck_dñ
+(
+h264_∑ck_˘x_t
+ *
+˘x
+);
+
+67 
+h264_∑ck_pkt
+(
+h264_∑ck_˘x_t
+ *
+˘x
+
+
+68 , 
+node_t
+ *
+«l
+
+
+69 , 
+node_¨øy_t
+ **
+pkt
+
+
+70 , *
+_u¨gs
+);
+
+74 
+h264_u≈ack_˘x_t
+*
+
+75 
+h264_u≈ack_√w
+(
+˘x_∑rm_t
+ *
+∑rm
+);
+
+76 
+h264_u≈ack_dñ
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+);
+
+79 
+h264_u≈ack_«l
+(
+h264_u≈ack_˘x_t
+ *
+˘x
+
+
+80 , 
+node_t
+ *
+pkt
+
+
+81 , 
+node_t
+ *
+«l
+
+
+82 , *
+_u¨gs
+);
+
+	@src/nalu.c
+
+1 
+	~<uni°d.h
+>
+
+2 
+	~<°döt.h
+>
+
+4 
+	~"h264∑ck.h
+"
+
+5 
+	~"«lu.h
+"
+
+7 
+	$«lu_föd
+ (
+node_t
+ *
+«lus
+, *
+cou¡
+, *
+bô°
+, 
+°_size
+)
+
+9 
+uöt32_t
+ 
+ödex
+ = *
+cou¡
+;
+
+10 
+uöt8_t
+ * 
+bs
+ = (uöt8_à*)
+bô°
+;
+
+11 
+uöt32_t
+ * 
+hód
+;
+
+12 (
+uöt32_t
+)
+bs
+ <((uöt32_t)
+bô°
+ + 
+°_size
+ - 4))
+
+14 
+hód
+ = (
+uöt32_t
+ *)
+bs
+;
+
+15 #ifde‡
+BIGENDIAN
+
+
+16 i‡(
+hód
+[0] == 0x00000001)
+
+18 i‡(
+hód
+[0] == 0x01000000)
+
+21 
+bs
+ += 4;
+
+22 
+	`mem_d©a
+(&
+«lus
+[
+ödex
+].
+mem
+Ë
+bs
+;
+
+23 
+«lus
+[
+ödex
+].
+times
+ = 0;
+
+24 
+«lus
+[
+ödex
+].
+d⁄
+ = 0;
+
+25 i‡((
+ödex
+ - (*
+cou¡
+)) > 0)
+
+27 
+	`mem_d©a_s
+(&
+«lus
+[
+ödex
+ - 1].
+mem
+)
+
+28 (
+size_t
+)(
+	`mem_d©a
+(&
+«lus
+[
+ödex
+].
+mem
+) - mem_data(&nalus[index - 1].mem)) - 4;
+
+30 ++ 
+ödex
+;
+
+32 i‡(
+bs
+[3] != 0)
+
+34 
+bs
+ += 4;
+
+36 i‡(
+bs
+[2] != 0)
+
+38 
+bs
+ += 3;
+
+40 i‡(
+bs
+[1] != 0)
+
+42 
+bs
+ += 2;
+
+46 
+bs
+ += 1;
+
+50 i‡(
+ödex
+ > *
+cou¡
+)
+
+52 
+	`mem_d©a_s
+(&
+«lus
+[
+ödex
+ - 1].
+mem
+)
+
+53 (
+size_t
+)(((
+uöt32_t
+)
+bô°
+ + 
+°_size
+Ë- (uöt32_t)
+	`mem_d©a
+(&
+«lus
+[
+ödex
+ - 1].
+mem
+));
+
+54 *
+cou¡
+ = 
+ödex
+;
+
+58 
+	`¥ötf
+ ("Nothing found!\n");
+
+62 
+	}
+}
+
+	@src/nalu.h
+
+1 #i‚de‡
+__«lu_h__
+
+
+2 
+	#__«lu_h__
+
+
+	)
+
+4 
+	~"h264∑ck.h
+"
+
+7 
+«lu_föd
+ (
+node_t
+ *
+«lus
+, *
+cou¡
+, *
+bô°
+, 
+°_size
+);
+
+	@src/pack.c
+
+1 
+	~"°rög.h
+"
+
+3 
+	~"˘x.h
+"
+
+4 
+	~"∑ck.h
+"
+
+20 
+	$∑ck_¢p
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+22 
+uöt32_t
+ 
+d©a_s
+ = 0;
+
+23 
+uöt32_t
+ 
+hdr_s
+ = 0;
+
+24 
+˘x
+->
+∑rm
+.
+	`_size
+(&˘x->∑rm, 
+_u¨gs
+, &
+d©a_s
+, &
+hdr_s
+);
+
+26 if((
+«l
+ =
+NULL
+)
+
+27 || (
+pkt
+ =
+NULL
+)
+
+28 || (
+	`mem_d©a_s
+(&
+«l
+->
+mem
+Ë> 
+d©a_s
+))
+
+33 
+˘x
+->
+¨øy
+.
+cou¡
+ = 1;
+
+34 
+˘x
+->
+¨øy
+.
+node
+[0].
+mem
+ = ctx->
+∑rm
+.
+	`_Æloc
+(&˘x->∑rm, 
+d©a_s
+, 
+hdr_s
+);
+
+36 if(
+	`mem_d©a
+(&
+˘x
+->
+¨øy
+.
+node
+[0].
+mem
+Ë=
+NULL
+)
+
+40 
+	`mem˝y
+(
+	`mem_d©a
+(&
+˘x
+->
+¨øy
+.
+node
+[0].
+mem
+), mem_d©a(&
+«l
+->mem), 
+	`mem_d©a_s
+(&nal->mem));
+
+42 
+	`mem_d©a_s
+(&
+˘x
+->
+¨øy
+.
+node
+[0].
+mem
+Ëmem_d©a_s(&
+«l
+->mem);
+
+44 *
+pkt
+ = &
+˘x
+->
+¨øy
+;
+
+46  
+˘x
+->
+¨øy
+.
+cou¡
+;
+
+47 
+	}
+}
+
+61 
+	$∑ck_fu_a
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+63 
+uöt32_t
+ 
+«lPaylﬂdSize
+ = 
+	`mem_d©a_s
+(&
+«l
+->
+mem
+Ë- (
+«l_hódî_ty≥
+);
+
+65 
+uöt32_t
+ 
+buf_size
+ = 0;
+
+66 
+uöt32_t
+ 
+∑d_size
+ = 0;
+
+67 
+˘x
+->
+∑rm
+.
+	`_size
+(&˘x->∑rm, 
+_u¨gs
+, &
+buf_size
+, &
+∑d_size
+);
+
+69 
+uöt32_t
+ 
+fuaPaylﬂdSize
+ = 
+buf_size
+ - (
+fu_ödiˇt‹_ty≥
+Ë- (
+fu_hódî_ty≥
+);
+
+72 i‡(
+«lPaylﬂdSize
+ <
+fuaPaylﬂdSize
+)
+
+77 
+uöt32_t
+ 
+∑ckësNumbî
+ = (((
+«lPaylﬂdSize
+ % 
+fuaPaylﬂdSize
+) > 0)
+
+78 ? ((
+«lPaylﬂdSize
+ / 
+fuaPaylﬂdSize
+) + 1)
+
+79 : (
+«lPaylﬂdSize
+ / 
+fuaPaylﬂdSize
+));
+
+81 
+uöt8_t
+ *
+«lus
+ = 
+	`mem_d©a
+(&
+«l
+->
+mem
+);
+
+82 
+uöt8_t
+ *
+«lus_off
+ = (uöt8_à*)(
+«lus
+ + (
+«l_hódî_ty≥
+));
+
+84 
+uöt32_t
+ 
+cou¡
+ = 0;
+
+85 
+˘x
+->
+¨øy
+.
+cou¡
+ = 0;
+
+86 
+cou¡
+ = 0; cou¡ < 
+∑ckësNumbî
+; ++count)
+
+89 
+mem_t
+ 
+mem
+ = 
+˘x
+->
+∑rm
+.
+	`_Æloc
+(&˘x->∑rm, 
+buf_size
+, 
+∑d_size
+);
+
+90 
+uöt8_t
+ *
+buf
+ = 
+	`mem_d©a
+(&
+mem
+);
+
+92 if(
+buf
+ =
+NULL
+)
+
+96 #ifde‡
+BIGENDIAN
+
+
+102 
+buf
+[0] = ((0x07 & 
+«lus
+[0]) | 0xE0);
+
+103 i‡(
+cou¡
+ == 0)
+
+105 
+buf
+[1] = 0x01;
+
+107 i‡((
+cou¡
+ + 1Ë=
+∑ckësNumbî
+)
+
+109 
+buf
+[1] = 0x02;
+
+117 
+buf
+[1] |(0xF8 & 
+«lus
+[0]);
+
+125 
+buf
+[0] = 0x1C | (0xE0 & 
+«lus
+[0]);
+
+127 i‡(
+cou¡
+ == 0)
+
+129 
+buf
+[1] = 0x80;
+
+131 i‡((
+cou¡
+ + 1Ë=
+∑ckësNumbî
+)
+
+133 
+buf
+[1] = 0x40;
+
+141 
+buf
+[1] |(0x1F & 
+«lus
+[0]);
+
+144 i‡((
+cou¡
+ + 1Ë< 
+∑ckësNumbî
+)
+
+146 
+	`mem˝y
+ ((*)(
+buf
+ + 2 * (
+uöt8_t
+)), (*)
+«lus_off
+, 
+fuaPaylﬂdSize
+);
+
+148 
+˘x
+->
+¨øy
+.
+cou¡
+ = count+1;
+
+149 
+	`mem_d©a
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+Ë
+buf
+;
+
+150 
+	`mem_d©a_s
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+)
+fuaPaylﬂdSize
+ + (
+fu_ödiˇt‹_ty≥
+Ë+ (
+fu_hódî_ty≥
+);
+
+151 
+	`mem_hdr_s
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+) = mem_hdr_s(&mem);
+
+155 
+uöt32_t
+ 
+ªmaöögPaylﬂd
+ = 
+«lPaylﬂdSize
+ - 
+cou¡
+ * 
+fuaPaylﬂdSize
+;
+
+156 
+	`mem˝y
+ ((*)(
+buf
+ + 2 * (
+uöt8_t
+)), (*)
+«lus_off
+, 
+ªmaöögPaylﬂd
+);
+
+158 
+˘x
+->
+¨øy
+.
+cou¡
+ = count+1;
+
+159 
+	`mem_d©a
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+Ë
+buf
+;
+
+160 
+	`mem_d©a_s
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+)
+ªmaöögPaylﬂd
+ + (
+fu_ödiˇt‹_ty≥
+Ë+ (
+fu_hódî_ty≥
+);
+
+161 
+	`mem_hdr_s
+(&
+˘x
+->
+¨øy
+.
+node
+[
+cou¡
+].
+mem
+) = mem_hdr_s(&mem);
+
+164 
+«lus_off
+ = (
+uöt8_t
+ *)“Æus_of‡+ 
+fuaPaylﬂdSize
+);
+
+167 *
+pkt
+ = &
+˘x
+->
+¨øy
+;
+
+169  
+˘x
+->
+¨øy
+.
+cou¡
+;
+
+170 
+	}
+}
+
+171 
+	$∑ck_fu_b
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+174 
+	}
+}
+
+176 
+	$∑ck_°≠_a
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+179 
+	}
+}
+
+180 
+	$∑ck_°≠_b
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+183 
+	}
+}
+
+185 
+	$∑ck_mèp
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+)
+
+188 
+	}
+}
+
+	@src/pack.h
+
+1 #i‚de‡
+__∑ck_h__
+
+
+2 
+	#__∑ck_h__
+
+
+	)
+
+4 
+	~"˘x.h
+"
+
+6 
+∑ck_¢p
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+8 
+∑ck_fu_a
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+9 
+∑ck_fu_b
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+11 
+∑ck_°≠_a
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+12 
+∑ck_°≠_b
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+14 
+∑ck_mèp
+(
+∑ck_˘x_t
+ *
+˘x
+, 
+node_t
+ *
+«l
+, 
+node_¨øy_t
+ **
+pkt
+, *
+_u¨gs
+);
+
+	@src/rtp.h
+
+1 #i‚de‡
+__πp_h__
+
+
+2 
+	#__πp_h__
+
+
+	)
+
+4 
+	~"°döt.h
+"
+
+7 
+πp_pkt_s
+ 
+	tπp_pkt_t
+;
+
+8 
+	sπp_pkt_s
+ {
+
+9 #i‚de‡
+BIGENDIAN
+
+
+10 
+uöt32_t
+ 
+	mc§c_cou¡
+:4;
+
+11 
+uöt32_t
+ 
+	mexãnsi⁄
+:1;
+
+12 
+uöt32_t
+ 
+	m∑ddög
+:1;
+
+13 
+uöt32_t
+ 
+	mvîsi⁄
+:2;
+
+14 
+uöt32_t
+ 
+	m∑ylﬂd_ty≥
+:7;
+
+15 
+uöt32_t
+ 
+	mm¨kî
+:1;
+
+17 
+uöt32_t
+ 
+	mvîsi⁄
+:2;
+
+18 
+uöt32_t
+ 
+	m∑ddög
+:1;
+
+19 
+uöt32_t
+ 
+	mexãnsi⁄
+:1;
+
+20 
+uöt32_t
+ 
+	mc§c_cou¡
+:4;
+
+21 
+uöt32_t
+ 
+	mm¨kî
+:1;
+
+22 
+uöt32_t
+ 
+	m∑ylﬂd_ty≥
+:7;
+
+24 
+uöt16_t
+ 
+	m£q
+;
+
+25 
+uöt32_t
+ 
+	mtime°amp
+;
+
+26 
+uöt32_t
+ 
+	ms§c
+;
+
+27 
+uöt32_t
+ 
+	md©a
+[0];
+
+30 
+	#RTP_PKT_CC
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+c§c_cou¡
+)
+
+	)
+
+31 
+	#RTP_PKT_MARK
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+m¨kî
+)
+
+	)
+
+32 
+	#RTP_PKT_PT
+(
+pkt
+Ë(((
+πp_pkt_t
+*Ìkt)->
+∑ylﬂd_ty≥
+)
+
+	)
+
+33 
+	#RTP_PKT_SEQ
+(
+pkt
+Ë
+	`¡ohs
+(((
+πp_pkt_t
+*Ìkt)->
+£q
+)
+
+	)
+
+34 
+	#RTP_PKT_TS
+(
+pkt
+Ë
+	`¡ohl
+(((
+πp_pkt_t
+*Ìkt)->
+time°amp
+)
+
+	)
+
+35 
+	#RTP_PKT_SSRC
+(
+pkt
+Ë
+	`¡ohl
+(((
+πp_pkt_t
+*Ìkt)->
+s§c
+)
+
+	)
+
+36 
+	#RTP_PKT_DATA
+(
+pkt
+Ë(&((
+πp_pkt_t
+*Ìkt)->
+d©a
+[0] + (‘ç_pkt_t*Ìkt)->
+c§c_cou¡
+)
+
+	)
+
+38 
+	#RTPPT_ISDYNAMIC
+(
+±
+Ë’à>96)
+
+	)
+
+	@
+1
+.
+0
+21
+271
+demo/file.c
+demo/file.h
+demo/main.c
+demo/obj.h
+inc/buf_pool.h
+inc/h264_filter.h
+inc/h264pack.h
+inc/nalu.h
+inc/rtp.h
+src/buf_pool.c
+src/buf_pool.h
+src/ctx.c
+src/ctx.h
+src/h264_filter.c
+src/h264_filter.h
+src/h264pack.h
+src/nalu.c
+src/nalu.h
+src/pack.c
+src/pack.h
+src/rtp.h

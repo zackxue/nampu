@@ -1,0 +1,14 @@
+autoconfSamp pkg-config source file
+#
+prefix=/home/shiyong/usr
+exec_prefix=${prefix}
+libdir=/home/shiyong/usr/lib
+includedir=/home/shiyong/usr/inc
+
+Name: libnmpshare
+Description: libnmpshare is a shared library used by Nampu Video Surveillance System, Copyright (c) 2011 ~ 2012, Nampu.
+
+Version: 2.8.0
+Requires:
+Libs: -L${exec_prefix}/lib -lnmpshare
+Cflags: -I${includedir}

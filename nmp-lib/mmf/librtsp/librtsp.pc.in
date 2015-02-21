@@ -1,0 +1,14 @@
+# autoconfSamp pkg-config source file
+#
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+libdir=@prefix@/lib
+includedir=@prefix@/inc
+
+Name: @PACKAGE@
+Description: librtsp is a share library
+Version: @VERSION@
+Requires:
+Libs: -L@libdir@ -lrtsp
+Cflags: -I${includedir}

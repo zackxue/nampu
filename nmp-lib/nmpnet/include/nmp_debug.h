@@ -1,5 +1,5 @@
 /*
- * jpf_debug.h
+ * nmp_debug.h
  *
  * This file declares interfaces and macros for debugging 
  * and system running information logging purpose.

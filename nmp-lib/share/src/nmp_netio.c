@@ -12,12 +12,12 @@
 #include "nmp_debug.h"
 #include "nmp_errno.h"
 
-struct _HmNetIO
+struct _JpfNetIO
 {
     gint        ref_count;
 
     HmWatch    *io_watch;
-    HmNet      *net;
+    JpfNet      *net;
     GMutex      *lock;
 
 	HmIOEst	on_est;		/* On established, after connect. */
@@ -26,37 +26,37 @@ struct _HmNetIO
 	HmDesFun   priv_destroy;
 };
 
-extern gint hm_net_recv_message(HmNet *net, HmNetIO *net_io, gpointer msg);
-extern gint hm_net_add_io(HmNet *net, HmNetIO *net_io, gint notify);
-extern HmNet *hm_net_ref(HmNet *net);
-extern void hm_net_unref(HmNet *net);
-extern void hm_net_async_kill_io(HmNet *net, HmNetIO *net_io, gint err);
-extern void hm_net_wakeup_context(HmNet *net);
-extern void hm_net_establish_io(HmNet *net, HmNetIO *net_io);
+extern gint jpf_net_recv_message(JpfNet *net, JpfNetIO *net_io, gpointer msg);
+extern gint jpf_net_add_io(JpfNet *net, JpfNetIO *net_io, gint notify);
+extern JpfNet *jpf_net_ref(JpfNet *net);
+extern void jpf_net_unref(JpfNet *net);
+extern void jpf_net_async_kill_io(JpfNet *net, JpfNetIO *net_io, gint err);
+extern void jpf_net_wakeup_context(JpfNet *net);
+extern void jpf_net_establish_io(JpfNet *net, JpfNetIO *net_io);
 
 static gint total_net_io_count = 0;
 
 static __inline__ HmWatch *
-hm_net_io_create_watch(HmConnection *conn, 
-    HmPacketProto *ll_proto, HmPayloadProto *hl_proto)
+jpf_net_io_create_watch(HmConnection *conn, 
+    JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto)
 {
-    return (HmWatch*)hm_hl_io_new(conn, ll_proto, hl_proto);
+    return (HmWatch*)jpf_hl_io_new(conn, ll_proto, hl_proto);
 }
 
 
 static __inline__ HmWatch *
-hm_net_io_create_listen_watch(HmConnection *conn, 
-    HmPacketProto *ll_proto, HmPayloadProto *hl_proto)
+jpf_net_io_create_listen_watch(HmConnection *conn, 
+    JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto)
 {
-    return (HmWatch*)hm_hl_listen_io_new(conn, ll_proto, hl_proto);
+    return (HmWatch*)jpf_hl_listen_io_new(conn, ll_proto, hl_proto);
 }
 
 
 static __inline__ void
-hm_net_io_release(HmNetIO *net_io)
+jpf_net_io_release(JpfNetIO *net_io)
 {
     g_atomic_int_add(&total_net_io_count, -1);
-hm_debug("Net net_io '%p' finalized, total %d left.", net_io, g_atomic_int_get(&total_net_io_count));
+jpf_debug("Net net_io '%p' finalized, total %d left.", net_io, g_atomic_int_get(&total_net_io_count));
     BUG_ON(net_io->io_watch);
     BUG_ON(net_io->net);
     g_mutex_free(net_io->lock);
@@ -69,19 +69,19 @@ hm_debug("Net net_io '%p' finalized, total %d left.", net_io, g_atomic_int_get(&
 
 
 __export void
-hm_net_io_attach(HmNetIO *net_io, GMainContext *context)
+jpf_net_io_attach(JpfNetIO *net_io, GMainContext *context)
 {
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
     if (net_io->io_watch)
-        hm_watch_attach(net_io->io_watch, context);
+        jpf_watch_attach(net_io->io_watch, context);
     g_mutex_unlock(net_io->lock);
 }
 
 
-__export HmNetIO *
-hm_net_io_ref(HmNetIO *net_io)
+__export JpfNetIO *
+jpf_net_io_ref(JpfNetIO *net_io)
 {
     G_ASSERT(net_io != NULL && 
         g_atomic_int_get(&net_io->ref_count) > 0);
@@ -92,14 +92,14 @@ hm_net_io_ref(HmNetIO *net_io)
 
 
 __export void
-hm_net_io_unref(HmNetIO *net_io)
+jpf_net_io_unref(JpfNetIO *net_io)
 {
     G_ASSERT(net_io != NULL && 
         g_atomic_int_get(&net_io->ref_count) > 0);
 
     if (g_atomic_int_dec_and_test(&net_io->ref_count))
     {
-        hm_net_io_release(net_io);
+        jpf_net_io_release(net_io);
     }
 }
 
@@ -108,10 +108,10 @@ hm_net_io_unref(HmNetIO *net_io)
  * kill a net-io object without unref.
 */
 __export void
-hm_net_io_kill(HmNetIO *net_io)
+jpf_net_io_kill(JpfNetIO *net_io)
 {
     HmWatch *watch;
-    HmNet *net;
+    JpfNet *net;
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
@@ -125,22 +125,22 @@ hm_net_io_kill(HmNetIO *net_io)
 
     if (watch)
     {
-        hm_watch_kill(watch);
-        hm_watch_unref(watch);     /* what we unref is watch */
+        jpf_watch_kill(watch);
+        jpf_watch_unref(watch);     /* what we unref is watch */
     }
 
     if (net)
     {
-        hm_net_unref(net);
+        jpf_net_unref(net);
     }
 }
 
 
 __export void
-hm_net_io_async_kill(HmNetIO *net_io, gint err)
+jpf_net_io_async_kill(JpfNetIO *net_io, gint err)
 {
     HmWatch *watch;
-    HmNet *net;
+    JpfNet *net;
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
@@ -154,28 +154,28 @@ hm_net_io_async_kill(HmNetIO *net_io, gint err)
 
     if (watch)
     {
-        hm_watch_unref(watch);     /* what we unref is watch */
+        jpf_watch_unref(watch);     /* what we unref is watch */
     }
 
     if (net)
     {
-        hm_net_async_kill_io(net, net_io, err);
-        hm_net_unref(net);
+        jpf_net_async_kill_io(net, net_io, err);
+        jpf_net_unref(net);
     }
 }
 
 
-__export HmNetIO *
-hm_net_io_new(HmConnection *conn, HmPacketProto *ll_proto,
-    HmPayloadProto *hl_proto, gint *err)
+__export JpfNetIO *
+jpf_net_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
+    JpfPayloadProto *hl_proto, gint *err)
 {
-    HmNetIO *net_io;
+    JpfNetIO *net_io;
     G_ASSERT(conn != NULL && ll_proto != NULL 
         && hl_proto != NULL);
 
-    net_io = g_new0(HmNetIO, 1);
+    net_io = g_new0(JpfNetIO, 1);
     net_io->ref_count = 1;
-    net_io->io_watch = hm_net_io_create_watch(conn, ll_proto,
+    net_io->io_watch = jpf_net_io_create_watch(conn, ll_proto,
         hl_proto);
 
     if (!net_io->io_watch)
@@ -186,8 +186,8 @@ hm_net_io_new(HmConnection *conn, HmPacketProto *ll_proto,
         return NULL;
     }
 
-    hm_watch_set_private(net_io->io_watch, net_io);
-    hm_net_io_ref(net_io); /* watch */
+    jpf_watch_set_private(net_io->io_watch, net_io);
+    jpf_net_io_ref(net_io); /* watch */
     net_io->net = NULL;
     net_io->lock = g_mutex_new();
     g_atomic_int_add(&total_net_io_count, 1);
@@ -196,16 +196,16 @@ hm_net_io_new(HmConnection *conn, HmPacketProto *ll_proto,
 }
 
 
-__export HmNetIO *
-hm_net_listen_io_new(HmConnection *conn, HmPacketProto *ll_proto,
-    HmPayloadProto *hl_proto, gint *err)
+__export JpfNetIO *
+jpf_net_listen_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
+    JpfPayloadProto *hl_proto, gint *err)
 {
-    HmNetIO *net_io;
+    JpfNetIO *net_io;
     G_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
 
-    net_io = g_new0(HmNetIO, 1);
+    net_io = g_new0(JpfNetIO, 1);
     net_io->ref_count = 1;
-    net_io->io_watch = hm_net_io_create_listen_watch(conn, ll_proto,
+    net_io->io_watch = jpf_net_io_create_listen_watch(conn, ll_proto,
         hl_proto);
 
     if (!net_io->io_watch)
@@ -216,8 +216,8 @@ hm_net_listen_io_new(HmConnection *conn, HmPacketProto *ll_proto,
         return NULL;
     }
 
-    hm_watch_set_private(net_io->io_watch, net_io);
-    hm_net_io_ref(net_io); /* watch */
+    jpf_watch_set_private(net_io->io_watch, net_io);
+    jpf_net_io_ref(net_io); /* watch */
     net_io->net = NULL;
     net_io->lock = g_mutex_new();
     g_atomic_int_add(&total_net_io_count, 1);
@@ -227,7 +227,7 @@ hm_net_listen_io_new(HmConnection *conn, HmPacketProto *ll_proto,
 
 
 static __inline__ void
-__hm_net_io_set_owner(HmNetIO *net_io, HmNet *owner)
+__jpf_net_io_set_owner(JpfNetIO *net_io, JpfNet *owner)
 {
     if (owner)
     {
@@ -243,18 +243,18 @@ __hm_net_io_set_owner(HmNetIO *net_io, HmNet *owner)
 
 
 __export void
-hm_net_io_set_owner(HmNetIO *net_io, gpointer owner)
+jpf_net_io_set_owner(JpfNetIO *net_io, gpointer owner)
 {
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
-    __hm_net_io_set_owner(net_io, (HmNet*)owner);
+    __jpf_net_io_set_owner(net_io, (JpfNet*)owner);
     g_mutex_unlock(net_io->lock);
 }
 
 
 __export void
-hm_net_io_set_private(HmNetIO *net_io, gpointer priv_data,
+jpf_net_io_set_private(JpfNetIO *net_io, gpointer priv_data,
 	HmDesFun priv_destroy)
 {
 	G_ASSERT(net_io != NULL);
@@ -265,7 +265,7 @@ hm_net_io_set_private(HmNetIO *net_io, gpointer priv_data,
 
 
 __export gpointer
-hm_net_io_get_private(HmNetIO *net_io)
+jpf_net_io_get_private(JpfNetIO *net_io)
 {
 	G_ASSERT(net_io != NULL);
 
@@ -274,23 +274,23 @@ hm_net_io_get_private(HmNetIO *net_io)
 
 
 __export gint
-hm_net_io_read_message(HmNetIO *net_io, gpointer msg)
+jpf_net_io_read_message(JpfNetIO *net_io, gpointer msg)
 {
-    HmNet *net = NULL;
+    JpfNet *net = NULL;
     gint rc = -E_NETIODIE;
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
     if (net_io->net)
     {
-        net = hm_net_ref(net_io->net);
+        net = jpf_net_ref(net_io->net);
     }
     g_mutex_unlock(net_io->lock);
 
     if (net)
     {
-        rc = hm_net_recv_message(net, net_io, msg);
-        hm_net_unref(net);
+        rc = jpf_net_recv_message(net, net_io, msg);
+        jpf_net_unref(net);
     }
 
     return rc;
@@ -298,7 +298,7 @@ hm_net_io_read_message(HmNetIO *net_io, gpointer msg)
 
 
 __export gint
-hm_net_io_write_message(HmNetIO *net_io, gpointer msg)
+jpf_net_io_write_message(JpfNetIO *net_io, gpointer msg)
 {
     HmWatch *watch;
     gint rc = 0;
@@ -310,15 +310,15 @@ hm_net_io_write_message(HmNetIO *net_io, gpointer msg)
 
     if (watch)
     {
-        hm_watch_ref(watch);
+        jpf_watch_ref(watch);
     }
 
     g_mutex_unlock(net_io->lock);
 
     if (watch)
     {
-        rc = hm_watch_write_message(watch, msg);
-        hm_watch_unref(watch);
+        rc = jpf_watch_write_message(watch, msg);
+        jpf_watch_unref(watch);
     }
 
     return rc;
@@ -326,22 +326,22 @@ hm_net_io_write_message(HmNetIO *net_io, gpointer msg)
 
 
 static __inline__ gint
-hm_net_io_add_child(HmNetIO *net_io, HmNetIO *new_io)
+jpf_net_io_add_child(JpfNetIO *net_io, JpfNetIO *new_io)
 {
-    HmNet *net = NULL;
+    JpfNet *net = NULL;
     gint rc = -E_NETIODIE;
 
     g_mutex_lock(net_io->lock);
     if (net_io->net)
     {
-        net = hm_net_ref(net_io->net);
+        net = jpf_net_ref(net_io->net);
     }
     g_mutex_unlock(net_io->lock);
 
     if (net)
     {
-        rc = hm_net_add_io(net, new_io, 1);
-        hm_net_unref(net);
+        rc = jpf_net_add_io(net, new_io, 1);
+        jpf_net_unref(net);
     }
 
     return rc;
@@ -349,27 +349,27 @@ hm_net_io_add_child(HmNetIO *net_io, HmNetIO *new_io)
 
 
 __export gint
-hm_net_io_add_child_watch(HmNetIO *net_io, gpointer watch)
+jpf_net_io_add_child_watch(JpfNetIO *net_io, gpointer watch)
 {
-    HmNetIO *new_io;
+    JpfNetIO *new_io;
     gint rc;
     G_ASSERT(net_io != NULL && watch != NULL);
 
-    new_io = g_new0(HmNetIO, 1);
+    new_io = g_new0(JpfNetIO, 1);
     new_io->ref_count = 1;  /* 1 returned to user */
     new_io->io_watch = (HmWatch*)watch;
     new_io->net = NULL;
     new_io->lock = g_mutex_new();
 
-    hm_watch_set_private(watch, new_io);
-    hm_net_io_ref(new_io); /* increased by watch */
+    jpf_watch_set_private(watch, new_io);
+    jpf_net_io_ref(new_io); /* increased by watch */
 
     g_atomic_int_add(&total_net_io_count, 1);
-    rc = hm_net_io_add_child(net_io, new_io);
+    rc = jpf_net_io_add_child(net_io, new_io);
     if (rc)
     {
-        hm_net_io_kill(new_io);
-        hm_net_io_unref(net_io);
+        jpf_net_io_kill(new_io);
+        jpf_net_io_unref(net_io);
     }
 
     return rc;
@@ -377,28 +377,28 @@ hm_net_io_add_child_watch(HmNetIO *net_io, gpointer watch)
 
 
 __export void
-hm_net_io_establish(HmNetIO *net_io)
+jpf_net_io_establish(JpfNetIO *net_io)
 {
-	HmNet *net = NULL;
+	JpfNet *net = NULL;
 	G_ASSERT(net_io != NULL);
 
 	g_mutex_lock(net_io->lock);
     if (net_io->net)
     {
-        net = hm_net_ref(net_io->net);
+        net = jpf_net_ref(net_io->net);
     }
 	g_mutex_unlock(net_io->lock);
 
 	if (net)
 	{
-		hm_net_establish_io(net, net_io);
-		hm_net_unref(net);
+		jpf_net_establish_io(net, net_io);
+		jpf_net_unref(net);
 	}
 }
 
 
 __export void
-hm_net_io_on_establish(HmNetIO *net_io, gpointer init_data)
+jpf_net_io_on_establish(JpfNetIO *net_io, gpointer init_data)
 {
 	G_ASSERT(net_io != NULL);
 
@@ -410,10 +410,10 @@ hm_net_io_on_establish(HmNetIO *net_io, gpointer init_data)
 
 
 __export gboolean
-hm_net_io_set_ttd(HmNetIO *net_io, gint milli_secs)
+jpf_net_io_set_ttd(JpfNetIO *net_io, gint milli_secs)
 {
     gboolean set_ok = FALSE;
-    HmNet *net = NULL;
+    JpfNet *net = NULL;
     HmWatch *watch;
     G_ASSERT(net_io != NULL);
 
@@ -422,27 +422,27 @@ hm_net_io_set_ttd(HmNetIO *net_io, gint milli_secs)
     watch = net_io->io_watch;
     if (watch)
     {
-        hm_watch_ref(watch);
+        jpf_watch_ref(watch);
     }
 
     if (net_io->net)
     {
-        net = hm_net_ref(net_io->net);
+        net = jpf_net_ref(net_io->net);
     }
 
     g_mutex_unlock(net_io->lock);
 
     if (watch)
     {
-        set_ok = hm_watch_set_conn_ttd(watch, milli_secs);
-        hm_watch_unref(watch);
+        set_ok = jpf_watch_set_conn_ttd(watch, milli_secs);
+        jpf_watch_unref(watch);
     }
 
     if (net)
     {
         if (set_ok)
-            hm_net_wakeup_context(net);
-        hm_net_unref(net);
+            jpf_net_wakeup_context(net);
+        jpf_net_unref(net);
     }
 
     return set_ok;
@@ -450,7 +450,7 @@ hm_net_io_set_ttd(HmNetIO *net_io, gint milli_secs)
 
 
 __export void
-hm_net_io_set_ester(HmNetIO *net_io, HmIOEst on_est)
+jpf_net_io_set_ester(JpfNetIO *net_io, HmIOEst on_est)
 {
 	G_ASSERT(net_io != NULL);
 
@@ -459,7 +459,7 @@ hm_net_io_set_ester(HmNetIO *net_io, HmIOEst on_est)
 
 
 __export gchar *
-hm_net_io_get_peer(HmNetIO *net_io)
+jpf_net_io_get_peer(JpfNetIO *net_io)
 {
 	gchar *ip = NULL;
 	HmWatch *watch;
@@ -470,15 +470,15 @@ hm_net_io_get_peer(HmNetIO *net_io)
 	watch = net_io->io_watch;
 	if (watch)
 	{
-	    hm_watch_ref(watch);
+	    jpf_watch_ref(watch);
 	}
 
 	g_mutex_unlock(net_io->lock);
 
 	if (watch)
 	{
-		ip = hm_watch_get_peer(watch);
-	    hm_watch_unref(watch);
+		ip = jpf_watch_get_peer(watch);
+	    jpf_watch_unref(watch);
 	}
 
 	return ip;
@@ -486,7 +486,7 @@ hm_net_io_get_peer(HmNetIO *net_io)
 
 
 __export void
-hm_net_io_set_heavy_load(HmNetIO *net_io)
+jpf_net_io_set_heavy_load(JpfNetIO *net_io)
 {
 	HmWatch *watch;
 	G_ASSERT(net_io != NULL);
@@ -496,21 +496,21 @@ hm_net_io_set_heavy_load(HmNetIO *net_io)
 	watch = net_io->io_watch;
 	if (watch)
 	{
-	    hm_watch_ref(watch);
+	    jpf_watch_ref(watch);
 	}
 	
 	g_mutex_unlock(net_io->lock);
 
 	if (watch)
 	{
-		hm_watch_set_heavy_load(watch);
-		hm_watch_unref(watch);
+		jpf_watch_set_heavy_load(watch);
+		jpf_watch_unref(watch);
 	}
 }
 
 
 __export void
-hm_net_io_set_block_size(HmNetIO *net_io, gint size)
+jpf_net_io_set_block_size(JpfNetIO *net_io, gint size)
 {
 	HmWatch *watch;
 	G_ASSERT(net_io != NULL);
@@ -520,15 +520,15 @@ hm_net_io_set_block_size(HmNetIO *net_io, gint size)
 	watch = net_io->io_watch;
 	if (watch)
 	{
-	    hm_watch_ref(watch);
+	    jpf_watch_ref(watch);
 	}
 	
 	g_mutex_unlock(net_io->lock);
 
 	if (watch)
 	{
-		hm_watch_set_block_size(watch, size);
-		hm_watch_unref(watch);
+		jpf_watch_set_block_size(watch, size);
+		jpf_watch_unref(watch);
 	}
 }
 

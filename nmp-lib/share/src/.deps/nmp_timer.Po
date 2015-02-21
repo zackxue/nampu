@@ -1,5 +1,5 @@
 nmp_timer.o: nmp_timer.c /usr/include/stdc-predef.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_timer.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_timer.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h \
@@ -99,7 +99,7 @@ nmp_timer.o: nmp_timer.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -112,7 +112,7 @@ nmp_timer.o: nmp_timer.c /usr/include/stdc-predef.h \
 
 /usr/include/stdc-predef.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_timer.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_timer.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -354,7 +354,7 @@ nmp_timer.o: nmp_timer.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 

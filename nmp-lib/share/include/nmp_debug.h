@@ -1,10 +1,10 @@
 /*
- * hm_debug.h
+ * nmp_debug.h
  *
  * This file declares interfaces and macros for debugging 
  * and system running information logging purpose.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
@@ -31,7 +31,7 @@
 
 #if defined HM_DEBUG && !defined G_OS_WIN32
 /* snprintf() has different behavior on windows */
-#define hm_print(...)   \
+#define jpf_print(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -43,7 +43,7 @@ G_STMT_START {\
 } G_STMT_END
 
 
-#define hm_warning(...)   \
+#define jpf_warning(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -55,7 +55,7 @@ G_STMT_START {\
 } G_STMT_END
 
 
-#define hm_error(...)   \
+#define jpf_error(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -69,19 +69,19 @@ G_STMT_START {\
 
 #else
 
-#define hm_print(...)   \
+#define jpf_print(...)   \
     g_log (G_LOG_DOMAIN,         \
         G_LOG_LEVEL_MESSAGE,  \
         __VA_ARGS__)
 
 
-#define hm_warning(...)   \
+#define jpf_warning(...)   \
     g_log (G_LOG_DOMAIN,         \
         G_LOG_LEVEL_WARNING,  \
         __VA_ARGS__)
 
 
-#define hm_error(...)  \
+#define jpf_error(...)  \
     G_STMT_START {                 \
         g_log (G_LOG_DOMAIN,         \
             G_LOG_LEVEL_ERROR,    \
@@ -91,7 +91,7 @@ G_STMT_START {\
 
 #endif  /* HM_DEBUG & G_OS_WIN32 */
 
-#define hm_debug hm_print
+#define jpf_debug jpf_print
 
 #define bug_print(...)   \
     g_log (G_LOG_DOMAIN,         \
@@ -145,10 +145,10 @@ G_STMT_START {\
 } G_STMT_END
 
 
-gint hm_debug_log_facility_init(const gchar *folder_path,
+gint jpf_debug_log_facility_init(const gchar *folder_path,
     const gchar *name);
 
-void hm_debug_set_log_size(gint size);
+void jpf_debug_set_log_size(gint size);
 
 
 #endif  //__HM_DEBUG_H__

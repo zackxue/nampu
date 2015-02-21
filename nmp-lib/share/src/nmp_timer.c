@@ -17,12 +17,12 @@ struct _HmTimerEngine
 	GThread			*th_loop;
 };
 
-static gpointer hm_timer_thread_loop(gpointer user_data);
+static gpointer jpf_timer_thread_loop(gpointer user_data);
 static HmTimerEngine *global_timer_engine = NULL;
 static volatile gsize g_init_global_timer_engine_volatile = 0;
 
 HmTimerEngine *
-hm_timer_engine_new( void )
+jpf_timer_engine_new( void )
 {
 	HmTimerEngine *eng;
 
@@ -43,7 +43,7 @@ hm_timer_engine_new( void )
 	}	
 
 	eng->th_loop = g_thread_create(
-		hm_timer_thread_loop,
+		jpf_timer_thread_loop,
 		eng,
 		TRUE,
 		NULL
@@ -69,7 +69,7 @@ alloc_contex_err:
 
 
 void
-hm_timer_engine_release(HmTimerEngine *eng)
+jpf_timer_engine_release(HmTimerEngine *eng)
 {//:TODO
 	G_ASSERT(eng != NULL);
 
@@ -88,7 +88,7 @@ hm_timer_engine_release(HmTimerEngine *eng)
 
 
 static __inline__ guint
-hm_timeout_add_full (gint priority, guint interval,
+jpf_timeout_add_full (gint priority, guint interval,
 	GSourceFunc function, gpointer data, GMainContext *context)
 {
 	GSource *source;
@@ -108,18 +108,18 @@ hm_timeout_add_full (gint priority, guint interval,
 
 
 guint
-hm_timer_engine_set_timer(HmTimerEngine *eng, guint interval,
+jpf_timer_engine_set_timer(HmTimerEngine *eng, guint interval,
 	HmTimerFun fun, gpointer data)
 {
 	G_ASSERT(eng != NULL && fun != NULL);
 
-	return hm_timeout_add_full(G_PRIORITY_DEFAULT, interval,
+	return jpf_timeout_add_full(G_PRIORITY_DEFAULT, interval,
 		(GSourceFunc)fun, data, eng->context);
 }
 
 
 void
-hm_timer_engine_del_timer(HmTimerEngine *eng, gint id)
+jpf_timer_engine_del_timer(HmTimerEngine *eng, gint id)
 {
 	GSource *source;
 	G_ASSERT(eng != NULL);
@@ -131,7 +131,7 @@ hm_timer_engine_del_timer(HmTimerEngine *eng, gint id)
 
 
 static gpointer
-hm_timer_thread_loop(gpointer user_data)
+jpf_timer_thread_loop(gpointer user_data)
 {
 	HmTimerEngine *eng = (HmTimerEngine*)user_data;
 
@@ -142,33 +142,33 @@ hm_timer_thread_loop(gpointer user_data)
 
 
 static __inline__ void
-hm_init_timer( void )
+jpf_init_timer( void )
 {
 	G_ASSERT(!global_timer_engine);
 
-	global_timer_engine = hm_timer_engine_new();
+	global_timer_engine = jpf_timer_engine_new();
 	BUG_ON(!global_timer_engine);
 }
 
 
 guint
-hm_set_timer(guint interval, HmTimerFun fun, gpointer data)
+jpf_set_timer(guint interval, HmTimerFun fun, gpointer data)
 {
 	guint timer;
 
 	if (g_once_init_enter(&g_init_global_timer_engine_volatile))
 	{
-		hm_init_timer();
+		jpf_init_timer();
 		g_once_init_leave(&g_init_global_timer_engine_volatile, 1);
 	}
 
-	timer = hm_timer_engine_set_timer(
+	timer = jpf_timer_engine_set_timer(
 		global_timer_engine, interval, fun, data
 	);
 
 	if (!timer)
 	{
-		hm_error(
+		jpf_error(
 			"Create timer failed because unknown reason."
 		);
 		FATAL_ERROR_EXIT;
@@ -179,11 +179,11 @@ hm_set_timer(guint interval, HmTimerFun fun, gpointer data)
 
 
 void
-hm_del_timer(guint id)
+jpf_del_timer(guint id)
 {
 	G_ASSERT(global_timer_engine);
 	
-	hm_timer_engine_del_timer(global_timer_engine, id);
+	jpf_timer_engine_del_timer(global_timer_engine, id);
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * hm_signal.h
+ * jpf_signal.h
  *
  * This file declares interfaces for singal handling.
  *
@@ -10,6 +10,6 @@
 #ifndef __HM_SIGNAL_H__
 #define __HM_SIGNAL_H__
 
-void hm_sig_setup_signals( void );
+void jpf_sig_setup_signals( void );
 
 #endif	//__HM_SIGNAL_H__

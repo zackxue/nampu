@@ -98,8 +98,8 @@ nmp_fragments.o: nmp_fragments.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -109,7 +109,7 @@ nmp_fragments.o: nmp_fragments.c /usr/include/stdc-predef.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/include/i386-linux-gnu/bits/stdio_lim.h \
  /usr/include/i386-linux-gnu/bits/sys_errlist.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_timer.h
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_timer.h
 
 /usr/include/stdc-predef.h:
 
@@ -357,9 +357,9 @@ nmp_fragments.h:
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 
@@ -393,4 +393,4 @@ nmp_fragments.h:
 
 /usr/include/i386-linux-gnu/bits/sys_errlist.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_timer.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_timer.h:

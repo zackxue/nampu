@@ -1,7 +1,7 @@
 /*
- * hm_wait.h
+ * nmp_wait.h
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
@@ -12,9 +12,9 @@
 
 G_BEGIN_DECLS
 
-typedef struct _HmWait HmWait;
+typedef struct _JpfWait JpfWait;
 
-struct _HmWait
+struct _JpfWait
 {
     gboolean        waited;		/* condition */
     GMutex          *lock;
@@ -22,10 +22,10 @@ struct _HmWait
 };
 
 
-static __inline__ HmWait *
-hm_wait_new( void )
+static __inline__ JpfWait *
+jpf_wait_new( void )
 {//TODO: ERR
-    HmWait *w = g_new0(HmWait, 1);
+    JpfWait *w = g_new0(JpfWait, 1);
     if (G_UNLIKELY(!w))		/* glib, unlikely */
         return NULL;
 
@@ -38,7 +38,7 @@ hm_wait_new( void )
 
 
 static __inline__ void
-hm_wait_free(HmWait *w)
+jpf_wait_free(JpfWait *w)
 {
     if (G_UNLIKELY(!w))
         return;
@@ -50,63 +50,63 @@ hm_wait_free(HmWait *w)
 
 
 static __inline__ void
-hm_wait_begin(HmWait *w)
+jpf_wait_begin(JpfWait *w)
 {
     g_mutex_lock(w->lock);
 }
 
 
 static __inline__ void
-hm_wait_waiting(HmWait *w)
+jpf_wait_waiting(JpfWait *w)
 {
     g_cond_wait(w->cond, w->lock);  
 }
 
 
 static __inline__ void
-hm_wait_timed_waiting(HmWait *w, GTimeVal *abs_time)
+jpf_wait_timed_waiting(JpfWait *w, GTimeVal *abs_time)
 {
     g_cond_timed_wait(w->cond, w->lock, abs_time);  
 }
 
 
 static __inline__ void
-hm_wait_end(HmWait *w)
+jpf_wait_end(JpfWait *w)
 {
     g_mutex_unlock(w->lock);
 }
 
 
 static __inline__ void
-hm_wait_set_cond_true(HmWait *w)
+jpf_wait_set_cond_true(JpfWait *w)
 {
     w->waited = TRUE;
 }
 
 
 static __inline__ void
-hm_wait_set_cond_false(HmWait *w)
+jpf_wait_set_cond_false(JpfWait *w)
 {
     w->waited = FALSE;
 }
 
 
 static __inline__ gboolean
-hm_wait_is_cond_true(HmWait *w)
+jpf_wait_is_cond_true(JpfWait *w)
 {
     return w->waited;
 }
 
 
 static __inline__ void
-hm_wait_wakeup(HmWait *w)
+jpf_wait_wakeup(JpfWait *w)
 {
     g_cond_signal(w->cond);
 }
 
 
 static __inline__ void
-hm_wait_wakeup_all(HmWait *w)
+jpf_wait_wakeup_all(JpfWait *w)
 {
     g_cond_broadcast(w->cond);
 }

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <glib.h>
-//#include "jpf_debug.h"
-//#include "jpf_errno.h"
+//#include "nmp_debug.h"
+//#include "nmp_errno.h"
 
 #include "ports.h"
 

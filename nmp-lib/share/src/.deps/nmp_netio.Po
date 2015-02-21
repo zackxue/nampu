@@ -1,5 +1,5 @@
 nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netio.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netio.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h \
@@ -99,7 +99,7 @@ nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h \
  /usr/include/netinet/in.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
  /usr/include/i386-linux-gnu/bits/wchar.h \
@@ -113,12 +113,12 @@ nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
  /usr/include/asm-generic/socket.h \
  /usr/include/i386-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h /usr/include/i386-linux-gnu/bits/in.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h \
  nmp_hlio.h nmp_io.h nmp_watch.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h \
  nmp_netbuf.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -128,14 +128,14 @@ nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
  /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
  /usr/include/i386-linux-gnu/bits/stdio_lim.h \
  /usr/include/i386-linux-gnu/bits/sys_errlist.h /usr/include/string.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h \
  /usr/include/errno.h /usr/include/i386-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/i386-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h
 
 /usr/include/stdc-predef.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netio.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netio.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -377,7 +377,7 @@ nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h:
 
 /usr/include/netinet/in.h:
 
@@ -409,7 +409,7 @@ nmp_netio.o: nmp_netio.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/in.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h:
 
 nmp_hlio.h:
 
@@ -417,13 +417,13 @@ nmp_io.h:
 
 nmp_watch.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h:
 
 nmp_netbuf.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 
@@ -459,7 +459,7 @@ nmp_netbuf.h:
 
 /usr/include/string.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h:
 
 /usr/include/errno.h:
 

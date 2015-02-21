@@ -15,48 +15,48 @@
 
 G_BEGIN_DECLS
 
-typedef void (*HmIOFin)(gpointer priv_data, HmNetIO *io, gint err);
-typedef gint (*HmIOInit)(gpointer priv_data, HmNetIO *io);
-typedef gint (*HmIOReader)(gpointer priv_data, HmNetIO *net_io, gpointer msg);
+typedef void (*HmIOFin)(gpointer priv_data, JpfNetIO *io, gint err);
+typedef gint (*HmIOInit)(gpointer priv_data, JpfNetIO *io);
+typedef gint (*HmIOReader)(gpointer priv_data, JpfNetIO *net_io, gpointer msg);
 
-HmNet *hm_net_new(HmPacketProto *ll_proto,
-	HmPayloadProto *hl_proto, gpointer priv_data);
+JpfNet *jpf_net_new(JpfPacketProto *ll_proto,
+	JpfPayloadProto *hl_proto, gpointer priv_data);
 
-HmNet *hm_net_new_full(guint nloops, gboolean gather,
-	HmPacketProto *ll_proto, HmPayloadProto *hl_proto, gpointer priv_data);
+JpfNet *jpf_net_new_full(guint nloops, gboolean gather,
+	JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto, gpointer priv_data);
 
-void hm_net_release(HmNet *net);
+void jpf_net_release(JpfNet *net);
 
-void hm_net_set_reader(HmNet *net, HmIOReader reader);
+void jpf_net_set_reader(JpfNet *net, HmIOReader reader);
 
-gpointer hm_net_get_private(HmNet *net);
+gpointer jpf_net_get_private(JpfNet *net);
 
-void hm_net_set_funcs(HmNet *net, HmIOInit init, HmIOFin fin);
+void jpf_net_set_funcs(JpfNet *net, HmIOInit init, HmIOFin fin);
 
-HmNetIO *hm_net_create_io(HmNet *net, HmConnection *conn, HmIOEst on_est,
+JpfNetIO *jpf_net_create_io(JpfNet *net, HmConnection *conn, HmIOEst on_est,
 	gint *err);
 
-HmNetIO *hm_net_create_listen_io(HmNet *net, HmConnection *conn,
+JpfNetIO *jpf_net_create_listen_io(JpfNet *net, HmConnection *conn,
 	gint *err);
 
-HmNetIO *hm_net_create_listen_io_2(HmNet *net, struct sockaddr *sa,
+JpfNetIO *jpf_net_create_listen_io_2(JpfNet *net, struct sockaddr *sa,
 	gint *err);
 
-gint hm_net_write_io(HmNetIO *net_io, gpointer msg);
+gint jpf_net_write_io(JpfNetIO *net_io, gpointer msg);
 
-HmNetIO *hm_net_ref_io(HmNetIO *net_io);
-void hm_net_unref_io(HmNetIO *net_io);
+JpfNetIO *jpf_net_ref_io(JpfNetIO *net_io);
+void jpf_net_unref_io(JpfNetIO *net_io);
 
-void hm_net_set_io_private(HmNetIO *net_io, gpointer priv_data, HmDesFun des);
-gpointer hm_net_get_io_private(HmNetIO *net_io);
+void jpf_net_set_io_private(JpfNetIO *net_io, gpointer priv_data, HmDesFun des);
+gpointer jpf_net_get_io_private(JpfNetIO *net_io);
 
-gboolean hm_net_set_io_ttd(HmNetIO *net_io, gint milli_sec);
+gboolean jpf_net_set_io_ttd(JpfNetIO *net_io, gint milli_sec);
 
-gint hm_net_kill_io(HmNet *net, HmNetIO *net_io);
+gint jpf_net_kill_io(JpfNet *net, JpfNetIO *net_io);
 
-gchar *hm_net_get_io_peer_name(HmNetIO *net_io);
-void hm_net_set_heavy_io_load(HmNetIO *net_io);
-void hm_net_set_io_block_size(HmNetIO *net_io, gint size);
+gchar *jpf_net_get_io_peer_name(JpfNetIO *net_io);
+void jpf_net_set_heavy_io_load(JpfNetIO *net_io);
+void jpf_net_set_io_block_size(JpfNetIO *net_io, gint size);
 
 G_END_DECLS
 

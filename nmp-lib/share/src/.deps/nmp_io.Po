@@ -4,7 +4,7 @@ nmp_io.o: nmp_io.c /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/i386-linux-gnu/gnu/stubs.h \
  /usr/include/i386-linux-gnu/gnu/stubs-32.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stddef.h /usr/include/xlocale.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/types.h \
@@ -107,12 +107,12 @@ nmp_io.o: nmp_io.c /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/glib-2.0/glib/deprecated/gthread.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h \
  /usr/include/errno.h /usr/include/i386-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/i386-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  nmp_io.h nmp_watch.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h \
  /usr/include/netinet/in.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
  /usr/include/i386-linux-gnu/bits/wchar.h \
@@ -127,7 +127,7 @@ nmp_io.o: nmp_io.c /usr/include/stdc-predef.h /usr/include/string.h \
  /usr/include/i386-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h /usr/include/i386-linux-gnu/bits/in.h \
  nmp_netbuf.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h \
  nmp_fragments.h
 
 /usr/include/stdc-predef.h:
@@ -148,7 +148,7 @@ nmp_io.o: nmp_io.c /usr/include/stdc-predef.h /usr/include/string.h \
 
 /usr/include/xlocale.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 
@@ -408,7 +408,7 @@ nmp_io.o: nmp_io.c /usr/include/stdc-predef.h /usr/include/string.h \
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h:
 
 /usr/include/errno.h:
 
@@ -426,7 +426,7 @@ nmp_io.h:
 
 nmp_watch.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_conn.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_conn.h:
 
 /usr/include/netinet/in.h:
 
@@ -460,6 +460,6 @@ nmp_watch.h:
 
 nmp_netbuf.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_netproto.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_netproto.h:
 
 nmp_fragments.h:

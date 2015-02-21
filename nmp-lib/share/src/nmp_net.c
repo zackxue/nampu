@@ -27,8 +27,8 @@ struct _HmSchedLoop
 };
 
 
-typedef struct _HmNetSched HmNetSched;
-struct _HmNetSched
+typedef struct _JpfNetSched JpfNetSched;
+struct _JpfNetSched
 {
     gint nr_loops;
     gint last_loop;
@@ -36,7 +36,7 @@ struct _HmNetSched
 };
 
 
-struct _HmNet
+struct _JpfNet
 {
     gint            ref_count;
     gint            killed;     /* state */
@@ -44,10 +44,10 @@ struct _HmNet
     GHashTable      *io_table;  /* net-io hash table */
     GMutex          *lock;
 
-    HmNetSched     *scheduler; /* io scheduler */
+    JpfNetSched     *scheduler; /* io scheduler */
 
-    HmPacketProto  *ll_proto;  /* Low Level: packet proto */
-    HmPayloadProto *hl_proto;  /* High Level: payload proto */
+    JpfPacketProto  *ll_proto;  /* Low Level: packet proto */
+    JpfPayloadProto *hl_proto;  /* High Level: payload proto */
 
     HmIOInit       on_init;
     HmIOFin        on_fin;
@@ -57,7 +57,7 @@ struct _HmNet
 
 
 static gpointer
-hm_net_scheduler_loop_thread(gpointer user_data)
+jpf_net_scheduler_loop_thread(gpointer user_data)
 {
     HmSchedLoop *l = (HmSchedLoop*)user_data;
 
@@ -68,7 +68,7 @@ hm_net_scheduler_loop_thread(gpointer user_data)
 
 
 static gboolean
-hm_net_loop_gather(gpointer data)
+jpf_net_loop_gather(gpointer data)
 {
 	usleep(GATHER_SLEEP_MSEC*1000);
 	return TRUE;
@@ -76,7 +76,7 @@ hm_net_loop_gather(gpointer data)
 
 
 static __inline__ void
-hm_net_scheduler_init(HmNetSched *sched, guint n_loops,
+jpf_net_scheduler_init(JpfNetSched *sched, guint n_loops,
 	gboolean gather)
 {
     gint index;
@@ -94,7 +94,7 @@ hm_net_scheduler_init(HmNetSched *sched, guint n_loops,
             l->context, FALSE
         );
         l->loop_thread = g_thread_create(
-            hm_net_scheduler_loop_thread,
+            jpf_net_scheduler_loop_thread,
             l,
             FALSE,
             NULL
@@ -105,7 +105,7 @@ hm_net_scheduler_init(HmNetSched *sched, guint n_loops,
 			tsource = g_timeout_source_new(GATHER_INTERVAL_MSEC);
 			if (tsource)
 			{
-				g_source_set_callback(tsource, hm_net_loop_gather, NULL, NULL);
+				g_source_set_callback(tsource, jpf_net_loop_gather, NULL, NULL);
 				g_source_attach(tsource, l->context);
 				g_source_unref(tsource);
 			}
@@ -114,30 +114,30 @@ hm_net_scheduler_init(HmNetSched *sched, guint n_loops,
 }
 
 
-static __inline__ HmNetSched *
-hm_net_scheduler_new(guint n_loops, gboolean gather)
+static __inline__ JpfNetSched *
+jpf_net_scheduler_new(guint n_loops, gboolean gather)
 {
     gint mem_size;
-    HmNetSched *sched;
+    JpfNetSched *sched;
 
 	if (!n_loops)
 		n_loops = 1;
-    mem_size = sizeof(HmNetSched) + (n_loops * sizeof(HmSchedLoop));
-    sched = (HmNetSched *)g_malloc(mem_size);
-    hm_net_scheduler_init(sched, n_loops, gather);
+    mem_size = sizeof(JpfNetSched) + (n_loops * sizeof(HmSchedLoop));
+    sched = (JpfNetSched *)g_malloc(mem_size);
+    jpf_net_scheduler_init(sched, n_loops, gather);
     return sched;
 }
 
 
 static __inline__ void
-hm_net_scheduler_free(HmNetSched *sched)
+jpf_net_scheduler_free(JpfNetSched *sched)
 {
 	BUG();
 }
 
 
 static __inline__ void
-hm_net_scheduler_wakup(HmNetSched *sched)
+jpf_net_scheduler_wakup(JpfNetSched *sched)
 {
 	gint index;
 
@@ -150,7 +150,7 @@ hm_net_scheduler_wakup(HmNetSched *sched)
 
 
 static __inline__ GMainContext *
-hm_net_scheduler_get_context(HmNetSched *sched)
+jpf_net_scheduler_get_context(JpfNetSched *sched)
 {
     HmSchedLoop *l;
 
@@ -163,34 +163,34 @@ hm_net_scheduler_get_context(HmNetSched *sched)
 
 
 static guint
-hm_net_io_hash_func(gconstpointer key)
+jpf_net_io_hash_func(gconstpointer key)
 {
     return (guint)key;
 }
 
 
 static gboolean
-hm_net_io_hash_key_equal(gconstpointer a, gconstpointer b)
+jpf_net_io_hash_key_equal(gconstpointer a, gconstpointer b)
 {
     return a == b;
 }
 
 
 static __inline__ void
-hm_net_init(HmNet *self, guint nloops, gboolean gather,
-	HmPacketProto *ll_proto, HmPayloadProto *hl_proto,
+jpf_net_init(JpfNet *self, guint nloops, gboolean gather,
+	JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto,
 	gpointer priv_data)
 {
     self->ref_count = 1;
     self->killed = 0;
     self->io_table = g_hash_table_new(
-        hm_net_io_hash_func,
-        hm_net_io_hash_key_equal
+        jpf_net_io_hash_func,
+        jpf_net_io_hash_key_equal
     );
 
     self->lock = g_mutex_new();
 
-    self->scheduler = hm_net_scheduler_new(nloops, gather);
+    self->scheduler = jpf_net_scheduler_new(nloops, gather);
     self->ll_proto = ll_proto;
     self->hl_proto = hl_proto;
 
@@ -202,40 +202,40 @@ hm_net_init(HmNet *self, guint nloops, gboolean gather,
 }
 
 
-__export HmNet *
-hm_net_new(HmPacketProto *ll_proto,
-    HmPayloadProto *hl_proto, gpointer priv_data)
+__export JpfNet *
+jpf_net_new(JpfPacketProto *ll_proto,
+    JpfPayloadProto *hl_proto, gpointer priv_data)
 {
-    HmNet *net;
+    JpfNet *net;
     G_ASSERT(ll_proto != NULL && hl_proto != NULL);
 
-    net = g_new0(HmNet, 1);
-    hm_net_init(net, 1, FALSE, ll_proto, hl_proto, priv_data);
+    net = g_new0(JpfNet, 1);
+    jpf_net_init(net, 1, FALSE, ll_proto, hl_proto, priv_data);
 
     return net;
 }
 
 
-__export HmNet *
-hm_net_new_full(guint nloops, gboolean gather,
-	HmPacketProto *ll_proto, HmPayloadProto *hl_proto,
+__export JpfNet *
+jpf_net_new_full(guint nloops, gboolean gather,
+	JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto,
 	gpointer priv_data)
 {
-    HmNet *net;
+    JpfNet *net;
     G_ASSERT(ll_proto != NULL && hl_proto != NULL);
 
-    net = g_new0(HmNet, 1);
-    hm_net_init(net, nloops, gather, ll_proto, hl_proto, priv_data);
+    net = g_new0(JpfNet, 1);
+    jpf_net_init(net, nloops, gather, ll_proto, hl_proto, priv_data);
 
     return net;
 }
 
 
 static __inline__ void
-hm_net_free(HmNet *net)
+jpf_net_free(JpfNet *net)
 {
     BUG_ON(!net->killed);
-    hm_net_scheduler_free(net->scheduler);
+    jpf_net_scheduler_free(net->scheduler);
 
     g_mutex_free(net->lock);
     g_hash_table_unref(net->io_table);
@@ -243,8 +243,8 @@ hm_net_free(HmNet *net)
 }
 
 
-__export HmNet *
-hm_net_ref(HmNet *net)
+__export JpfNet *
+jpf_net_ref(JpfNet *net)
 {
     G_ASSERT(net != NULL && 
         g_atomic_int_get(&net->ref_count) > 0);
@@ -255,37 +255,37 @@ hm_net_ref(HmNet *net)
 
 
 __export void
-hm_net_unref(HmNet *net)
+jpf_net_unref(JpfNet *net)
 {
     G_ASSERT(net != NULL && 
         g_atomic_int_get(&net->ref_count) > 0);
 
     if (g_atomic_int_dec_and_test(&net->ref_count))
     {
-        hm_net_free(net);
+        jpf_net_free(net);
     }   
 }
 
 
 static __inline__ void
-hm_net_kill(HmNet *net)
+jpf_net_kill(JpfNet *net)
 {
     BUG();
 }
 
 
 __export void
-hm_net_release(HmNet *net)
+jpf_net_release(JpfNet *net)
 {//TODO:
     G_ASSERT(net != NULL);
 
-    hm_net_kill(net);
-    hm_net_unref(net);
+    jpf_net_kill(net);
+    jpf_net_unref(net);
 }
 
 
 __export void
-hm_net_set_reader(HmNet *net, HmIOReader reader)
+jpf_net_set_reader(JpfNet *net, HmIOReader reader)
 {
     G_ASSERT(net != NULL);
 
@@ -294,7 +294,7 @@ hm_net_set_reader(HmNet *net, HmIOReader reader)
 
 
 __export gpointer
-hm_net_get_private(HmNet *net)
+jpf_net_get_private(JpfNet *net)
 {
     G_ASSERT(net != NULL);
 
@@ -303,7 +303,7 @@ hm_net_get_private(HmNet *net)
 
 
 __export void 
-hm_net_set_funcs(HmNet *net, HmIOInit init, HmIOFin fin)
+jpf_net_set_funcs(JpfNet *net, HmIOInit init, HmIOFin fin)
 {
     G_ASSERT(net != NULL);
 
@@ -313,7 +313,7 @@ hm_net_set_funcs(HmNet *net, HmIOInit init, HmIOFin fin)
 
 
 static __inline__ gint
-__hm_net_add_io(HmNet *net, HmNetIO *net_io, gint notify)
+__jpf_net_add_io(JpfNet *net, JpfNetIO *net_io, gint notify)
 {
     gint rc = 0;
 
@@ -330,9 +330,9 @@ __hm_net_add_io(HmNet *net, HmNetIO *net_io, gint notify)
     if (!rc)
     {
         g_hash_table_insert(net->io_table, net_io, net_io);
-        hm_net_io_set_owner(net_io, net);
-        hm_net_ref(net);
-        hm_net_io_ref(net_io);
+        jpf_net_io_set_owner(net_io, net);
+        jpf_net_ref(net);
+        jpf_net_io_ref(net_io);
     }
 
     return rc;
@@ -340,51 +340,51 @@ __hm_net_add_io(HmNet *net, HmNetIO *net_io, gint notify)
 
 
 __export gint
-hm_net_add_io(HmNet *net, HmNetIO *net_io, gint notify)
+jpf_net_add_io(JpfNet *net, JpfNetIO *net_io, gint notify)
 {
     gint rc;
     GMainContext *context;
     G_ASSERT(net != NULL && net_io != NULL);
 
     g_mutex_lock(net->lock);
-    rc = __hm_net_add_io(net, net_io, notify);
+    rc = __jpf_net_add_io(net, net_io, notify);
     g_mutex_unlock(net->lock);
 
     if (!rc)
     {
-        context = hm_net_scheduler_get_context(net->scheduler);
-        hm_net_io_attach(net_io, context);
+        context = jpf_net_scheduler_get_context(net->scheduler);
+        jpf_net_io_attach(net_io, context);
     }
 
     return rc;
 }
 
 
-__export HmNetIO *
-hm_net_create_io(HmNet *net, HmConnection *conn, HmIOEst on_est,
+__export JpfNetIO *
+jpf_net_create_io(JpfNet *net, HmConnection *conn, HmIOEst on_est,
     gint *err)
 {
-    HmNetIO *io;
+    JpfNetIO *io;
     gint rc;
     G_ASSERT(net != NULL && conn != NULL);
 
-    io = hm_net_io_new(conn, net->ll_proto, 
+    io = jpf_net_io_new(conn, net->ll_proto, 
         net->hl_proto, err);
     if (G_UNLIKELY(!io))
     {
-        hm_connection_close(conn);
+        jpf_connection_close(conn);
         return NULL;
     }
 
-    hm_net_io_set_ester(io, on_est);
-    rc = hm_net_add_io(net, io, 0);
+    jpf_net_io_set_ester(io, on_est);
+    rc = jpf_net_add_io(net, io, 0);
     if (rc)
     {
         if (err)
             *err = rc;
 
-        hm_net_io_kill(io);
-        hm_net_io_unref(io);
+        jpf_net_io_kill(io);
+        jpf_net_io_unref(io);
         return NULL;
     }
 
@@ -392,30 +392,30 @@ hm_net_create_io(HmNet *net, HmConnection *conn, HmIOEst on_est,
 }
 
 
-__export HmNetIO *
-hm_net_create_listen_io(HmNet *net, HmConnection *conn,
+__export JpfNetIO *
+jpf_net_create_listen_io(JpfNet *net, HmConnection *conn,
     gint *err)
 {
-    HmNetIO *io;
+    JpfNetIO *io;
     gint rc;
     G_ASSERT(net != NULL && conn != NULL);
 
-    io = hm_net_listen_io_new(conn, net->ll_proto,
+    io = jpf_net_listen_io_new(conn, net->ll_proto,
         net->hl_proto, err);
     if (G_UNLIKELY(!io))
     {
-        hm_connection_close(conn);
+        jpf_connection_close(conn);
         return NULL;
     }
 
-    rc = hm_net_add_io(net, io, 0);
+    rc = jpf_net_add_io(net, io, 0);
     if (rc)
     {
         if (err)
             *err = rc;
 
-        hm_net_io_kill(io);
-        hm_net_io_unref(io);
+        jpf_net_io_kill(io);
+        jpf_net_io_unref(io);
         return NULL;
     }
 
@@ -423,25 +423,25 @@ hm_net_create_listen_io(HmNet *net, HmConnection *conn,
 }
 
 
-__export HmNetIO *
-hm_net_create_listen_io_2(HmNet *net, struct sockaddr *sa, gint *err)
+__export JpfNetIO *
+jpf_net_create_listen_io_2(JpfNet *net, struct sockaddr *sa, gint *err)
 {
     HmConnection *conn;
     gint rc;
 
-    conn = hm_connection_new(sa, CF_TYPE_TCP|CF_FLGS_NONBLOCK, err);
+    conn = jpf_connection_new(sa, CF_TYPE_TCP|CF_FLGS_NONBLOCK, err);
     if (conn)
     {
-        rc = hm_connection_listen(conn);
+        rc = jpf_connection_listen(conn);
         if (G_UNLIKELY(rc < 0))
         {
-            hm_connection_close(conn);
+            jpf_connection_close(conn);
             if (err)
                 *err = rc;
             return NULL;
         }
 
-        return hm_net_create_listen_io(net, conn, err);
+        return jpf_net_create_listen_io(net, conn, err);
     }
 
     return NULL;
@@ -449,74 +449,74 @@ hm_net_create_listen_io_2(HmNet *net, struct sockaddr *sa, gint *err)
 
 
 __export gint
-hm_net_write_io(HmNetIO *net_io, gpointer msg)
+jpf_net_write_io(JpfNetIO *net_io, gpointer msg)
 {
-    return hm_net_io_write_message(net_io, msg);
+    return jpf_net_io_write_message(net_io, msg);
 }
 
 
-__export HmNetIO *
-hm_net_ref_io(HmNetIO *net_io)
+__export JpfNetIO *
+jpf_net_ref_io(JpfNetIO *net_io)
 {
-    return hm_net_io_ref(net_io);
-}
-
-
-__export void
-hm_net_unref_io(HmNetIO *net_io)
-{
-    hm_net_io_unref(net_io);
+    return jpf_net_io_ref(net_io);
 }
 
 
 __export void
-hm_net_set_io_private(HmNetIO *net_io, gpointer priv_data,
+jpf_net_unref_io(JpfNetIO *net_io)
+{
+    jpf_net_io_unref(net_io);
+}
+
+
+__export void
+jpf_net_set_io_private(JpfNetIO *net_io, gpointer priv_data,
     HmDesFun des)
 {
-    hm_net_io_set_private(net_io, priv_data, des);
+    jpf_net_io_set_private(net_io, priv_data, des);
 }
 
 
 __export gpointer
-hm_net_get_io_private(HmNetIO *net_io)
+jpf_net_get_io_private(JpfNetIO *net_io)
 {
-    return hm_net_io_get_private(net_io);
+    return jpf_net_io_get_private(net_io);
 }
 
 
 __export gboolean
-hm_net_set_io_ttd(HmNetIO *net_io, gint milli_sec)
+jpf_net_set_io_ttd(JpfNetIO *net_io, gint milli_sec)
 {
-    return hm_net_io_set_ttd(net_io, milli_sec);
+    return jpf_net_io_set_ttd(net_io, milli_sec);
 }
 
 
 static __inline__ void
-__hm_net_establish_io(HmNet *net, HmNetIO *net_io)
+__jpf_net_establish_io(JpfNet *net, JpfNetIO *net_io)
 {
     gpointer io;
 
     io = g_hash_table_lookup(net->io_table, net_io);
     if (G_LIKELY(io))
     {
-        hm_net_io_on_establish(net_io, net->priv_data);
+        jpf_net_io_on_establish(net_io, net->priv_data);
     }
 }
 
 
 __export void
-hm_net_establish_io(HmNet *net, HmNetIO *net_io)
+jpf_net_establish_io(JpfNet *net, JpfNetIO *net_io)
 {
     G_ASSERT(net != NULL && net_io != NULL);
 
     g_mutex_lock(net->lock);
-    __hm_net_establish_io(net, net_io);
+    __jpf_net_establish_io(net, net_io);
     g_mutex_unlock(net->lock);
 }
 
 
 static __inline__ gint
-__hm_net_kill_io(HmNet *net, HmNetIO *net_io,
+__jpf_net_kill_io(JpfNet *net, JpfNetIO *net_io,
     gint notify, gint err)
 {
    if (net->killed)
@@ -534,19 +534,19 @@ __hm_net_kill_io(HmNet *net, HmNetIO *net_io,
 
 
 static __inline__ gint
-_hm_net_kill_io(HmNet *net, HmNetIO *net_io,
+_jpf_net_kill_io(JpfNet *net, JpfNetIO *net_io,
     gint notify, gint err)
 {
     gint found;
 
     g_mutex_lock(net->lock);
-    found = __hm_net_kill_io(net, net_io, notify, err);
+    found = __jpf_net_kill_io(net, net_io, notify, err);
     g_mutex_unlock(net->lock);
 
     if (found)
     {
-        hm_net_io_kill(net_io);
-        hm_net_io_unref(net_io);   /* decrease ref owned by #net::io_table */
+        jpf_net_io_kill(net_io);
+        jpf_net_io_unref(net_io);   /* decrease ref owned by #net::io_table */
         return 0;
     }
 
@@ -555,32 +555,32 @@ _hm_net_kill_io(HmNet *net, HmNetIO *net_io,
 
 
 __export void
-hm_net_async_kill_io(HmNet *net, HmNetIO *net_io, gint err)
+jpf_net_async_kill_io(JpfNet *net, JpfNetIO *net_io, gint err)
 {
     gint found;
 
     g_mutex_lock(net->lock);
-    found = __hm_net_kill_io(net, net_io, 1, err);
+    found = __jpf_net_kill_io(net, net_io, 1, err);
     g_mutex_unlock(net->lock);
 
     if (found)
     {   /* decrease ref owned by #net::io_table */
-        hm_net_io_unref(net_io);       
+        jpf_net_io_unref(net_io);       
     }
 }
 
 
 __export gint
-hm_net_kill_io(HmNet *net, HmNetIO *net_io)
+jpf_net_kill_io(JpfNet *net, JpfNetIO *net_io)
 {
     G_ASSERT(net != NULL && net_io != NULL);
 
-    return _hm_net_kill_io(net, net_io, 0, 0);
+    return _jpf_net_kill_io(net, net_io, 0, 0);
 }
 
 
 static __inline__ gint
-__hm_net_recv_message(HmNet *net, HmNetIO *net_io, gpointer msg)
+__jpf_net_recv_message(JpfNet *net, JpfNetIO *net_io, gpointer msg)
 {
     gint rc = -E_NETNOREADER;
 
@@ -594,14 +594,14 @@ __hm_net_recv_message(HmNet *net, HmNetIO *net_io, gpointer msg)
 
 
 __export gint
-hm_net_recv_message(HmNet *net, HmNetIO *net_io, gpointer msg)
+jpf_net_recv_message(JpfNet *net, JpfNetIO *net_io, gpointer msg)
 {
     gint rc = -E_NETDIE;
     G_ASSERT(net != NULL);
 
     if (!net->killed)       //Fixme: race condition!
     {
-        rc = __hm_net_recv_message(net, net_io, msg);
+        rc = __jpf_net_recv_message(net, net_io, msg);
     }
 
     return rc;
@@ -609,43 +609,43 @@ hm_net_recv_message(HmNet *net, HmNetIO *net_io, gpointer msg)
 
 
 __export void
-hm_net_wakeup_context(HmNet *net)
+jpf_net_wakeup_context(JpfNet *net)
 {
     G_ASSERT(net != NULL);
 
     if (net->scheduler)
     {
-        hm_net_scheduler_wakup(net->scheduler);
+        jpf_net_scheduler_wakup(net->scheduler);
     }
 }
 
 
 __export gchar *
-hm_net_get_io_peer_name(HmNetIO *net_io)
+jpf_net_get_io_peer_name(JpfNetIO *net_io)
 {
     if (!net_io)
         return NULL;
-    return hm_net_io_get_peer(net_io);
+    return jpf_net_io_get_peer(net_io);
 }
 
 
 __export void
-hm_net_set_heavy_io_load(HmNetIO *net_io)
+jpf_net_set_heavy_io_load(JpfNetIO *net_io)
 {
     if (!net_io)
         return;
 
-    hm_net_io_set_heavy_load(net_io);
+    jpf_net_io_set_heavy_load(net_io);
 }
 
 
 __export void
-hm_net_set_io_block_size(HmNetIO *net_io, gint size)
+jpf_net_set_io_block_size(JpfNetIO *net_io, gint size)
 {
     if (!net_io)
         return;
 
-    hm_net_io_set_block_size(net_io, size);    
+    jpf_net_io_set_block_size(net_io, size);    
 }
 
 //:~ End

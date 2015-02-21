@@ -37,7 +37,7 @@ struct _HmIO			/* basic IO, packet layer */
 {
 	HmWatch		watch;
 
-	HmPacketProto	*proto;
+	JpfPacketProto	*proto;
 	HmIOFuncs		*funcs;
 
 	gchar			*buffer;
@@ -48,10 +48,10 @@ struct _HmIO			/* basic IO, packet layer */
 };
 
 
-HmIO *hm_io_new(HmConnection *conn, HmPacketProto *proto,
+HmIO *jpf_io_new(HmConnection *conn, JpfPacketProto *proto,
 	HmIOFuncs *funcs, gsize size);
 
-HmIO *hm_listen_io_new(HmConnection *conn, HmPacketProto *proto,
+HmIO *jpf_listen_io_new(HmConnection *conn, JpfPacketProto *proto,
 	HmIOFuncs *funcs, gsize size);
 
 G_END_DECLS

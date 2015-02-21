@@ -1,5 +1,5 @@
 /*
- * hm_netproto.h
+ * jpf_netproto.h
  *
  * This file describes interfaces of net protocol parser. 
  *
@@ -14,12 +14,12 @@
 
 G_BEGIN_DECLS
 
-typedef struct _HmNetPackInfo HmNetPackInfo;
+typedef struct _JpfNetPackInfo JpfNetPackInfo;
 
 /*
  * Payload information.
 */
-struct _HmNetPackInfo
+struct _JpfNetPackInfo
 {
 	guint				total_packets;			//@{total packets, for fragmentation}
 	guint				packet_no;				//@{current packet no, for fragmentation}
@@ -30,8 +30,8 @@ struct _HmNetPackInfo
 };
 
 
-typedef struct _HmPayloadProto HmPayloadProto;
-struct _HmPayloadProto
+typedef struct _JpfPayloadProto JpfPayloadProto;
+struct _JpfPayloadProto
 {
     /*
      * parse the payload information, it is always in XML format. return
@@ -57,8 +57,8 @@ struct _HmPayloadProto
 };
 
 
-typedef struct _HmPacketProto HmPacketProto;
-struct _HmPacketProto
+typedef struct _JpfPacketProto JpfPacketProto;
+struct _JpfPacketProto
 {
     /*
      * check whether a full packet has come, if so, return
@@ -74,7 +74,7 @@ struct _HmPacketProto
      * @Ret:  0 success, payload() will be invoked. 
      *       !0 error, it will be reported to upper layer.
     */
-    gint (*unpack)(gchar *start, gchar *end,  HmNetPackInfo *info);
+    gint (*unpack)(gchar *start, gchar *end,  JpfNetPackInfo *info);
 
     /*
      * create net protocol packet.

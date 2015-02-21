@@ -1,5 +1,5 @@
 /*
- * hm_fragments.c
+ * jpf_fragments.c
  *
  * Routines for packet defragmentation. 
  *
@@ -41,7 +41,7 @@ struct _HmDefrags
 
 
 static __inline__ void
-hm_net_packet_release_frags(HmPacketFrags *frags);
+jpf_net_packet_release_frags(HmPacketFrags *frags);
 
 
 static HmDefrags packet_fragments = 
@@ -52,7 +52,7 @@ static HmDefrags packet_fragments =
 
 
 static __inline__ gboolean
-__hm_net_packet_del_frags(HmDefrags *fragments, 
+__jpf_net_packet_del_frags(HmDefrags *fragments, 
     HmPacketFrags *frags)
 {
     GList *list;
@@ -60,7 +60,7 @@ __hm_net_packet_del_frags(HmDefrags *fragments,
     list = g_list_find(fragments->pl, frags);
     if (list)
     {
-        hm_net_packet_release_frags(frags);
+        jpf_net_packet_release_frags(frags);
         fragments->pl = g_list_delete_link(fragments->pl, list);
         return TRUE;
     }
@@ -70,14 +70,14 @@ __hm_net_packet_del_frags(HmDefrags *fragments,
 
 
 static __inline__ gboolean
-hm_net_packet_del_frags(HmDefrags *fragments, 
+jpf_net_packet_del_frags(HmDefrags *fragments, 
     HmPacketFrags *frags)
 {
     gboolean ret;
     G_ASSERT(fragments != NULL && frags != NULL);
 
     g_static_mutex_lock(&fragments->lock);
-    ret = __hm_net_packet_del_frags(fragments, frags);
+    ret = __jpf_net_packet_del_frags(fragments, frags);
     g_static_mutex_unlock(&fragments->lock);
 
     return ret;
@@ -85,19 +85,19 @@ hm_net_packet_del_frags(HmDefrags *fragments,
 
 
 static gboolean
-hm_net_packet_defrag_timer(gpointer user_data)
+jpf_net_packet_defrag_timer(gpointer user_data)
 {
     HmPacketFrags *frags = (HmPacketFrags*)user_data;
 
-    hm_net_packet_del_frags(&packet_fragments, frags); 
+    jpf_net_packet_del_frags(&packet_fragments, frags); 
     return FALSE;
 }
 
 
 static __inline__ gint
-hm_net_packet_sanity_test(HmPacketFrags *frags)
+jpf_net_packet_sanity_test(HmPacketFrags *frags)
 {
-    HmNetPackInfo *npi;
+    JpfNetPackInfo *npi;
     GList *list;
     guint no = 1;
     gsize size = 0;
@@ -105,7 +105,7 @@ hm_net_packet_sanity_test(HmPacketFrags *frags)
     list = frags->packets;
     while (list != NULL)
     {
-        npi = (HmNetPackInfo*)list->data;
+        npi = (JpfNetPackInfo*)list->data;
 
         if (npi->packet_no != no)
             return 1;
@@ -118,12 +118,12 @@ hm_net_packet_sanity_test(HmPacketFrags *frags)
 }
 
 
-static __inline__ HmNetPackInfo *
-hm_net_packet_new_npi(gsize total_size)
+static __inline__ JpfNetPackInfo *
+jpf_net_packet_new_npi(gsize total_size)
 {
-    HmNetPackInfo *npi;
+    JpfNetPackInfo *npi;
 
-    npi = g_new0(HmNetPackInfo, 1);
+    npi = g_new0(JpfNetPackInfo, 1);
     if (G_UNLIKELY(!npi))
         return NULL;    /* glib has its own oom facility */
 
@@ -142,15 +142,15 @@ hm_net_packet_new_npi(gsize total_size)
 }
 
 
-static __inline__ HmNetPackInfo *
-hm_net_packet_copy_npi(HmNetPackInfo *npi)
+static __inline__ JpfNetPackInfo *
+jpf_net_packet_copy_npi(JpfNetPackInfo *npi)
 {
-    HmNetPackInfo *n;
+    JpfNetPackInfo *n;
 
     if (G_UNLIKELY(!npi))
         return NULL;
 
-    n = hm_net_packet_new_npi(npi->size);
+    n = jpf_net_packet_new_npi(npi->size);
     if (G_UNLIKELY(!n))
         return NULL;
 
@@ -164,7 +164,7 @@ hm_net_packet_copy_npi(HmNetPackInfo *npi)
 
 
 void
-hm_net_packet_release_npi(HmNetPackInfo *npi)
+jpf_net_packet_release_npi(JpfNetPackInfo *npi)
 {
     G_ASSERT(npi != NULL);
 
@@ -174,7 +174,7 @@ hm_net_packet_release_npi(HmNetPackInfo *npi)
 
 
 static __inline__ HmPacketFrags *
-hm_net_packet_new_frags(gpointer identity, guint total_packet)
+jpf_net_packet_new_frags(gpointer identity, guint total_packet)
 {
     HmPacketFrags *frags;
 
@@ -184,9 +184,9 @@ hm_net_packet_new_frags(gpointer identity, guint total_packet)
 
     frags->packet_identity = identity;
     frags->total = total_packet;
-    frags->timer_id = hm_set_timer(
+    frags->timer_id = jpf_set_timer(
         MAX_DEFRAG_TIMEOUT_M,
-        hm_net_packet_defrag_timer,
+        jpf_net_packet_defrag_timer,
         frags
     );
 
@@ -195,7 +195,7 @@ hm_net_packet_new_frags(gpointer identity, guint total_packet)
 
 
 static __inline__ void
-hm_net_packet_release_frags(HmPacketFrags *frags)
+jpf_net_packet_release_frags(HmPacketFrags *frags)
 {
     GList *list;
     G_ASSERT(frags != NULL);
@@ -203,42 +203,42 @@ hm_net_packet_release_frags(HmPacketFrags *frags)
     list = frags->packets;
     while (list != NULL)
     {
-        hm_net_packet_release_npi(
-            (HmNetPackInfo*)list->data
+        jpf_net_packet_release_npi(
+            (JpfNetPackInfo*)list->data
         );
         list = g_list_next(list);
     }
 
     g_list_free(frags->packets);
-    hm_del_timer(frags->timer_id);
+    jpf_del_timer(frags->timer_id);
     g_free(frags);
 }
 
 
-static __inline__ HmNetPackInfo *
-hm_net_packet_linearize(HmPacketFrags *frags)
+static __inline__ JpfNetPackInfo *
+jpf_net_packet_linearize(HmPacketFrags *frags)
 {
     gint pos = 0;
     GList *list;
-    HmNetPackInfo *npi, *pi;
+    JpfNetPackInfo *npi, *pi;
     gpointer identity = NULL;
 
-    if (hm_net_packet_sanity_test(frags))
+    if (jpf_net_packet_sanity_test(frags))
     {
-        hm_warning(
+        jpf_warning(
             "packet-%u sanity test failed!", 
             (guint)frags->packet_identity
         );
         return NULL;
     }
 
-    npi = hm_net_packet_new_npi(frags->total_size);
+    npi = jpf_net_packet_new_npi(frags->total_size);
     if (npi)
     {
         list = frags->packets;
         while (list != NULL)
         {
-            pi = (HmNetPackInfo*)list->data;
+            pi = (JpfNetPackInfo*)list->data;
             memcpy(&npi->start[pos], pi->start, pi->size);
             pos += pi->size;
 
@@ -256,9 +256,9 @@ hm_net_packet_linearize(HmPacketFrags *frags)
 
 
 static gint
-hm_net_packet_find_next_one(gconstpointer a, gconstpointer b)
+jpf_net_packet_find_next_one(gconstpointer a, gconstpointer b)
 {
-    HmNetPackInfo *npi = (HmNetPackInfo*)a;
+    JpfNetPackInfo *npi = (JpfNetPackInfo*)a;
     guint no = (guint)b;
 
     if (npi->packet_no > no)
@@ -268,16 +268,16 @@ hm_net_packet_find_next_one(gconstpointer a, gconstpointer b)
 }
 
 
-static __inline__ HmNetPackInfo *
-hm_net_packet_enqueue(HmPacketFrags *frags, HmNetPackInfo *np)
+static __inline__ JpfNetPackInfo *
+jpf_net_packet_enqueue(HmPacketFrags *frags, JpfNetPackInfo *np)
 {
-    HmNetPackInfo *np_copy, *np_ret;
+    JpfNetPackInfo *np_copy, *np_ret;
     GList *next;
 
-    np_copy = hm_net_packet_copy_npi(np);
+    np_copy = jpf_net_packet_copy_npi(np);
     if (G_UNLIKELY(!np_copy))
     {
-        hm_warning(
+        jpf_warning(
             "copy npi failed while enqueue packet!"
         );
 
@@ -296,7 +296,7 @@ hm_net_packet_enqueue(HmPacketFrags *frags, HmNetPackInfo *np)
         next = g_list_find_custom(
             frags->packets,
             (gpointer)np->packet_no,
-            hm_net_packet_find_next_one
+            jpf_net_packet_find_next_one
         );
 
         frags->packets = g_list_insert_before(
@@ -311,7 +311,7 @@ hm_net_packet_enqueue(HmPacketFrags *frags, HmNetPackInfo *np)
 
     if (frags->eat >= frags->total)
     {
-        np_ret = hm_net_packet_linearize(frags);
+        np_ret = jpf_net_packet_linearize(frags);
         if (!np_ret)
             np_ret = np;
         return np_ret;
@@ -322,7 +322,7 @@ hm_net_packet_enqueue(HmPacketFrags *frags, HmNetPackInfo *np)
 
 
 static gint
-hm_net_packet_find_frags(gconstpointer a, gconstpointer b)
+jpf_net_packet_find_frags(gconstpointer a, gconstpointer b)
 {
     HmPacketFrags *frags = (HmPacketFrags*)a;
 
@@ -333,26 +333,26 @@ hm_net_packet_find_frags(gconstpointer a, gconstpointer b)
 }
 
 
-static __inline__ HmNetPackInfo *
-__hm_net_packet_cached(HmDefrags *fragments, HmNetPackInfo *net_pack)
+static __inline__ JpfNetPackInfo *
+__jpf_net_packet_cached(HmDefrags *fragments, JpfNetPackInfo *net_pack)
 {
-    HmNetPackInfo *np;
+    JpfNetPackInfo *np;
     GList *list;
     HmPacketFrags *frags;
     
     list = g_list_find_custom(
         fragments->pl,
         net_pack->private_from_low_layer,
-        hm_net_packet_find_frags
+        jpf_net_packet_find_frags
     );
 
     if (list)
     {
         frags = (HmPacketFrags*)list->data;
-        np = hm_net_packet_enqueue(frags, net_pack);
+        np = jpf_net_packet_enqueue(frags, net_pack);
         if (np)
         {
-            hm_net_packet_release_frags(frags);
+            jpf_net_packet_release_frags(frags);
 
             fragments->pl = g_list_delete_link(
                 fragments->pl,
@@ -369,7 +369,7 @@ __hm_net_packet_cached(HmDefrags *fragments, HmNetPackInfo *net_pack)
     {
         if (net_pack->packet_no != 1)
         {
-            hm_print(
+            jpf_print(
                 "received a fragmentary packet, drop!"
             );
             return NULL;
@@ -377,30 +377,30 @@ __hm_net_packet_cached(HmDefrags *fragments, HmNetPackInfo *net_pack)
 
         if (net_pack->total_packets > MAX_PACKET_FRAGMENTS)
         {
-            hm_warning(
+            jpf_warning(
                 "too many fragments, drop!"
             );
 
             return NULL;
         }
 
-        frags = hm_net_packet_new_frags(
+        frags = jpf_net_packet_new_frags(
             net_pack->private_from_low_layer,
             net_pack->total_packets
         );
 
         if (G_UNLIKELY(!frags))
         {
-            hm_warning(
+            jpf_warning(
                 "alloc frags object failed!"
             );
             return NULL;
         }
 
-        np = hm_net_packet_enqueue(frags, net_pack);
+        np = jpf_net_packet_enqueue(frags, net_pack);
         if (np)
         {
-            hm_net_packet_release_frags(frags);
+            jpf_net_packet_release_frags(frags);
 
             if (np == net_pack)
                 np = NULL;
@@ -418,21 +418,21 @@ __hm_net_packet_cached(HmDefrags *fragments, HmNetPackInfo *net_pack)
 }
 
 
-static __inline__ HmNetPackInfo *
-hm_net_packet_cached(HmDefrags *fragments, HmNetPackInfo *net_pack)
+static __inline__ JpfNetPackInfo *
+jpf_net_packet_cached(HmDefrags *fragments, JpfNetPackInfo *net_pack)
 {
-    HmNetPackInfo *pack;
+    JpfNetPackInfo *pack;
 
     g_static_mutex_lock(&fragments->lock);
-    pack = __hm_net_packet_cached(fragments, net_pack);
+    pack = __jpf_net_packet_cached(fragments, net_pack);
     g_static_mutex_unlock(&fragments->lock);
 
     return pack;
 }
 
 
-HmNetPackInfo *
-hm_net_packet_defrag(HmNetPackInfo *net_packet)
+JpfNetPackInfo *
+jpf_net_packet_defrag(JpfNetPackInfo *net_packet)
 {
     G_ASSERT(net_packet != NULL);
 
@@ -441,7 +441,7 @@ hm_net_packet_defrag(HmNetPackInfo *net_packet)
 
    if (G_UNLIKELY(net_packet->packet_no > net_packet->total_packets))
    {
-       hm_print(
+       jpf_print(
 	    "received a out of order packet %d-%d",
 	    net_packet->total_packets,
 	    net_packet->packet_no
@@ -450,7 +450,7 @@ hm_net_packet_defrag(HmNetPackInfo *net_packet)
    		return NULL;
    }
 
-    return hm_net_packet_cached(&packet_fragments, net_packet);
+    return jpf_net_packet_cached(&packet_fragments, net_packet);
 }
 
 

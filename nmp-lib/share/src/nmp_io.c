@@ -15,15 +15,15 @@
 
 
 static __inline__ gint
-hm_io_recv_packet(HmIO *io, gchar *buf, gsize size);
+jpf_io_recv_packet(HmIO *io, gchar *buf, gsize size);
 
 
 static __inline__ void
-__hm_io_finalize(HmIO *io);
+__jpf_io_finalize(HmIO *io);
 
 
 static HmWatch *
-hm_io_create(HmWatch *w, HmConnection *conn)
+jpf_io_create(HmWatch *w, HmConnection *conn)
 {
 	HmIOFuncs *funcs;
 	HmIO *io = (HmIO*)w;
@@ -36,13 +36,13 @@ hm_io_create(HmWatch *w, HmConnection *conn)
 		return (*funcs->create)(io, conn);
 	}
 
-	hm_connection_close(conn);
+	jpf_connection_close(conn);
 	return NULL;
 }
 
 
 static void
-hm_io_on_listen_error(HmWatch *w, gint rw, gint why)
+jpf_io_on_listen_error(HmWatch *w, gint rw, gint why)
 {
 	HmIOFuncs *funcs;
 	HmIO *io = (HmIO*)w;
@@ -58,7 +58,7 @@ hm_io_on_listen_error(HmWatch *w, gint rw, gint why)
 
 
 static void
-hm_io_finalize(HmWatch *w)
+jpf_io_finalize(HmWatch *w)
 {
 	HmIO *io = (HmIO*)w;
 
@@ -67,33 +67,33 @@ hm_io_finalize(HmWatch *w)
 		(*io->funcs->finalize)(io);
 	}
 
-	__hm_io_finalize(io);
+	__jpf_io_finalize(io);
 }
 
 
-static HmWatchFuncs hm_listen_io_watch_funcs =
+static HmWatchFuncs jpf_listen_io_watch_funcs =
 {
-	.create		= hm_io_create,
-	.error		= hm_io_on_listen_error,
-	.finalize	= hm_io_finalize
+	.create		= jpf_io_create,
+	.error		= jpf_io_on_listen_error,
+	.finalize	= jpf_io_finalize
 };
 
 
 static gint
-hm_io_recv_data(HmWatch *w, gchar *buf, gsize size)
+jpf_io_recv_data(HmWatch *w, gchar *buf, gsize size)
 {
 	HmIO *io = (HmIO*)w;
 
-	return hm_io_recv_packet(io, buf, size);
+	return jpf_io_recv_packet(io, buf, size);
 }
 
 
 static gint
-hm_io_format_data(HmWatch *w, gpointer msg, gchar buf[],
+jpf_io_format_data(HmWatch *w, gpointer msg, gchar buf[],
 	gsize size)
 {
 	HmIOFuncs *funcs;
-	HmPacketProto *proto;
+	JpfPacketProto *proto;
 	gint pack_head_len, phl, payload_len = 0;
 	HmIO *io = (HmIO*)w;
 
@@ -136,7 +136,7 @@ hm_io_format_data(HmWatch *w, gpointer msg, gchar buf[],
 
 
 static void
-hm_io_on_error(HmWatch *w, gint rw, gint why)
+jpf_io_on_error(HmWatch *w, gint rw, gint why)
 {
 	HmIO *io;
 	HmIOFuncs *funcs;
@@ -155,7 +155,7 @@ hm_io_on_error(HmWatch *w, gint rw, gint why)
 
 
 static void
-hm_io_on_close(HmWatch *w, gint async)
+jpf_io_on_close(HmWatch *w, gint async)
 {
 	HmIO *io;
 	HmIOFuncs *funcs;
@@ -173,18 +173,18 @@ hm_io_on_close(HmWatch *w, gint async)
 }
 
 
-static HmWatchFuncs hm_io_watch_funcs =
+static HmWatchFuncs jpf_io_watch_funcs =
 {
-	.recv		= hm_io_recv_data,
-	.format		= hm_io_format_data,
-	.error		= hm_io_on_error,
-	.close		= hm_io_on_close,
-	.finalize	= hm_io_finalize
+	.recv		= jpf_io_recv_data,
+	.format		= jpf_io_format_data,
+	.error		= jpf_io_on_error,
+	.close		= jpf_io_on_close,
+	.finalize	= jpf_io_finalize
 };
 
 
 static __inline__ gint
-hm_io_initialize(HmIO *io, gint listen)
+jpf_io_initialize(HmIO *io, gint listen)
 {
 	gint buffer_size;
 	HmWatch *watch = (HmWatch*)io;
@@ -212,7 +212,7 @@ hm_io_initialize(HmIO *io, gint listen)
 
 
 static __inline__ void
-__hm_io_finalize(HmIO *io)
+__jpf_io_finalize(HmIO *io)
 {
 	if (io->buffer)
 	{
@@ -223,32 +223,32 @@ __hm_io_finalize(HmIO *io)
 
 
 __export HmIO *
-hm_io_new(HmConnection *conn, HmPacketProto *proto, 
+jpf_io_new(HmConnection *conn, JpfPacketProto *proto, 
 	HmIOFuncs *funcs, gsize size)
 {
 	HmIO *io;
 	G_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
-	if (hm_connection_is_blocked(conn))
+	if (jpf_connection_is_blocked(conn))
 	{
-		hm_warning(
+		jpf_warning(
 			"Net create io on blocked connection '%p'.",
 			conn
 		);
 		return NULL;		
 	}
 
-	io = (HmIO*)hm_watch_create(
-		conn, &hm_io_watch_funcs, size);
+	io = (HmIO*)jpf_watch_create(
+		conn, &jpf_io_watch_funcs, size);
 	if (!io)
 	{
-		hm_warning(
+		jpf_warning(
 			"Net create watch failed."
 		);
 		return NULL;
 	}
 
-	hm_io_initialize(io, 0);
+	jpf_io_initialize(io, 0);
 
 	io->proto = proto;
 	io->funcs = funcs;
@@ -258,23 +258,23 @@ hm_io_new(HmConnection *conn, HmPacketProto *proto,
 
 
 __export HmIO *
-hm_listen_io_new(HmConnection *conn, HmPacketProto *proto,
+jpf_listen_io_new(HmConnection *conn, JpfPacketProto *proto,
 	HmIOFuncs *funcs, gsize size)
 {
 	HmIO *io;
 	G_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
-	io = (HmIO*)hm_listen_watch_create(
-		conn, &hm_listen_io_watch_funcs, size);
+	io = (HmIO*)jpf_listen_watch_create(
+		conn, &jpf_listen_io_watch_funcs, size);
 	if (!io)
 	{
-		hm_warning(
+		jpf_warning(
 			"Net create watch failed."
 		);
 		return NULL;
 	}
 
-	hm_io_initialize(io, 1);
+	jpf_io_initialize(io, 1);
 
 	io->proto = proto;
 	io->funcs = funcs;
@@ -284,11 +284,11 @@ hm_listen_io_new(HmConnection *conn, HmPacketProto *proto,
 
 
 static __inline__ gint
-hm_io_packet_proto_check(HmIO *io)
+jpf_io_packet_proto_check(HmIO *io)
 {
-	HmPacketProto *proto;
+	JpfPacketProto *proto;
 	gint effective, ret;
-    HmNetPackInfo payload_raw, *npi;
+    JpfNetPackInfo payload_raw, *npi;
     HmIOFuncs *funcs;
 
 	proto = io->proto;
@@ -317,7 +317,7 @@ hm_io_packet_proto_check(HmIO *io)
             if (G_UNLIKELY(ret))
                 return ret;
 
-			npi = hm_net_packet_defrag(&payload_raw);
+			npi = jpf_net_packet_defrag(&payload_raw);
 			if (G_LIKELY(npi))
 			{
 				if (funcs->recv)
@@ -331,7 +331,7 @@ hm_io_packet_proto_check(HmIO *io)
 				}
 
 				if (G_UNLIKELY(npi != &payload_raw))
-					hm_net_packet_release_npi(npi);
+					jpf_net_packet_release_npi(npi);
 
 				if (G_UNLIKELY(ret))
 					return ret;
@@ -387,7 +387,7 @@ hm_io_packet_proto_check(HmIO *io)
 
 
 static __inline__ gint
-hm_io_recv_packet(HmIO *io, gchar *buf, gsize size)
+jpf_io_recv_packet(HmIO *io, gchar *buf, gsize size)
 {
 	gint ret, left;
 
@@ -411,7 +411,7 @@ hm_io_recv_packet(HmIO *io, gchar *buf, gsize size)
 			buf += left;
 		}
 
-		if (G_UNLIKELY((ret = hm_io_packet_proto_check(io))))
+		if (G_UNLIKELY((ret = jpf_io_packet_proto_check(io))))
 			return ret;
 	}
 

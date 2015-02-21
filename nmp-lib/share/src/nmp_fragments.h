@@ -1,5 +1,5 @@
 /*
- * hm_fragments.h
+ * jpf_fragments.h
  *
  * Data structure for packet defragmentation. 
  *
@@ -16,8 +16,8 @@
 
 G_BEGIN_DECLS
 
-void hm_net_packet_release_npi(HmNetPackInfo *npi);
-HmNetPackInfo *hm_net_packet_defrag(HmNetPackInfo *net_pack);
+void jpf_net_packet_release_npi(JpfNetPackInfo *npi);
+JpfNetPackInfo *jpf_net_packet_defrag(JpfNetPackInfo *net_pack);
 
 G_END_DECLS
 

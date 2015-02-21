@@ -1,5 +1,5 @@
 /*
- * hm_rw_file.h
+ * jpf_rw_file.h
  *
  * This file declares interfaces to read/write config file.
  *

@@ -22,15 +22,15 @@ struct _HmHlIO		/* High level IO, payload layer, for example: XML */
 {
 	HmIO			io;
 
-	HmPayloadProto	*proto;
+	JpfPayloadProto	*proto;
 };
 
 
-HmHlIO *hm_hl_io_new(HmConnection *conn, HmPacketProto *ll_proto,
-	HmPayloadProto *hl_proto);
+HmHlIO *jpf_hl_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
+	JpfPayloadProto *hl_proto);
 
-HmHlIO *hm_hl_listen_io_new(HmConnection *conn, HmPacketProto *ll_proto,
-	HmPayloadProto *hl_proto);
+HmHlIO *jpf_hl_listen_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
+	JpfPayloadProto *hl_proto);
 
 G_END_DECLS
 

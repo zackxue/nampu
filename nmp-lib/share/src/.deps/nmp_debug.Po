@@ -28,11 +28,11 @@ nmp_debug.o: nmp_debug.c /usr/include/stdc-predef.h /usr/include/unistd.h \
  /usr/include/i386-linux-gnu/sys/sysmacros.h \
  /usr/include/i386-linux-gnu/bits/pthreadtypes.h \
  /usr/include/i386-linux-gnu/sys/stat.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h \
  /usr/include/errno.h /usr/include/i386-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/i386-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/stdlib.h /usr/include/i386-linux-gnu/bits/waitflags.h \
  /usr/include/i386-linux-gnu/bits/waitstatus.h /usr/include/alloca.h \
  /usr/include/i386-linux-gnu/bits/stdlib-float.h \
@@ -197,7 +197,7 @@ nmp_debug.o: nmp_debug.c /usr/include/stdc-predef.h /usr/include/unistd.h \
 
 /usr/include/i386-linux-gnu/sys/stat.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h:
 
 /usr/include/errno.h:
 
@@ -211,7 +211,7 @@ nmp_debug.o: nmp_debug.c /usr/include/stdc-predef.h /usr/include/unistd.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/stdlib.h:
 

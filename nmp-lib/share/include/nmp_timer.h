@@ -1,5 +1,5 @@
 /*
- * hm_timer.h
+ * jpf_timer.h
  *
  * This file describes timer
  *
@@ -18,19 +18,19 @@ typedef gboolean (*HmTimerFun)(gpointer user_data);
 typedef struct _HmTimerEngine HmTimerEngine;
 
 
-HmTimerEngine *hm_timer_engine_new( void );
-void hm_timer_engine_release(HmTimerEngine *eng);
+HmTimerEngine *jpf_timer_engine_new( void );
+void jpf_timer_engine_release(HmTimerEngine *eng);
 
-guint hm_timer_engine_set_timer(HmTimerEngine *eng, guint interval,
+guint jpf_timer_engine_set_timer(HmTimerEngine *eng, guint interval,
 	HmTimerFun fun, gpointer data);
 
-void hm_timer_engine_del_timer(HmTimerEngine *eng, gint id);
+void jpf_timer_engine_del_timer(HmTimerEngine *eng, gint id);
 
 /* global timer setup */
 
-guint hm_set_timer(guint interval, HmTimerFun fun, gpointer data);
+guint jpf_set_timer(guint interval, HmTimerFun fun, gpointer data);
 
-void hm_del_timer(guint id);
+void jpf_del_timer(guint id);
 
 G_END_DECLS
 

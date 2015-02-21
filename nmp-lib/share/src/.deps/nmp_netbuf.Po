@@ -5,11 +5,11 @@ nmp_netbuf.o: nmp_netbuf.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/gnu/stubs.h \
  /usr/include/i386-linux-gnu/gnu/stubs-32.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stddef.h /usr/include/xlocale.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h \
  /usr/include/errno.h /usr/include/i386-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/i386-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/types.h \
@@ -131,7 +131,7 @@ nmp_netbuf.o: nmp_netbuf.c /usr/include/stdc-predef.h \
 
 /usr/include/xlocale.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_errno.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_errno.h:
 
 /usr/include/errno.h:
 
@@ -145,7 +145,7 @@ nmp_netbuf.o: nmp_netbuf.c /usr/include/stdc-predef.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 

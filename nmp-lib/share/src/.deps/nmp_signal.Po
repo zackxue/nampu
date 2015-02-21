@@ -32,8 +32,8 @@ nmp_signal.o: nmp_signal.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/bits/time.h \
  /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/alloca.h \
  /usr/include/i386-linux-gnu/bits/stdlib-float.h /usr/include/string.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_signal.h \
- /home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_signal.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h \
  /usr/include/unistd.h /usr/include/i386-linux-gnu/bits/posix_opt.h \
  /usr/include/i386-linux-gnu/bits/environments.h \
  /usr/include/i386-linux-gnu/bits/confname.h /usr/include/getopt.h \
@@ -203,9 +203,9 @@ nmp_signal.o: nmp_signal.c /usr/include/stdc-predef.h \
 
 /usr/include/string.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_signal.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_signal.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/share/include/nmp_debug.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/share/include/nmp_debug.h:
 
 /usr/include/unistd.h:
 

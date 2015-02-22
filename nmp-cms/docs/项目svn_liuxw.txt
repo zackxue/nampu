@@ -1,0 +1,52 @@
+设备sdk svn路径
+svn://192.168.1.20/platform/trunk/pd-pusdk/jdevsdk   
+//进入jdevsdk目录，两种编译方式：
+第一种方式
+1 source $(path)/pd-libs/env/$(cross)     //设置交叉编译的环境
+2 sourse ./set-x-env		
+3 ./autogen.sh
+4 ./config.sh
+5 make
+6 ./rebuild.sh
+7 make install
+
+第二种方式
+1 ./build_script.sh debug $(cross)      #eg../build_script.sh debug x86   $(cross)是env目录下的各个环境文件名，比如x86
+
+代理服务器SVN路径
+svn://192.168.1.20/platform/trunk/pd-proxy/proxy-server	
+编译方式：进入proxy-server目录
+1 source $(path)/pd-libs/env/x86
+2 sourse ./set-x-env
+3 make
+
+在bin目录下，运行./proxy前，先执行source runpath.sh
+发布文件：
+  1.proxy
+  2.factory_info.xml
+  3.libjxml.so
+  4.libjnet.so
+
+基础库pd-libs SVN路径
+svn://192.168.1.20/platform/trunk/pd-libs
+编译方式：
+进入到pd-libs目录
+./build_all debug #编译所有版本 例如：./build_all debug。这种方式编译不可靠，有时会出错
+说明：每个工程都有自己的编译脚本，建议单独进入到各个库的目录下，手动编译，运行脚本build_script，例如：./build_script debug x86	
+
+音频混合库
+svn://192.168.1.20/platform/developing/liuxw/audio_mix_lib
+编译方式：
+ 进入到audio_mix_lib目录下，执行make
+
+解码器加密狗动态库
+svn://192.168.1.20/platform/developing/liuxw/encrypt_dynamic
+编译环境：vc6.0下编译
+
+制作加密狗静态库
+svn://192.168.1.20/platform/developing/liuxw/et199_encrypt_lib
+编译环境：vc6.0下编译
+
+说明：
+1. $(path)是指pd-libs目录的绝对路径；$(cross)是env目录下的各个环境文件名，例如x86。
+2. set-x-env是指set-debug-env或者set-release-env

@@ -1,0 +1,96 @@
+移动项目
+项目路径
+svn://192.168.1.20/windows/trunk/MobileNetSDK
+
+项目树结构
+trunk
+    |--MobileNetSDK
+
+项目介绍
+MobileNetSDK
+介绍：IOS、Android手机客户端的底层库，WINDOW客户端的网络库
+编译：1)IOS平台, 编译环境Mac, 使用XCode编译
+      2)Android平台，编译环境cygwin, 使用NDK编译
+      3)WIN32平台, 编译环境VC6.0
+      编译顺序: JSocketCtrl, JNetSDK, JNMLib
+
+==================================================================================
+平台项目
+项目路径
+svn://192.168.1.20/platform/trunk/pd-proxy
+
+项目树结构
+trunk
+    |--pd-proxy
+        |--proxy-client
+项目介绍
+proxy-client
+介绍：代理服务器客户端
+编译：使用vs2008编译
+
+==================================================================================
+平台项目
+项目路径
+svn://192.168.1.20/platform/trunk/pd-pusdk/device_sdk
+
+项目树结构
+trunk
+    |--pd-pusdk
+        |--device_sdk
+            |--jlive
+项目介绍
+jlive
+介绍：流媒体网络库
+编译：win32平台, 使用vs2008编译
+
+===================================================================================
+项目路径
+svn://192.168.1.20/platform/developing/zouc/Mobile
+
+项目树结构
+zouc
+    |--jcutalk
+    |--pd-ivs
+    |--SoftDogConfigTool
+    |--talk_mod
+    |--CloudClient
+    |--ffmpeg
+        |--android
+    |--developing
+        |--h264pack(参考pd-libs)
+        |--inc
+        |--jlib(参考pd-libs)
+        |--libev(参考pd-libs)
+        |--librtsp(参考pd-libs)
+        |--netnembryo-0.1.1(参考pd-libs)
+        |--rtsp-client(参考pd-libs)
+
+各项介绍
+1. jcutalk
+介绍：win32下的对讲库
+编译：使用vs2008编译
+
+2. pd-ivs
+介绍：ivs服务器
+编译：linux环境，通过make来编译
+
+3. SoftDogConfigTool
+介绍：加密狗配置工具
+编译：使用vs2008编译
+
+4. talk_mod
+介绍：linux服务端对讲库
+编译：linux环境，通过make编译
+
+5. CloudClient
+介绍：Android平台客户端
+编译：使用Eclipse编译
+
+6. ffmpeg
+介绍：ffmpeg源代码，用于CloudClient的解码库
+编译：1).先执行ffmpeg-download.sh下载源代码；
+      2).执行ffmpeg-android.sh编译
+
+7. developing
+介绍：CloudClient使用的底层网络库
+编译：使用NDK编译

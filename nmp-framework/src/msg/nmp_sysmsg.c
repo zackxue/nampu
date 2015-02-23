@@ -1,7 +1,7 @@
 /*
- * jpf_sysmsg.c
+ * nmp_sysmsg.c
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 

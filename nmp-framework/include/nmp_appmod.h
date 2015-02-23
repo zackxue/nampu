@@ -1,12 +1,12 @@
 /*
  * nmp_appmod.h
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_APP_MOD_H__
-#define __JPF_APP_MOD_H__
+#ifndef __NMP_APP_MOD_H__
+#define __NMP_APP_MOD_H__
 
 #include "nmp_appobj.h"
 #include "nmp_modio.h"
@@ -80,4 +80,4 @@ gint jpf_app_mod_sync_request(JpfAppMod *self, JpfSysMsg **msg);
 
 G_END_DECLS
 
-#endif	//__JPF_APP_MOD_H__
+#endif	//__NMP_APP_MOD_H__

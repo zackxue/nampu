@@ -3,7 +3,7 @@
  *
  * This file implements net, used for net io objects management.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 

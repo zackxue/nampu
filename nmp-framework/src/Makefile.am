@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS=foreign subdir-objects
-lib_LIBRARIES=libnmpframework.a
-libnmpframework_a_SOURCES=./app/nmp_appcore.c \
+lib_LTLIBRARIES=libnmpframework.la
+libnmpframework_la_SOURCES=./app/nmp_appcore.c \
 			./app/nmp_appmod.c \
 			./app/nmp_appobj.c \
 			./app/nmp_mod_access.c \
@@ -14,7 +14,14 @@ libnmpframework_a_SOURCES=./app/nmp_appcore.c \
 			./msg/nmp_msgbus.c \
 			./msg/nmp_msgengine.c \
 			./msg/nmp_sysmsg.c
-libnmpframework_a_CFLAGS=-Wall -g -fno-inline -fstack-protector
+
+libnmpframework_la_LIBADD=
+
+libnmpframework_la_LDFLAGS=-no-undefined -version-info $(LIBNMPFRAMEWORK_SO_VERSION) $(shell pkg-config --libs glib-2.0 gobject-2.0 gthread-2.0) -lrt
+libnmpframework_la_LIBFLAGS=
+
+
+libnmpframework_la_CFLAGS=-Wall -g -fno-inline -fstack-protector
 
 libnmpframeworkincludedir=$(prefix)/include/nampu
 libnmpframeworkinclude_HEADERS=$(top_srcdir)/include/*.h

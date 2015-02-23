@@ -1,5 +1,5 @@
-#ifndef __JPF_APP_CORE_H__
-#define __JPF_APP_CORE_H__
+#ifndef __NMP_APP_CORE_H__
+#define __NMP_APP_CORE_H__
 
 #include "nmp_appobj.h"
 #include "nmp_msgbus.h"
@@ -46,4 +46,4 @@ void jpf_afx_inst_bus_bypass(JpfAfxInst inst);
 
 G_BEGIN_DECLS
 
-#endif	//__JPF_APP_CORE_H__
+#endif	//__NMP_APP_CORE_H__

@@ -1,4 +1,4 @@
-#ifndef __JPF_MEMORY_H__
+#ifndef __NMP_MEMORY_H__
 
 #include <glib-object.h>
 
@@ -23,4 +23,4 @@ void jpf_mem_free(gpointer p);
 
 G_END_DECLS
 
-#endif	//__JPF_MEMORY_H__
+#endif	//__NMP_MEMORY_H__

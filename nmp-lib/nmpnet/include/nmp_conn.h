@@ -1,5 +1,5 @@
-#ifndef __JPF_CONNECTION_H__
-#define __JPF_CONNECTION_H__
+#ifndef __NMP_CONNECTION_H__
+#define __NMP_CONNECTION_H__
 
 #include <netinet/in.h>
 #include <stddef.h>
@@ -44,4 +44,4 @@ char *j_connection_get_peer(JConnection *conn, char *ip);
 }
 #endif
 
-#endif	//__JPF_CONNECTION_H__
+#endif	//__NMP_CONNECTION_H__

@@ -2,8 +2,8 @@
  * jxj platform - cms -  Slot Interface
 */
 
-#ifndef __JPF_ISLOT_H__
-#define __JPF_ISLOT_H__
+#ifndef __NMP_ISLOT_H__
+#define __NMP_ISLOT_H__
 
 #include <glib-object.h>
 #include "nmp_data.h"
@@ -60,4 +60,4 @@ GType jpf_islot_get_type();
 
 G_END_DECLS
 
-#endif	//__JPF_ISLOT_H__
+#endif	//__NMP_ISLOT_H__

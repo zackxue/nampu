@@ -1,5 +1,5 @@
-#ifndef __JPF_OBJECT_H__
-#define __JPF_OBJECT_H__
+#ifndef __NMP_OBJECT_H__
+#define __NMP_OBJECT_H__
 
 #include <glib-object.h>
 
@@ -41,4 +41,4 @@ GType jpf_object_get_type( void );
 
 G_END_DECLS
 
-#endif	//__JPF_OBJECT_H__
+#endif	//__NMP_OBJECT_H__

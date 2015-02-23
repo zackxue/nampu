@@ -3,13 +3,13 @@
  *
  * This file describes net ring buffer.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
 */
 
-#ifndef __HM_NETBUF_H__
-#define __HM_NETBUF_H__
+#ifndef __NMP_NETBUF_H__
+#define __NMP_NETBUF_H__
 
 #include <glib.h>
 
@@ -35,4 +35,4 @@ gint jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data);
 
 G_END_DECLS
 
-#endif  //__HM_NETBUF_H__
+#endif  //__NMP_NETBUF_H__

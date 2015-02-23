@@ -1,5 +1,5 @@
-#ifndef __HM_CONNECTION_H__
-#define __HM_CONNECTION_H__
+#ifndef __NMP_CONNECTION_H__
+#define __NMP_CONNECTION_H__
 
 #include <glib.h>
 #include <netinet/in.h>
@@ -44,4 +44,4 @@ gchar *jpf_connection_get_peer(HmConnection *conn);
 
 G_END_DECLS
 
-#endif	//__HM_CONNECTION_H__
+#endif	//__NMP_CONNECTION_H__

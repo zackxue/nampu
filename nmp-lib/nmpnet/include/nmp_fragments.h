@@ -3,13 +3,13 @@
  *
  * Data structure for packet defragmentation. 
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:  Author:
  *
 */
 
-#ifndef __JPF_FRAGMENT_H__
-#define __JPF_FRAGMENT_H__
+#ifndef __NMP_FRAGMENT_H__
+#define __NMP_FRAGMENT_H__
 
 #include "nmp_netproto.h"
 
@@ -24,4 +24,4 @@ static __inline__ JNetPackInfo *j_net_packet_defrag(JNetPackInfo *net_pack){retu
 }
 #endif
 
-#endif  //__JPF_FRAGMENT_H__
+#endif  //__NMP_FRAGMENT_H__

@@ -3,12 +3,12 @@
  *
  * This file declares low level io, packet layer.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_IO_H__
-#define __JPF_IO_H__
+#ifndef __NMP_IO_H__
+#define __NMP_IO_H__
 
 #include "nmp_watch.h"
 #include "nmp_netproto.h"
@@ -56,4 +56,4 @@ JIO *j_listen_io_new(JConnection *conn, JPacketProto *proto,
 }
 #endif
 
-#endif	//__JPF_IO_H__
+#endif	//__NMP_IO_H__

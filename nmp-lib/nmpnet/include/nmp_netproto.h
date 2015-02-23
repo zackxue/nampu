@@ -3,12 +3,12 @@
  *
  * This file describes interfaces of net protocol parser. 
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
 */
-#ifndef __JPF_NETPROTO_H__
-#define __JPF_NETPROTO_H__
+#ifndef __NMP_NETPROTO_H__
+#define __NMP_NETPROTO_H__
 
 typedef struct _JNetPackInfo JNetPackInfo;
 
@@ -81,4 +81,4 @@ struct _JPacketProto
     	char buff[], size_t buff_size);
 };
 
-#endif  //__JPF_NETPROTO_H__
+#endif  //__NMP_NETPROTO_H__

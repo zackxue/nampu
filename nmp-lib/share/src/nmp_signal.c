@@ -3,7 +3,7 @@
  *
  * This file contains functions which set handlers of signals that we care.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
  * Actions of signal handlers:

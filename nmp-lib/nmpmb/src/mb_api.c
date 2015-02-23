@@ -1,6 +1,6 @@
 /*
  * Clinet Network SDK Interface.
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  */
 #include "mb_api.h"
 #include "mb_cu.h"

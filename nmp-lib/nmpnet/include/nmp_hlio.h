@@ -3,12 +3,12 @@
  *
  * This file declares high level io, payload layer.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_HLIO_H__
-#define __JPF_HLIO_H__
+#ifndef __NMP_HLIO_H__
+#define __NMP_HLIO_H__
 
 #include "nmp_io.h"
 
@@ -35,4 +35,4 @@ JHlIO *j_hl_listen_io_new(JConnection *conn, JPacketProto *ll_proto,
 }
 #endif
 
-#endif	//__JPF_HLIO_H__
+#endif	//__NMP_HLIO_H__

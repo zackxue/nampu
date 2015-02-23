@@ -7,8 +7,8 @@
  * Author:
 */
 
-#ifndef __HM_IO_H__
-#define __HM_IO_H__
+#ifndef __NMP_IO_H__
+#define __NMP_IO_H__
 
 #include <glib.h>
 #include "nmp_watch.h"
@@ -56,4 +56,4 @@ HmIO *jpf_listen_io_new(HmConnection *conn, JpfPacketProto *proto,
 
 G_END_DECLS
 
-#endif	//__HM_IO_H__
+#endif	//__NMP_IO_H__

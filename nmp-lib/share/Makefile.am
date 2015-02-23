@@ -9,5 +9,5 @@ INCLUDES = -I$(CURRENTPATH)/include -I$(shell pkg-config --cflags ${GLIB_LIBS})
 export INCLUDES
 
 pkgconfigdir=$(libdir)/pkgconfig
-pkgconfig_DATA=libnmpshare.pc
+pkgconfig_DATA=nmpshare.pc
 

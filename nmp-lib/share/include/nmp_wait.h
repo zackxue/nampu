@@ -5,8 +5,8 @@
  * Author:
 */
 
-#ifndef __HM_WAIT_H__
-#define __HM_WAIT_H__
+#ifndef __NMP_WAIT_H__
+#define __NMP_WAIT_H__
 
 #include <glib.h>
 
@@ -114,4 +114,4 @@ jpf_wait_wakeup_all(JpfWait *w)
 
 G_END_DECLS
 
-#endif  //__HM_WAIT_H__
+#endif  //__NMP_WAIT_H__

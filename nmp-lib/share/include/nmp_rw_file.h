@@ -3,12 +3,12 @@
  *
  * This file declares interfaces to read/write config file.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __HM_RW_FILE_H__
-#define __HM_RW_FILE_H__
+#ifndef __NMP_RW_FILE_H__
+#define __NMP_RW_FILE_H__
 
 #include <glib.h>
 
@@ -40,4 +40,4 @@ void close_rw_file(rw_file *fp);
 
 G_END_DECLS
 
-#endif  //__HM_RW_FILE_H__
+#endif  //__NMP_RW_FILE_H__

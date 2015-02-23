@@ -1,5 +1,5 @@
-#ifndef __JPF_PORTS_H__
-#define __JPF_PORTS_H__
+#ifndef __NMP_PORTS_H__
+#define __NMP_PORTS_H__
 
 #include <glib.h>
 
@@ -33,4 +33,4 @@ void jpf_media_ports_put_pair(gint low, gint hi);
 /* »ñµÃ¶Ë¿Ú·¶Î§ */
 gint jpf_media_ports_get_range(gint *p_low, gint *p_hi);
 
-#endif	//__JPF_PORTS_H__
+#endif	//__NMP_PORTS_H__

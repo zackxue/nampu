@@ -7,8 +7,8 @@
  * Author:
 */
 
-#ifndef __HM_WATCH_H__
-#define __HM_WATCH_H__
+#ifndef __NMP_WATCH_H__
+#define __NMP_WATCH_H__
 
 #include <glib.h>
 #include "nmp_conn.h"
@@ -87,4 +87,4 @@ void jpf_watch_set_block_size(HmWatch *watch, gint block_size);
 
 G_END_DECLS
 
-#endif  //__HM_WATCH_H__
+#endif  //__NMP_WATCH_H__

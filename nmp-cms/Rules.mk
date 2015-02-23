@@ -20,12 +20,12 @@ INCS += -I$(PROJ_ROOT)/include -I$(PROJ_ROOT)/lib/include -I$(PROJ_ROOT)/include
 INCS += -I /usr/include/libxml2 
 INCS += $(MYSQL_INC)
 
-#LIBS += -rdynamic -ldl
+LIBS += -rdynamic -ldl
 LIBS += $(shell pkg-config --libs ${GLIB_LIBS})
 LIBS += -lxml2
 LIBS += $(MYSQL_LIB)
-LIBS += -L$(NMP_LIB_INSTALL)/lib -lnmpshare
-LIBS += -L$(NMP_LIB_INSTALL)/lib -lnmpframework
+LIBS += $(shell pkg-config --libs nmpshare)
+LIBS += $(shell pkg-config --libs nmpframework)
 
 OUTPUT_DIR := $(PROJ_ROOT)/bin
 

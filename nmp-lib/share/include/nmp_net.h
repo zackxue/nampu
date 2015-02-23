@@ -7,8 +7,8 @@
  * Author:
 */
 
-#ifndef __HM_NET_H__
-#define __HM_NET_H__
+#ifndef __NMP_NET_H__
+#define __NMP_NET_H__
 
 #include <glib.h>
 #include "nmp_netio.h"
@@ -60,4 +60,4 @@ void jpf_net_set_io_block_size(JpfNetIO *net_io, gint size);
 
 G_END_DECLS
 
-#endif	//__HM_NET_H__
+#endif	//__NMP_NET_H__

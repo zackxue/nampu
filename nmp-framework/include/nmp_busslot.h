@@ -1,5 +1,5 @@
-#ifndef __JPF_BUSSLOT_H__
-#define __JPF_BUSSLOT_H__
+#ifndef __NMP_BUSSLOT_H__
+#define __NMP_BUSSLOT_H__
 
 #include "nmp_object.h"
 #include "nmp_islot.h"
@@ -58,4 +58,4 @@ GType jpf_bus_slot_get_type( void );
 
 G_END_DECLS
 
-#endif	//__JPF_BUSSLOT_H__
+#endif	//__NMP_BUSSLOT_H__

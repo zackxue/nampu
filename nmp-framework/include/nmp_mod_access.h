@@ -3,12 +3,12 @@
  *
  * A mod who has the ability to access network.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_MOD_ACCESS_H__
-#define __JPF_MOD_ACCESS_H__
+#ifndef __NMP_MOD_ACCESS_H__
+#define __NMP_MOD_ACCESS_H__
 
 #include "nmp_appmod.h"
 #include "nmp_net.h"
@@ -61,4 +61,4 @@ void jpf_mod_acc_release_io(JpfModAccess *self, JpfNetIO *io);
 
 G_END_DECLS
 
-#endif	//__JPF_MOD_ACCESS_H__
+#endif	//__NMP_MOD_ACCESS_H__

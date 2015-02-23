@@ -3,12 +3,12 @@
  *
  * This file describes timer
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __HM_TIMER_H__
-#define __HM_TIMER_H__
+#ifndef __NMP_TIMER_H__
+#define __NMP_TIMER_H__
 
 #include <glib.h>
 
@@ -34,4 +34,4 @@ void jpf_del_timer(guint id);
 
 G_END_DECLS
 
-#endif	//__HM_TIMER_H__
+#endif	//__NMP_TIMER_H__

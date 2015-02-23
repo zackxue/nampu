@@ -4,12 +4,12 @@
  * This file declares interfaces and macros for debugging 
  * and system running information logging purpose.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_DEBUG_H__
-#define __JPF_DEBUG_H__
+#ifndef __NMP_DEBUG_H__
+#define __NMP_DEBUG_H__
 
 #if 0
 #include <unistd.h>
@@ -163,4 +163,4 @@ do { \
     exit(FATAL_ERR_CODE); \
 }while (0)
 
-#endif  //__JPF_DEBUG_H__
+#endif  //__NMP_DEBUG_H__

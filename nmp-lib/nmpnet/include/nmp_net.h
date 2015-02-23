@@ -3,12 +3,12 @@
  *
  * This file declares net interfaces.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_NET_H__
-#define __JPF_NET_H__
+#ifndef __NMP_NET_H__
+#define __NMP_NET_H__
 
 #include "nmp_netio.h"
 
@@ -65,4 +65,4 @@ void j_del_timer(void *handle);
 }
 #endif
 
-#endif	//__JPF_NET_H__
+#endif	//__NMP_NET_H__

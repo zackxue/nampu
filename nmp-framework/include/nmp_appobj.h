@@ -1,5 +1,5 @@
-#ifndef __JPF_APP_OBJ_H__
-#define __JPF_APP_OBJ_H__
+#ifndef __NMP_APP_OBJ_H__
+#define __NMP_APP_OBJ_H__
 
 #include "nmp_object.h"
 #include "nmp_sysmsg.h"
@@ -44,4 +44,4 @@ gint jpf_app_obj_hook_from_bus(JpfAppObj *self, JpfSysMsg *msg);
 
 G_END_DECLS
 
-#endif	//__JPF_APP_OBJ_H__
+#endif	//__NMP_APP_OBJ_H__

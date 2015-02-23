@@ -7,8 +7,8 @@
  * Author:
 */
 
-#ifndef __HM_HLIO_H__
-#define __HM_HLIO_H__
+#ifndef __NMP_HLIO_H__
+#define __NMP_HLIO_H__
 
 #include <glib.h>
 #include "nmp_io.h"
@@ -34,4 +34,4 @@ HmHlIO *jpf_hl_listen_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
 
 G_END_DECLS
 
-#endif	//__HM_HLIO_H__
+#endif	//__NMP_HLIO_H__

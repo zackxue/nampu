@@ -3,7 +3,7 @@
  *
  * This file implements net I/O ring buffers
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
  * JNetRealBuf supplies a classic model for production and 

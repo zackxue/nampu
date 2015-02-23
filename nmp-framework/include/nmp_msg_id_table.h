@@ -1,5 +1,5 @@
-#ifndef __JPF_MSG_ID_TABLE_H__
-#define __JPF_MSG_ID_TABLE_H__
+#ifndef __NMP_MSG_ID_TABLE_H__
+#define __NMP_MSG_ID_TABLE_H__
 
 #include <string.h>
 #include "nmp_debug.h"
@@ -63,4 +63,4 @@ const gchar *jpf_message_id_2_str_##name(gint msg_id)\
 }
 
 
-#endif	/* __JPF_MSG_ID_TABLE_H__ */
+#endif	/* __NMP_MSG_ID_TABLE_H__ */

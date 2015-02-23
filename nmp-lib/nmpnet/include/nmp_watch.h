@@ -3,7 +3,7 @@
  *
  * This file declares watch structure and interfaces.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 

@@ -9,7 +9,7 @@ LIB_TARG = libjpfsearch.a
 TARG = $(LIB_OUTPUT)/$(LIB_TARG)
 
 LOCAL_INC := $(INCS)
-LOCAL_INC += -I ./inc
+LOCAL_INC += -I ./include
 LOCAL_SRC := ./src
 
 LIBS += -lrt

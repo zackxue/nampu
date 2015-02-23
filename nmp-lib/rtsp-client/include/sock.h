@@ -1,5 +1,5 @@
-#ifndef __JPF_SOCK_H__
-#define __JPF_SOCK_H__
+#ifndef __NMP_SOCK_H__
+#define __NMP_SOCK_H__
 
 #include <fcntl.h>
 #include "rtsp_client.h"
@@ -11,4 +11,4 @@ gint rtp_session_sock_init(RTP_Session *rtp_s);
 void rtp_session_sock_close(RTP_Session *rtp_s);
 gint set_fd_flags(gint fd, gint flgs);
 
-#endif	/* __JPF_SOCK_H__ */
+#endif	/* __NMP_SOCK_H__ */

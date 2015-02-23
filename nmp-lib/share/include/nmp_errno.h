@@ -1,5 +1,5 @@
-#ifndef __HM_ERRNO_H__
-#define __HM_ERRNO_H__
+#ifndef __NMP_ERRNO_H__
+#define __NMP_ERRNO_H__
 
 #include <errno.h>
 
@@ -257,4 +257,4 @@
 
 #define Err(err_no)	strerror(-(err_no))
 
-#endif  //__HM_ERRNO_H__
+#endif  //__NMP_ERRNO_H__

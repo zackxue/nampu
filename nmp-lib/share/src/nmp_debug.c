@@ -4,7 +4,7 @@
  * This file include routes and macros for debugging 
  * and system running information logging purpose.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 

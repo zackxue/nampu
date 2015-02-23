@@ -3,12 +3,12 @@
  *
  * This file declares net io interfaces.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_NETIO_H__
-#define __JPF_NETIO_H__
+#ifndef __NMP_NETIO_H__
+#define __NMP_NETIO_H__
 
 #include "nmplib.h"
 #include "nmp_conn.h"
@@ -66,4 +66,4 @@ char *j_net_io_get_peer(JNetIO *net_io, char *ip);
 }
 #endif
 
-#endif	//__JPF_NETIO_H__
+#endif	//__NMP_NETIO_H__

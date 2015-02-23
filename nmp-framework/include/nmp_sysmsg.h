@@ -5,8 +5,8 @@
  * Author:
 */
 
-#ifndef __JPF_SYS_MESSAGE__
-#define __JPF_SYS_MESSAGE__
+#ifndef __NMP_SYS_MESSAGE__
+#define __NMP_SYS_MESSAGE__
 
 #include <string.h>
 #include "nmp_data.h"
@@ -240,4 +240,4 @@ gint jpf_sysmsg_get_userdata(JpfSysMsg *msg, gpointer *pdata, gsize *psize);
 
 G_END_DECLS
 
-#endif  //__JPF_SYS_MESSAGE__
+#endif  //__NMP_SYS_MESSAGE__

@@ -3,13 +3,13 @@
  *
  * This file describes net ring buffer.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
 */
 
-#ifndef __JPF_NETBUF_H__
-#define __JPF_NETBUF_H__
+#ifndef __NMP_NETBUF_H__
+#define __NMP_NETBUF_H__
 
 #define PAGE_SIZE				4096
 #define MAX_IO_BUFFER_SIZE		(16*PAGE_SIZE)    //64K
@@ -35,4 +35,4 @@ int j_net_buf_flush(JNetBuf *buff, void *user_data);
 }
 #endif
 
-#endif  //__JPF_NETBUF_H__
+#endif  //__NMP_NETBUF_H__

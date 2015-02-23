@@ -5,12 +5,12 @@
  * jpf_event_request() will sleep, and will not be woken
  * up till the response arriving, or timeout.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_EVENT_TABLE_H__
-#define __JPF_EVENT_TABLE_H__
+#ifndef __NMP_EVENT_TABLE_H__
+#define __NMP_EVENT_TABLE_H__
 
 #include <glib.h>
 #include "nmp_sysmsg.h"
@@ -33,4 +33,4 @@ gint jpf_event_response(JpfEventTable *table, JpfSysMsg *msg);
 
 G_END_DECLS
 
-#endif  //__JPF_EVENT_TABLE_H__
+#endif  //__NMP_EVENT_TABLE_H__

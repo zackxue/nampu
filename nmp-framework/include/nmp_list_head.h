@@ -1,5 +1,5 @@
-#ifndef __JPF_LIST_H__
-#define __JPF_LIST_H__
+#ifndef __NMP_LIST_H__
+#define __NMP_LIST_H__
 
 /*
  * Simple doubly linked list implementation.
@@ -222,4 +222,4 @@ static inline void list_splice_init(struct list_head *list,
 	     &pos->member != (head); 					\
 	     pos = list_entry(pos->member.next, typeof(*pos), member))
 
-#endif	//__JPF_LIST_H__
+#endif	//__NMP_LIST_H__

@@ -690,6 +690,8 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+LIBNMPSHARE_VERSION
+LIBNMPSHARE_SO_VERSION
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -2894,6 +2896,50 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
+##################################################################
+PACKAGE=nmpshare
+{ $as_echo "$as_me:${as_lineno-$LINENO}: $PACKAGE_NAME-$PACKAGE_VERSION		A library for XXXXXXXXXXXXXXXXXXXXX." >&5
+$as_echo "$as_me: $PACKAGE_NAME-$PACKAGE_VERSION		A library for XXXXXXXXXXXXXXXXXXXXX." >&6;}
+LIBNMPSHARE_MAJOR_VERSION=$(echo $PACKAGE_VERSION | cut -d. -f1)
+LIBNMPSHARE_MINOR_VERSION=$(echo $PACKAGE_VERSION | cut -d. -f2)
+LIBNMPSHARE_MICRO_VERSION=$(echo $PACKAGE_VERSION | cut -d. -f3)
+LIBNMPSHARE_EXTRA_VERSION=$(echo $PACKAGE_VERSION | cut -d. -f4)
+
+LIBNMPSHARE_SO_VERSION=`expr $LIBNMPSHARE_MINOR_VERSION + $LIBNMPSHARE_MAJOR_VERSION`:$LIBNMPSHARE_MICRO_VERSION:$LIBNMPSHARE_MINOR_VERSION
+
+#LIBNMPSHARE_SO_VERSION for lib/Makefile.am
+LIBNMPSHARE_SO_VERSION=$LIBNMPSHARE_SO_VERSION
+
+
+LIBNMPSHARE_VERSION=${LIBNMPSHARE_MAJOR_VERSION}.${LIBNMPSHARE_MINOR_VERSION}.${LIBNMPSHARE_MICRO_VERSION}
+
+if test -n "$LIBNMPSHARE_EXTRA_VERSION" ; then
+	LIBNMPSHARE_VERSION="${LIBNMPSHARE_VERSION}.${LIBNMPSHARE_EXTRA_VERSION}"
+fi
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define LIBNMPSHARE_MAJOR_VERSION $LIBNMPSHARE_MAJOR_VERSION
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define LIBNMPSHARE_MINOR_VERSION $LIBNMPSHARE_MINOR_VERSION
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define LIBNMPSHARE_MICRO_VERSION $LIBNMPSHARE_MICRO_VERSION
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define LIBNMPSHARE_VERSION "$LIBNMPSHARE_VERSION"
+_ACEOF
+
+##################################################################
 
 : ${CFLAGS=""}
 
@@ -12054,7 +12100,7 @@ $as_echo "$as_me: FOUND CPPFLAGS DEFINES : \"$CPPFLAGS\"" >&6;}
 { $as_echo "$as_me:${as_lineno-$LINENO}: FOUND LIBS DEFINES : \"$LIBS\"" >&5
 $as_echo "$as_me: FOUND LIBS DEFINES : \"$LIBS\"" >&6;}
 
-ac_config_files="$ac_config_files Makefile libnmpshare.pc src/Makefile"
+ac_config_files="$ac_config_files Makefile nmpshare.pc src/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -13063,7 +13109,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "libnmpshare.pc") CONFIG_FILES="$CONFIG_FILES libnmpshare.pc" ;;
+    "nmpshare.pc") CONFIG_FILES="$CONFIG_FILES nmpshare.pc" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

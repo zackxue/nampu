@@ -1,14 +1,14 @@
 /*
- * jpf_netproto.h
+ * nmp_netproto.h
  *
  * This file describes interfaces of net protocol parser. 
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
 */
-#ifndef __HM_NETPROTO_H__
-#define __HM_NETPROTO_H__
+#ifndef __NMP_NETPROTO_H__
+#define __NMP_NETPROTO_H__
 
 #include <glib.h>
 
@@ -88,4 +88,4 @@ struct _JpfPacketProto
 
 G_END_DECLS
 
-#endif  //__HM_NETPROTO_H__
+#endif  //__NMP_NETPROTO_H__

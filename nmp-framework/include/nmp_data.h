@@ -3,12 +3,12 @@
  *
  * Base type of platform data, such as 'sysmsg'.
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_DATA_H__
-#define __JPF_DATA_H__
+#ifndef __NMP_DATA_H__
+#define __NMP_DATA_H__
 
 #include <glib-object.h>
 
@@ -46,4 +46,4 @@ GType jpf_data_get_type( void );
 
 G_END_DECLS
 
-#endif  //__JPF_DATA_H__
+#endif  //__NMP_DATA_H__

@@ -8,8 +8,8 @@
  * Author:
 */
 
-#ifndef __HM_DEBUG_H__
-#define __HM_DEBUG_H__
+#ifndef __NMP_DEBUG_H__
+#define __NMP_DEBUG_H__
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@
 #include <string.h>
 
 #undef  G_LOG_DOMAIN
-#define G_LOG_DOMAIN             "Hm"
+#define G_LOG_DOMAIN             "Nampu"
 
 #define HM_LOG_TITLE            "# Server Started At %s"
 #define HM_LOG_TIME_FORMAT      "%04d-%02d-%02d-%02d:%02d:%02d"
@@ -151,4 +151,4 @@ gint jpf_debug_log_facility_init(const gchar *folder_path,
 void jpf_debug_set_log_size(gint size);
 
 
-#endif  //__HM_DEBUG_H__
+#endif  //__NMP_DEBUG_H__

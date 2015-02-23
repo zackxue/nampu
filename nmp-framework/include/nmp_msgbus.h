@@ -1,12 +1,12 @@
 /*
  * nmp_msgbus.h
  *
- * Copyright(c) by HiMickey, 2010~2014
+ * Copyright(c) by Nampu, 2010~2014
  * Author:
 */
 
-#ifndef __JPF_MSG_BUS_H__
-#define __JPF_MSG_BUS_H__
+#ifndef __NMP_MSG_BUS_H__
+#define __NMP_MSG_BUS_H__
 
 #include "nmp_object.h"
 #include "nmp_sysmsg.h"
@@ -69,4 +69,4 @@ GType jpf_msg_bus_get_type( void );
 
 G_END_DECLS
 
-#endif  //__JPF_MSG_BUS_H__
+#endif  //__NMP_MSG_BUS_H__

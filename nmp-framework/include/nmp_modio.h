@@ -7,8 +7,8 @@
  * Author:
 */
 
-#ifndef __JPF_MOD_IO_H__
-#define __JPF_MOD_IO_H__
+#ifndef __NMP_MOD_IO_H__
+#define __NMP_MOD_IO_H__
 
 #include "nmp_object.h"
 #include "nmp_islot.h"
@@ -54,4 +54,4 @@ GType jpf_mod_io_get_type( void );
 
 G_BEGIN_DECLS
 
-#endif  //__JPF_MOD_IO_H__
+#endif  //__NMP_MOD_IO_H__

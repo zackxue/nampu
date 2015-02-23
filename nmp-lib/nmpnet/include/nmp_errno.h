@@ -1,5 +1,5 @@
-#ifndef __JPF_ERRNO_H__
-#define __JPF_ERRNO_H__
+#ifndef __NMP_ERRNO_H__
+#define __NMP_ERRNO_H__
 
 #include <errno.h>
 
@@ -216,4 +216,4 @@
 
 #endif  //if 0
 
-#endif  //__JPF_ERRNO_H__
+#endif  //__NMP_ERRNO_H__

@@ -26,7 +26,7 @@ TARG := $(OUTPUT_DIR)/cms
 .PHONY: ALL_SUB $(SUB_DIRS) clean 
 
 $(TARG): ALL_SUB
-	$(CC) -o $@ $(shell find . -name "O_TARG" -print | xargs cat) $(LIBS) $(shell find . -name "L_TARG" -print | xargs cat)
+	$(CC) -o $@ $(shell find . -name "O_TARG" -print | xargs cat) $(LIBS) $(shell find . -name "L_TARG" -print | xargs cat) -lxml2
 
 ALL_SUB: $(SUB_DIRS)
 

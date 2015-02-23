@@ -70,6 +70,18 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
+/* major version */
+#define LIBNMPSHARE_MAJOR_VERSION 2
+
+/* micro version */
+#define LIBNMPSHARE_MICRO_VERSION 0
+
+/* minor version */
+#define LIBNMPSHARE_MINOR_VERSION 8
+
+/* LIBNMPSHARE version number */
+#define LIBNMPSHARE_VERSION "2.8.0"
+
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #define LT_OBJDIR ".libs/"

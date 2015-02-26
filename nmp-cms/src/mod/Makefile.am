@@ -83,11 +83,11 @@ libcmsmod_a_SOURCES=./mod_ams/nmp_ams_insert.c \
 		    ./mod_wdd/nmp_mod_wdd.h \
 		    ./mod_wdd/nmp_wdd_insert.c \
 		    ./mod_wdd/nmp_wdd_mh.c \
-		    ./share/nmp_mods.c \
-		    ./share/nmp_res_ctl.c \
-		    ./share/nmp_shared.c \
-		    ./share/nmp_utility.c \
-		    ./share/nmp_xml_interface.c
+		    ./shared/nmp_mods.c \
+		    ./shared/nmp_res_ctl.c \
+		    ./shared/nmp_shared.c \
+		    ./shared/nmp_utility.c \
+		    ./shared/nmp_xml_interface.c
 
 #libcmsmod_a_LIBADD=
 libcmsmod_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC

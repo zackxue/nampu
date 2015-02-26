@@ -1,0 +1,95 @@
+AUTOMAKE_OPTIONS=foreign subdir-objects
+noinst_LIBRARIES=libcmsmod.a
+libcmsmod_a_SOURCES=./mod_ams/nmp_ams_insert.c \
+		    ./mod_ams/nmp_ams_mh.c \
+		    ./mod_ams/nmp_ams_msg.c \
+		    ./mod_ams/nmp_ams_policy.c \
+		    ./mod_ams/nmp_ams_policy.h \
+		    ./mod_ams/nmp_ams_struct.h \
+		    ./mod_ams/nmp_mod_ams.c \
+		    ./mod_ams/nmp_mod_ams.h \
+		    ./mod_bss/nmp_mod_insert.c \
+		    ./mod_bss/nmp_mod_mh.c \
+		    ./mod_bss/nmp_mod_msg.c \
+		    ./mod_bss/nmp_mod_struct.h \
+		    ./mod_bss/nmp_mod_bss.c \
+		    ./mod_bss/nmp_mod_bss.h \
+		    ./mod_bss/nmp_mod_pu.c \
+		    ./mod_bss/nmp_mod_pu.h \
+		    ./mod_cu/nmp_cu_insert.c \
+		    ./mod_cu/nmp_cu_mh.c \
+		    ./mod_cu/nmp_cu_msg.c \
+		    ./mod_cu/nmp_cu_msg.h \
+		    ./mod_cu/nmp_cu_struct.h \
+		    ./mod_cu/nmp_mod_cu.h \
+		    ./mod_cu/nmp_mod_cu.c \
+		    ./mod_dbs/gb2312_map_unicode.c \
+		    ./mod_dbs/gb2312_to_utf8.c \
+		    ./mod_dbs/gb2313_to_utf8.h \
+		    ./mod_dbs/nmp_dbs_fun.c \
+		    ./mod_dbs/nmp_dbs_fun.h \
+		    ./mod_dbs/nmp_dbs_insert.c \
+		    ./mod_dbs/nmp_dbs_mh_ams.c \
+		    ./mod_dbs/nmp_dbs_mh_bss.c \
+		    ./mod_dbs/nmp_dbs_mh_cu.c \
+		    ./mod_dbs/nmp_dbs_mh_mds.c \
+		    ./mod_dbs/nmp_dbs_mh_mss.c \
+		    ./mod_dbs/nmp_dbs_mh_pu.c \
+		    ./mod_dbs/nmp_dbs_mh_tw.c \
+		    ./mod_dbs/nmp_dbs_mh_wdd.c \
+		    ./mod_dbs/nmp_dbs_proc_cu.c \
+		    ./mod_dbs/nmp_mod_dbs.c \
+		    ./mod_dbs/nmp_mod_dbs.h \
+		    ./mod_dbs/nmp_mysql_fun.c \
+		    ./mod_dbs/nmp_dbs_msgmap.h \
+		    ./mod_dbs/nmp_dbs_struct.h \
+		    ./mod_dbs/nmp_mysql_fun.h \
+		    ./mod_ivs/nmp_ivs_insert.c \
+		    ./mod_ivs/nmp_ivs_mh.c \
+		    ./mod_ivs/nmp_ivs_msg.c \
+		    ./mod_ivs/nmp_ivs_struct.h \
+		    ./mod_ivs/nmp_mod_ivs.c \
+		    ./mod_ivs/nmp_mod_ivs.h \
+		    ./mod_log/nmp_log_defs.h \
+		    ./mod_log/nmp_log_insert.c \
+		    ./mod_log/nmp_log_mh.c \
+		    ./mod_log/nmp_log_mysql_fun.c \
+		    ./mod_log/nmp_log_mysql_fun.h \
+		    ./mod_log/nmp_mod_log.c \
+		    ./mod_log/nmp_mod_log.h \
+		    ./mod_mds/nmp_mds_insert.c \
+		    ./mod_mds/nmp_mds_mh.c \
+		    ./mod_mds/nmp_mds_msg.c \
+		    ./mod_mds/nmp_mds_struct.c \
+		    ./mod_mds/nmp_mod_mds.c \
+		    ./mod_mds/nmp_mod_mds.h \
+		    ./mod_mss/nmp_mss_insert.c \
+		    ./mod_mss/nmp_mss_mh.c \
+		    ./mod_mss/nmp_mod_mss.c \
+		    ./mod_mss/nmp_mod_mss.h \
+		    ./mod_mss/nmp_mss_msg.c \
+		    ./mod_mss/nmp_mss_struct.h \
+		    ./mod_pu/nmp_pu_insert.c \
+		    ./mod_pu/nmp_pu_mh.c \
+		    ./mod_pu/nmp_mod_pu.c \
+		    ./mod_pu/nmp_mod_pu.h \
+		    ./mod_pu/nmp_pu_msg.c \
+		    ./mod_pu/nmp_pu_struct.h \
+		    ./mod_tw/nmp_mod_tw.c \
+		    ./mod_tw/nmp_mod_tw.h \
+		    ./mod_tw/nmp_tw_insert.c \
+		    ./mod_tw/nmp_tw_mh.c \
+		    ./mod_wdd/nmp_mod_wdd.c \
+		    ./mod_wdd/nmp_mod_wdd.h \
+		    ./mod_wdd/nmp_wdd_insert.c \
+		    ./mod_wdd/nmp_wdd_mh.c \
+		    ./share/nmp_mods.c \
+		    ./share/nmp_res_ctl.c \
+		    ./share/nmp_shared.c \
+		    ./share/nmp_utility.c \
+		    ./share/nmp_xml_interface.c
+
+#libcmsmod_a_LIBADD=
+libcmsmod_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
+#libcmsmod_a_CXXFLAGS=
+

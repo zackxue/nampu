@@ -1,0 +1,2 @@
+nmp_tv_wall.o: src/nmp_tv_wall.c include/nmp_tv_wall.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/nmp_tw_interface.h

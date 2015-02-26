@@ -1,0 +1,6 @@
+db_connect_pool.o: src/db_connect_pool.c /usr/include/mysql/mysql.h \
+ /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_com.h \
+ /usr/include/mysql/mysql_time.h /usr/include/mysql/my_list.h \
+ /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/db_connect_pool.h \
+ /home/shiyong/usr/include/nampu/nmp_list_head.h

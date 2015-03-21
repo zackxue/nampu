@@ -6,108 +6,108 @@
 #include "nmp_share_struct.h"
 
 
-typedef struct _JpfAmsRegister JpfAmsRegister;
-struct _JpfAmsRegister
+typedef struct _NmpAmsRegister NmpAmsRegister;
+struct _NmpAmsRegister
 {
     gchar ams_id[AMS_ID_LEN];
     gchar  ams_version[VERSION_LEN];
 };
 
-typedef struct _JpfAmsRegisterRes JpfAmsRegisterRes;
-struct _JpfAmsRegisterRes
+typedef struct _NmpAmsRegisterRes NmpAmsRegisterRes;
+struct _NmpAmsRegisterRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar                    domain_id[DOMAIN_ID_LEN];
     gint                       keep_alive_time;
     gchar			server_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfAmsHeart JpfAmsHeart;
-struct _JpfAmsHeart
+typedef struct _NmpAmsHeart NmpAmsHeart;
+struct _NmpAmsHeart
 {
     gchar		ams_id[AMS_ID_LEN];
 };
 
-typedef struct _JpfAmsHeartRes JpfAmsHeartRes;
-struct _JpfAmsHeartRes
+typedef struct _NmpAmsHeartRes NmpAmsHeartRes;
+struct _NmpAmsHeartRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			server_time[TIME_INFO_LEN];
 };
 
 
-typedef struct _JpfActionPolicy JpfActionPolicy;
-struct _JpfActionPolicy
+typedef struct _NmpActionPolicy NmpActionPolicy;
+struct _NmpActionPolicy
 {
 	int			weekday_num;
-	JpfWeekday	weekdays[WEEKDAYS];
+	NmpWeekday	weekdays[WEEKDAYS];
 };
 
 
-typedef struct _JpfAmsActionRecord JpfAmsActionRecord;
-struct _JpfAmsActionRecord
+typedef struct _NmpAmsActionRecord NmpAmsActionRecord;
+struct _NmpAmsActionRecord
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			level;
-	JpfShareMssId	mss_id;
+	NmpShareMssId	mss_id;
 	guint		time_len;
 	guint		alarm_type;
 };
 
 
-typedef struct _JpfAmsActionIO JpfAmsActionIO;
-struct _JpfAmsActionIO
+typedef struct _NmpAmsActionIO NmpAmsActionIO;
+struct _NmpAmsActionIO
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	guint		time_len;
 	gchar		io_value[IO_VALUE_LEN];
 	gchar		session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfAmsActionIORes JpfAmsActionIORes;
-struct _JpfAmsActionIORes
+typedef struct _NmpAmsActionIORes NmpAmsActionIORes;
+struct _NmpAmsActionIORes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
 };
 
 
-typedef struct _JpfAmsActionPreset JpfAmsActionPreset;
-struct _JpfAmsActionPreset
+typedef struct _NmpAmsActionPreset NmpAmsActionPreset;
+struct _NmpAmsActionPreset
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			preset_num;
 	gchar		session[SESSION_ID_LEN];
 };
 
 
-typedef struct _JpfAmsActionSnapshot JpfAmsActionSnapshot;
-struct _JpfAmsActionSnapshot
+typedef struct _NmpAmsActionSnapshot NmpAmsActionSnapshot;
+struct _NmpAmsActionSnapshot
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			level;
-	JpfShareMssId	mss_id;
+	NmpShareMssId	mss_id;
 	guint		picture_count;
 	guint		alarm_type;
 };
 
 
-typedef struct _JpfAmsActionMapGu JpfAmsActionMapGu;
-struct _JpfAmsActionMapGu
+typedef struct _NmpAmsActionMapGu NmpAmsActionMapGu;
+struct _NmpAmsActionMapGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gchar			gu_name[GU_NAME_LEN];
 	gint		map_id;						//id
 	gchar		map_name[MAP_NAME_LEN];
 	gint		level;
 };
 
-typedef struct _JpfAmsActionMap JpfAmsActionMap;
-struct _JpfAmsActionMap
+typedef struct _NmpAmsActionMap NmpAmsActionMap;
+struct _NmpAmsActionMap
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			alarm_type;
 	gchar			alarm_time[TIME_INFO_LEN];
 	gchar			gu_name[GU_NAME_LEN];
@@ -116,14 +116,14 @@ struct _JpfAmsActionMap
 	gint			map_id;
 	gchar			map_name[MAP_NAME_LEN];
 	guint			action_gu_count;
-	JpfAmsActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
+	NmpAmsActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
 	gint				cu_count;
-	JpfAllCuOwnPu		cu_list[0];
+	NmpAllCuOwnPu		cu_list[0];
 };
 
 
-typedef struct _JpfAmsGetDeviceInfo JpfAmsGetDeviceInfo;
-struct _JpfAmsGetDeviceInfo
+typedef struct _NmpAmsGetDeviceInfo NmpAmsGetDeviceInfo;
+struct _NmpAmsGetDeviceInfo
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gint					req_num;
@@ -131,8 +131,8 @@ struct _JpfAmsGetDeviceInfo
 };
 
 
-typedef struct _JpfAmsDeviceInfo JpfAmsDeviceInfo;
-struct _JpfAmsDeviceInfo
+typedef struct _NmpAmsDeviceInfo NmpAmsDeviceInfo;
+struct _NmpAmsDeviceInfo
 {
 	gchar				puid[MAX_ID_LEN];
 	gchar				domain[DOMAIN_ID_LEN];
@@ -142,14 +142,14 @@ struct _JpfAmsDeviceInfo
 	gint					dev_port;
 };
 
-typedef struct _JpfAmsGetDeviceInfoRes JpfAmsGetDeviceInfoRes;
-struct _JpfAmsGetDeviceInfoRes
+typedef struct _NmpAmsGetDeviceInfoRes NmpAmsGetDeviceInfoRes;
+struct _NmpAmsGetDeviceInfoRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				ams_id[AMS_ID_LEN];
 	gint					total_count;
 	gint					back_count;
-	JpfAmsDeviceInfo		dev_info[0];
+	NmpAmsDeviceInfo		dev_info[0];
 };
 
 

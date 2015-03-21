@@ -1,5 +1,5 @@
 /*
- * jpf_mods.c
+ * nmp_mods.c
  *
  * This file implements data structures shared by all mods.
  *
@@ -13,81 +13,81 @@
 
 guint msg_seq_generator = 0;
 
-typedef struct _JpfVisitBlock JpfVisitBlock;
-struct _JpfVisitBlock
+typedef struct _NmpVisitBlock NmpVisitBlock;
+struct _NmpVisitBlock
 {
-	JpfGuestVisit func;
+	NmpGuestVisit func;
 	gpointer data;
 };
 
 
 static gpointer
-jpf_mods_cmd_executer(gpointer user_data);
+nmp_mods_cmd_executer(gpointer user_data);
 
 static gint
-jpf_mods_io_equal_fn(gconstpointer a, gconstpointer b)
+nmp_mods_io_equal_fn(gconstpointer a, gconstpointer b)
 {
-	JpfNewIO *new_io;
-	JpfNetIO *io;
+	NmpNewIO *new_io;
+	NmpNetIO *io;
 	G_ASSERT(a != NULL && b != NULL);
 
-	new_io = (JpfNewIO*)a;
-	io = (JpfNetIO*)b;
+	new_io = (NmpNewIO*)a;
+	io = (NmpNetIO*)b;
 
 	return new_io->io == io ? 0 : 1;
 }
 
 
 static gint
-jpf_mods_io_list_timeout(gconstpointer a, gconstpointer b)
+nmp_mods_io_list_timeout(gconstpointer a, gconstpointer b)
 {
-	JpfNewIOList *l;
-	JpfNewIO *new_io;
+	NmpNewIOList *l;
+	NmpNewIO *new_io;
 	G_ASSERT(a != NULL && b != NULL);
 
-	new_io = (JpfNewIO*)a;
-	l = (JpfNewIOList*)b;
+	new_io = (NmpNewIO*)a;
+	l = (NmpNewIOList*)b;
 
 	return new_io->elapse > l->timeout ? 0 : 1;
 }
 
 
 static void
-jpf_mods_io_1sec_elapsed(gpointer data, gpointer null)
+nmp_mods_io_1sec_elapsed(gpointer data, gpointer null)
 {
-	JpfNewIO *new_io;
+	NmpNewIO *new_io;
 	G_ASSERT(data != NULL);
 
-	new_io = (JpfNewIO*)data;
+	new_io = (NmpNewIO*)data;
 	++new_io->elapse;
 }
 
 
 static __inline__ void
-__jpf_mods_io_list_timer(JpfNewIOList *l)
+__nmp_mods_io_list_timer(NmpNewIOList *l)
 {
 	GList *list;
-	JpfNewIO *new_io;
-	JpfNetIO *io;
+	NmpNewIO *new_io;
+	NmpNetIO *io;
 
-	g_list_foreach(l->list, jpf_mods_io_1sec_elapsed, NULL);
+	g_list_foreach(l->list, nmp_mods_io_1sec_elapsed, NULL);
 
 	for (;;)
 	{
 		list = g_list_find_custom(l->list, l,
-			jpf_mods_io_list_timeout);
+			nmp_mods_io_list_timeout);
 
 		if (!list)
 			break;
 
-		new_io = (JpfNewIO*)list->data;
+		new_io = (NmpNewIO*)list->data;
 		l->list = g_list_delete_link(l->list, list);
 
 		g_mutex_unlock(l->lock);
 
 		io = new_io->io;
-		jpf_net_unref_io(io);	/* release list ownership */
-		nmp_mod_acc_release_io((JpfModAccess*)l->owner, io);
+		nmp_net_unref_io(io);	/* release list ownership */
+		nmp_mod_acc_release_io((NmpModAccess*)l->owner, io);
 
 		g_free(new_io);
 
@@ -97,28 +97,28 @@ __jpf_mods_io_list_timer(JpfNewIOList *l)
 
 
 static gboolean
-jpf_mods_io_list_timer(gpointer user_data)
+nmp_mods_io_list_timer(gpointer user_data)
 {
-	JpfNewIOList *l;
+	NmpNewIOList *l;
 	G_ASSERT(user_data != NULL);
 
-	l = (JpfNewIOList*)user_data;
+	l = (NmpNewIOList*)user_data;
 
 	g_mutex_lock(l->lock);
-	__jpf_mods_io_list_timer(l);
+	__nmp_mods_io_list_timer(l);
 	g_mutex_unlock(l->lock);
 
 	return TRUE;
 }
 
 
-static __inline__ JpfNewIOList *
-jpf_mods_io_list_new(gpointer owner, guint timeout)
+static __inline__ NmpNewIOList *
+nmp_mods_io_list_new(gpointer owner, guint timeout)
 {
-	JpfNewIOList *l;
+	NmpNewIOList *l;
 	G_ASSERT(owner != NULL);
 
-	l = g_new0(JpfNewIOList, 1);
+	l = g_new0(NmpNewIOList, 1);
 	if (G_UNLIKELY(!l))
 		return NULL;
 
@@ -129,8 +129,8 @@ jpf_mods_io_list_new(gpointer owner, guint timeout)
 		return NULL;
 	}
 
-	l->timer_id = jpf_set_timer(1000,
-		jpf_mods_io_list_timer, l);
+	l->timer_id = nmp_set_timer(1000,
+		nmp_mods_io_list_timer, l);
 	if (G_UNLIKELY(!l->timer_id))
 	{
 		g_mutex_free(l->lock);
@@ -146,25 +146,25 @@ jpf_mods_io_list_new(gpointer owner, guint timeout)
 
 
 static void
-jpf_mods_io_list_release(JpfNewIOList *list)
+nmp_mods_io_list_release(NmpNewIOList *list)
 {
 	FATAL_ERROR_EXIT;
 }
 
 
 static __inline__ gint
-__jpf_mods_io_list_insert(JpfNewIOList *l, JpfNetIO *io)
+__nmp_mods_io_list_insert(NmpNewIOList *l, NmpNetIO *io)
 {
-	JpfNewIO *new_io;
+	NmpNewIO *new_io;
 	GList *list;
 
 	list = g_list_find_custom(l->list, io,
-		jpf_mods_io_equal_fn);
+		nmp_mods_io_equal_fn);
 
 	if (G_UNLIKELY(list))
 		return -E_NEWIOEXIST;
 
-	new_io = g_new0(JpfNewIO, 1);
+	new_io = g_new0(NmpNewIO, 1);
 	if (G_UNLIKELY(!new_io))
 		return -E_NOMEM;
 
@@ -173,20 +173,20 @@ __jpf_mods_io_list_insert(JpfNewIOList *l, JpfNetIO *io)
 	new_io->elapse = 0;
 
 	l->list = g_list_append(l->list, new_io);
-	jpf_net_ref_io(io);
+	nmp_net_ref_io(io);
 
 	return 0;
 }
 
 
 gint
-__jpf_mods_io_list_delete(JpfNewIOList *l, JpfNetIO *io)
+__nmp_mods_io_list_delete(NmpNewIOList *l, NmpNetIO *io)
 {
 	GList *list;
-	JpfNewIO *new_io;
+	NmpNewIO *new_io;
 
 	list = g_list_find_custom(l->list, io,
-		jpf_mods_io_equal_fn);
+		nmp_mods_io_equal_fn);
 
 	if (G_UNLIKELY(!list))
 		return -E_NOSUCHIO;
@@ -196,20 +196,20 @@ __jpf_mods_io_list_delete(JpfNewIOList *l, JpfNetIO *io)
 
 	l->list = g_list_delete_link(l->list, list);
 	g_free(new_io);
-	jpf_net_unref_io(io);
+	nmp_net_unref_io(io);
 
 	return 0;
 }
 
 
 gint
-jpf_mods_io_list_insert(JpfNewIOList *l, JpfNetIO *io)
+nmp_mods_io_list_insert(NmpNewIOList *l, NmpNetIO *io)
 {
 	gint ret;
 	G_ASSERT(l != NULL);
 
 	g_mutex_lock(l->lock);
-	ret = __jpf_mods_io_list_insert(l, io);
+	ret = __nmp_mods_io_list_insert(l, io);
 	g_mutex_unlock(l->lock);
 
 	return ret;
@@ -217,27 +217,27 @@ jpf_mods_io_list_insert(JpfNewIOList *l, JpfNetIO *io)
 
 
 gint
-jpf_mods_io_list_delete(JpfNewIOList *l, JpfNetIO *io)
+nmp_mods_io_list_delete(NmpNewIOList *l, NmpNetIO *io)
 {
 	gint ret;
 	G_ASSERT(l != NULL);
 
 	g_mutex_lock(l->lock);
-	ret = __jpf_mods_io_list_delete(l, io);
+	ret = __nmp_mods_io_list_delete(l, io);
 	g_mutex_unlock(l->lock);
-printf("----------------jpf_mods_io_list_delete\n");
+printf("----------------nmp_mods_io_list_delete\n");
 	return ret;
 }
 
 
 gint
-jpf_mods_queue_cmd(GAsyncQueue *queue, JpfModCmd cmd,
-	gpointer priv, JpfCmdBlockPrivDes priv_des)
+nmp_mods_queue_cmd(GAsyncQueue *queue, NmpModCmd cmd,
+	gpointer priv, NmpCmdBlockPrivDes priv_des)
 {
-	JpfCmdBlock *c_b;
+	NmpCmdBlock *c_b;
 	G_ASSERT(queue != NULL);
 
-	c_b = g_new0(JpfCmdBlock, 1);
+	c_b = g_new0(NmpCmdBlock, 1);
 	if (G_UNLIKELY(!c_b))
 		return -E_NOMEM;
 
@@ -250,15 +250,15 @@ jpf_mods_queue_cmd(GAsyncQueue *queue, JpfModCmd cmd,
 }
 
 
-JpfCmdBlock *
-jpf_mods_pop_cmd(GAsyncQueue *queue)
+NmpCmdBlock *
+nmp_mods_pop_cmd(GAsyncQueue *queue)
 {
-	return (JpfCmdBlock*)g_async_queue_pop(queue);
+	return (NmpCmdBlock*)g_async_queue_pop(queue);
 }
 
 
 void
-jpf_mods_destroy_cmd(JpfCmdBlock *c_b)
+nmp_mods_destroy_cmd(NmpCmdBlock *c_b)
 {
 	G_ASSERT(c_b != NULL);
 
@@ -270,7 +270,7 @@ jpf_mods_destroy_cmd(JpfCmdBlock *c_b)
 
 
 guint
-jpf_mods_str_hash_pjw(const gchar *start, gsize len)
+nmp_mods_str_hash_pjw(const gchar *start, gsize len)
 {
 	guint g, h = 0;
 	const gchar *end;
@@ -293,14 +293,14 @@ jpf_mods_str_hash_pjw(const gchar *start, gsize len)
 
 
 static __inline__ void
-jpf_mods_base_obj_init(JpfGuestBase *base_obj, const gchar *id_str,
-	JpfGuestFin finalize, gpointer priv_data)
+nmp_mods_base_obj_init(NmpGuestBase *base_obj, const gchar *id_str,
+	NmpGuestFin finalize, gpointer priv_data)
 {
-	JpfID *id;
+	NmpID *id;
 
-	id = (JpfID*)base_obj;
+	id = (NmpID*)base_obj;
 	strncpy(id->id_value, id_str, MAX_ID_LEN - 1);
-	id->id_hash = jpf_mods_str_hash_pjw(
+	id->id_hash = nmp_mods_str_hash_pjw(
 		id->id_value,
 		strlen(id->id_value)
 	);
@@ -312,7 +312,7 @@ jpf_mods_base_obj_init(JpfGuestBase *base_obj, const gchar *id_str,
 
 
 void
-jpf_mods_guest_ref(JpfGuestBase *base_obj)
+nmp_mods_guest_ref(NmpGuestBase *base_obj)
 {
 	G_ASSERT(base_obj != NULL &&
 		g_atomic_int_get(&base_obj->ref_count) > 0);
@@ -322,7 +322,7 @@ jpf_mods_guest_ref(JpfGuestBase *base_obj)
 
 
 void
-jpf_mods_guest_unref(JpfGuestBase *base_obj)
+nmp_mods_guest_unref(NmpGuestBase *base_obj)
 {
 	gboolean is_zero;
 	G_ASSERT(base_obj != NULL &&
@@ -335,54 +335,54 @@ jpf_mods_guest_unref(JpfGuestBase *base_obj)
 			(*base_obj->finalize)(base_obj, base_obj->priv_data);
 
 		if (base_obj->io)
-			jpf_net_unref_io(base_obj->io);
+			nmp_net_unref_io(base_obj->io);
 
 		g_free(base_obj);
 	}
 }
 
 
-JpfGuestBase *
-jpf_mods_guest_new(gsize size, const gchar *id_str, JpfGuestFin finalize,
+NmpGuestBase *
+nmp_mods_guest_new(gsize size, const gchar *id_str, NmpGuestFin finalize,
 	gpointer priv_data)
 {
-	JpfGuestBase *base_obj;
-	G_ASSERT(size >= sizeof(JpfGuestBase) && id_str);
+	NmpGuestBase *base_obj;
+	G_ASSERT(size >= sizeof(NmpGuestBase) && id_str);
 
 	base_obj = g_malloc(size);
 	if (G_UNLIKELY(!base_obj))
 		return NULL;
 
 	memset(base_obj, 0, size);
-	jpf_mods_base_obj_init(base_obj, id_str, finalize, priv_data);
+	nmp_mods_base_obj_init(base_obj, id_str, finalize, priv_data);
 
 	return base_obj;
 }
 
 
 void
-jpf_mods_guest_attach_io(JpfGuestBase *guest, JpfNetIO *io)
+nmp_mods_guest_attach_io(NmpGuestBase *guest, NmpNetIO *io)
 {
 	G_ASSERT(guest != NULL && io != NULL);
 
 	BUG_ON(guest->io != NULL);
 
 	guest->io = io;
-	jpf_net_ref_io(io);
+	nmp_net_ref_io(io);
 }
 
 
 static gboolean
-jpf_mods_guest_io_equal(gpointer key, gpointer value, gpointer user_data)
+nmp_mods_guest_io_equal(gpointer key, gpointer value, gpointer user_data)
 {
 	G_ASSERT(value != NULL);
 
-	return ((JpfGuestBase*)value)->io == user_data;
+	return ((NmpGuestBase*)value)->io == user_data;
 }
 
 
 static gboolean
-jpf_mods_guest_base_equal(gpointer key, gpointer value, gpointer user_data)
+nmp_mods_guest_base_equal(gpointer key, gpointer value, gpointer user_data)
 {
 	G_ASSERT(value != NULL);
 
@@ -391,15 +391,15 @@ jpf_mods_guest_base_equal(gpointer key, gpointer value, gpointer user_data)
 
 
 static __inline__ gint
-__jpf_mods_container_del_guest_2(JpfGuestContainer *container,
-	JpfNetIO *io, JpfID *out)
+__nmp_mods_container_del_guest_2(NmpGuestContainer *container,
+	NmpNetIO *io, NmpID *out)
 {
 	gint n_del;
-	JpfGuestBase *base_obj;
+	NmpGuestBase *base_obj;
 
 	base_obj = g_hash_table_find(
 		container->guest_table,
-		jpf_mods_guest_io_equal,
+		nmp_mods_guest_io_equal,
 		io
 	);
 	if (!base_obj)
@@ -409,7 +409,7 @@ __jpf_mods_container_del_guest_2(JpfGuestContainer *container,
 
 	n_del = g_hash_table_foreach_remove(
 		container->guest_table,
-		jpf_mods_guest_io_equal,
+		nmp_mods_guest_io_equal,
 		io
 	);
 
@@ -420,14 +420,14 @@ __jpf_mods_container_del_guest_2(JpfGuestContainer *container,
 
 
 gint
-__jpf_mods_container_del_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest)
+__nmp_mods_container_del_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest)
 {
 	gint n_del;
 
 	n_del = g_hash_table_foreach_remove(
 		container->guest_table,
-		jpf_mods_guest_base_equal,
+		nmp_mods_guest_base_equal,
 		guest
 	);
 
@@ -438,14 +438,14 @@ __jpf_mods_container_del_guest(JpfGuestContainer *container,
 
 
 gint
-jpf_mods_container_del_guest_2(JpfGuestContainer *container,
-	JpfNetIO *io, JpfID *out)
+nmp_mods_container_del_guest_2(NmpGuestContainer *container,
+	NmpNetIO *io, NmpID *out)
 {
 	gint ret;
 	G_ASSERT(container != NULL && io != NULL && out != NULL);
 
 	g_mutex_lock(container->table_lock);
-	ret = __jpf_mods_container_del_guest_2(container, io, out);
+	ret = __nmp_mods_container_del_guest_2(container, io, out);
 	g_mutex_unlock(container->table_lock);
 
 	return ret;
@@ -453,14 +453,14 @@ jpf_mods_container_del_guest_2(JpfGuestContainer *container,
 
 
 gint
-jpf_mods_container_del_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest)
+nmp_mods_container_del_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest)
 {
 	gint ret;
 	G_ASSERT(container != NULL && guest != NULL);
 
 	g_mutex_lock(container->table_lock);
-	ret = __jpf_mods_container_del_guest(container, guest);
+	ret = __nmp_mods_container_del_guest(container, guest);
 	g_mutex_unlock(container->table_lock);
 
 	return ret;
@@ -468,11 +468,11 @@ jpf_mods_container_del_guest(JpfGuestContainer *container,
 
 
 static __inline__ gint
-__jpf_mods_container_add_guest(JpfGuestContainer *container,
-	JpfGuestBase *base_obj, JpfID *conflict)
+__nmp_mods_container_add_guest(NmpGuestContainer *container,
+	NmpGuestBase *base_obj, NmpID *conflict)
 {
 	gint ret;
-	JpfGuestBase *old;
+	NmpGuestBase *old;
 
 	old = g_hash_table_lookup(container->guest_table,
 		base_obj);
@@ -481,30 +481,30 @@ __jpf_mods_container_add_guest(JpfGuestContainer *container,
 		if (old->io == base_obj->io)
 			return -E_GUESTREOL;
 
-		jpf_print(
-			"<JpfGuestContainer> guest id:%s exists!",
+		nmp_print(
+			"<NmpGuestContainer> guest id:%s exists!",
 			ID_OF_GUEST(base_obj)
 		);
 		return -E_GUESTIDEXIST;
 	}
 
-	if (!__jpf_mods_container_del_guest_2(container,
+	if (!__nmp_mods_container_del_guest_2(container,
 		base_obj->io, conflict))
 	{
-		jpf_print(
-			"<JpfGuestContainer> new guest-%s and guest-%s use "
+		nmp_print(
+			"<NmpGuestContainer> new guest-%s and guest-%s use "
 			"the same io!",
 			ID_OF_GUEST(base_obj), ID_STR(conflict)
 		);
 		return -E_GUESTIOCFLT;
 	}
 
-	ret = jpf_mods_io_list_delete(container->unrecognized_list,
+	ret = nmp_mods_io_list_delete(container->unrecognized_list,
 		base_obj->io);
 	if (G_UNLIKELY(ret))
 	{
-		jpf_print(
-			"<JpfGuestContainer> io not found in unrecognized "
+		nmp_print(
+			"<NmpGuestContainer> io not found in unrecognized "
 			"io list, add guest:%s failed!",
 			ID_OF_GUEST(base_obj)
 		);
@@ -515,15 +515,15 @@ __jpf_mods_container_add_guest(JpfGuestContainer *container,
 		base_obj);
 
 	base_obj->container = container;
-	jpf_mods_guest_ref(base_obj);
+	nmp_mods_guest_ref(base_obj);
 
 	return 0;
 }
 
 
 gint
-jpf_mods_container_add_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest, JpfID *conflict)
+nmp_mods_container_add_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest, NmpID *conflict)
 {
 	gint ret;
 	G_ASSERT(container != NULL && guest != NULL
@@ -533,12 +533,12 @@ jpf_mods_container_add_guest(JpfGuestContainer *container,
 	BUG_ON(guest->container);
 
 	g_mutex_lock(container->table_lock);
-	ret = __jpf_mods_container_add_guest(container,
+	ret = __nmp_mods_container_add_guest(container,
 		guest, conflict);
 	if (ret)
 	{
 		if (ret != -E_NOSUCHIO && ret != -E_GUESTREOL)
-			jpf_mods_io_list_delete(
+			nmp_mods_io_list_delete(
 				container->unrecognized_list,
 				guest->io
 			);
@@ -550,67 +550,67 @@ jpf_mods_container_add_guest(JpfGuestContainer *container,
 
 
 static guint
-jpf_mods_guest_hash_fn(gconstpointer key)
+nmp_mods_guest_hash_fn(gconstpointer key)
 {
-	JpfID *id;
+	NmpID *id;
 	G_ASSERT(key != NULL);
 
-	id = (JpfID*)key;
+	id = (NmpID*)key;
 
 	return id->id_hash;
 }
 
 
 static gboolean
-jpf_mods_guest_key_equal(gconstpointer a, gconstpointer b)
+nmp_mods_guest_key_equal(gconstpointer a, gconstpointer b)
 {
-	JpfID *id_a, *id_b;
+	NmpID *id_a, *id_b;
 
-	id_a = (JpfID*)a;
-	id_b = (JpfID*)b;
+	id_a = (NmpID*)a;
+	id_b = (NmpID*)b;
 
 	return !strcmp(id_a->id_value, id_b->id_value);
 }
 
 
 static void
-jpf_mods_guest_value_destroy(gpointer data)
+nmp_mods_guest_value_destroy(gpointer data)
 {
-	JpfGuestBase *base_obj;
+	NmpGuestBase *base_obj;
 	G_ASSERT(data != NULL);
 
-	base_obj = (JpfGuestBase*)data;
+	base_obj = (NmpGuestBase*)data;
 
 	nmp_mod_acc_release_io(
-		(JpfModAccess*)base_obj->container->owner,
+		(NmpModAccess*)base_obj->container->owner,
 		base_obj->io
 	);
 
-	jpf_mods_guest_unref(base_obj);
+	nmp_mods_guest_unref(base_obj);
 
 
 }
 
 
-JpfGuestContainer *
-jpf_mods_container_new(gpointer owner,  guint timeout)
+NmpGuestContainer *
+nmp_mods_container_new(gpointer owner,  guint timeout)
 {
-	JpfGuestContainer *container;
+	NmpGuestContainer *container;
 	G_ASSERT(owner != NULL);
 
-	container = g_new0(JpfGuestContainer, 1);
+	container = g_new0(NmpGuestContainer, 1);
 	if (G_UNLIKELY(!container))
 	{
-		jpf_warning("<JpfGuestContainer> new failed!");
+		nmp_warning("<NmpGuestContainer> new failed!");
 		return NULL;
 	}
 
-	container->unrecognized_list = jpf_mods_io_list_new(
+	container->unrecognized_list = nmp_mods_io_list_new(
 		owner, timeout);
 	if (G_UNLIKELY(!container->unrecognized_list))
 	{
-		jpf_warning(
-			"<JpfGuestContainer> alloc temp list failed!"
+		nmp_warning(
+			"<NmpGuestContainer> alloc temp list failed!"
 		);
 		goto alloc_temp_list_err;
 	}
@@ -618,22 +618,22 @@ jpf_mods_container_new(gpointer owner,  guint timeout)
 	container->cmd_queue = g_async_queue_new();
 	if (G_UNLIKELY(!container->cmd_queue))
 	{
-		jpf_warning(
-			"<JpfGuestContainer> alloc cmd queue failed!"
+		nmp_warning(
+			"<NmpGuestContainer> alloc cmd queue failed!"
 		);
 		goto alloc_cmd_queue_err;
 	}
 
 	container->guest_table = g_hash_table_new_full(
-		jpf_mods_guest_hash_fn,
-		jpf_mods_guest_key_equal,
+		nmp_mods_guest_hash_fn,
+		nmp_mods_guest_key_equal,
 		NULL,
-		jpf_mods_guest_value_destroy
+		nmp_mods_guest_value_destroy
 	);
 	if (G_UNLIKELY(!container->guest_table))
 	{
-		jpf_warning(
-			"<JpfGuestContainer> alloc guest hash table failed!"
+		nmp_warning(
+			"<NmpGuestContainer> alloc guest hash table failed!"
 		);
 		goto alloc_hash_table_err;
 	}
@@ -641,22 +641,22 @@ jpf_mods_container_new(gpointer owner,  guint timeout)
 	container->table_lock = g_mutex_new();
 	if (G_UNLIKELY(!container->table_lock))
 	{
-		jpf_warning(
-			"<JpfGuestContainer> alloc table lock failed!"
+		nmp_warning(
+			"<NmpGuestContainer> alloc table lock failed!"
 		);
 		goto alloc_table_lock_err;
 	}
 
 	container->container_manager = g_thread_create(
-        jpf_mods_cmd_executer,
+        nmp_mods_cmd_executer,
         container,
         FALSE,
         NULL
     );
     if (G_UNLIKELY(!container->container_manager))
     {
-    	jpf_warning(
-    		"<JpfGuestContainer> alloc manager failed!"
+    	nmp_warning(
+    		"<NmpGuestContainer> alloc manager failed!"
     	);
     	goto alloc_manager_err;
     }
@@ -674,7 +674,7 @@ alloc_hash_table_err:
 	g_async_queue_unref(container->cmd_queue);
 
 alloc_cmd_queue_err:
-	jpf_mods_io_list_release(container->unrecognized_list);
+	nmp_mods_io_list_release(container->unrecognized_list);
 
 alloc_temp_list_err:
 	g_free(container);
@@ -684,31 +684,31 @@ alloc_temp_list_err:
 
 
 static __inline__ void
-jpf_mods_container_notify_remove(JpfGuestContainer *container,
-	JpfNetIO *io)
+nmp_mods_container_notify_remove(NmpGuestContainer *container,
+	NmpNetIO *io)
 {
 	gint ret;
 	G_ASSERT(container != NULL && io != NULL);
 
-	ret = jpf_mods_queue_cmd(container->cmd_queue,
+	ret = nmp_mods_queue_cmd(container->cmd_queue,
 		MOD_CMD_DESTROY_ENT, io, NULL);
 
 	if (G_UNLIKELY(ret))
-		jpf_warning("<JpfGuestContainer> queue cmd failed!");
+		nmp_warning("<NmpGuestContainer> queue cmd failed!");
 }
 
 
 gint
-nmp_mod_container_add_io(JpfGuestContainer *container, JpfNetIO *io)
+nmp_mod_container_add_io(NmpGuestContainer *container, NmpNetIO *io)
 {
 	gint err;
 	G_ASSERT(container != NULL && io != NULL);
 
-	err = jpf_mods_io_list_insert(container->unrecognized_list, io);
+	err = nmp_mods_io_list_insert(container->unrecognized_list, io);
 	if (err)
 	{
-		jpf_error(
-			"<JpfGuestContainer> insert io to temp list err: %d!",
+		nmp_error(
+			"<NmpGuestContainer> insert io to temp list err: %d!",
 			err
 		);
 		return err;
@@ -719,51 +719,51 @@ nmp_mod_container_add_io(JpfGuestContainer *container, JpfNetIO *io)
 
 
 gint
-nmp_mod_container_del_io(JpfGuestContainer *container, JpfNetIO *io)
+nmp_mod_container_del_io(NmpGuestContainer *container, NmpNetIO *io)
 {
 	gint ret;
 	G_ASSERT(container != NULL && io != NULL);
 
-	ret = jpf_mods_io_list_delete(container->unrecognized_list, io);
+	ret = nmp_mods_io_list_delete(container->unrecognized_list, io);
 	if (G_UNLIKELY(!ret))
 		return ret;
 
-	jpf_mods_container_notify_remove(container, io);
+	nmp_mods_container_notify_remove(container, io);
 
 	return -E_INPROGRESS;
 }
 
 
 
-static __inline__ JpfGuestBase *
-__jpf_mods_container_get_guest(JpfGuestContainer *container,
-	JpfNetIO *io)
+static __inline__ NmpGuestBase *
+__nmp_mods_container_get_guest(NmpGuestContainer *container,
+	NmpNetIO *io)
 {
-	JpfGuestBase *base_obj;
+	NmpGuestBase *base_obj;
 
 	base_obj = g_hash_table_find(
 		container->guest_table,
-		jpf_mods_guest_io_equal,
+		nmp_mods_guest_io_equal,
 		io
 	);
 
 	if (base_obj)
-		jpf_mods_guest_ref(base_obj);
+		nmp_mods_guest_ref(base_obj);
 
 	return base_obj;
 }
 
 
-static __inline__ JpfGuestBase *
-__jpf_mods_container_get_guest_2(JpfGuestContainer *container,
+static __inline__ NmpGuestBase *
+__nmp_mods_container_get_guest_2(NmpGuestContainer *container,
 	const gchar *id_str)
 {
-	JpfID id;
-	JpfGuestBase *base_obj;
+	NmpID id;
+	NmpGuestBase *base_obj;
 
 	memset(&id, 0, sizeof(id));
 	strncpy(id.id_value, id_str, MAX_ID_LEN - 1);
-	id.id_hash = jpf_mods_str_hash_pjw(
+	id.id_hash = nmp_mods_str_hash_pjw(
 		id.id_value,
 		strlen(id.id_value)
 	);
@@ -774,36 +774,36 @@ __jpf_mods_container_get_guest_2(JpfGuestContainer *container,
 	);
 
 	if (base_obj)
-		jpf_mods_guest_ref(base_obj);
+		nmp_mods_guest_ref(base_obj);
 
 	return base_obj;
 }
 
 
-JpfGuestBase *
-jpf_mods_container_get_guest(JpfGuestContainer *container,
-	JpfNetIO *io)
+NmpGuestBase *
+nmp_mods_container_get_guest(NmpGuestContainer *container,
+	NmpNetIO *io)
 {
-	JpfGuestBase *base_obj;
+	NmpGuestBase *base_obj;
 	G_ASSERT(container != NULL && io != NULL);
 
 	g_mutex_lock(container->table_lock);
-	base_obj = __jpf_mods_container_get_guest(container, io);
+	base_obj = __nmp_mods_container_get_guest(container, io);
 	g_mutex_unlock(container->table_lock);
 
 	return base_obj;
 }
 
 
-JpfGuestBase *
-jpf_mods_container_get_guest_2(JpfGuestContainer *container,
+NmpGuestBase *
+nmp_mods_container_get_guest_2(NmpGuestContainer *container,
 	const gchar *id_str)
 {
-	JpfGuestBase *base_obj;
+	NmpGuestBase *base_obj;
 	G_ASSERT(container != NULL && id_str != NULL);
 
 	g_mutex_lock(container->table_lock);
-	base_obj = __jpf_mods_container_get_guest_2(container, id_str);
+	base_obj = __nmp_mods_container_get_guest_2(container, id_str);
 	g_mutex_unlock(container->table_lock);
 
 	return base_obj;
@@ -811,17 +811,17 @@ jpf_mods_container_get_guest_2(JpfGuestContainer *container,
 
 
 void
-jpf_mods_container_put_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest)
+nmp_mods_container_put_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest)
 {
 	G_ASSERT(container != NULL && guest != NULL);
 
-	jpf_mods_guest_unref(guest);
+	nmp_mods_guest_unref(guest);
 }
 
 
 gint
-jpf_mods_container_guest_counts(JpfGuestContainer *container)
+nmp_mods_container_guest_counts(NmpGuestContainer *container)
 {
 	G_ASSERT(container != NULL);
 
@@ -830,32 +830,32 @@ jpf_mods_container_guest_counts(JpfGuestContainer *container)
 
 
 static gpointer
-jpf_mods_cmd_executer(gpointer user_data)
+nmp_mods_cmd_executer(gpointer user_data)
 {
-	JpfGuestContainer *container;
-	JpfCmdBlock *c_b;
-	JpfID id;
+	NmpGuestContainer *container;
+	NmpCmdBlock *c_b;
+	NmpID id;
 	gint ret;
 
-	container = (JpfGuestContainer*)user_data;
+	container = (NmpGuestContainer*)user_data;
 
 	for (;;)
 	{
-		c_b = jpf_mods_pop_cmd(container->cmd_queue);
+		c_b = nmp_mods_pop_cmd(container->cmd_queue);
 		switch (c_b->cmd)
 		{
 		case MOD_CMD_DESTROY_ENT:
-			ret = jpf_mods_container_del_guest_2(container,
-				(JpfNetIO*)c_b->priv, &id);
+			ret = nmp_mods_container_del_guest_2(container,
+				(NmpNetIO*)c_b->priv, &id);
 			if (G_UNLIKELY(ret))
-				jpf_warning(
-					"<JpfGuestContainer> can't find guest with io=%p!",
+				nmp_warning(
+					"<NmpGuestContainer> can't find guest with io=%p!",
 					c_b->priv
 				);
 			else
 			{
-				jpf_print(
-					"<JpfGuestContainer> guest-%s offline!",
+				nmp_print(
+					"<NmpGuestContainer> guest-%s offline!",
 					id.id_value
 				);
 			}
@@ -866,11 +866,11 @@ jpf_mods_cmd_executer(gpointer user_data)
 			break;
 
 		default:
-			jpf_warning("<JpfGuestContainer> unrecognized mod cmd!");
+			nmp_warning("<NmpGuestContainer> unrecognized mod cmd!");
 			break;
 		}
 
-		jpf_mods_destroy_cmd(c_b);
+		nmp_mods_destroy_cmd(c_b);
 	}
 
 	return NULL;
@@ -883,8 +883,8 @@ nmp_cms_mod_deliver_msg(NmpAppObj *self, gint dst, gint msg_id,
 {
 	NmpSysMsg *msg;
 
-	msg = jpf_sysmsg_new(msg_id, parm, size, ++msg_seq_generator,
-		(JpfMsgPrivDes)destroy);
+	msg = nmp_sysmsg_new(msg_id, parm, size, ++msg_seq_generator,
+		(NmpMsgPrivDes)destroy);
 	if (G_UNLIKELY(!msg))
 		return -ENOMEM;
 
@@ -900,7 +900,7 @@ nmp_cms_mod_deliver_msg_2(NmpAppObj *self, gint dst, gint msg_id,
 {
 	NmpSysMsg *msg;
 
-	msg = jpf_sysmsg_new_2(msg_id, parm, size, ++msg_seq_generator);
+	msg = nmp_sysmsg_new_2(msg_id, parm, size, ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -ENOMEM;
 
@@ -914,7 +914,7 @@ nmp_cms_mod_cpy_msg(NmpAppObj *app_obj,NmpSysMsg *msg,  gint dst)
 {
 	NmpSysMsg *cpy_msg;
 
-	cpy_msg = jpf_sysmsg_copy_one(msg);
+	cpy_msg = nmp_sysmsg_copy_one(msg);
 	if (G_UNLIKELY(!cpy_msg))
 		return -ENOMEM;
 
@@ -926,39 +926,39 @@ nmp_cms_mod_cpy_msg(NmpAppObj *app_obj,NmpSysMsg *msg,  gint dst)
 
 
 static void
-jpf_mods_visit_func(gpointer key, gpointer value, gpointer user_data)
+nmp_mods_visit_func(gpointer key, gpointer value, gpointer user_data)
 {
-	JpfVisitBlock *pvb = (JpfVisitBlock*)user_data;
+	NmpVisitBlock *pvb = (NmpVisitBlock*)user_data;
 	if (pvb->func)
 	{
-		(*pvb->func)((JpfGuestBase*)value, pvb->data);
+		(*pvb->func)((NmpGuestBase*)value, pvb->data);
 	}
 }
 
 
 static __inline__ void
-__jpf_mods_container_do_for_each(JpfGuestContainer *container,
-	JpfGuestVisit func, gpointer user_data)
+__nmp_mods_container_do_for_each(NmpGuestContainer *container,
+	NmpGuestVisit func, gpointer user_data)
 {
-	JpfVisitBlock vb;
+	NmpVisitBlock vb;
 	vb.func = func;
 	vb.data = user_data;
 
 	g_hash_table_foreach(
 		container->guest_table,
-		jpf_mods_visit_func,
+		nmp_mods_visit_func,
 		&vb
 	);
 }
 
 void
-jpf_mods_container_do_for_each(JpfGuestContainer *container,
-	JpfGuestVisit func, gpointer user_data)
+nmp_mods_container_do_for_each(NmpGuestContainer *container,
+	NmpGuestVisit func, gpointer user_data)
 {
 	G_ASSERT(container != NULL && func != NULL);
 
 	g_mutex_lock(container->table_lock);
-	__jpf_mods_container_do_for_each(container, func, user_data);
+	__nmp_mods_container_do_for_each(container, func, user_data);
 	g_mutex_unlock(container->table_lock);
 }
 

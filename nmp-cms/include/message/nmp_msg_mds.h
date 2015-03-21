@@ -5,18 +5,18 @@
 #include "nmp_list_head.h"
 
 
-typedef struct _JpfMdsRegister JpfMdsRegister;
-struct _JpfMdsRegister
+typedef struct _NmpMdsRegister NmpMdsRegister;
+struct _NmpMdsRegister
 {
     gchar mds_id[MDS_ID_LEN];
     gchar cms_ip[MAX_IP_LEN];
     gchar mds_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfMdsRegisterRes JpfMdsRegisterRes;
-struct _JpfMdsRegisterRes
+typedef struct _NmpMdsRegisterRes NmpMdsRegisterRes;
+struct _NmpMdsRegisterRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    mds_id[MDS_ID_LEN];
     gint                       pu_port;
@@ -25,18 +25,18 @@ struct _JpfMdsRegisterRes
     gint                       get_ip_enable;
 };
 
-typedef struct _JpfMdsHeart JpfMdsHeart;
-struct _JpfMdsHeart
+typedef struct _NmpMdsHeart NmpMdsHeart;
+struct _NmpMdsHeart
 {
     gchar	mds_id[MDS_ID_LEN];
     gchar cms_ip[MAX_IP_LEN];
     gchar mds_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfMdsHeartRes JpfMdsHeartRes;
-struct _JpfMdsHeartRes
+typedef struct _NmpMdsHeartRes NmpMdsHeartRes;
+struct _NmpMdsHeartRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar	mds_id[MDS_ID_LEN];
     gchar			server_time[TIME_INFO_LEN];
 };

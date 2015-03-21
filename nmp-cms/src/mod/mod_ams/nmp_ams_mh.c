@@ -16,9 +16,9 @@ USING_MSG_ID_MAP(cms);
 gint
 nmp_mod_ams_action_handler(gint dst, gint msg_type, void *parm, guint size)
 {
-	jpf_warning("<JpfAmsMh> nmp_mod_ams_action_handler begin...");
+	nmp_warning("<NmpAmsMh> nmp_mod_ams_action_handler begin...");
 	gint ret;
-	NmpAppObj *self = (NmpAppObj *)jpf_get_mod_ams();
+	NmpAppObj *self = (NmpAppObj *)nmp_get_mod_ams();
 
 	ret = nmp_cms_mod_deliver_msg_2(self, dst, msg_type,
 		parm, size);
@@ -28,11 +28,11 @@ nmp_mod_ams_action_handler(gint dst, gint msg_type, void *parm, guint size)
 
 
 static __inline__ gint
-nmp_mod_ams_register(JpfModAms *self, JpfNetIO *io,  NmpMsgID msg_id,
-    JpfAmsRegister *req, JpfAmsRegisterRes *res)
+nmp_mod_ams_register(NmpModAms *self, NmpNetIO *io,  NmpMsgID msg_id,
+    NmpAmsRegister *req, NmpAmsRegisterRes *res)
 {
     gint ret;
-    JpfID conflict;
+    NmpID conflict;
 
     G_ASSERT(self != NULL && io != NULL && req != NULL && res != NULL);
 
@@ -41,7 +41,7 @@ nmp_mod_ams_register(JpfModAms *self, JpfNetIO *io,  NmpMsgID msg_id,
         return ret;
 
     ret = nmp_mod_ams_sync_req(self, msg_id, req,
-         sizeof(JpfAmsRegister), res, sizeof(JpfAmsRegisterRes));
+         sizeof(NmpAmsRegister), res, sizeof(NmpAmsRegisterRes));
 
     return ret;
 }
@@ -50,17 +50,17 @@ nmp_mod_ams_register(JpfModAms *self, JpfNetIO *io,  NmpMsgID msg_id,
 NmpMsgFunRet
 nmp_mod_ams_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModAms *self;
-    JpfNetIO *io;
-    JpfAmsRegister *req_info;
-    JpfAmsRegisterRes res_info;
+    NmpModAms *self;
+    NmpNetIO *io;
+    NmpAmsRegister *req_info;
+    NmpAmsRegisterRes res_info;
     NmpMsgID msg_id;
-    JpfGuestBase *ams_base;
-    JpfAms *ams;
-    JpfMsgAmsOnlineChange notify_info;
+    NmpGuestBase *ams_base;
+    NmpAms *ams;
+    NmpMsgAmsOnlineChange notify_info;
     gint ret;
 
-    self = (JpfModAms*)app_obj;
+    self = (NmpModAms*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -76,43 +76,43 @@ nmp_mod_ams_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     ret = nmp_mod_ams_register(self, io, msg_id, req_info, &res_info);
     if (ret)
     {
-        jpf_print(
-            "<JpfModAms> ams:%s register failed, err:%d",
+        nmp_print(
+            "<NmpModAms> ams:%s register failed, err:%d",
             req_info->ams_id, -ret
         );
 
         SET_CODE(&res_info, -ret);
         MSG_SET_RESPONSE(msg);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_acc_release_io((NmpModAccess*)self, io);
         nmp_mod_container_del_io(self->container, io);
 
         return MFR_ACCEPTED;
     }
 
-    ams_base = jpf_mods_container_get_guest(self->container, io);
+    ams_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!ams_base))
     {
         ret = -E_NOSUCHGUEST;
-	 jpf_warning("<JpfModAms> Can't find ams:'%s' in container, io timeout?", notify_info.ams_id);
+	 nmp_warning("<NmpModAms> Can't find ams:'%s' in container, io timeout?", notify_info.ams_id);
     }
     else
    {
-        ams = (JpfAms *)ams_base;
+        ams = (NmpAms *)ams_base;
         ams->ams_state = STAT_AMS_ONLINE;
-        jpf_mods_container_put_guest(self->container, ams_base);
+        nmp_mods_container_put_guest(self->container, ams_base);
 
-         jpf_print(
-             "<JpfModAms> ams:%s register ok",
+         nmp_print(
+             "<NmpModAms> ams:%s register ok",
              req_info->ams_id
          );
 
-        strncpy(res_info.domain_id, jpf_get_local_domain_id(), DOMAIN_ID_LEN - 1);
+        strncpy(res_info.domain_id, nmp_get_local_domain_id(), DOMAIN_ID_LEN - 1);
 
-        jpf_check_keepalive_time(&res_info.keep_alive_time);
-        jpf_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
+        nmp_check_keepalive_time(&res_info.keep_alive_time);
+        nmp_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
 
         notify_info.new_status = 1;
         nmp_mod_ams_change_ams_online_status(app_obj, notify_info);
@@ -120,7 +120,7 @@ nmp_mod_ams_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     SET_CODE(&res_info, -ret);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 
 }
@@ -129,15 +129,15 @@ nmp_mod_ams_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ams_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModAms *self;
-    JpfNetIO *io;
-    JpfGuestBase *ams_base;
-    JpfAmsHeart *req_info;
-    JpfAmsHeartRes res_info;
+    NmpModAms *self;
+    NmpNetIO *io;
+    NmpGuestBase *ams_base;
+    NmpAmsHeart *req_info;
+    NmpAmsHeartRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModAms*)app_obj;
+    self = (NmpModAms*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -146,40 +146,40 @@ nmp_mod_ams_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    ams_base = jpf_mods_container_get_guest_2(self->container, req_info->ams_id);
+    ams_base = nmp_mods_container_get_guest_2(self->container, req_info->ams_id);
     if (G_UNLIKELY(!ams_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModAms> amsId:%s No such guest.", req_info->ams_id);
+        nmp_warning("<NmpModAms> amsId:%s No such guest.", req_info->ams_id);
     }
     else
     {
-        jpf_get_utc_time(res_info.server_time);
-        jpf_mods_container_put_guest(self->container, ams_base);
+        nmp_get_utc_time(res_info.server_time);
+        nmp_mods_container_put_guest(self->container, ams_base);
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
 
 
 NmpMsgFunRet
-nmp_mod_ams_backward(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str)
+nmp_mod_ams_backward(NmpModAms *self, NmpSysMsg *msg, const gchar *id_str)
 {
-    JpfGuestBase *ams_base;
-    JpfNetIO *io;
+    NmpGuestBase *ams_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    ams_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    ams_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!ams_base))
     {
-        jpf_warning("<JpfModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
+        nmp_warning("<NmpModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -188,29 +188,29 @@ nmp_mod_ams_backward(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str)
     BUG_ON(!io);
 
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, ams_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, ams_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
 NmpMsgFunRet
-nmp_mod_ams_backward_2(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
+nmp_mod_ams_backward_2(NmpModAms *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
 {
-    JpfGuestBase *ams_base;
-    JpfNetIO *io;
+    NmpGuestBase *ams_base;
+    NmpNetIO *io;
     gint msg_id;
-    JpfErrRes      code;
+    NmpErrRes      code;
 
     memset(&code, 0, sizeof(code));
     msg_id = MSG_GETID(msg);
-    ams_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    ams_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!ams_base))
     {
-        jpf_warning("<JpfModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
+        nmp_warning("<NmpModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        //jpf_sysmsg_destroy(msg);
+        //nmp_sysmsg_destroy(msg);
 
 
         SET_CODE(&code.code, E_NOSUCHGUEST);
@@ -218,7 +218,7 @@ nmp_mod_ams_backward_2(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str, con
             memcpy(code.session, session_id, USER_NAME_LEN - 1);
 
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_BSS);
-        jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+        nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
         MSG_SET_RESPONSE(msg);
         return MFR_DELIVER_BACK;
     }
@@ -226,14 +226,14 @@ nmp_mod_ams_backward_2(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str, con
     io = IO_OF_GUEST(ams_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, ams_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, ams_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
-static int jpf_get_week_time(JpfTime *jpf_time, char *time)
+static int nmp_get_week_time(NmpTime *nmp_time, char *time)
 {
 	struct tm cur_tm;
 	time_t cur_time;
@@ -247,16 +247,16 @@ static int jpf_get_week_time(JpfTime *jpf_time, char *time)
 	cur_time = mktime(&cur_tm);
 	localtime_r(&cur_time, &cur_tm);
 
-	jpf_time->day_of_week = cur_tm.tm_wday;
-	jpf_time->cur_time = cur_tm.tm_hour * 60 * 60 + cur_tm.tm_min * 60 + cur_tm.tm_sec;
+	nmp_time->day_of_week = cur_tm.tm_wday;
+	nmp_time->cur_time = cur_tm.tm_hour * 60 * 60 + cur_tm.tm_min * 60 + cur_tm.tm_sec;
 
 	return 0;
 }
 
-static int nmp_mod_ams_get_alarm_info(JpfAlarmInfo *alarm_info,
-	JpfSubmitAlarm *req_info)
+static int nmp_mod_ams_get_alarm_info(NmpAlarmInfo *alarm_info,
+	NmpSubmitAlarm *req_info)
 {
-	memset(alarm_info, 0, sizeof(JpfAlarmInfo));
+	memset(alarm_info, 0, sizeof(NmpAlarmInfo));
 
 	strncpy(alarm_info->alarm_guid.domain_id, req_info->domain_id,
 		DOMAIN_ID_LEN - 1);
@@ -265,41 +265,41 @@ static int nmp_mod_ams_get_alarm_info(JpfAlarmInfo *alarm_info,
 
 	if (strlen(req_info->alarm_time) == 0)
 	{
-		jpf_warning("<JpfAmsMh>error, alarm_time=%s.", req_info->alarm_time);
+		nmp_warning("<NmpAmsMh>error, alarm_time=%s.", req_info->alarm_time);
 		return -1;
 	}
 	strncpy(alarm_info->alarm_time, req_info->alarm_time, TIME_INFO_LEN - 1);
-	return jpf_get_week_time(&alarm_info->time, req_info->alarm_time);
+	return nmp_get_week_time(&alarm_info->time, req_info->alarm_time);
 }
 
 
 /*
  *	if return 0, destroy_msg need to be destroyed
  */
-gint jpf_ams_get_action_info_from_dbs(JpfMsgAmsGetActionInfoRes **res,
-	JpfAlarmInfo *alarm_info, NmpSysMsg **destroy_msg)
+gint nmp_ams_get_action_info_from_dbs(NmpMsgAmsGetActionInfoRes **res,
+	NmpAlarmInfo *alarm_info, NmpSysMsg **destroy_msg)
 {
-	JpfMsgAmsGetActionInfo req;
+	NmpMsgAmsGetActionInfo req;
 	NmpSysMsg *msg;
 	gint ret;
 
 	req.alarm_guid = alarm_info->alarm_guid;
-	msg = jpf_sysmsg_new_2(MSG_AMS_GET_ACTION_INFO, &req,
-		sizeof(JpfMsgAmsGetActionInfo), ++msg_seq_generator);
+	msg = nmp_sysmsg_new_2(MSG_AMS_GET_ACTION_INFO, &req,
+		sizeof(NmpMsgAmsGetActionInfo), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	ret = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_ams(), &msg);
+	ret = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_ams(), &msg);
 	if (G_UNLIKELY(ret))
 	{
-		jpf_warning("<JpfModAms> request action info failed!");
+		nmp_warning("<NmpModAms> request action info failed!");
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning("<JpfModAms> request action info timeout!");
+		nmp_warning("<NmpModAms> request action info timeout!");
 		return -E_TIMEOUT;
 	}
 
@@ -308,7 +308,7 @@ gint jpf_ams_get_action_info_from_dbs(JpfMsgAmsGetActionInfoRes **res,
 	if ((*res)->result < 0)
 	{
 		ret = -1;
-		jpf_warning("<JpfModAms> request action info, result < 0!");
+		nmp_warning("<NmpModAms> request action info, result < 0!");
 		goto end;
 	}
 
@@ -316,50 +316,50 @@ gint jpf_ams_get_action_info_from_dbs(JpfMsgAmsGetActionInfoRes **res,
 	return 0;
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return ret;
 }
 
 
-void nmp_mod_ams_do_alarm_action(JpfAlarmInfo *alarm_info)
+void nmp_mod_ams_do_alarm_action(NmpAlarmInfo *alarm_info)
 {
 	g_assert(alarm_info);
-	JpfMsgAmsGetActionInfoRes *res = NULL;
+	NmpMsgAmsGetActionInfoRes *res = NULL;
 	NmpSysMsg *msg = NULL;
 	gint ret;
 
-	ret = jpf_ams_find_gu_and_action(alarm_info);
+	ret = nmp_ams_find_gu_and_action(alarm_info);
 	if (ret == 0)	//success
 		return ;
 
-	ret = jpf_ams_get_action_info_from_dbs(&res, alarm_info, &msg);
+	ret = nmp_ams_get_action_info_from_dbs(&res, alarm_info, &msg);
 	if (ret != 0)	//failed
 		return ;
 
-	ret = jpf_ams_add_gu_action_info(&alarm_info->alarm_guid, res);
+	ret = nmp_ams_add_gu_action_info(&alarm_info->alarm_guid, res);
 	if (ret != 0)	//failed
 	{
-		jpf_warning("<JpfModAms>jpf_ams_add_gu_action_info failed!");
+		nmp_warning("<NmpModAms>nmp_ams_add_gu_action_info failed!");
 	}
 
 	if (msg)		//注意，res指向的为msg中的内存
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 
-	ret = jpf_ams_find_gu_and_action(alarm_info);
+	ret = nmp_ams_find_gu_and_action(alarm_info);
 	if (ret != 0)	//failed
 	{
-		jpf_warning("<JpfModAms>error:second find action failed!");
+		nmp_warning("<NmpModAms>error:second find action failed!");
 	}
 }
 
 
-void ams_alarm_info_print(JpfAlarmInfo *alarm_info)
+void ams_alarm_info_print(NmpAlarmInfo *alarm_info)
 {
-	jpf_print("<JpfAmsMh>alarm happen!");
-	jpf_print("<JpfAmsMh>alarm domain_id:%s.", alarm_info->alarm_guid.domain_id);
-	jpf_print("<JpfAmsMh>alarm guid:%s.", alarm_info->alarm_guid.guid);
-	jpf_print("<JpfAmsMh>alarm type:%d.", alarm_info->alarm_type);
-	jpf_print("<JpfAmsMh>alarm week:%d, time:%ld.", alarm_info->time.day_of_week,
+	nmp_print("<NmpAmsMh>alarm happen!");
+	nmp_print("<NmpAmsMh>alarm domain_id:%s.", alarm_info->alarm_guid.domain_id);
+	nmp_print("<NmpAmsMh>alarm guid:%s.", alarm_info->alarm_guid.guid);
+	nmp_print("<NmpAmsMh>alarm type:%d.", alarm_info->alarm_type);
+	nmp_print("<NmpAmsMh>alarm week:%d, time:%ld.", alarm_info->time.day_of_week,
 		alarm_info->time.cur_time);
 }
 
@@ -367,19 +367,19 @@ void ams_alarm_info_print(JpfAlarmInfo *alarm_info)
 NmpMsgFunRet
 nmp_mod_ams_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModAms *self;
-	JpfSubmitAlarm *req_info;
-	JpfAlarmInfo alarm_info;
+	NmpModAms *self;
+	NmpSubmitAlarm *req_info;
+	NmpAlarmInfo alarm_info;
 	gint ret = 0;
 
-	self = (JpfModAms*)app_obj;
+	self = (NmpModAms*)app_obj;
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
 	ret = nmp_mod_ams_get_alarm_info(&alarm_info, req_info);
 	if (ret < 0)
 	{
-		jpf_warning("<JpfModAms> get alarm info error.");
+		nmp_warning("<NmpModAms> get alarm info error.");
 	}
 	else
 	{
@@ -389,7 +389,7 @@ nmp_mod_ams_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		nmp_mod_ams_do_alarm_action(&alarm_info);
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 
 	return MFR_ACCEPTED;
 }
@@ -398,25 +398,25 @@ nmp_mod_ams_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ams_change_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModAms *self;
-	JpfShareGuid *req_info;
+	NmpModAms *self;
+	NmpShareGuid *req_info;
 	gint ret = 0;
 
-	self = (JpfModAms*)app_obj;
+	self = (NmpModAms*)app_obj;
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_ams_remove_alarm_node(req_info);
+	ret = nmp_ams_remove_alarm_node(req_info);
 	if (ret == 0)
 	{
-		jpf_print("<JpfAmsMh> jpf_ams_remove_alarm_node success");
+		nmp_print("<NmpAmsMh> nmp_ams_remove_alarm_node success");
 	}
 	else
 	{
-		jpf_print("<JpfAmsMh> jpf_ams_remove_alarm_node failed");
+		nmp_print("<NmpAmsMh> nmp_ams_remove_alarm_node failed");
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 
 	return MFR_ACCEPTED;
 }
@@ -425,25 +425,25 @@ nmp_mod_ams_change_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ams_del_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModAms *self;
-	JpfShareGuid *req_info;
+	NmpModAms *self;
+	NmpShareGuid *req_info;
 	gint ret = 0;
 
-	self = (JpfModAms*)app_obj;
+	self = (NmpModAms*)app_obj;
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_ams_remove_alarm_node(req_info);
+	ret = nmp_ams_remove_alarm_node(req_info);
 	if (ret == 0)
 	{
-		jpf_print("<JpfAmsMh> jpf_ams_remove_alarm_node success");
+		nmp_print("<NmpAmsMh> nmp_ams_remove_alarm_node success");
 	}
 	else
 	{
-		jpf_print("<JpfAmsMh> jpf_ams_remove_alarm_node failed");
+		nmp_print("<NmpAmsMh> nmp_ams_remove_alarm_node failed");
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 
 	return MFR_ACCEPTED;
 }
@@ -452,28 +452,28 @@ nmp_mod_ams_del_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ams_device_info_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModAms *self;
-	JpfGuestBase *ams_base;
+	NmpModAms *self;
+	NmpGuestBase *ams_base;
 	gint msg_id;
-	JpfAmsId *req_info = NULL;
+	NmpAmsId *req_info = NULL;
 
 	self = NMP_MODAMS(app_obj);
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
 	msg_id = MSG_GETID(msg);
-	ams_base = jpf_mods_container_get_guest_2(self->container, req_info->ams_id);
+	ams_base = nmp_mods_container_get_guest_2(self->container, req_info->ams_id);
 	if (G_UNLIKELY(!ams_base))
 	{
-		jpf_warning("<JpfModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
+		nmp_warning("<NmpModAms> deliver msg '%s' failed, AmsId:%s no such ams.",
 			MESSAGE_ID_TO_STR(cms, msg_id), req_info->ams_id);
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 
 		return MFR_ACCEPTED;
 	}
 
-	jpf_sysmsg_attach_io(msg, IO_OF_GUEST(ams_base));
-	jpf_mods_container_put_guest(self->container, ams_base);
+	nmp_sysmsg_attach_io(msg, IO_OF_GUEST(ams_base));
+	nmp_mods_container_put_guest(self->container, ams_base);
 
 	return MFR_DELIVER_AHEAD;
 }
@@ -483,16 +483,16 @@ NmpMsgFunRet
 nmp_mod_ams_get_device_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfModAms *self;
-	JpfNetIO *io;
-	JpfGuestBase *ams_base;
-	JpfAmsGetDeviceInfo *req_info;
-	JpfAmsGetDeviceInfoRes res_info;
+	NmpModAms *self;
+	NmpNetIO *io;
+	NmpGuestBase *ams_base;
+	NmpAmsGetDeviceInfo *req_info;
+	NmpAmsGetDeviceInfoRes res_info;
 	NmpMsgID msg_id;
 	gint ret = 0;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModAms*)app_obj;
+	self = (NmpModAms*)app_obj;
 	io = MSG_IO(msg);
 	BUG_ON(!io);
 
@@ -500,22 +500,22 @@ nmp_mod_ams_get_device_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ams_base = jpf_mods_container_get_guest_2(self->container, req_info->ams_id);
+	ams_base = nmp_mods_container_get_guest_2(self->container, req_info->ams_id);
 	if (G_UNLIKELY(!ams_base))
 	{
 		ret = -E_NOSUCHGUEST;
-		jpf_warning("<JpfModAms> amsId:%s No such guest.", req_info->ams_id);
+		nmp_warning("<NmpModAms> amsId:%s No such guest.", req_info->ams_id);
 	}
 	else
 	{
 		MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-		jpf_mods_container_put_guest(self->container, ams_base);
+		nmp_mods_container_put_guest(self->container, ams_base);
 		return MFR_DELIVER_AHEAD;
 	}
 
 	MSG_SET_RESPONSE(msg);
 	SET_CODE(&res_info, -ret);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	return MFR_DELIVER_BACK;
 }
@@ -524,10 +524,10 @@ nmp_mod_ams_get_device_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ams_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModAms *self;
-    JpfAmsGetDeviceInfoRes *res_info;
+    NmpModAms *self;
+    NmpAmsGetDeviceInfoRes *res_info;
 
-    self = (JpfModAms*)app_obj;
+    self = (NmpModAms*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -537,7 +537,7 @@ nmp_mod_ams_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 
 void
-nmp_mod_ams_register_msg_handler(JpfModAms *self)
+nmp_mod_ams_register_msg_handler(NmpModAms *self)
 {
     NmpAppMod *super_self = (NmpAppMod*)self;
 

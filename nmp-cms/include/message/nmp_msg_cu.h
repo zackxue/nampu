@@ -8,39 +8,39 @@
 #include "nmp_tw_interface.h"
 
 
-typedef struct _JpfCuExecuteRes JpfCuExecuteRes;
-struct _JpfCuExecuteRes
+typedef struct _NmpCuExecuteRes NmpCuExecuteRes;
+struct _NmpCuExecuteRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfCuLoginInfo JpfCuLoginInfo;
-struct _JpfCuLoginInfo
+typedef struct _NmpCuLoginInfo NmpCuLoginInfo;
+struct _NmpCuLoginInfo
 {
     gchar	username[USER_NAME_LEN];
     gchar	password[USER_PASSWD_LEN];
     gint     cu_version;
 };
 
-typedef struct _JpfCuHeart JpfCuHeart;
-struct _JpfCuHeart
+typedef struct _NmpCuHeart NmpCuHeart;
+struct _NmpCuHeart
 {
     gchar			session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfCuHeartResp JpfCuHeartResp;
-struct _JpfCuHeartResp
+typedef struct _NmpCuHeartResp NmpCuHeartResp;
+struct _NmpCuHeartResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			server_time[TIME_INFO_LEN];
 };
 
 
-typedef struct _JpfCuLoginResp JpfCuLoginResp;
-struct _JpfCuLoginResp
+typedef struct _NmpCuLoginResp NmpCuLoginResp;
+struct _NmpCuLoginResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			session[SESSION_ID_LEN];
     gchar			domain_name[DOMAIN_NAME_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
@@ -53,22 +53,22 @@ struct _JpfCuLoginResp
 };
 
 
-typedef struct _JpfForceUsrOffline JpfForceUsrOffline;
-struct _JpfForceUsrOffline
+typedef struct _NmpForceUsrOffline NmpForceUsrOffline;
+struct _NmpForceUsrOffline
 {
     gint	reason;
 };
 
-typedef struct _JpfCuReqArea JpfCuReqArea;
-struct _JpfCuReqArea
+typedef struct _NmpCuReqArea NmpCuReqArea;
+struct _NmpCuReqArea
 {
     gchar    username[USER_NAME_LEN];
     gchar    domain_id[DOMAIN_ID_LEN];
 };
 
 
-typedef struct _JpfGetArea JpfGetArea;
-struct _JpfGetArea
+typedef struct _NmpGetArea NmpGetArea;
+struct _NmpGetArea
 {
     gchar			session[SESSION_ID_LEN];
     gint            req_num;
@@ -76,8 +76,8 @@ struct _JpfGetArea
     gint            area_id;
 };
 
-typedef struct _JpfArea  JpfArea;
-struct _JpfArea
+typedef struct _NmpArea  NmpArea;
+struct _NmpArea
 {
     gint     area_id;
     gchar  area_name[AREA_NAME_LEN];
@@ -85,28 +85,28 @@ struct _JpfArea
 };
 
 
-typedef struct _JpfGetAreaRes JpfGetAreaRes;
-struct _JpfGetAreaRes
+typedef struct _NmpGetAreaRes NmpGetAreaRes;
+struct _NmpGetAreaRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			         session[SESSION_ID_LEN];
     gint                     req_num;
     gint                     total_num;
-    JpfArea               area_info[0];
+    NmpArea               area_info[0];
 };
 
-typedef struct _JpfGetAreaInfo JpfGetAreaInfo;
-struct _JpfGetAreaInfo
+typedef struct _NmpGetAreaInfo NmpGetAreaInfo;
+struct _NmpGetAreaInfo
 {
     gchar			session[SESSION_ID_LEN];
     gchar           username[USER_NAME_LEN];
     gint            area_id;
 };
 
-typedef struct _JpfGetAreaInfoRes JpfGetAreaInfoRes;
-struct _JpfGetAreaInfoRes
+typedef struct _NmpGetAreaInfoRes NmpGetAreaInfoRes;
+struct _NmpGetAreaInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			     session[SESSION_ID_LEN];
     gint    gu_count;
     gchar  area_name[AREA_NAME_LEN];
@@ -116,8 +116,8 @@ struct _JpfGetAreaInfoRes
     gchar  description[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfGetDefenceArea JpfGetDefenceArea;
-struct _JpfGetDefenceArea
+typedef struct _NmpGetDefenceArea NmpGetDefenceArea;
+struct _NmpGetDefenceArea
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -125,8 +125,8 @@ struct _JpfGetDefenceArea
     gint            area_id;
 };
 
-typedef struct _JpfDefenceArea  JpfDefenceArea;
-struct _JpfDefenceArea
+typedef struct _NmpDefenceArea  NmpDefenceArea;
+struct _NmpDefenceArea
 {
     gint     area_id;
     gchar  area_name[AREA_NAME_LEN];
@@ -136,18 +136,18 @@ struct _JpfDefenceArea
 };
 
 
-typedef struct _JpfGetDefenceAreaRes JpfGetDefenceAreaRes;
-struct _JpfGetDefenceAreaRes
+typedef struct _NmpGetDefenceAreaRes NmpGetDefenceAreaRes;
+struct _NmpGetDefenceAreaRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfDefenceArea    area_info[0];
+    NmpDefenceArea    area_info[0];
 };
 
-typedef struct _JpfGetDefenceMap JpfGetDefenceMap;
-struct _JpfGetDefenceMap
+typedef struct _NmpGetDefenceMap NmpGetDefenceMap;
+struct _NmpGetDefenceMap
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -155,8 +155,8 @@ struct _JpfGetDefenceMap
     gint            defence_area_id;
 };
 
-typedef struct _JpfDefenceMap  JpfDefenceMap;
-struct _JpfDefenceMap
+typedef struct _NmpDefenceMap  NmpDefenceMap;
+struct _NmpDefenceMap
 {
     gint     map_id;
     gchar  map_name[MAP_NAME_LEN];
@@ -164,18 +164,18 @@ struct _JpfDefenceMap
 };
 
 
-typedef struct _JpfGetDefenceMapRes JpfGetDefenceMapRes;
-struct _JpfGetDefenceMapRes
+typedef struct _NmpGetDefenceMapRes NmpGetDefenceMapRes;
+struct _NmpGetDefenceMapRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfDefenceMap    map_info[0];
+    NmpDefenceMap    map_info[0];
 };
 
-typedef struct _JpfGetDefenceGu JpfGetDefenceGu;
-struct _JpfGetDefenceGu
+typedef struct _NmpGetDefenceGu NmpGetDefenceGu;
+struct _NmpGetDefenceGu
 {
     gchar		session[SESSION_ID_LEN];
     gchar		username[USER_NAME_LEN];
@@ -184,8 +184,8 @@ struct _JpfGetDefenceGu
     gint            map_id;
 };
 
-typedef struct _JpfDefenceGu  JpfDefenceGu;
-struct _JpfDefenceGu
+typedef struct _NmpDefenceGu  NmpDefenceGu;
+struct _NmpDefenceGu
 {
     gchar  guid[MAX_ID_LEN];
     gchar  domain_id[DOMAIN_ID_LEN];
@@ -197,18 +197,18 @@ struct _JpfDefenceGu
 };
 
 
-typedef struct _JpfGetDefenceGuRes JpfGetDefenceGuRes;
-struct _JpfGetDefenceGuRes
+typedef struct _NmpGetDefenceGuRes NmpGetDefenceGuRes;
+struct _NmpGetDefenceGuRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfDefenceGu      defence_gu[0];
+    NmpDefenceGu      defence_gu[0];
 };
 
-typedef struct _JpfGetMapHref JpfGetMapHref;
-struct _JpfGetMapHref
+typedef struct _NmpGetMapHref NmpGetMapHref;
+struct _NmpGetMapHref
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -216,8 +216,8 @@ struct _JpfGetMapHref
     gint            map_id;
 };
 
-typedef struct _JpfMapHref JpfMapHref;
-struct _JpfMapHref
+typedef struct _NmpMapHref NmpMapHref;
+struct _NmpMapHref
 {
     gint                dst_map_id;
     gchar             map_name[MAP_NAME_LEN];
@@ -227,28 +227,28 @@ struct _JpfMapHref
 };
 
 
-typedef struct _JpfGetMapHrefRes JpfGetMapHrefRes;
-struct _JpfGetMapHrefRes
+typedef struct _NmpGetMapHrefRes NmpGetMapHrefRes;
+struct _NmpGetMapHrefRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfMapHref          map_href[0];
+    NmpMapHref          map_href[0];
 };
 
-typedef struct _JpfGetGuMapLocation JpfGetGuMapLocation;
-struct _JpfGetGuMapLocation
+typedef struct _NmpGetGuMapLocation NmpGetGuMapLocation;
+struct _NmpGetGuMapLocation
 {
     gchar	session[SESSION_ID_LEN];
     gchar  domain_id[DOMAIN_ID_LEN];
     gchar  guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfGetGuMapLocationRes JpfGetGuMapLocationRes;
-struct _JpfGetGuMapLocationRes
+typedef struct _NmpGetGuMapLocationRes NmpGetGuMapLocationRes;
+struct _NmpGetGuMapLocationRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                    defence_area_id;
     gint                    map_id;
@@ -258,8 +258,8 @@ struct _JpfGetGuMapLocationRes
     double               coordinate_y;
 };
 
-typedef struct _JpfGetTw JpfGetTw;
-struct _JpfGetTw
+typedef struct _NmpGetTw NmpGetTw;
+struct _NmpGetTw
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -267,26 +267,26 @@ struct _JpfGetTw
     gchar           username[USER_NAME_LEN];
 };
 
-typedef struct _JpfCuTwInfo JpfCuTwInfo;
-struct _JpfCuTwInfo
+typedef struct _NmpCuTwInfo NmpCuTwInfo;
+struct _NmpCuTwInfo
 {
     gint                tw_id;
     gchar             tw_name[TW_NAME_LEN];
 };
 
 
-typedef struct _JpfGetTwRes JpfGetTwRes;
-struct _JpfGetTwRes
+typedef struct _NmpGetTwRes NmpGetTwRes;
+struct _NmpGetTwRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfCuTwInfo                  tw_info[0];
+    NmpCuTwInfo                  tw_info[0];
 };
 
-typedef struct _JpfGetScreen JpfGetScreen;
-struct _JpfGetScreen
+typedef struct _NmpGetScreen NmpGetScreen;
+struct _NmpGetScreen
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
@@ -295,8 +295,8 @@ struct _JpfGetScreen
 	gint				tw_id;
 };
 
-typedef struct _JpfScreen JpfScreen;
-struct _JpfScreen
+typedef struct _NmpScreen NmpScreen;
+struct _NmpScreen
 {
     gint                   scr_id;
     gint                   screen_num;
@@ -310,18 +310,18 @@ struct _JpfScreen
 };
 
 
-typedef struct _JpfGetScreenRes JpfGetScreenRes;
-struct _JpfGetScreenRes
+typedef struct _NmpGetScreenRes NmpGetScreenRes;
+struct _NmpGetScreenRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfScreen            screen_info[0];
+    NmpScreen            screen_info[0];
 };
 
-typedef struct _JpfGetScrState JpfGetScrState;
-struct _JpfGetScrState
+typedef struct _NmpGetScrState NmpGetScrState;
+struct _NmpGetScrState
 {
     gchar		session[SESSION_ID_LEN];
     gint           tw_id;
@@ -329,8 +329,8 @@ struct _JpfGetScrState
     tw_general_guid  guid;
 };
 
-typedef struct _JpfScrStateInfo JpfScrStateInfo;
-struct _JpfScrStateInfo
+typedef struct _NmpScrStateInfo NmpScrStateInfo;
+struct _NmpScrStateInfo
 {
     gint                div_num;
     gchar              enc_name[GU_NAME_LEN];
@@ -340,8 +340,8 @@ struct _JpfScrStateInfo
     gint                 action_result;
 };
 
-typedef struct _JpfFullScrState JpfFullScrState;
-struct _JpfFullScrState
+typedef struct _NmpFullScrState NmpFullScrState;
+struct _NmpFullScrState
 {
     gint                mode;	//全屏模式 0:非全屏，1:全屏
     gchar              enc_name[GU_NAME_LEN];
@@ -352,20 +352,20 @@ struct _JpfFullScrState
 };
 
 
-typedef struct _JpfGetScrStateRes JpfGetScrStateRes;
-struct _JpfGetScrStateRes
+typedef struct _NmpGetScrStateRes NmpGetScrStateRes;
+struct _NmpGetScrStateRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                    div_id;
     gint                    scr_lock_state;
-    JpfFullScrState     full_scr_state;
+    NmpFullScrState     full_scr_state;
     gint                     back_num;
-    JpfScrStateInfo      scr_state_info[0];
+    NmpScrStateInfo      scr_state_info[0];
 };
 
-typedef struct _JpfChangeDivMode JpfChangeDivMode;
-struct _JpfChangeDivMode
+typedef struct _NmpChangeDivMode NmpChangeDivMode;
+struct _NmpChangeDivMode
 {
     gchar		session[SESSION_ID_LEN];
     gint           tw_id;
@@ -374,15 +374,15 @@ struct _JpfChangeDivMode
     tw_general_guid  guid;
 };
 
-typedef struct _JpfChangeDivModeRes JpfChangeDivModeRes;
-struct _JpfChangeDivModeRes
+typedef struct _NmpChangeDivModeRes NmpChangeDivModeRes;
+struct _NmpChangeDivModeRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfRunStep JpfRunStep;
-struct _JpfRunStep
+typedef struct _NmpRunStep NmpRunStep;
+struct _NmpRunStep
 {
     gchar		session[SESSION_ID_LEN];
     gint           tw_id;
@@ -394,15 +394,15 @@ struct _JpfRunStep
     gchar         guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfRunStepRes JpfRunStepRes;
-struct _JpfRunStepRes
+typedef struct _NmpRunStepRes NmpRunStepRes;
+struct _NmpRunStepRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfFullScreen JpfFullScreen;
-struct _JpfFullScreen
+typedef struct _NmpFullScreen NmpFullScreen;
+struct _NmpFullScreen
 {
     gchar		session[SESSION_ID_LEN];
     gint           tw_id;
@@ -412,8 +412,8 @@ struct _JpfFullScreen
     tw_general_guid         guid;
 };
 
-typedef struct _JpfExitFullScreen JpfExitFullScreen;
-struct _JpfExitFullScreen
+typedef struct _NmpExitFullScreen NmpExitFullScreen;
+struct _NmpExitFullScreen
 {
     gchar		session[SESSION_ID_LEN];
     gint           tw_id;
@@ -421,8 +421,8 @@ struct _JpfExitFullScreen
     tw_general_guid         guid;
 };
 
-typedef struct _JpfGetTour JpfGetTour;
-struct _JpfGetTour
+typedef struct _NmpGetTour NmpGetTour;
+struct _NmpGetTour
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -430,8 +430,8 @@ struct _JpfGetTour
     gchar           username[USER_NAME_LEN];
 };
 
-typedef struct _JpfCuTourInfo JpfCuTourInfo;
-struct _JpfCuTourInfo
+typedef struct _NmpCuTourInfo NmpCuTourInfo;
+struct _NmpCuTourInfo
 {
     gint                tour_id;
     gchar             tour_name[TOUR_NAME_LEN];
@@ -440,18 +440,18 @@ struct _JpfCuTourInfo
 };
 
 
-typedef struct _JpfGetTourRes JpfGetTourRes;
-struct _JpfGetTourRes
+typedef struct _NmpGetTourRes NmpGetTourRes;
+struct _NmpGetTourRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfCuTourInfo                  tour_info[0];
+    NmpCuTourInfo                  tour_info[0];
 };
 
-typedef struct _JpfGetTourStep JpfGetTourStep;
-struct _JpfGetTourStep
+typedef struct _NmpGetTourStep NmpGetTourStep;
+struct _NmpGetTourStep
 {
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
@@ -459,8 +459,8 @@ struct _JpfGetTourStep
     gint            tour_id;
 };
 
-typedef struct _JpfCuTourStepInfo JpfCuTourStepInfo;
-struct _JpfCuTourStepInfo
+typedef struct _NmpCuTourStepInfo NmpCuTourStepInfo;
+struct _NmpCuTourStepInfo
 {
     gint                step_no;
     gint               interval;
@@ -469,18 +469,18 @@ struct _JpfCuTourStepInfo
 };
 
 
-typedef struct _JpfGetTourStepRes JpfGetTourStepRes;
-struct _JpfGetTourStepRes
+typedef struct _NmpGetTourStepRes NmpGetTourStepRes;
+struct _NmpGetTourStepRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfCuTourStepInfo                  step_info[0];
+    NmpCuTourStepInfo                  step_info[0];
 };
 
-typedef struct _JpfGetGroup JpfGetGroup;
-struct _JpfGetGroup
+typedef struct _NmpGetGroup NmpGetGroup;
+struct _NmpGetGroup
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
@@ -488,8 +488,8 @@ struct _JpfGetGroup
 	gint				start_num;
 };
 
-typedef struct _JpfCuGroupInfo JpfCuGroupInfo;
-struct _JpfCuGroupInfo
+typedef struct _NmpCuGroupInfo NmpCuGroupInfo;
+struct _NmpCuGroupInfo
 {
     gint               group_id;
     gchar             group_name[GROUP_NAME_LEN];
@@ -498,40 +498,40 @@ struct _JpfCuGroupInfo
 };
 
 
-typedef struct _JpfGetGroupRes JpfGetGroupRes;
-struct _JpfGetGroupRes
+typedef struct _NmpGetGroupRes NmpGetGroupRes;
+struct _NmpGetGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint                     back_num;
     gint                     total_num;
-    JpfCuGroupInfo      group_info[0];
+    NmpCuGroupInfo      group_info[0];
 };
 
 ////////////
 
-typedef struct _JpfAreaList JpfAreaList;
-struct _JpfAreaList
+typedef struct _NmpAreaList NmpAreaList;
+struct _NmpAreaList
 {
     gint       area_id;
     gchar    area_name[AREA_NAME_LEN];
 };
 
 
-typedef struct _JpfCuReqAreaResp JpfCuReqAreaResp;
-struct _JpfCuReqAreaResp
+typedef struct _NmpCuReqAreaResp NmpCuReqAreaResp;
+struct _NmpCuReqAreaResp
 {
     gchar 			username[USER_NAME_LEN];
     gchar 			domain_id[DOMAIN_ID_LEN];
     gchar 			domain_name[DOMAIN_ID_LEN];
     gint  			result_code;
     gint 			area_num;
-    JpfAreaList 	       area_list[0];
+    NmpAreaList 	       area_list[0];
 };
 
 
-typedef struct _JpfCuReqDeviceList JpfCuReqDeviceList;
-struct _JpfCuReqDeviceList
+typedef struct _NmpCuReqDeviceList NmpCuReqDeviceList;
+struct _NmpCuReqDeviceList
 {
     gchar         username[USER_NAME_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
@@ -539,8 +539,8 @@ struct _JpfCuReqDeviceList
 };
 
 
-typedef struct _JpfGuList JpfGuList;
-struct _JpfGuList
+typedef struct _NmpGuList NmpGuList;
+struct _NmpGuList
 {
     gchar         puid[MAX_ID_LEN];
     gchar         guid[MAX_ID_LEN];
@@ -553,8 +553,8 @@ struct _JpfGuList
     gint            is_online;
 };
 
-typedef struct _JpfCuReqDeviceListResp JpfCuReqDeviceListResp;
-struct _JpfCuReqDeviceListResp
+typedef struct _NmpCuReqDeviceListResp NmpCuReqDeviceListResp;
+struct _NmpCuReqDeviceListResp
 {
     gchar          username[USER_NAME_LEN];
     gchar          domain_id[DOMAIN_ID_LEN];
@@ -563,12 +563,12 @@ struct _JpfCuReqDeviceListResp
     gchar          area_name[AREA_NAME_LEN];
     gint             result_code;
     gint             gu_num;
-    JpfGuList      gu_list[0];
+    NmpGuList      gu_list[0];
 };
 
 //////////////
-typedef struct _JpfGetDevice JpfGetDevice;
-struct _JpfGetDevice
+typedef struct _NmpGetDevice NmpGetDevice;
+struct _NmpGetDevice
 {
     gchar		  session[SESSION_ID_LEN];
     gchar           username[USER_NAME_LEN];
@@ -577,8 +577,8 @@ struct _JpfGetDevice
     gint              start_num;
 };
 
-typedef struct _JpfGu JpfGu;
-struct _JpfGu
+typedef struct _NmpGu NmpGu;
+struct _NmpGu
 {
     struct list_head list;
     gchar                guid[MAX_ID_LEN];
@@ -589,8 +589,8 @@ struct _JpfGu
 
 };
 
-typedef struct _JpfDevice JpfDevice;
-struct _JpfDevice
+typedef struct _NmpDevice NmpDevice;
+struct _NmpDevice
 {
     struct list_head list;
 
@@ -601,23 +601,23 @@ struct _JpfDevice
     gint            pu_state;
 
     gint           gu_num;
-    JpfGu       *gu_list;
+    NmpGu       *gu_list;
 };
 
-typedef struct _JpfGetDeviceRes JpfGetDeviceRes;
-struct _JpfGetDeviceRes
+typedef struct _NmpGetDeviceRes NmpGetDeviceRes;
+struct _NmpGetDeviceRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint	                device_count;
     gint	                gu_count;
-    JpfDevice *          device_list;
+    NmpDevice *          device_list;
     GStaticMutex        list_lock;
 };
 
 
-typedef struct _JpfGetAreaDevice JpfGetAreaDevice;
-struct _JpfGetAreaDevice
+typedef struct _NmpGetAreaDevice NmpGetAreaDevice;
+struct _NmpGetAreaDevice
 {
     gchar		  session[SESSION_ID_LEN];
     gchar           username[USER_NAME_LEN];
@@ -626,8 +626,8 @@ struct _JpfGetAreaDevice
     gint              start_num;
 };
 
-typedef struct _JpfDeviceInfo JpfDeviceInfo;
-struct _JpfDeviceInfo
+typedef struct _NmpDeviceInfo NmpDeviceInfo;
+struct _NmpDeviceInfo
 {
     gchar         domain_id[DOMAIN_ID_LEN];
     gchar         puid[MAX_ID_LEN];
@@ -639,18 +639,18 @@ struct _JpfDeviceInfo
 };
 
 
-typedef struct _JpfGetAreaDeviceRes JpfGetAreaDeviceRes;
-struct _JpfGetAreaDeviceRes
+typedef struct _NmpGetAreaDeviceRes NmpGetAreaDeviceRes;
+struct _NmpGetAreaDeviceRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  session[SESSION_ID_LEN];
     gint	                device_count;
     gint                  req_num;
-    JpfDeviceInfo       device_list[0];
+    NmpDeviceInfo       device_list[0];
 };
 
-typedef struct  _JpfGetMediaUrl JpfGetMediaUrl ;
-struct _JpfGetMediaUrl
+typedef struct  _NmpGetMediaUrl NmpGetMediaUrl ;
+struct _NmpGetMediaUrl
 {
     gchar			session[SESSION_ID_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
@@ -663,10 +663,10 @@ struct _JpfGetMediaUrl
     gchar              username[USER_NAME_LEN];
 };
 
-typedef struct  _JpfGetMediaUrlRes JpfGetMediaUrlRes;
-struct   _JpfGetMediaUrlRes
+typedef struct  _NmpGetMediaUrlRes NmpGetMediaUrlRes;
+struct   _NmpGetMediaUrlRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar			   session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
     gchar                guid[MAX_ID_LEN];
@@ -676,8 +676,8 @@ struct   _JpfGetMediaUrlRes
     gchar                decode_name[DECODE_NAME_LEN];
 };
 
-typedef struct _JpfGetPlatformInfo JpfGetPlatformInfo;
-struct _JpfGetPlatformInfo
+typedef struct _NmpGetPlatformInfo NmpGetPlatformInfo;
+struct _NmpGetPlatformInfo
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
@@ -685,35 +685,35 @@ struct _JpfGetPlatformInfo
 };
 
 
-typedef struct _JpfGetDeviceInfo JpfGetDeviceInfo;
-struct _JpfGetDeviceInfo
+typedef struct _NmpGetDeviceInfo NmpGetDeviceInfo;
+struct _NmpGetDeviceInfo
 {
     gchar			   session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfGetDeviceInfoErr JpfGetDeviceInfoErr;
-struct _JpfGetDeviceInfoErr
+typedef struct _NmpGetDeviceInfoErr NmpGetDeviceInfoErr;
+struct _NmpGetDeviceInfoErr
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar			   session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfGetDeviceChannelInfo JpfGetDeviceChannelInfo;
-struct _JpfGetDeviceChannelInfo
+typedef struct _NmpGetDeviceChannelInfo NmpGetDeviceChannelInfo;
+struct _NmpGetDeviceChannelInfo
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
     gchar                guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfGetDeviceInfoRes JpfGetDeviceInfoRes;
-struct _JpfGetDeviceInfoRes
+typedef struct _NmpGetDeviceInfoRes NmpGetDeviceInfoRes;
+struct _NmpGetDeviceInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			         session[SESSION_ID_LEN];
     gchar                  domain_id[DOMAIN_ID_LEN];
     gchar                  puid[MAX_ID_LEN];
@@ -730,10 +730,10 @@ struct _JpfGetDeviceInfoRes
     gint                     rs485_num;
 };
 
-typedef struct _JpfGetPlatformInfoRes JpfGetPlatformInfoRes;
-struct _JpfGetPlatformInfoRes
+typedef struct _NmpGetPlatformInfoRes NmpGetPlatformInfoRes;
+struct _NmpGetPlatformInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -745,8 +745,8 @@ struct _JpfGetPlatformInfoRes
     gint                      is_conn_cms;
 };
 
-typedef struct _JpfSetPlatformInfo JpfSetPlatformInfo;
-struct _JpfSetPlatformInfo
+typedef struct _NmpSetPlatformInfo NmpSetPlatformInfo;
+struct _NmpSetPlatformInfo
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -759,8 +759,8 @@ struct _JpfSetPlatformInfo
     gint                      is_conn_cms;
 };
 
-typedef struct _JpfNetworkInfo JpfNetworkInfo;
-struct _JpfNetworkInfo
+typedef struct _NmpNetworkInfo NmpNetworkInfo;
+struct _NmpNetworkInfo
 {
     gint                      network_type;
     gchar                   ip[MAX_IP_LEN];
@@ -770,10 +770,10 @@ struct _JpfNetworkInfo
     gint                      dhcp_enable;
 };
 
-typedef struct _JpfGetNetworkInfoRes JpfGetNetworkInfoRes;
-struct _JpfGetNetworkInfoRes
+typedef struct _NmpGetNetworkInfoRes NmpGetNetworkInfoRes;
+struct _NmpGetNetworkInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -783,11 +783,11 @@ struct _JpfGetNetworkInfoRes
     gint                      cmd_port;
     gint                      data_port;
     gint                      web_port;
-    JpfNetworkInfo 		network[3];
+    NmpNetworkInfo 		network[3];
 };
 
-typedef struct _JpfSetNetworkInfo JpfSetNetworkInfo;
-struct _JpfSetNetworkInfo
+typedef struct _NmpSetNetworkInfo NmpSetNetworkInfo;
+struct _NmpSetNetworkInfo
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -798,14 +798,14 @@ struct _JpfSetNetworkInfo
     gint                      cmd_port;
     gint                      data_port;
     gint                      web_port;
-    JpfNetworkInfo 		network[3];
+    NmpNetworkInfo 		network[3];
 };
 
 
-typedef struct _JpfGetPppoeInfoRes JpfGetPppoeInfoRes;
-struct _JpfGetPppoeInfoRes
+typedef struct _NmpGetPppoeInfoRes NmpGetPppoeInfoRes;
+struct _NmpGetPppoeInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -816,8 +816,8 @@ struct _JpfGetPppoeInfoRes
     gchar                   pppoeIp[MAX_IP_LEN];
 };
 
-typedef struct _JpfSetPppoeInfo JpfSetPppoeInfo;
-struct _JpfSetPppoeInfo
+typedef struct _NmpSetPppoeInfo NmpSetPppoeInfo;
+struct _NmpSetPppoeInfo
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -829,10 +829,10 @@ struct _JpfSetPppoeInfo
     gchar                   pppoeIp[MAX_IP_LEN];
 };
 
-typedef struct _JpfGetEncodeParaRes JpfGetEncodeParaRes;
-struct _JpfGetEncodeParaRes
+typedef struct _NmpGetEncodeParaRes NmpGetEncodeParaRes;
+struct _NmpGetEncodeParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -853,35 +853,35 @@ struct _JpfGetEncodeParaRes
     gint                      encodeLevel;
 };
 
-typedef struct _JpfSetDeviceInfo JpfSetDeviceInfo;
-struct _JpfSetDeviceInfo
+typedef struct _NmpSetDeviceInfo NmpSetDeviceInfo;
+struct _NmpSetDeviceInfo
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar		               session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                     puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfSetDeviceInfoRes JpfSetDeviceInfoRes;
-struct _JpfSetDeviceInfoRes
+typedef struct _NmpSetDeviceInfoRes NmpSetDeviceInfoRes;
+struct _NmpSetDeviceInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                    puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfSetDeviceParaRes JpfSetDeviceParaRes;
-struct _JpfSetDeviceParaRes
+typedef struct _NmpSetDeviceParaRes NmpSetDeviceParaRes;
+struct _NmpSetDeviceParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfSetEncodePara JpfSetEncodePara;
-struct _JpfSetEncodePara
+typedef struct _NmpSetEncodePara NmpSetEncodePara;
+struct _NmpSetEncodePara
 {
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -903,10 +903,10 @@ struct _JpfSetEncodePara
     gint                      encodeLevel;
 };
 
-typedef struct _JpfGetDisplayParaRes JpfGetDisplayParaRes;
-struct _JpfGetDisplayParaRes
+typedef struct _NmpGetDisplayParaRes NmpGetDisplayParaRes;
+struct _NmpGetDisplayParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -917,8 +917,8 @@ struct _JpfGetDisplayParaRes
     gint                      sharpness;
 };
 
-typedef struct _JpfSetDisplayPara JpfSetDisplayPara;
-struct _JpfSetDisplayPara
+typedef struct _NmpSetDisplayPara NmpSetDisplayPara;
+struct _NmpSetDisplayPara
 {
 
     gchar		             session[SESSION_ID_LEN];
@@ -931,10 +931,10 @@ struct _JpfSetDisplayPara
     gint                      sharpness;
 };
 
-typedef struct _JpfGetOSDParaRes JpfGetOSDParaRes;
-struct _JpfGetOSDParaRes
+typedef struct _NmpGetOSDParaRes NmpGetOSDParaRes;
+struct _NmpGetOSDParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -956,8 +956,8 @@ struct _JpfGetOSDParaRes
     gint                      text_display_h;
 };
 
-typedef struct _JpfSetOSDPara JpfSetOSDPara;
-struct _JpfSetOSDPara
+typedef struct _NmpSetOSDPara NmpSetOSDPara;
+struct _NmpSetOSDPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -981,10 +981,10 @@ struct _JpfSetOSDPara
 };
 
 
-typedef struct _JpfGetRecordParaRes JpfGetRecordParaRes;
-struct _JpfGetRecordParaRes
+typedef struct _NmpGetRecordParaRes NmpGetRecordParaRes;
+struct _NmpGetRecordParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -993,11 +993,11 @@ struct _JpfGetRecordParaRes
     gint                      pre_record;
     gint                      all_day_enable;
     gint                      weekday_num;
-    JpfWeekday          weekdays[WEEKDAYS];
+    NmpWeekday          weekdays[WEEKDAYS];
 };
 
-typedef struct _JpfSetRecordPara  JpfSetRecordPara;
-struct _JpfSetRecordPara
+typedef struct _NmpSetRecordPara  NmpSetRecordPara;
+struct _NmpSetRecordPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1007,12 +1007,12 @@ struct _JpfSetRecordPara
     gint                      pre_record;
     gint                      all_day_enable;
     gint                      weekday_num;
-    JpfWeekday            weekdays[WEEKDAYS];
+    NmpWeekday            weekdays[WEEKDAYS];
 };
 
 
-typedef struct _JpfRectangle JpfRectangle;
-struct _JpfRectangle
+typedef struct _NmpRectangle NmpRectangle;
+struct _NmpRectangle
 {
     gint left;
     gint top;
@@ -1020,10 +1020,10 @@ struct _JpfRectangle
     gint bottom;
 };
 
-typedef struct _JpfGetMoveAlarmParaRes JpfGetMoveAlarmParaRes;
-struct _JpfGetMoveAlarmParaRes
+typedef struct _NmpGetMoveAlarmParaRes NmpGetMoveAlarmParaRes;
+struct _NmpGetMoveAlarmParaRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar		             session[SESSION_ID_LEN];
     gchar                  domain_id[DOMAIN_ID_LEN];
     gchar                  guid[MAX_ID_LEN];
@@ -1034,12 +1034,12 @@ struct _JpfGetMoveAlarmParaRes
     gint                     weekday_num;
     gint                     max_width;
     gint                     max_height;
-    JpfRectangle        detect_area[DETECT_AREA_NUM]; 						//侦测区域
-    JpfWeekday         weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
+    NmpRectangle        detect_area[DETECT_AREA_NUM]; 						//侦测区域
+    NmpWeekday         weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfSetMoveAlarmPara JpfSetMoveAlarmPara;
-struct _JpfSetMoveAlarmPara
+typedef struct _NmpSetMoveAlarmPara NmpSetMoveAlarmPara;
+struct _NmpSetMoveAlarmPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                  domain_id[DOMAIN_ID_LEN];
@@ -1051,25 +1051,25 @@ struct _JpfSetMoveAlarmPara
     gint                     weekday_num;
     gint                     max_width;
     gint                     max_height;
-    JpfRectangle        detect_area[DETECT_AREA_NUM]; 						//侦测区域
-    JpfWeekday         weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
+    NmpRectangle        detect_area[DETECT_AREA_NUM]; 						//侦测区域
+    NmpWeekday         weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfGetVideoLostParaRes JpfGetVideoLostParaRes;
-struct _JpfGetVideoLostParaRes
+typedef struct _NmpGetVideoLostParaRes NmpGetVideoLostParaRes;
+struct _NmpGetVideoLostParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                     lost_enable; 					//video lost是否生效
     gint                     detect_interval; 					//侦测间隔时间
     gint                      weekday_num;
-    JpfWeekday         weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
+    NmpWeekday         weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfSetVideoLostPara JpfSetVideoLostPara;
-struct _JpfSetVideoLostPara
+typedef struct _NmpSetVideoLostPara NmpSetVideoLostPara;
+struct _NmpSetVideoLostPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1077,13 +1077,13 @@ struct _JpfSetVideoLostPara
     gint                      lost_enable; 					//video lost是否生效
     gint                      detect_interval; 					//侦测间隔时间
     gint                      weekday_num;
-    JpfWeekday         weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
+    NmpWeekday         weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfGetHideParaRes JpfGetHideParaRes;
-struct _JpfGetHideParaRes
+typedef struct _NmpGetHideParaRes NmpGetHideParaRes;
+struct _NmpGetHideParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -1092,11 +1092,11 @@ struct _JpfGetHideParaRes
     gint                      max_width;
     gint                      max_height;
     gint                      detect_num;
-    JpfRectangle         detect_area[DETECT_AREA_NUM];
+    NmpRectangle         detect_area[DETECT_AREA_NUM];
 };
 
-typedef struct _JpfSetHidePara JpfSetHidePara;
-struct _JpfSetHidePara
+typedef struct _NmpSetHidePara NmpSetHidePara;
+struct _NmpSetHidePara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1106,13 +1106,13 @@ struct _JpfSetHidePara
     gint                      max_width;
     gint                      max_height;
     gint                      detect_num;
-    JpfRectangle         detect_area[DETECT_AREA_NUM];
+    NmpRectangle         detect_area[DETECT_AREA_NUM];
 };
 
-typedef struct _JpfGetHideAlarmParaRes JpfGetHideAlarmParaRes;
-struct _JpfGetHideAlarmParaRes
+typedef struct _NmpGetHideAlarmParaRes NmpGetHideAlarmParaRes;
+struct _NmpGetHideAlarmParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -1122,12 +1122,12 @@ struct _JpfGetHideAlarmParaRes
     gint                      max_height;
     gint                      weekday_num;
     gint                      detect_num;
-    JpfRectangle         detect_area[DETECT_AREA_NUM];
-    JpfWeekday          weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
+    NmpRectangle         detect_area[DETECT_AREA_NUM];
+    NmpWeekday          weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfSetHideAlarmPara JpfSetHideAlarmPara;
-struct _JpfSetHideAlarmPara
+typedef struct _NmpSetHideAlarmPara NmpSetHideAlarmPara;
+struct _NmpSetHideAlarmPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1138,14 +1138,14 @@ struct _JpfSetHideAlarmPara
     gint                      max_height;
     gint                      weekday_num;
     gint                      detect_num;
-    JpfRectangle         detect_area[DETECT_AREA_NUM];
-    JpfWeekday          weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
+    NmpRectangle         detect_area[DETECT_AREA_NUM];
+    NmpWeekday          weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfGetIOAlarmParaRes JpfGetIOAlarmParaRes;
-struct _JpfGetIOAlarmParaRes
+typedef struct _NmpGetIOAlarmParaRes NmpGetIOAlarmParaRes;
+struct _NmpGetIOAlarmParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
@@ -1153,11 +1153,11 @@ struct _JpfGetIOAlarmParaRes
     gint                      io_type;
     gint                      detect_interval; 					//侦测间隔时间
     gint                      weekday_num;
-    JpfWeekday          weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
+    NmpWeekday          weekdays[WEEKDAYS]; 						//移动侦测时间段：结束时间
 };
 
-typedef struct _JpfSetIOAlarmPara JpfSetIOAlarmPara;
-struct _JpfSetIOAlarmPara
+typedef struct _NmpSetIOAlarmPara NmpSetIOAlarmPara;
+struct _NmpSetIOAlarmPara
 {
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1166,14 +1166,14 @@ struct _JpfSetIOAlarmPara
     gint                      io_type;
     gint                      detect_interval; 					//侦测间隔时间
     gint                      weekday_num;
-    JpfWeekday          weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
+    NmpWeekday          weekdays[WEEKDAYS]; 					//移动侦测时间段：结束时间
 };
 
 
-typedef struct _JpfGetJointPara JpfGetJointPara;
-struct _JpfGetJointPara
+typedef struct _NmpGetJointPara NmpGetJointPara;
+struct _NmpGetJointPara
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar		              session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
@@ -1181,10 +1181,10 @@ struct _JpfGetJointPara
 };
 
 
-typedef struct _JpfGetJointParaRes JpfGetJointParaRes;
-struct _JpfGetJointParaRes
+typedef struct _NmpGetJointParaRes NmpGetJointParaRes;
+struct _NmpGetJointParaRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
@@ -1201,8 +1201,8 @@ struct _JpfGetJointParaRes
     gint                       email_enable;
 };
 
-typedef struct _JpfSetJointPara JpfSetJointPara;
-struct _JpfSetJointPara
+typedef struct _NmpSetJointPara NmpSetJointPara;
+struct _NmpSetJointPara
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
@@ -1220,8 +1220,8 @@ struct _JpfSetJointPara
     gint                       email_enable;
 };
 
-typedef struct _JpfPtzPara JpfPtzPara;
-struct _JpfPtzPara
+typedef struct _NmpPtzPara NmpPtzPara;
+struct _NmpPtzPara
 {
     gint                       serial_no;
     gint                       ptz_protocol;
@@ -1232,27 +1232,27 @@ struct _JpfPtzPara
     gint	                  verify;
 };
 
-typedef struct _JpfGetPtzParaRes JpfGetPtzParaRes;
-struct _JpfGetPtzParaRes
+typedef struct _NmpGetPtzParaRes NmpGetPtzParaRes;
+struct _NmpGetPtzParaRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
-    JpfPtzPara             ptz_para;
+    NmpPtzPara             ptz_para;
 };
 
-typedef struct _JpfSetPtzPara JpfSetPtzPara;
-struct _JpfSetPtzPara
+typedef struct _NmpSetPtzPara NmpSetPtzPara;
+struct _NmpSetPtzPara
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
-    JpfPtzPara             ptz_para;
+    NmpPtzPara             ptz_para;
 };
 
-typedef struct _JpfControlPtz JpfControlPtz;
-struct _JpfControlPtz
+typedef struct _NmpControlPtz NmpControlPtz;
+struct _NmpControlPtz
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
@@ -1262,26 +1262,26 @@ struct _JpfControlPtz
     gint                       rank;
 };
 
-typedef struct _JpfPresetInfo JpfPresetInfo;
-struct _JpfPresetInfo
+typedef struct _NmpPresetInfo NmpPresetInfo;
+struct _NmpPresetInfo
 {
     gchar                   preset_name[PRESET_NAME_LEN];
     gint                      preset_no;
 };
 
-typedef struct _JpfGetPresetPointRes JpfGetPresetPointRes;
-struct _JpfGetPresetPointRes
+typedef struct _NmpGetPresetPointRes NmpGetPresetPointRes;
+struct _NmpGetPresetPointRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                      preset_num;
-    JpfPresetInfo          preset_info[0];
+    NmpPresetInfo          preset_info[0];
 };
 
-typedef struct _JpfSetPresetPoint JpfSetPresetPoint;
-struct _JpfSetPresetPoint
+typedef struct _NmpSetPresetPoint NmpSetPresetPoint;
+struct _NmpSetPresetPoint
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1291,8 +1291,8 @@ struct _JpfSetPresetPoint
     gint		preset_no;
 };
 
-typedef struct _Jpf3DControl Jpf3DControl;
-struct _Jpf3DControl
+typedef struct _Nmp3DControl Nmp3DControl;
+struct _Nmp3DControl
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1302,26 +1302,26 @@ struct _Jpf3DControl
     gint		amplify;
 };
 
-typedef struct _JpfCruiseInfo JpfCruiseInfo;
-struct _JpfCruiseInfo
+typedef struct _NmpCruiseInfo NmpCruiseInfo;
+struct _NmpCruiseInfo
 {
     gchar		cruise_name[CRUISE_NAME_LEN];
     gint		cruise_no;
 };
 
-typedef struct _JpfGetCruiseWaySetRes JpfGetCruiseWaySetRes;
-struct _JpfGetCruiseWaySetRes
+typedef struct _NmpGetCruiseWaySetRes NmpGetCruiseWaySetRes;
+struct _NmpGetCruiseWaySetRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                      cruise_num;
-    JpfCruiseInfo          cruise_info[0];
+    NmpCruiseInfo          cruise_info[0];
 };
 
-typedef struct _JpfGetCruiseWay JpfGetCruiseWay;
-struct _JpfGetCruiseWay
+typedef struct _NmpGetCruiseWay NmpGetCruiseWay;
+struct _NmpGetCruiseWay
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1329,29 +1329,29 @@ struct _JpfGetCruiseWay
     gint                      cruise_no;
 };
 
-typedef struct _JpfCruiseWayInfo JpfCruiseWayInfo;
-struct _JpfCruiseWayInfo
+typedef struct _NmpCruiseWayInfo NmpCruiseWayInfo;
+struct _NmpCruiseWayInfo
 {
     gint		preset_no;
     gint          speed;
     gint		step;
 };
 
-typedef struct _JpfGetCruiseWayRes JpfGetCruiseWayRes;
-struct _JpfGetCruiseWayRes
+typedef struct _NmpGetCruiseWayRes NmpGetCruiseWayRes;
+struct _NmpGetCruiseWayRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gchar		cruise_name[CRUISE_NAME_LEN];
     gint		cruise_no;
     gint                      cruise_num;
-    JpfCruiseWayInfo    cruise_way[0];
+    NmpCruiseWayInfo    cruise_way[0];
 };
 
-typedef struct _JpfAddCruiseWay JpfAddCruiseWay;
-struct _JpfAddCruiseWay
+typedef struct _NmpAddCruiseWay NmpAddCruiseWay;
+struct _NmpAddCruiseWay
 {
     gchar			session[SESSION_ID_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
@@ -1359,21 +1359,21 @@ struct _JpfAddCruiseWay
     gchar			cruise_name[CRUISE_NAME_LEN];
     gint			cruise_num;
     gint                 cruise_no;
-    JpfCruiseWayInfo    cruise_way[0];
+    NmpCruiseWayInfo    cruise_way[0];
 };
 
-typedef struct _JpfAddCruiseWayRes JpfAddCruiseWayRes;
-struct _JpfAddCruiseWayRes
+typedef struct _NmpAddCruiseWayRes NmpAddCruiseWayRes;
+struct _NmpAddCruiseWayRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                      cruise_no;
 };
 
-typedef struct _JpfModifyCruiseWay JpfModifyCruiseWay;
-struct _JpfModifyCruiseWay
+typedef struct _NmpModifyCruiseWay NmpModifyCruiseWay;
+struct _NmpModifyCruiseWay
 {
     gchar			session[SESSION_ID_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
@@ -1381,11 +1381,11 @@ struct _JpfModifyCruiseWay
     gchar			cruise_name[CRUISE_NAME_LEN];
     gint			cruise_no;
     gint			cruise_num;
-    JpfCruiseWayInfo	cruise_way[0];
+    NmpCruiseWayInfo	cruise_way[0];
 };
 
-typedef struct _JpfSetCruiseWay JpfSetCruiseWay;
-struct _JpfSetCruiseWay
+typedef struct _NmpSetCruiseWay NmpSetCruiseWay;
+struct _NmpSetCruiseWay
 {
     gchar			session[SESSION_ID_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
@@ -1394,10 +1394,10 @@ struct _JpfSetCruiseWay
     gint		cruise_no;
 };
 
-typedef struct _JpfGetDeviceTimeRes JpfGetDeviceTimeRes;
-struct _JpfGetDeviceTimeRes
+typedef struct _NmpGetDeviceTimeRes NmpGetDeviceTimeRes;
+struct _NmpGetDeviceTimeRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1406,8 +1406,8 @@ struct _JpfGetDeviceTimeRes
     gint                      time_zone;
 };
 
-typedef struct _JpfSetDeviceTime JpfSetDeviceTime;
-struct _JpfSetDeviceTime
+typedef struct _NmpSetDeviceTime NmpSetDeviceTime;
+struct _NmpSetDeviceTime
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1418,10 +1418,10 @@ struct _JpfSetDeviceTime
     gint                      set_flag;
 };
 
-typedef struct _JpfGetNTPInfoRes JpfGetNTPInfoRes;
-struct _JpfGetNTPInfoRes
+typedef struct _NmpGetNTPInfoRes NmpGetNTPInfoRes;
+struct _NmpGetNTPInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1432,8 +1432,8 @@ struct _JpfGetNTPInfoRes
     gint                      dst_enable;
 };
 
-typedef struct _JpfSetNTPInfo JpfSetNTPInfo;
-struct _JpfSetNTPInfo
+typedef struct _NmpSetNTPInfo NmpSetNTPInfo;
+struct _NmpSetNTPInfo
 {
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1445,8 +1445,8 @@ struct _JpfSetNTPInfo
     gint                      dst_enable;
 };
 
-typedef struct _JpfGetSerialPara JpfGetSerialPara;
-struct _JpfGetSerialPara
+typedef struct _NmpGetSerialPara NmpGetSerialPara;
+struct _NmpGetSerialPara
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
@@ -1454,10 +1454,10 @@ struct _JpfGetSerialPara
     gint                   serial_no;
 };
 
-typedef struct _JpfGetSerialParaRes JpfGetSerialParaRes;
-struct _JpfGetSerialParaRes
+typedef struct _NmpGetSerialParaRes NmpGetSerialParaRes;
+struct _NmpGetSerialParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1468,8 +1468,8 @@ struct _JpfGetSerialParaRes
     gint	                     verify;
 };
 
-typedef struct _JpfSetSerialPara JpfSetSerialPara;
-struct _JpfSetSerialPara
+typedef struct _NmpSetSerialPara NmpSetSerialPara;
+struct _NmpSetSerialPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1481,10 +1481,10 @@ struct _JpfSetSerialPara
     gint	                     verify;
 };
 
-typedef struct _JpfGetFtpParaRes JpfGetFtpParaRes;
-struct _JpfGetFtpParaRes
+typedef struct _NmpGetFtpParaRes NmpGetFtpParaRes;
+struct _NmpGetFtpParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1495,8 +1495,8 @@ struct _JpfGetFtpParaRes
     gchar                   ftp_path[PATH_LEN];
 };
 
-typedef struct _JpfSetFtpPara JpfSetFtpPara;
-struct _JpfSetFtpPara
+typedef struct _NmpSetFtpPara NmpSetFtpPara;
+struct _NmpSetFtpPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1508,10 +1508,10 @@ struct _JpfSetFtpPara
     gchar                   ftp_path[PATH_LEN];
 };
 
-typedef struct _JpfGetSmtpParaRes JpfGetSmtpParaRes;
-struct _JpfGetSmtpParaRes
+typedef struct _NmpGetSmtpParaRes NmpGetSmtpParaRes;
+struct _NmpGetSmtpParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1526,8 +1526,8 @@ struct _JpfGetSmtpParaRes
     gint                      ssl_enable;
 };
 
-typedef struct _JpfSetSmtpPara JpfSetSmtpPara;
-struct _JpfSetSmtpPara
+typedef struct _NmpSetSmtpPara NmpSetSmtpPara;
+struct _NmpSetSmtpPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1543,8 +1543,8 @@ struct _JpfSetSmtpPara
     gint                      ssl_enable;
 };
 
-typedef struct _JpfSetUpnpPara JpfSetUpnpPara;
-struct _JpfSetUpnpPara
+typedef struct _NmpSetUpnpPara NmpSetUpnpPara;
+struct _NmpSetUpnpPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1560,10 +1560,10 @@ struct _JpfSetUpnpPara
     gint	                     web_port_result;
 };
 
-typedef struct _JpfGetUpnpParaRes JpfGetUpnpParaRes;
-struct _JpfGetUpnpParaRes
+typedef struct _NmpGetUpnpParaRes NmpGetUpnpParaRes;
+struct _NmpGetUpnpParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1578,8 +1578,8 @@ struct _JpfGetUpnpParaRes
     gint	                 web_port_result;
 };
 
-typedef struct _JpfSetTransparentPara JpfSetTransparentPara;
-struct _JpfSetTransparentPara
+typedef struct _NmpSetTransparentPara NmpSetTransparentPara;
+struct _NmpSetTransparentPara
 {
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1590,8 +1590,8 @@ struct _JpfSetTransparentPara
     gchar                   data[STRING_LEN];
 };
 
-typedef struct _JpfGetTransparentPara JpfGetTransparentPara;
-struct _JpfGetTransparentPara
+typedef struct _NmpGetTransparentPara NmpGetTransparentPara;
+struct _NmpGetTransparentPara
 {
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1602,10 +1602,10 @@ struct _JpfGetTransparentPara
     gchar                   data[STRING_LEN];
 };
 
-typedef struct _JpfGetTransparentParaRes JpfGetTransparentParaRes;
-struct _JpfGetTransparentParaRes
+typedef struct _NmpGetTransparentParaRes NmpGetTransparentParaRes;
+struct _NmpGetTransparentParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1615,8 +1615,8 @@ struct _JpfGetTransparentParaRes
     gchar                   data[STRING_LEN];
 };
 
-typedef struct _JpfSetDdnsPara JpfSetDdnsPara;
-struct _JpfSetDdnsPara
+typedef struct _NmpSetDdnsPara NmpSetDdnsPara;
+struct _NmpSetDdnsPara
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
@@ -1630,10 +1630,10 @@ struct _JpfSetDdnsPara
     gchar                    password[USER_PASSWD_LEN];
 };
 
-typedef struct _JpfGetDdnsParaRes JpfGetDdnsParaRes;
-struct _JpfGetDdnsParaRes
+typedef struct _NmpGetDdnsParaRes NmpGetDdnsParaRes;
+struct _NmpGetDdnsParaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
@@ -1646,8 +1646,8 @@ struct _JpfGetDdnsParaRes
     gchar                    password[USER_PASSWD_LEN];
 };
 
-typedef struct _JpfDiskInfo JpfDiskInfo;
-struct _JpfDiskInfo
+typedef struct _NmpDiskInfo NmpDiskInfo;
+struct _NmpDiskInfo
 {
     gint                      disk_no;
     gint                      disk_type;
@@ -1659,29 +1659,29 @@ struct _JpfDiskInfo
 };
 
 
-typedef struct _JpfGetDiskInfoRes JpfGetDiskInfoRes;
-struct _JpfGetDiskInfoRes
+typedef struct _NmpGetDiskInfoRes NmpGetDiskInfoRes;
+struct _NmpGetDiskInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   puid[MAX_ID_LEN];
     gint                      disk_num;
-    JpfDiskInfo           disk_info[0];
+    NmpDiskInfo           disk_info[0];
 };
 
-typedef struct _JpfGetResolutionInfoRes JpfGetResolutionInfoRes;
-struct _JpfGetResolutionInfoRes
+typedef struct _NmpGetResolutionInfoRes NmpGetResolutionInfoRes;
+struct _NmpGetResolutionInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		              session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                      resolution;
 };
 
-typedef struct _JpfSetResolutionInfo JpfSetResolutionInfo;
-struct _JpfSetResolutionInfo
+typedef struct _NmpSetResolutionInfo NmpSetResolutionInfo;
+struct _NmpSetResolutionInfo
 {
 
     gchar		             session[SESSION_ID_LEN];
@@ -1690,8 +1690,8 @@ struct _JpfSetResolutionInfo
     gint                      resolution;
 };
 
-typedef struct _JpfIrcutControlInfo JpfIrcutControlInfo;
-struct _JpfIrcutControlInfo
+typedef struct _NmpIrcutControlInfo NmpIrcutControlInfo;
+struct _NmpIrcutControlInfo
 {
     gint                     channel;
     gint                     switch_mode;
@@ -1702,29 +1702,29 @@ struct _JpfIrcutControlInfo
     IrcutTimerSwitch   timer_switch;
 };
 
-typedef struct _JpfGetIrcutControlInfoRes JpfGetIrcutControlInfoRes;
-struct _JpfGetIrcutControlInfoRes
+typedef struct _NmpGetIrcutControlInfoRes NmpGetIrcutControlInfoRes;
+struct _NmpGetIrcutControlInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		          session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                     channel_count;
-    JpfIrcutControlInfo     ircut_control_info[0];
+    NmpIrcutControlInfo     ircut_control_info[0];
 };
 
-typedef struct _JpfSetIrcutControlInfo JpfSetIrcutControlInfo;
-struct _JpfSetIrcutControlInfo
+typedef struct _NmpSetIrcutControlInfo NmpSetIrcutControlInfo;
+struct _NmpSetIrcutControlInfo
 {
     gchar		             session[SESSION_ID_LEN];
     gchar                   domain_id[DOMAIN_ID_LEN];
     gchar                   guid[MAX_ID_LEN];
     gint                     channel_count;
-    JpfIrcutControlInfo     ircut_control_info[0];
+    NmpIrcutControlInfo     ircut_control_info[0];
 };
 
-typedef struct _JpfFormatDisk JpfFormatDisk;
-struct _JpfFormatDisk
+typedef struct _NmpFormatDisk NmpFormatDisk;
+struct _NmpFormatDisk
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
@@ -1732,8 +1732,8 @@ struct _JpfFormatDisk
     gint                       disk_no;
 };
 
-typedef struct _JpfGetStoreLog JpfGetStoreLog;
-struct _JpfGetStoreLog
+typedef struct _NmpGetStoreLog NmpGetStoreLog;
+struct _NmpGetStoreLog
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
@@ -1747,8 +1747,8 @@ struct _JpfGetStoreLog
     gint                   sessId;
 };
 
-typedef struct _JpfGetMssStoreLog JpfGetMssStoreLog;
-struct _JpfGetMssStoreLog
+typedef struct _NmpGetMssStoreLog NmpGetMssStoreLog;
+struct _NmpGetMssStoreLog
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
@@ -1763,8 +1763,8 @@ struct _JpfGetMssStoreLog
     gint                   sessId;
 };
 
-typedef struct _JpfStoreLog JpfStoreLog;
-struct _JpfStoreLog
+typedef struct _NmpStoreLog NmpStoreLog;
+struct _NmpStoreLog
 {
     gint                   record_type;
     gchar                begin_time[TIME_LEN];
@@ -1773,21 +1773,21 @@ struct _JpfStoreLog
     gint                   file_size;
 };
 
-typedef struct _JpfGetStoreLogRes JpfGetStoreLogRes;
-struct _JpfGetStoreLogRes
+typedef struct _NmpGetStoreLogRes NmpGetStoreLogRes;
+struct _NmpGetStoreLogRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
     gint                       sessId;
     gint                       total_num;
     gint                       req_num;
-    JpfStoreLog           store_list[0];
+    NmpStoreLog           store_list[0];
 };
 
-typedef struct _JpfPuUpgrade JpfPuUpgrade;
-struct _JpfPuUpgrade
+typedef struct _NmpPuUpgrade NmpPuUpgrade;
+struct _NmpPuUpgrade
 {
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
@@ -1796,10 +1796,10 @@ struct _JpfPuUpgrade
     gint                       file_len;
 };
 
-typedef struct _JpfPuUpgradeRes JpfPuUpgradeRes;
-struct _JpfPuUpgradeRes
+typedef struct _NmpPuUpgradeRes NmpPuUpgradeRes;
+struct _NmpPuUpgradeRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    puid[MAX_ID_LEN];
@@ -1807,8 +1807,8 @@ struct _JpfPuUpgradeRes
     gint                       port;
 };
 
-typedef struct _JpfGetAlarm JpfGetAlarm;
-struct _JpfGetAlarm
+typedef struct _NmpGetAlarm NmpGetAlarm;
+struct _NmpGetAlarm
 {
     gchar		session[SESSION_ID_LEN];
     gchar		username[USER_NAME_LEN];
@@ -1820,8 +1820,8 @@ struct _JpfGetAlarm
     gchar          end_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfAlarm JpfAlarm;
-struct _JpfAlarm
+typedef struct _NmpAlarm NmpAlarm;
+struct _NmpAlarm
 {
     gint           alarm_id;
     gchar        domain_id[DOMAIN_ID_LEN];
@@ -1835,35 +1835,35 @@ struct _JpfAlarm
     gchar	      alarm_info[ALARM_INFO_LEN];
 };
 
-typedef struct _JpfGetAlarmRes JpfGetAlarmRes;
-struct _JpfGetAlarmRes
+typedef struct _NmpGetAlarmRes NmpGetAlarmRes;
+struct _NmpGetAlarmRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
     gint            req_num;
     gint            total_num;
-    JpfAlarm	alarm_list[0];
+    NmpAlarm	alarm_list[0];
 };
 
-typedef struct _JpfGetAlarmState JpfGetAlarmState;
-struct _JpfGetAlarmState
+typedef struct _NmpGetAlarmState NmpGetAlarmState;
+struct _NmpGetAlarmState
 {
     gchar		session[SESSION_ID_LEN];
     gint            alarm_id;;
 };
 
-typedef struct _JpfGetAlarmStateRes JpfGetAlarmStateRes;
-struct _JpfGetAlarmStateRes
+typedef struct _NmpGetAlarmStateRes NmpGetAlarmStateRes;
+struct _NmpGetAlarmStateRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
     gchar		operator[USER_NAME_LEN];
     gchar		deal_time[TIME_INFO_LEN];
     gchar		description[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfDealAlarm JpfDealAlarm;
-struct _JpfDealAlarm
+typedef struct _NmpDealAlarm NmpDealAlarm;
+struct _NmpDealAlarm
 {
     gchar		session[SESSION_ID_LEN];
     gint            alarm_id;
@@ -1871,15 +1871,15 @@ struct _JpfDealAlarm
     gchar		description[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfDealAlarmRes JpfDealAlarmRes;
-struct _JpfDealAlarmRes
+typedef struct _NmpDealAlarmRes NmpDealAlarmRes;
+struct _NmpDealAlarmRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfControlDevice JpfControlDevice;
-struct _JpfControlDevice
+typedef struct _NmpControlDevice NmpControlDevice;
+struct _NmpControlDevice
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
@@ -1887,49 +1887,49 @@ struct _JpfControlDevice
     gint                   command;   //
 };
 
-typedef struct _JpfGetGuMss JpfGetGuMss;
-struct _JpfGetGuMss
+typedef struct _NmpGetGuMss NmpGetGuMss;
+struct _NmpGetGuMss
 {
     gchar		       session[SESSION_ID_LEN];
     gchar                domain_id[DOMAIN_ID_LEN];
     gchar                guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfGuMssHdGroup JpfGuMssHdGroup;
-struct _JpfGuMssHdGroup
+typedef struct _NmpGuMssHdGroup NmpGuMssHdGroup;
+struct _NmpGuMssHdGroup
 {
      gchar              hd_group_id[HD_GROUP_ID_LEN];
 };
 
-typedef struct _JpfGuMss JpfGuMss;
-struct _JpfGuMss
+typedef struct _NmpGuMss NmpGuMss;
+struct _NmpGuMss
 {
     gchar                mss_id[MSS_ID_LEN];
     gchar                mss_name[MSS_NAME_LEN];
-    JpfGuMssHdGroup hd_group[HD_GROUP_NUM];
+    NmpGuMssHdGroup hd_group[HD_GROUP_NUM];
 };
 
-typedef struct _JpfGetGuMssRes JpfGetGuMssRes;
-struct _JpfGetGuMssRes
+typedef struct _NmpGetGuMssRes NmpGetGuMssRes;
+struct _NmpGetGuMssRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar		           session[SESSION_ID_LEN];
     gchar                    domain_id[DOMAIN_ID_LEN];
     gchar                    guid[MAX_ID_LEN];
     gint                       total_num;
-    JpfGuMss               mss_list[0];
+    NmpGuMss               mss_list[0];
 };
 
-typedef struct _JpfAuthorizationExpired JpfAuthorizationExpired;
-struct _JpfAuthorizationExpired
+typedef struct _NmpAuthorizationExpired NmpAuthorizationExpired;
+struct _NmpAuthorizationExpired
 {
     gint	type;  // 0:距离过期不到5天 1:过期半个小时内 2:已过期
     gchar  expired_time[TIME_LEN];  //到期时间
 
 };
 
-typedef struct _JpfNotifyMessage JpfNotifyMessage;
-struct _JpfNotifyMessage
+typedef struct _NmpNotifyMessage NmpNotifyMessage;
+struct _NmpNotifyMessage
 {
     gint	msg_id;  //消息ID
     gchar param1[GENERAL_MSG_PARM_LEN];
@@ -1939,32 +1939,32 @@ struct _JpfNotifyMessage
 
 };
 
-typedef struct _JpfGetLicenseInfo JpfGetLicenseInfo;
-struct _JpfGetLicenseInfo
+typedef struct _NmpGetLicenseInfo NmpGetLicenseInfo;
+struct _NmpGetLicenseInfo
 {
     gchar			session[SESSION_ID_LEN];
 };
 
-typedef struct _JpfGetLicenseInfoRes JpfGetLicenseInfoRes;
-struct _JpfGetLicenseInfoRes
+typedef struct _NmpGetLicenseInfoRes NmpGetLicenseInfoRes;
+struct _NmpGetLicenseInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar			session[SESSION_ID_LEN];
-    JpfExpiredTime expired_time;
+    NmpExpiredTime expired_time;
     gint			version;
 };
 
-typedef JpfGetLicenseInfo JpfGetTwLicenseInfo;
+typedef NmpGetLicenseInfo NmpGetTwLicenseInfo;
 
-typedef struct _JpfGetTwLicenseInfoRes JpfGetTwLicenseInfoRes;
-struct _JpfGetTwLicenseInfoRes
+typedef struct _NmpGetTwLicenseInfoRes NmpGetTwLicenseInfoRes;
+struct _NmpGetTwLicenseInfoRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gint tw_auth_type;
 };
 
-typedef struct _JpfCuModifyUserPwd JpfCuModifyUserPwd;
-struct _JpfCuModifyUserPwd
+typedef struct _NmpCuModifyUserPwd NmpCuModifyUserPwd;
+struct _NmpCuModifyUserPwd
 {
     gchar		session[SESSION_ID_LEN];
     gchar       username[USER_NAME_LEN];
@@ -1972,17 +1972,17 @@ struct _JpfCuModifyUserPwd
     gchar       new_password[USER_PASSWD_LEN];
 };
 
-typedef struct _JpfCuModifyUserPwdRes JpfCuModifyUserPwdRes;
-struct _JpfCuModifyUserPwdRes
+typedef struct _NmpCuModifyUserPwdRes NmpCuModifyUserPwdRes;
+struct _NmpCuModifyUserPwdRes
 {
-	JpfMsgErrCode      code;
+	NmpMsgErrCode      code;
     gchar		session[SESSION_ID_LEN];
     gchar       new_password[USER_PASSWD_LEN];
 };
 
 
-typedef struct _JpfCuQueryGuid JpfCuQueryGuid;
-struct _JpfCuQueryGuid
+typedef struct _NmpCuQueryGuid NmpCuQueryGuid;
+struct _NmpCuQueryGuid
 {
 	gchar			user[USER_NAME_LEN];
 	gint				gu_num;
@@ -1990,10 +1990,10 @@ struct _JpfCuQueryGuid
 };
 
 
-typedef struct _JpfCuQueryGuidRes JpfCuQueryGuidRes;
-struct _JpfCuQueryGuidRes
+typedef struct _NmpCuQueryGuidRes NmpCuQueryGuidRes;
+struct _NmpCuQueryGuidRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 	gchar			guid[MAX_ID_LEN];
 	gchar			domain[DOMAIN_ID_LEN];
@@ -2003,8 +2003,8 @@ struct _JpfCuQueryGuidRes
 };
 
 
-typedef struct _JpfCuQueryScreenID JpfCuQueryScreenID;
-struct _JpfCuQueryScreenID
+typedef struct _NmpCuQueryScreenID NmpCuQueryScreenID;
+struct _NmpCuQueryScreenID
 {
 	gchar			user[USER_NAME_LEN];
 	gint				screen_num;
@@ -2012,18 +2012,18 @@ struct _JpfCuQueryScreenID
 };
 
 
-typedef struct _JpfCuQueryScreenIDRes JpfCuQueryScreenIDRes;
-struct _JpfCuQueryScreenIDRes
+typedef struct _NmpCuQueryScreenIDRes NmpCuQueryScreenIDRes;
+struct _NmpCuQueryScreenIDRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 	gint				screen_id;
 	gint				tw_id;
 };
 
 
-typedef struct _JpfCuQueryUserGuids JpfCuQueryUserGuids;
-struct _JpfCuQueryUserGuids
+typedef struct _NmpCuQueryUserGuids NmpCuQueryUserGuids;
+struct _NmpCuQueryUserGuids
 {
 	gchar			user[USER_NAME_LEN];
 	gint				req_num;
@@ -2032,8 +2032,8 @@ struct _JpfCuQueryUserGuids
 };
 
 
-typedef struct _JpfUserGuidInfo JpfUserGuidInfo;
-struct _JpfUserGuidInfo
+typedef struct _NmpUserGuidInfo NmpUserGuidInfo;
+struct _NmpUserGuidInfo
 {
 	gchar			guid[MAX_ID_LEN];
 	gchar			domain[DOMAIN_ID_LEN];
@@ -2042,30 +2042,30 @@ struct _JpfUserGuidInfo
 	gint				gu_num;
 };
 
-typedef struct _JpfCuQueryUserGuidsRes JpfCuQueryUserGuidsRes;
-struct _JpfCuQueryUserGuidsRes
+typedef struct _NmpCuQueryUserGuidsRes NmpCuQueryUserGuidsRes;
+struct _NmpCuQueryUserGuidsRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 	gint				total_count;
 	gint				back_count;
-	JpfUserGuidInfo	guid_info[0];
+	NmpUserGuidInfo	guid_info[0];
 };
 
 
-typedef struct _JpfCuSetUserGuids JpfCuSetUserGuids;
-struct _JpfCuSetUserGuids
+typedef struct _NmpCuSetUserGuids NmpCuSetUserGuids;
+struct _NmpCuSetUserGuids
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
 	gint				first_req;
 	gint				count;
-	JpfUserGuidInfo	guid_info[0];
+	NmpUserGuidInfo	guid_info[0];
 };
 
 
-typedef struct _JpfCuSetScreenNum JpfCuSetScreenNum;
-struct _JpfCuSetScreenNum
+typedef struct _NmpCuSetScreenNum NmpCuSetScreenNum;
+struct _NmpCuSetScreenNum
 {
 	gchar			user[USER_NAME_LEN];
 	gint				screen_id;
@@ -2074,8 +2074,8 @@ struct _JpfCuSetScreenNum
 };
 
 
-typedef struct _JpfCuQueryTourID JpfCuQueryTourID;
-struct _JpfCuQueryTourID
+typedef struct _NmpCuQueryTourID NmpCuQueryTourID;
+struct _NmpCuQueryTourID
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
@@ -2083,17 +2083,17 @@ struct _JpfCuQueryTourID
 };
 
 
-typedef struct _JpfCuQueryTourIDRes JpfCuQueryTourIDRes;
-struct _JpfCuQueryTourIDRes
+typedef struct _NmpCuQueryTourIDRes NmpCuQueryTourIDRes;
+struct _NmpCuQueryTourIDRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 	gint				tour_id;
 };
 
 
-typedef struct _JpfCuSetTourNum JpfCuSetTourNum;
-struct _JpfCuSetTourNum
+typedef struct _NmpCuSetTourNum NmpCuSetTourNum;
+struct _NmpCuSetTourNum
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
@@ -2102,8 +2102,8 @@ struct _JpfCuSetTourNum
 };
 
 
-typedef struct _JpfCuQueryGroupID JpfCuQueryGroupID;
-struct _JpfCuQueryGroupID
+typedef struct _NmpCuQueryGroupID NmpCuQueryGroupID;
+struct _NmpCuQueryGroupID
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];
@@ -2111,17 +2111,17 @@ struct _JpfCuQueryGroupID
 };
 
 
-typedef struct _JpfCuQueryGroupIDRes JpfCuQueryGroupIDRes;
-struct _JpfCuQueryGroupIDRes
+typedef struct _NmpCuQueryGroupIDRes NmpCuQueryGroupIDRes;
+struct _NmpCuQueryGroupIDRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 	gint				group_id;
 };
 
 
-typedef struct _JpfCuSetGroupNum JpfCuSetGroupNum;
-struct _JpfCuSetGroupNum
+typedef struct _NmpCuSetGroupNum NmpCuSetGroupNum;
+struct _NmpCuSetGroupNum
 {
 	gchar			session[SESSION_ID_LEN];
 	gchar			user[USER_NAME_LEN];

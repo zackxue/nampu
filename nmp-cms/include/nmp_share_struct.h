@@ -9,37 +9,37 @@
 
 
 
-typedef struct _JpfTimeSeg JpfTimeSeg;
-struct _JpfTimeSeg
+typedef struct _NmpTimeSeg NmpTimeSeg;
+struct _NmpTimeSeg
 {
 	gint			seg_enable;		//时间段有效性:0-无效，1-有效
 	gchar		time_seg[TIME_SEG_LEN];
 };
 
-typedef struct _JpfWeekday JpfWeekday;
-struct _JpfWeekday
+typedef struct _NmpWeekday NmpWeekday;
+struct _NmpWeekday
 {
 	gint			weekday;		//0表示周日, 1-6就表示周一到周六, 7表示每天
 	gint			time_seg_num;
-	JpfTimeSeg	time_segs[TIME_SEG_NUM];
+	NmpTimeSeg	time_segs[TIME_SEG_NUM];
 };
 
 
-typedef struct _JpfShareMssId JpfShareMssId;
-struct _JpfShareMssId
+typedef struct _NmpShareMssId NmpShareMssId;
+struct _NmpShareMssId
 {
     gchar			mss_id[MSS_ID_LEN];
 };
 
-typedef struct _JpfShareGuid JpfShareGuid;
-struct _JpfShareGuid
+typedef struct _NmpShareGuid NmpShareGuid;
+struct _NmpShareGuid
 {
 	gchar		domain_id[DOMAIN_ID_LEN];
 	gchar		guid[MAX_ID_LEN];
 };
 
-typedef struct _JpfSegment JpfSegment;
-struct _JpfSegment
+typedef struct _NmpSegment NmpSegment;
+struct _NmpSegment
 {
     gint  open;//开关
     gint  begin_sec; //开始时间秒数 3600*hour+60*min+sec
@@ -51,7 +51,7 @@ struct _IrcutTimerSwitch
 {
     	gint			weekday;		//0表示周日, 1-6就表示周一到周六, 7表示每天
 	gint			time_seg_num;
-    JpfSegment seg_time[TIME_SEG_NUM]; //时间段（4段）  in segment time open ir light, otherwise close it
+    NmpSegment seg_time[TIME_SEG_NUM]; //时间段（4段）  in segment time open ir light, otherwise close it
 };
 
 

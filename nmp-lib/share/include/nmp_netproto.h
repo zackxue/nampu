@@ -14,12 +14,12 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfNetPackInfo JpfNetPackInfo;
+typedef struct _NmpNetPackInfo NmpNetPackInfo;
 
 /*
  * Payload information.
 */
-struct _JpfNetPackInfo
+struct _NmpNetPackInfo
 {
 	guint				total_packets;			//@{total packets, for fragmentation}
 	guint				packet_no;				//@{current packet no, for fragmentation}
@@ -30,8 +30,8 @@ struct _JpfNetPackInfo
 };
 
 
-typedef struct _JpfPayloadProto JpfPayloadProto;
-struct _JpfPayloadProto
+typedef struct _NmpPayloadProto NmpPayloadProto;
+struct _NmpPayloadProto
 {
     /*
      * parse the payload information, it is always in XML format. return
@@ -57,8 +57,8 @@ struct _JpfPayloadProto
 };
 
 
-typedef struct _JpfPacketProto JpfPacketProto;
-struct _JpfPacketProto
+typedef struct _NmpPacketProto NmpPacketProto;
+struct _NmpPacketProto
 {
     /*
      * check whether a full packet has come, if so, return
@@ -74,7 +74,7 @@ struct _JpfPacketProto
      * @Ret:  0 success, payload() will be invoked. 
      *       !0 error, it will be reported to upper layer.
     */
-    gint (*unpack)(gchar *start, gchar *end,  JpfNetPackInfo *info);
+    gint (*unpack)(gchar *start, gchar *end,  NmpNetPackInfo *info);
 
     /*
      * create net protocol packet.

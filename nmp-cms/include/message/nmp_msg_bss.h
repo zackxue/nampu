@@ -8,83 +8,83 @@
 
 #define ONLINE_RATE_FLAG 1
 
-typedef struct _JpfModifyAdmin             JpfModifyAdmin;
-typedef struct _JpfModifyAdminResp         JpfModifyAdminResp;
+typedef struct _NmpModifyAdmin             NmpModifyAdmin;
+typedef struct _NmpModifyAdminResp         NmpModifyAdminResp;
 
-typedef struct _JpfBssRes JpfBssRes;
-struct _JpfBssRes
+typedef struct _NmpBssRes NmpBssRes;
+struct _NmpBssRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfBssLoginInfo JpfBssLoginInfo;
-struct _JpfBssLoginInfo
+typedef struct _NmpBssLoginInfo NmpBssLoginInfo;
+struct _NmpBssLoginInfo
 {
 	gchar admin_name[USER_NAME_LEN];
 	gchar password[USER_PASSWD_LEN];
 };
 
-typedef struct _JpfBssLoginRes JpfBssLoginRes;
-struct _JpfBssLoginRes
+typedef struct _NmpBssLoginRes NmpBssLoginRes;
+struct _NmpBssLoginRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar       admin_name[USER_NAME_LEN];
     gchar       domain_name[DOMAIN_NAME_LEN];
     gchar       domain_id[DOMAIN_ID_LEN];
     gint         module_sets;
 };
 
-typedef struct _JpfBssHeart JpfBssHeart;
-struct _JpfBssHeart
+typedef struct _NmpBssHeart NmpBssHeart;
+struct _NmpBssHeart
 {
     gchar			 admin_name[USER_NAME_LEN];;
 };
 
-typedef struct _JpfBssHeartResp JpfBssHeartResp;
-struct _JpfBssHeartResp
+typedef struct _NmpBssHeartResp NmpBssHeartResp;
+struct _NmpBssHeartResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			server_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfPlatformUpgrade JpfPlatformUpgrade;
-struct _JpfPlatformUpgrade
+typedef struct _NmpPlatformUpgrade NmpPlatformUpgrade;
+struct _NmpPlatformUpgrade
 {
     gchar			 admin_name[USER_NAME_LEN];;
 };
 
-typedef struct _JpfPlatformUpgradeResp JpfPlatformUpgradeResp;
-struct _JpfPlatformUpgradeResp
+typedef struct _NmpPlatformUpgradeResp NmpPlatformUpgradeResp;
+struct _NmpPlatformUpgradeResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAdminInfo JpfAdminInfo;
-struct _JpfAdminInfo
+typedef struct _NmpAdminInfo NmpAdminInfo;
+struct _NmpAdminInfo
 {
 	gchar admin_name[USER_NAME_LEN];
 	gchar password[USER_PASSWD_LEN];
 };
 
-typedef struct _JpfAddAdmin JpfAddAdmin;
-struct _JpfAddAdmin
+typedef struct _NmpAddAdmin NmpAddAdmin;
+struct _NmpAddAdmin
 {
 	gchar admin_name[USER_NAME_LEN];
 	gchar password[USER_PASSWD_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfDelAdmin JpfDelAdmin;
-struct _JpfDelAdmin
+typedef struct _NmpDelAdmin NmpDelAdmin;
+struct _NmpDelAdmin
 {
 	gchar admin_name[MULTI_NAME_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryAdmin JpfQueryAdmin;
-struct _JpfQueryAdmin
+typedef struct _NmpQueryAdmin NmpQueryAdmin;
+struct _NmpQueryAdmin
 {
 	gint              req_num;
 	gint              start_num;
@@ -93,18 +93,18 @@ struct _JpfQueryAdmin
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryAdminRes JpfQueryAdminRes;
-struct _JpfQueryAdminRes
+typedef struct _NmpQueryAdminRes NmpQueryAdminRes;
+struct _NmpQueryAdminRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar bss_usr[USER_NAME_LEN];
 	gint                     total_num;
 	gint                     req_num;
-	JpfAdminInfo       admin_info[0];
+	NmpAdminInfo       admin_info[0];
 };
 
-typedef struct _JpfAddUserGroup  JpfAddUserGroup;
-struct _JpfAddUserGroup
+typedef struct _NmpAddUserGroup  NmpAddUserGroup;
+struct _NmpAddUserGroup
 {
 	gint group_permissions;
 	gint  group_rank;
@@ -113,24 +113,24 @@ struct _JpfAddUserGroup
 };
 
 
-typedef struct _JpfValidateUserGroup  JpfValidateUserGroup;
-struct _JpfValidateUserGroup
+typedef struct _NmpValidateUserGroup  NmpValidateUserGroup;
+struct _NmpValidateUserGroup
 {
 	gchar group_name[GROUP_NAME_LEN];
 	gint group_id;
 };
 
 
-typedef struct _JpfDelUserGroup JpfDelUserGroup;
-struct _JpfDelUserGroup
+typedef struct _NmpDelUserGroup NmpDelUserGroup;
+struct _NmpDelUserGroup
 {
 	gchar group_id[MULTI_NAME_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfUserGroupInfo  JpfUserGroupInfo;
-struct _JpfUserGroupInfo
+typedef struct _NmpUserGroupInfo  NmpUserGroupInfo;
+struct _NmpUserGroupInfo
 {
 	gint group_id;
 	gint group_permissions;
@@ -139,8 +139,8 @@ struct _JpfUserGroupInfo
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserGroup JpfQueryUserGroup;
-struct _JpfQueryUserGroup
+typedef struct _NmpQueryUserGroup NmpQueryUserGroup;
+struct _NmpQueryUserGroup
 {
 	gint              req_num;
 	gint              start_num;
@@ -149,18 +149,18 @@ struct _JpfQueryUserGroup
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserGroupRes JpfQueryUserGroupRes;
-struct _JpfQueryUserGroupRes
+typedef struct _NmpQueryUserGroupRes NmpQueryUserGroupRes;
+struct _NmpQueryUserGroupRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar bss_usr[USER_NAME_LEN];
 	gint                     total_num;
 	gint                     req_num;
-	JpfUserGroupInfo       group_info[0];
+	NmpUserGroupInfo       group_info[0];
 };
 
-typedef struct _JpfAddUser JpfAddUser;
-struct _JpfAddUser
+typedef struct _NmpAddUser NmpAddUser;
+struct _NmpAddUser
 {
 	gchar                username[USER_NAME_LEN];
 	gchar                password[USER_PASSWD_LEN];
@@ -171,29 +171,29 @@ struct _JpfAddUser
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfValidateUser  JpfValidateUser;
-struct _JpfValidateUser
+typedef struct _NmpValidateUser  NmpValidateUser;
+struct _NmpValidateUser
 {
     gchar username[USER_NAME_LEN];
 
 };
 
-typedef struct _JpfDelUser JpfDelUser;
-struct _JpfDelUser
+typedef struct _NmpDelUser NmpDelUser;
+struct _NmpDelUser
 {
     gchar username[MULTI_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfForceUserOffline JpfForceUserOffline;
-struct _JpfForceUserOffline
+typedef struct _NmpForceUserOffline NmpForceUserOffline;
+struct _NmpForceUserOffline
 {
     gint reason;
 };
 
 
-typedef struct _JpfUserInfo  JpfUserInfo;
-struct _JpfUserInfo
+typedef struct _NmpUserInfo  NmpUserInfo;
+struct _NmpUserInfo
 {
     gchar                username[USER_NAME_LEN];
     gchar                password[USER_PASSWD_LEN];
@@ -206,8 +206,8 @@ struct _JpfUserInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUser JpfQueryUser;
-struct _JpfQueryUser
+typedef struct _NmpQueryUser NmpQueryUser;
+struct _NmpQueryUser
 {
     gint              req_num;
     gint              start_num;
@@ -216,18 +216,18 @@ struct _JpfQueryUser
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserRes JpfQueryUserRes;
-struct _JpfQueryUserRes
+typedef struct _NmpQueryUserRes NmpQueryUserRes;
+struct _NmpQueryUserRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
-    JpfUserInfo          user_info[0];
+    NmpUserInfo          user_info[0];
 };
 
-typedef struct _JpfAddDomain  JpfAddDomain;
-struct _JpfAddDomain
+typedef struct _NmpAddDomain  NmpAddDomain;
+struct _NmpAddDomain
 {
     gchar             domain_id[DOMAIN_ID_LEN];
     gchar             domain_name[DOMAIN_NAME_LEN];
@@ -237,8 +237,8 @@ struct _JpfAddDomain
 };
 
 
-typedef struct _JpfDomainInfo  JpfDomainInfo;
-struct _JpfDomainInfo
+typedef struct _NmpDomainInfo  NmpDomainInfo;
+struct _NmpDomainInfo
 {
     gchar             domain_id[DOMAIN_ID_LEN];
     gchar             domain_name[DOMAIN_NAME_LEN];
@@ -248,54 +248,54 @@ struct _JpfDomainInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfDelDomain JpfDelDomain;
-struct _JpfDelDomain
+typedef struct _NmpDelDomain NmpDelDomain;
+struct _NmpDelDomain
 {
     gchar             domain_id[MULTI_NAME_LEN];
 };
 
-typedef struct _JpfQueryDomain JpfQueryDomain;
-struct _JpfQueryDomain
+typedef struct _NmpQueryDomain NmpQueryDomain;
+struct _NmpQueryDomain
 {
     gint               type;   //0:按用户名查询，1:按类型查询
     gchar            key[USER_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDomainRes JpfQueryDomainRes;
-struct _JpfQueryDomainRes
+typedef struct _NmpQueryDomainRes NmpQueryDomainRes;
+struct _NmpQueryDomainRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      total_num;
-    JpfDomainInfo           domain_info[0];
+    NmpDomainInfo           domain_info[0];
 };
 
-typedef struct _JpfModifyDomain   JpfModifyDomain;
-struct _JpfModifyDomain
+typedef struct _NmpModifyDomain   NmpModifyDomain;
+struct _NmpModifyDomain
 {
     gchar		dm_id[DOMAIN_ID_LEN];
     gchar		dm_name[DOMAIN_NAME_LEN];
 };
 
-typedef struct _JpfAddArea  JpfAddArea;
-struct _JpfAddArea
+typedef struct _NmpAddArea  NmpAddArea;
+struct _NmpAddArea
 {
     gchar             area_name[AREA_NAME_LEN];
     gint                area_parent;
 };
 
-typedef struct _JpfAddAreaRes JpfAddAreaRes;
-struct _JpfAddAreaRes
+typedef struct _NmpAddAreaRes NmpAddAreaRes;
+struct _NmpAddAreaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gint                area_id;
     gchar bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfAreaInfo  JpfAreaInfo;
-struct _JpfAreaInfo
+typedef struct _NmpAreaInfo  NmpAreaInfo;
+struct _NmpAreaInfo
 {
     gint                area_id;
     gchar             area_name[AREA_NAME_LEN];
@@ -307,8 +307,8 @@ struct _JpfAreaInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryArea JpfQueryArea;
-struct _JpfQueryArea
+typedef struct _NmpQueryArea NmpQueryArea;
+struct _NmpQueryArea
 {
     gint               req_num;
     gint               start_num;
@@ -316,31 +316,31 @@ struct _JpfQueryArea
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryAreaRes JpfQueryAreaRes;
-struct _JpfQueryAreaRes
+typedef struct _NmpQueryAreaRes NmpQueryAreaRes;
+struct _NmpQueryAreaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      total_num;
     gint                      req_num;
-    JpfAreaInfo           area_info[0];
+    NmpAreaInfo           area_info[0];
 };
 
-typedef struct _JpfDelArea JpfDelArea;
-struct _JpfDelArea
+typedef struct _NmpDelArea NmpDelArea;
+struct _NmpDelArea
 {
     gint                area_id;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfValidateArea  JpfValidateArea;
-struct _JpfValidateArea
+typedef struct _NmpValidateArea  NmpValidateArea;
+struct _NmpValidateArea
 {
     gchar             area_name[AREA_NAME_LEN];
 };
 
-typedef struct _JpfAddPu JpfAddPu;
-struct _JpfAddPu
+typedef struct _NmpAddPu NmpAddPu;
+struct _NmpAddPu
 {
     gchar             puid[MAX_ID_LEN];
     gchar             pu_info[PU_NAME_LEN];
@@ -362,16 +362,16 @@ struct _JpfAddPu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddPuRes JpfAddPuRes;
-struct _JpfAddPuRes
+typedef struct _NmpAddPuRes NmpAddPuRes;
+struct _NmpAddPuRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			  bss_usr[USER_NAME_LEN];
     gint                  success_count;
 };
 
-typedef struct _JpfPuInfo JpfPuInfo;
-struct _JpfPuInfo
+typedef struct _NmpPuInfo NmpPuInfo;
+struct _NmpPuInfo
 {
     gchar             puid[MAX_ID_LEN];
     gchar             pu_info[PU_NAME_LEN];
@@ -392,8 +392,8 @@ struct _JpfPuInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryPu JpfQueryPu;
-struct _JpfQueryPu
+typedef struct _NmpQueryPu NmpQueryPu;
+struct _NmpQueryPu
 {
     gint               req_num;
     gint               start_num;
@@ -403,19 +403,19 @@ struct _JpfQueryPu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryPuRes JpfQueryPuRes;
-struct _JpfQueryPuRes
+typedef struct _NmpQueryPuRes NmpQueryPuRes;
+struct _NmpQueryPuRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar bss_usr[USER_NAME_LEN];
     gint                  total_num;
     gint                  req_num;
     gint                  type;
-    JpfPuInfo          pu_info[0];
+    NmpPuInfo          pu_info[0];
 };
 
-typedef struct _JpfMovePu JpfMovePu;
-struct _JpfMovePu
+typedef struct _NmpMovePu NmpMovePu;
+struct _NmpMovePu
 {
     gchar             puid[MAX_ID_LEN];
     gchar             pu_info[PU_NAME_LEN];
@@ -424,38 +424,38 @@ struct _JpfMovePu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfPuPoint JpfPuPoint;
-struct _JpfPuPoint
+typedef struct _NmpPuPoint NmpPuPoint;
+struct _NmpPuPoint
 {
     gchar               domain_id[DOMAIN_ID_LEN];
     gchar               puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfDelPu JpfDelPu;
-struct _JpfDelPu
+typedef struct _NmpDelPu NmpDelPu;
+struct _NmpDelPu
 {
     gint       count;
     gint       type;
     gchar    key[MAX_ID_LEN];
     gchar bss_usr[USER_NAME_LEN];
-    JpfPuPoint pu_list[0];
+    NmpPuPoint pu_list[0];
 };
 
-typedef struct _JpfValidatePu  JpfValidatePu;
-struct _JpfValidatePu
+typedef struct _NmpValidatePu  NmpValidatePu;
+struct _NmpValidatePu
 {
     gchar              puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfStoreServer JpfStoreServer;
-struct _JpfStoreServer
+typedef struct _NmpStoreServer NmpStoreServer;
+struct _NmpStoreServer
 {
     gchar              mss_id[MSS_ID_LEN];
     gchar              mss_name[MSS_NAME_LEN];
 };
 
-typedef struct _JpfAddGu JpfAddGu;
-struct _JpfAddGu
+typedef struct _NmpAddGu NmpAddGu;
+struct _NmpAddGu
 {
     gchar             puid[MAX_ID_LEN];
     gchar             guid[MAX_ID_LEN];
@@ -464,12 +464,12 @@ struct _JpfAddGu
     gint                gu_type;
     gint                gu_attributes;
     gchar             ivs_id[IVS_ID_LEN];
-    JpfStoreServer            mss[MSS_NUM];
+    NmpStoreServer            mss[MSS_NUM];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfGuInfo JpfGuInfo;
-struct _JpfGuInfo
+typedef struct _NmpGuInfo NmpGuInfo;
+struct _NmpGuInfo
 {
     gchar            puid[MAX_ID_LEN];
     gchar            guid[MAX_ID_LEN];
@@ -485,12 +485,12 @@ struct _JpfGuInfo
     gchar             ivs_id[IVS_ID_LEN];
     gchar             ivs_name[IVS_NAME_LEN];
     gchar             ams_name[AMS_NAME_LEN];
-    JpfStoreServer            mss[MSS_NUM];
+    NmpStoreServer            mss[MSS_NUM];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGu JpfQueryGu;
-struct _JpfQueryGu
+typedef struct _NmpQueryGu NmpQueryGu;
+struct _NmpQueryGu
 {
     gint              req_num;
     gint              start_num;
@@ -502,27 +502,27 @@ struct _JpfQueryGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGuRes JpfQueryGuRes;
-struct _JpfQueryGuRes
+typedef struct _NmpQueryGuRes NmpQueryGuRes;
+struct _NmpQueryGuRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar bss_usr[USER_NAME_LEN];
     gint        total_num;
     gint req_num;
     gint               type;
-    JpfGuInfo    gu_info[0];
+    NmpGuInfo    gu_info[0];
 };
 
-typedef struct _JpfDelGu JpfDelGu;
-struct _JpfDelGu
+typedef struct _NmpDelGu NmpDelGu;
+struct _NmpDelGu
 {
     gchar domain_id[DOMAIN_ID_LEN];
     gchar  guid[MAX_ID_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddMds JpfAddMds;
-struct _JpfAddMds
+typedef struct _NmpAddMds NmpAddMds;
+struct _NmpAddMds
 {
     gchar   mds_id[MDS_ID_LEN];
     gchar   mds_name[MDS_NAME_LEN];
@@ -535,8 +535,8 @@ struct _JpfAddMds
 };
 
 
-typedef struct _JpfMdsInfo  JpfMdsInfo;
-struct _JpfMdsInfo
+typedef struct _NmpMdsInfo  NmpMdsInfo;
+struct _NmpMdsInfo
 {
     gint     type;  // 0: 修改mds ; 1:修改get_ip_enable
     gchar   mds_id[MDS_ID_LEN];
@@ -550,8 +550,8 @@ struct _JpfMdsInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMds JpfQueryMds;
-struct _JpfQueryMds
+typedef struct _NmpQueryMds NmpQueryMds;
+struct _NmpQueryMds
 {
     gint              req_num;
     gint              start_num;
@@ -560,28 +560,28 @@ struct _JpfQueryMds
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMdsRes JpfQueryMdsRes;
-struct _JpfQueryMdsRes
+typedef struct _NmpQueryMdsRes NmpQueryMdsRes;
+struct _NmpQueryMdsRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint               type;
     gint                     total_num;
     gint                     req_num;
-    JpfMdsInfo          mds_info[0];
+    NmpMdsInfo          mds_info[0];
 };
 
 
-typedef struct _JpfDelMds JpfDelMds;
-struct _JpfDelMds
+typedef struct _NmpDelMds NmpDelMds;
+struct _NmpDelMds
 {
     gchar  mds_id[MULTI_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfAddMdsIp JpfAddMdsIp;
-struct _JpfAddMdsIp
+typedef struct _NmpAddMdsIp NmpAddMdsIp;
+struct _NmpAddMdsIp
 {
     gchar   mds_id[MDS_ID_LEN];
     gchar   cms_ip[MAX_IP_LEN];
@@ -590,35 +590,35 @@ struct _JpfAddMdsIp
 };
 
 
-typedef struct _JpfMdsIpInfo  JpfMdsIpInfo;
-struct _JpfMdsIpInfo
+typedef struct _NmpMdsIpInfo  NmpMdsIpInfo;
+struct _NmpMdsIpInfo
 {
    //gchar   mds_id[MDS_ID_LEN];
     gchar   cms_ip[MAX_IP_LEN];
     gchar   mds_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfQueryMdsIp JpfQueryMdsIp;
-struct _JpfQueryMdsIp
+typedef struct _NmpQueryMdsIp NmpQueryMdsIp;
+struct _NmpQueryMdsIp
 {
     gint               type;   //0:按用户名查询，1:按类型查询
     gchar            key[USER_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMdsIpRes JpfQueryMdsIpRes;
-struct _JpfQueryMdsIpRes
+typedef struct _NmpQueryMdsIpRes NmpQueryMdsIpRes;
+struct _NmpQueryMdsIpRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gchar   mds_id[MDS_ID_LEN];
-    JpfMdsIpInfo          mds_ip_info[0];
+    NmpMdsIpInfo          mds_ip_info[0];
 };
 
 
-typedef struct _JpfDelMdsIp JpfDelMdsIp;
-struct _JpfDelMdsIp
+typedef struct _NmpDelMdsIp NmpDelMdsIp;
+struct _NmpDelMdsIp
 {
     gchar  mds_id[MDS_ID_LEN];
     gchar   cms_ip[MAX_IP_LEN];
@@ -626,8 +626,8 @@ struct _JpfDelMdsIp
 };
 
 
-typedef struct _JpfAddMss JpfAddMss;
-struct _JpfAddMss
+typedef struct _NmpAddMss NmpAddMss;
+struct _NmpAddMss
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar   mss_name[MSS_NAME_LEN];
@@ -638,8 +638,8 @@ struct _JpfAddMss
 };
 
 
-typedef struct _JpfMssInfo  JpfMssInfo;
-struct _JpfMssInfo
+typedef struct _NmpMssInfo  NmpMssInfo;
+struct _NmpMssInfo
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar   mss_name[MSS_NAME_LEN];
@@ -651,8 +651,8 @@ struct _JpfMssInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMss JpfQueryMss;
-struct _JpfQueryMss
+typedef struct _NmpQueryMss NmpQueryMss;
+struct _NmpQueryMss
 {
     gint              req_num;
     gint              start_num;
@@ -661,28 +661,28 @@ struct _JpfQueryMss
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMssRes JpfQueryMssRes;
-struct _JpfQueryMssRes
+typedef struct _NmpQueryMssRes NmpQueryMssRes;
+struct _NmpQueryMssRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
 
-    JpfMssInfo          mss_info[0];
+    NmpMssInfo          mss_info[0];
 };
 
 
-typedef struct _JpfDelMss JpfDelMss;
-struct _JpfDelMss
+typedef struct _NmpDelMss NmpDelMss;
+struct _NmpDelMss
 {
     gchar  mss_id[MULTI_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfRecordGu  JpfRecordGu;
-struct _JpfRecordGu
+typedef struct _NmpRecordGu  NmpRecordGu;
+struct _NmpRecordGu
 {
     gchar guid[MAX_ID_LEN];
     gchar domain_id[DOMAIN_ID_LEN];
@@ -695,14 +695,14 @@ struct _JpfRecordGu
     gchar area_name[AREA_NAME_LEN];
 };
 
-typedef struct _JpfHdGroup JpfHdGroup;
-struct _JpfHdGroup
+typedef struct _NmpHdGroup NmpHdGroup;
+struct _NmpHdGroup
 {
     gchar              hd_group_id[HD_GROUP_ID_LEN];
 };
 
-typedef struct _JpfQueryRecordPolicy JpfQueryRecordPolicy;
-struct _JpfQueryRecordPolicy
+typedef struct _NmpQueryRecordPolicy NmpQueryRecordPolicy;
+struct _NmpQueryRecordPolicy
 {
     gchar guid[MAX_ID_LEN];
     gchar domain_id[DOMAIN_ID_LEN];
@@ -714,56 +714,56 @@ struct _JpfQueryRecordPolicy
     gchar          bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryRecordGuRes JpfQueryRecordGuRes;
-struct _JpfQueryRecordGuRes
+typedef struct _NmpQueryRecordGuRes NmpQueryRecordGuRes;
+struct _NmpQueryRecordGuRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar                  guid[MAX_ID_LEN];
     gchar                  domain_id[DOMAIN_ID_LEN];
     gchar                  mss_id[MSS_ID_LEN];
-    JpfHdGroup		     hd_group[HD_GROUP_NUM];
+    NmpHdGroup		     hd_group[HD_GROUP_NUM];
     gchar                  time_policy[POLICY_LEN];
 };
 
-typedef struct _JpfQueryRecordPolicyRes JpfQueryRecordPolicyRes;
-struct _JpfQueryRecordPolicyRes
+typedef struct _NmpQueryRecordPolicyRes NmpQueryRecordPolicyRes;
+struct _NmpQueryRecordPolicyRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar          bss_usr[USER_NAME_LEN];
     gint                      total_num;
     gint                      req_num;
-    gint                      type;   //0:按用户名查询，1:按类型查询	    JpfHdGroup		       hd_group[HD_GROUP_NUM];
-    JpfHdGroup		       hd_group[HD_GROUP_NUM];
+    gint                      type;   //0:按用户名查询，1:按类型查询	    NmpHdGroup		       hd_group[HD_GROUP_NUM];
+    NmpHdGroup		       hd_group[HD_GROUP_NUM];
     gchar                    time_policy[POLICY_LEN];
 
-    JpfRecordGu          record_policy[0];
+    NmpRecordGu          record_policy[0];
 };
 
-typedef struct _JpfRecordPolicyConfig JpfRecordPolicyConfig;
-struct _JpfRecordPolicyConfig
+typedef struct _NmpRecordPolicyConfig NmpRecordPolicyConfig;
+struct _NmpRecordPolicyConfig
 {
     gint                      type;
     gint                      level;
     gchar                    mss_id[MSS_ID_LEN];
-    JpfHdGroup		        hd_group[HD_GROUP_NUM];
+    NmpHdGroup		        hd_group[HD_GROUP_NUM];
     gchar                    time_policy[POLICY_LEN];
     gchar bss_usr[USER_NAME_LEN];
     gint                       gu_count;
-    JpfRecordGu          record_policy[0];
+    NmpRecordGu          record_policy[0];
 };
 
-typedef struct _JpfRecordPolicyConfigRes JpfRecordPolicyConfigRes;
-struct _JpfRecordPolicyConfigRes
+typedef struct _NmpRecordPolicyConfigRes NmpRecordPolicyConfigRes;
+struct _NmpRecordPolicyConfigRes
 {
     gint                      type;
     gchar                    mss_id[MSS_ID_LEN];
     gchar		bss_usr[USER_NAME_LEN];
     gint                       gu_count;
-    JpfRecordGu          record_policy[0];
+    NmpRecordGu          record_policy[0];
 };
 
-typedef struct _JpfAddModifyManufacturer  JpfAddModifyManufacturer;
-struct _JpfAddModifyManufacturer
+typedef struct _NmpAddModifyManufacturer  NmpAddModifyManufacturer;
+struct _NmpAddModifyManufacturer
 {
     gint type;
     gchar   mf_id[MF_ID_LEN];
@@ -771,40 +771,40 @@ struct _JpfAddModifyManufacturer
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfManufacturerInfo  JpfManufacturerInfo;
-struct _JpfManufacturerInfo
+typedef struct _NmpManufacturerInfo  NmpManufacturerInfo;
+struct _NmpManufacturerInfo
 {
     gchar   mf_id[MF_ID_LEN];
     gchar  mf_name[MF_NAME_LEN];
 };
 
-typedef struct _JpfQueryManufacturer JpfQueryManufacturer;
-struct _JpfQueryManufacturer
+typedef struct _NmpQueryManufacturer NmpQueryManufacturer;
+struct _NmpQueryManufacturer
 {
     gint              req_num;
     gint              start_num;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryManufacturerRes JpfQueryManufacturerRes;
-struct _JpfQueryManufacturerRes
+typedef struct _NmpQueryManufacturerRes NmpQueryManufacturerRes;
+struct _NmpQueryManufacturerRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
-    JpfManufacturerInfo          manufacturer_info[0];
+    NmpManufacturerInfo          manufacturer_info[0];
 };
 
-typedef struct _JpfDelManufacturer JpfDelManufacturer;
-struct _JpfDelManufacturer
+typedef struct _NmpDelManufacturer NmpDelManufacturer;
+struct _NmpDelManufacturer
 {
     gchar  mf_id[MF_ID_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfGuToUserInfo JpfGuToUserInfo;
-struct _JpfGuToUserInfo
+typedef struct _NmpGuToUserInfo NmpGuToUserInfo;
+struct _NmpGuToUserInfo
 {
     //gchar   username[USER_NAME_LEN];
     gchar   user_guid[MAX_ID_LEN];
@@ -812,26 +812,26 @@ struct _JpfGuToUserInfo
 
 };
 
-typedef struct _JpfAddGuToUser JpfAddGuToUser;
-struct _JpfAddGuToUser
+typedef struct _NmpAddGuToUser NmpAddGuToUser;
+struct _NmpAddGuToUser
 {
     //struct  list_head list;
     gint total_num;
     gchar   username[USER_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
-    JpfGuToUserInfo gu_to_user_info[0];
+    NmpGuToUserInfo gu_to_user_info[0];
 };
 
 
-typedef struct _JpfUserOwnGu  JpfUserOwnGu;
-struct _JpfUserOwnGu
+typedef struct _NmpUserOwnGu  NmpUserOwnGu;
+struct _NmpUserOwnGu
 {
     gchar   user_guid[MAX_ID_LEN];
     gchar   guid_name[GU_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnGu JpfQueryUserOwnGu;
-struct _JpfQueryUserOwnGu
+typedef struct _NmpQueryUserOwnGu NmpQueryUserOwnGu;
+struct _NmpQueryUserOwnGu
 {
     gint              req_num;
     gint              start_num;
@@ -840,53 +840,53 @@ struct _JpfQueryUserOwnGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnGuRes JpfQueryUserOwnGuRes;
-struct _JpfQueryUserOwnGuRes
+typedef struct _NmpQueryUserOwnGuRes NmpQueryUserOwnGuRes;
+struct _NmpQueryUserOwnGuRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
     gchar domain_id[DOMAIN_ID_LEN];
     gchar user[USER_NAME_LEN];
 
-    JpfUserOwnGu      user_own_gu_info[0];
+    NmpUserOwnGu      user_own_gu_info[0];
 };
 
-typedef struct _JpfDelGuFromUser JpfDelGuFromUser;
-struct _JpfDelGuFromUser
+typedef struct _NmpDelGuFromUser NmpDelGuFromUser;
+struct _NmpDelGuFromUser
 {
     gint total_num;
     gchar   username[USER_NAME_LEN];
-    JpfGuToUserInfo gu_to_user_info[0];
+    NmpGuToUserInfo gu_to_user_info[0];
 };
 
-typedef struct _JpfTwToUserInfo JpfTwToUserInfo;
-struct _JpfTwToUserInfo
+typedef struct _NmpTwToUserInfo NmpTwToUserInfo;
+struct _NmpTwToUserInfo
 {
     gint   tw_id;
 };
 
-typedef struct _JpfAddTwToUser JpfAddTwToUser;
-struct _JpfAddTwToUser
+typedef struct _NmpAddTwToUser NmpAddTwToUser;
+struct _NmpAddTwToUser
 {
     //struct  list_head list;
     gint total_num;
     gchar   username[USER_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
-    JpfTwToUserInfo tw_to_user_info[0];
+    NmpTwToUserInfo tw_to_user_info[0];
 };
 
 
-typedef struct _JpfUserOwnTw  JpfUserOwnTw;
-struct _JpfUserOwnTw
+typedef struct _NmpUserOwnTw  NmpUserOwnTw;
+struct _NmpUserOwnTw
 {
     gint   tw_id;
     gchar  tw_name[TW_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnTw JpfQueryUserOwnTw;
-struct _JpfQueryUserOwnTw
+typedef struct _NmpQueryUserOwnTw NmpQueryUserOwnTw;
+struct _NmpQueryUserOwnTw
 {
     gint              req_num;
     gint              start_num;
@@ -894,43 +894,43 @@ struct _JpfQueryUserOwnTw
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnTwRes JpfQueryUserOwnTwRes;
-struct _JpfQueryUserOwnTwRes
+typedef struct _NmpQueryUserOwnTwRes NmpQueryUserOwnTwRes;
+struct _NmpQueryUserOwnTwRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
     gchar domain_id[DOMAIN_ID_LEN];
     gchar user[USER_NAME_LEN];
 
-    JpfUserOwnTw      user_own_tw_info[0];
+    NmpUserOwnTw      user_own_tw_info[0];
 };
 
-typedef struct _JpfTourToUserInfo JpfTourToUserInfo;
-struct _JpfTourToUserInfo
+typedef struct _NmpTourToUserInfo NmpTourToUserInfo;
+struct _NmpTourToUserInfo
 {
     gint   tour_id;
 };
 
-typedef struct _JpfAddTourToUser JpfAddTourToUser;
-struct _JpfAddTourToUser
+typedef struct _NmpAddTourToUser NmpAddTourToUser;
+struct _NmpAddTourToUser
 {
     gint total_num;
     gchar   username[USER_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
-    JpfTourToUserInfo tour_to_user_info[0];
+    NmpTourToUserInfo tour_to_user_info[0];
 };
 
-typedef struct _JpfUserOwnTour  JpfUserOwnTour;
-struct _JpfUserOwnTour
+typedef struct _NmpUserOwnTour  NmpUserOwnTour;
+struct _NmpUserOwnTour
 {
     gint   tour_id;
     gchar  tour_name[TOUR_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnTour JpfQueryUserOwnTour;
-struct _JpfQueryUserOwnTour
+typedef struct _NmpQueryUserOwnTour NmpQueryUserOwnTour;
+struct _NmpQueryUserOwnTour
 {
     gint              req_num;
     gint              start_num;
@@ -939,96 +939,96 @@ struct _JpfQueryUserOwnTour
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryUserOwnTourRes JpfQueryUserOwnTourRes;
-struct _JpfQueryUserOwnTourRes
+typedef struct _NmpQueryUserOwnTourRes NmpQueryUserOwnTourRes;
+struct _NmpQueryUserOwnTourRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint                     total_num;
     gint                     req_num;
     gchar domain_id[DOMAIN_ID_LEN];
     gchar user[USER_NAME_LEN];
 
-    JpfUserOwnTour      user_own_tour_info[0];
+    NmpUserOwnTour      user_own_tour_info[0];
 };
 
-typedef struct _JpfSetServerTime JpfSetServerTime;
-struct _JpfSetServerTime
+typedef struct _NmpSetServerTime NmpSetServerTime;
+struct _NmpSetServerTime
 {
     gchar time_zone[TIME_ZONE_LEN];
     gchar system_time[TIME_LEN];
 };
 
-typedef struct _JpfSetServerTimeRes JpfSetServerTimeRes;
-struct _JpfSetServerTimeRes
+typedef struct _NmpSetServerTimeRes NmpSetServerTimeRes;
+struct _NmpSetServerTimeRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gchar time_zone[TIME_ZONE_LEN];
     gchar system_time[TIME_LEN];
 };
 
-typedef struct  _JpfQueryServerTime JpfQueryServerTime;
-struct _JpfQueryServerTime
+typedef struct  _NmpQueryServerTime NmpQueryServerTime;
+struct _NmpQueryServerTime
 {
     gchar time_zone[TIME_ZONE_LEN];
 };
 
-typedef struct  _JpfQueryServerTimeRes JpfQueryServerTimeRes;
-struct _JpfQueryServerTimeRes
+typedef struct  _NmpQueryServerTimeRes NmpQueryServerTimeRes;
+struct _NmpQueryServerTimeRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     //gchar time_zone[TIME_ZONE_LEN];
     gchar system_time[TIME_LEN];
 };
 
 
-typedef struct  _JpfDbBackup JpfDbBackup;
-struct _JpfDbBackup
+typedef struct  _NmpDbBackup NmpDbBackup;
+struct _NmpDbBackup
 {
     gchar filename[FILENAME_LEN];
     gchar	bss_usr[USER_NAME_LEN];
 };
 
-typedef struct  _JpfDbImport JpfDbImport;
-struct _JpfDbImport
+typedef struct  _NmpDbImport NmpDbImport;
+struct _NmpDbImport
 {
     gchar filename[FILENAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct  _JpfDbImportRes JpfDbImportRes;
-struct _JpfDbImportRes
+typedef struct  _NmpDbImportRes NmpDbImportRes;
+struct _NmpDbImportRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gchar error_desc[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfErrRes JpfErrRes;
-struct _JpfErrRes
+typedef struct _NmpErrRes NmpErrRes;
+struct _NmpErrRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct _JpfSetResult JpfSetResult;
-struct _JpfSetResult
+typedef struct _NmpSetResult NmpSetResult;
+struct _NmpSetResult
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfGetNetInterfaceConfigRes JpfGetNetInterfaceConfigRes;
-struct _JpfGetNetInterfaceConfigRes
+typedef struct _NmpGetNetInterfaceConfigRes NmpGetNetInterfaceConfigRes;
+struct _NmpGetNetInterfaceConfigRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar                   network_interface[NET_INTERFACE_LEN];
 };
 
 
-typedef struct  _JpfGetNetworkConfig JpfGetNetworkConfig;
-struct _JpfGetNetworkConfig
+typedef struct  _NmpGetNetworkConfig NmpGetNetworkConfig;
+struct _NmpGetNetworkConfig
 {
     gchar                   network_interface[NET_INTERFACE_LEN];
 };
@@ -1040,17 +1040,17 @@ typedef struct
 	gchar				gateway[MAX_IP_LEN];
 } IpInfo;
 
-typedef struct _JpfGetNetworkConfigRes JpfGetNetworkConfigRes;
-struct _JpfGetNetworkConfigRes
+typedef struct _NmpGetNetworkConfigRes NmpGetNetworkConfigRes;
+struct _NmpGetNetworkConfigRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				dns[MAX_IP_LEN];
 	int					count;
 	IpInfo				ip_list[0];
 };
 
-typedef struct _JpfSetNetworkConfig JpfSetNetworkConfig;
-struct _JpfSetNetworkConfig
+typedef struct _NmpSetNetworkConfig NmpSetNetworkConfig;
+struct _NmpSetNetworkConfig
 {
 	gchar				network_interface[NET_INTERFACE_LEN];
 	gchar				dns[MAX_IP_LEN];
@@ -1058,25 +1058,25 @@ struct _JpfSetNetworkConfig
 	IpInfo				ip_list[0];
 };
 
-typedef struct _JpfAddHdGroup JpfAddHdGroup;
-struct _JpfAddHdGroup
+typedef struct _NmpAddHdGroup NmpAddHdGroup;
+struct _NmpAddHdGroup
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar   hd_group_name[GROUP_NAME_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfAddHdGroupRes JpfAddHdGroupRes;
-struct _JpfAddHdGroupRes
+typedef struct  _NmpAddHdGroupRes NmpAddHdGroupRes;
+struct _NmpAddHdGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gchar   mss_id[MSS_ID_LEN];
     gint hd_group_id;
 };
 
-typedef struct _JpfAddHdToGroup JpfAddHdToGroup;
-struct _JpfAddHdToGroup
+typedef struct _NmpAddHdToGroup NmpAddHdToGroup;
+struct _NmpAddHdToGroup
 {
     gchar   mss_id[MSS_ID_LEN];
     gint      hd_group_id;
@@ -1084,15 +1084,15 @@ struct _JpfAddHdToGroup
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfAddHdToGroupRes JpfAddHdToGroupRes;
-struct _JpfAddHdToGroupRes
+typedef struct  _NmpAddHdToGroupRes NmpAddHdToGroupRes;
+struct _NmpAddHdToGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct _JpfDelHdFromGroup JpfDelHdFromGroup;
-struct _JpfDelHdFromGroup
+typedef struct _NmpDelHdFromGroup NmpDelHdFromGroup;
+struct _NmpDelHdFromGroup
 {
     gchar   mss_id[MSS_ID_LEN];
     gint      hd_group_id;
@@ -1100,52 +1100,52 @@ struct _JpfDelHdFromGroup
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfDelHdFromGroupRes JpfDelHdFromGroupRes;
-struct _JpfDelHdFromGroupRes
+typedef struct  _NmpDelHdFromGroupRes NmpDelHdFromGroupRes;
+struct _NmpDelHdFromGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct _JpfRebootMss JpfRebootMss;
-struct _JpfRebootMss
+typedef struct _NmpRebootMss NmpRebootMss;
+struct _NmpRebootMss
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfRebootMssRes JpfRebootMssRes;
-struct _JpfRebootMssRes
+typedef struct  _NmpRebootMssRes NmpRebootMssRes;
+struct _NmpRebootMssRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct _JpfHdGroupInfo JpfHdGroupInfo;
-struct _JpfHdGroupInfo
+typedef struct _NmpHdGroupInfo NmpHdGroupInfo;
+struct _NmpHdGroupInfo
 {
     gint hd_group_id;
     gchar   hd_group_name[GROUP_NAME_LEN];
 };
 
-typedef struct _JpfQueryAllHdGroup JpfQueryAllHdGroup;
-struct _JpfQueryAllHdGroup
+typedef struct _NmpQueryAllHdGroup NmpQueryAllHdGroup;
+struct _NmpQueryAllHdGroup
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfQueryAllHdGroupRes JpfQueryAllHdGroupRes;
-struct _JpfQueryAllHdGroupRes
+typedef struct  _NmpQueryAllHdGroupRes NmpQueryAllHdGroupRes;
+struct _NmpQueryAllHdGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gint                     total_num;
-    JpfHdGroupInfo    group_info[0];
+    NmpHdGroupInfo    group_info[0];
 };
 
-typedef struct _JpfHdInfo JpfHdInfo;
-struct _JpfHdInfo
+typedef struct _NmpHdInfo NmpHdInfo;
+struct _NmpHdInfo
 {
     gchar hd_name[HD_NAME_LEN];
     gint hd_id;
@@ -1155,65 +1155,65 @@ struct _JpfHdInfo
     gint fs_type;
 };
 
-typedef struct _JpfQueryHdGroupInfo JpfQueryHdGroupInfo;
-struct _JpfQueryHdGroupInfo
+typedef struct _NmpQueryHdGroupInfo NmpQueryHdGroupInfo;
+struct _NmpQueryHdGroupInfo
 {
     gchar   mss_id[MSS_ID_LEN];
     gint      hd_group_id;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfQueryHdGroupInfoRes JpfQueryHdGroupInfoRes;
-struct _JpfQueryHdGroupInfoRes
+typedef struct  _NmpQueryHdGroupInfoRes NmpQueryHdGroupInfoRes;
+struct _NmpQueryHdGroupInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gint                     total_num;
-    JpfHdInfo    hd_info[0];
+    NmpHdInfo    hd_info[0];
 };
 
-typedef struct _JpfQueryAllHd JpfQueryAllHd;
-struct _JpfQueryAllHd
+typedef struct _NmpQueryAllHd NmpQueryAllHd;
+struct _NmpQueryAllHd
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfQueryAllHdRes JpfQueryAllHdRes;
-struct _JpfQueryAllHdRes
+typedef struct  _NmpQueryAllHdRes NmpQueryAllHdRes;
+struct _NmpQueryAllHdRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gint                     total_num;
-    JpfHdInfo    hd_info[0];
+    NmpHdInfo    hd_info[0];
 };
 
-typedef struct _JpfDelHdGroup JpfDelHdGroup;
-struct _JpfDelHdGroup
+typedef struct _NmpDelHdGroup NmpDelHdGroup;
+struct _NmpDelHdGroup
 {
     gchar   mss_id[MSS_ID_LEN];
     gint      hd_group_id;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfDelHdGroupRes JpfDelHdGroupRes;
-struct _JpfDelHdGroupRes
+typedef struct  _NmpDelHdGroupRes NmpDelHdGroupRes;
+struct _NmpDelHdGroupRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct _JpfGetHdFormatProgress JpfGetHdFormatProgress;
-struct _JpfGetHdFormatProgress
+typedef struct _NmpGetHdFormatProgress NmpGetHdFormatProgress;
+struct _NmpGetHdFormatProgress
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfGetHdFormatProgressRes JpfGetHdFormatProgressRes;
-struct _JpfGetHdFormatProgressRes
+typedef struct  _NmpGetHdFormatProgressRes NmpGetHdFormatProgressRes;
+struct _NmpGetHdFormatProgressRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gchar   mss_id[MSS_ID_LEN];
     gchar   hd_name[HD_NAME_LEN];
@@ -1222,8 +1222,8 @@ struct _JpfGetHdFormatProgressRes
     gint      percent;
 };
 
-typedef struct _JpfQueryGuRecordStatus JpfQueryGuRecordStatus;
-struct _JpfQueryGuRecordStatus
+typedef struct _NmpQueryGuRecordStatus NmpQueryGuRecordStatus;
+struct _NmpQueryGuRecordStatus
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar                  guid[MAX_ID_LEN];
@@ -1231,30 +1231,30 @@ struct _JpfQueryGuRecordStatus
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfQueryGuRecordStatusRes JpfQueryGuRecordStatusRes;
-struct _JpfQueryGuRecordStatusRes
+typedef struct  _NmpQueryGuRecordStatusRes NmpQueryGuRecordStatusRes;
+struct _NmpQueryGuRecordStatusRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gint                     status;
     gint                     status_code;
 };
 
-typedef struct _JpfMssId JpfMssId;
-struct _JpfMssId
+typedef struct _NmpMssId NmpMssId;
+struct _NmpMssId
 {
     gchar   mss_id[MSS_ID_LEN];
 };
 
-typedef struct _JpfMssEvent  JpfMssEvent;
-struct _JpfMssEvent
+typedef struct _NmpMssEvent  NmpMssEvent;
+struct _NmpMssEvent
 {
     gint       mss_num;
-    JpfMssId   mss_event[0];
+    NmpMssId   mss_event[0];
 };
 
-typedef struct _JpfAddDefenceArea  JpfAddDefenceArea;
-struct _JpfAddDefenceArea
+typedef struct _NmpAddDefenceArea  NmpAddDefenceArea;
+struct _NmpAddDefenceArea
 {
     gint                defence_area_id;
     gint                enable;
@@ -1262,14 +1262,14 @@ struct _JpfAddDefenceArea
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddDefenceAreaRes JpfAddDefenceAreaRes;
-struct _JpfAddDefenceAreaRes
+typedef struct _NmpAddDefenceAreaRes NmpAddDefenceAreaRes;
+struct _NmpAddDefenceAreaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
 };
 
-typedef struct _JpfDefenceAreaInfo  JpfDefenceAreaInfo;
-struct _JpfDefenceAreaInfo
+typedef struct _NmpDefenceAreaInfo  NmpDefenceAreaInfo;
+struct _NmpDefenceAreaInfo
 {
     gint                defence_area_id;
     gchar             defence_area_name[AREA_NAME_LEN];
@@ -1278,8 +1278,8 @@ struct _JpfDefenceAreaInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDefenceArea JpfQueryDefenceArea;
-struct _JpfQueryDefenceArea
+typedef struct _NmpQueryDefenceArea NmpQueryDefenceArea;
+struct _NmpQueryDefenceArea
 {
     gint               req_num;
     gint               start_num;
@@ -1288,26 +1288,26 @@ struct _JpfQueryDefenceArea
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDefenceAreaRes JpfQueryDefenceAreaRes;
-struct _JpfQueryDefenceAreaRes
+typedef struct _NmpQueryDefenceAreaRes NmpQueryDefenceAreaRes;
+struct _NmpQueryDefenceAreaRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      type;   //0:查询所有1:根据id查询
     gint                      total_num;
     gint                      req_num;
-    JpfDefenceAreaInfo           defence_area_info[0];
+    NmpDefenceAreaInfo           defence_area_info[0];
 };
 
-typedef struct _JpfDelDefenceArea JpfDelDefenceArea;
-struct _JpfDelDefenceArea
+typedef struct _NmpDelDefenceArea NmpDelDefenceArea;
+struct _NmpDelDefenceArea
 {
     gint                defence_area_id;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddDefenceMap  JpfAddDefenceMap;
-struct _JpfAddDefenceMap
+typedef struct _NmpAddDefenceMap  NmpAddDefenceMap;
+struct _NmpAddDefenceMap
 {
     gint                defence_area_id;
     gint                map_id;
@@ -1317,22 +1317,22 @@ struct _JpfAddDefenceMap
 };
 
 
-typedef struct _JpfAddDefenceMapRes JpfAddDefenceMapRes;
-struct _JpfAddDefenceMapRes
+typedef struct _NmpAddDefenceMapRes NmpAddDefenceMapRes;
+struct _NmpAddDefenceMapRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
 };
 
-typedef struct _JpfDefenceMapInfo  JpfDefenceMapInfo;
-struct _JpfDefenceMapInfo
+typedef struct _NmpDefenceMapInfo  NmpDefenceMapInfo;
+struct _NmpDefenceMapInfo
 {
     gint                map_id;
     gchar             map_name[MAP_NAME_LEN];
     gchar             map_location[MAP_LOCATION_LEN];
 };
 
-typedef struct _JpfQueryDefenceMap JpfQueryDefenceMap;
-struct _JpfQueryDefenceMap
+typedef struct _NmpQueryDefenceMap NmpQueryDefenceMap;
+struct _NmpQueryDefenceMap
 {
     gint                defence_area_id;
     gint               req_num;
@@ -1340,18 +1340,18 @@ struct _JpfQueryDefenceMap
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDefenceMapRes JpfQueryDefenceMapRes;
-struct _JpfQueryDefenceMapRes
+typedef struct _NmpQueryDefenceMapRes NmpQueryDefenceMapRes;
+struct _NmpQueryDefenceMapRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      total_num;
     gint                      back_num;
-    JpfDefenceMapInfo           defence_map_info[0];
+    NmpDefenceMapInfo           defence_map_info[0];
 };
 
-typedef struct _JpfDelDefenceMap JpfDelDefenceMap;
-struct _JpfDelDefenceMap
+typedef struct _NmpDelDefenceMap NmpDelDefenceMap;
+struct _NmpDelDefenceMap
 {
     gint                defence_area_id;
     gint                map_id;
@@ -1359,8 +1359,8 @@ struct _JpfDelDefenceMap
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddDefenceGu  JpfAddDefenceGu;
-struct _JpfAddDefenceGu
+typedef struct _NmpAddDefenceGu  NmpAddDefenceGu;
+struct _NmpAddDefenceGu
 {
     gint                map_id;
     gchar             guid[MAX_ID_LEN];
@@ -1370,14 +1370,14 @@ struct _JpfAddDefenceGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddDefenceGuRes JpfAddDefenceGuRes;
-struct _JpfAddDefenceGuRes
+typedef struct _NmpAddDefenceGuRes NmpAddDefenceGuRes;
+struct _NmpAddDefenceGuRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
 };
 
-typedef struct _JpfDefenceGuInfo  JpfDefenceGuInfo;
-struct _JpfDefenceGuInfo
+typedef struct _NmpDefenceGuInfo  NmpDefenceGuInfo;
+struct _NmpDefenceGuInfo
 {
     gchar             guid[MAX_ID_LEN];
     gchar             domain_id[DOMAIN_ID_LEN];
@@ -1388,8 +1388,8 @@ struct _JpfDefenceGuInfo
     double            coordinate_y;
 };
 
-typedef struct _JpfModifyDefenceGu  JpfModifyDefenceGu;
-struct _JpfModifyDefenceGu
+typedef struct _NmpModifyDefenceGu  NmpModifyDefenceGu;
+struct _NmpModifyDefenceGu
 {
     gint                map_id;
     gchar             guid[MAX_ID_LEN];
@@ -1399,8 +1399,8 @@ struct _JpfModifyDefenceGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDefenceGu JpfQueryDefenceGu;
-struct _JpfQueryDefenceGu
+typedef struct _NmpQueryDefenceGu NmpQueryDefenceGu;
+struct _NmpQueryDefenceGu
 {
     gint               map_id;
     gint               req_num;
@@ -1408,18 +1408,18 @@ struct _JpfQueryDefenceGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryDefenceGuRes JpfQueryDefenceGuRes;
-struct _JpfQueryDefenceGuRes
+typedef struct _NmpQueryDefenceGuRes NmpQueryDefenceGuRes;
+struct _NmpQueryDefenceGuRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      total_num;
     gint                      back_num;
-    JpfDefenceGuInfo           defence_gu_info[0];
+    NmpDefenceGuInfo           defence_gu_info[0];
 };
 
-typedef struct _JpfDelDefenceGu JpfDelDefenceGu;
-struct _JpfDelDefenceGu
+typedef struct _NmpDelDefenceGu NmpDelDefenceGu;
+struct _NmpDelDefenceGu
 {
     gint                map_id;
     gchar             guid[MAX_ID_LEN];
@@ -1429,8 +1429,8 @@ struct _JpfDelDefenceGu
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfSetMapHref  JpfSetMapHref;
-struct _JpfSetMapHref
+typedef struct _NmpSetMapHref  NmpSetMapHref;
+struct _NmpSetMapHref
 {
     gint                src_map_id;
     gint                dst_map_id;
@@ -1439,14 +1439,14 @@ struct _JpfSetMapHref
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfSetMapHrefRes JpfSetMapHrefRes;
-struct _JpfSetMapHrefRes
+typedef struct _NmpSetMapHrefRes NmpSetMapHrefRes;
+struct _NmpSetMapHrefRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
 };
 
-typedef struct _JpfMapHrefInfo  JpfMapHrefInfo;
-struct _JpfMapHrefInfo
+typedef struct _NmpMapHrefInfo  NmpMapHrefInfo;
+struct _NmpMapHrefInfo
 {
     gint                dst_map_id;
     gchar             map_name[MAP_NAME_LEN];
@@ -1455,8 +1455,8 @@ struct _JpfMapHrefInfo
     double            coordinate_y;
 };
 
-typedef struct _JpfModifyMapHref  JpfModifyMapHref;
-struct _JpfModifyMapHref
+typedef struct _NmpModifyMapHref  NmpModifyMapHref;
+struct _NmpModifyMapHref
 {
     gint                src_map_id;
     gint                dst_map_id;
@@ -1465,8 +1465,8 @@ struct _JpfModifyMapHref
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMapHref JpfQueryMapHref;
-struct _JpfQueryMapHref
+typedef struct _NmpQueryMapHref NmpQueryMapHref;
+struct _NmpQueryMapHref
 {
     gint               map_id;
     gint               req_num;
@@ -1474,34 +1474,34 @@ struct _JpfQueryMapHref
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryMapHrefRes JpfQueryMapHrefRes;
-struct _JpfQueryMapHrefRes
+typedef struct _NmpQueryMapHrefRes NmpQueryMapHrefRes;
+struct _NmpQueryMapHrefRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar bss_usr[USER_NAME_LEN];
     gint                      total_num;
     gint                      back_num;
-    JpfMapHrefInfo           map_href_info[0];
+    NmpMapHrefInfo           map_href_info[0];
 };
 
-typedef struct _JpfDelMapHref JpfDelMapHref;
-struct _JpfDelMapHref
+typedef struct _NmpDelMapHref NmpDelMapHref;
+struct _NmpDelMapHref
 {
     gint                src_map_id;
     gint                dst_map_id;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfChangeMss JpfChangeMss;
-struct _JpfChangeMss
+typedef struct _NmpChangeMss NmpChangeMss;
+struct _NmpChangeMss
 {
     gchar        mss_id[MSS_ID_LEN];
     gint      storage_type;  //磁盘类型：0：磁盘阵列，1：本地硬盘
     gint      mode;
 };
 
-typedef struct _JpfQueryAlarm JpfQueryAlarm;
-struct _JpfQueryAlarm
+typedef struct _NmpQueryAlarm NmpQueryAlarm;
+struct _NmpQueryAlarm
 {
     gint  		order_by;
     gint            req_num;
@@ -1513,8 +1513,8 @@ struct _JpfQueryAlarm
     gchar          bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfBssAlarm JpfBssAlarm;
-struct _JpfBssAlarm
+typedef struct _NmpBssAlarm NmpBssAlarm;
+struct _NmpBssAlarm
 {
     gint           alarm_id;
     gchar        domain_id[DOMAIN_ID_LEN];
@@ -1532,18 +1532,18 @@ struct _JpfBssAlarm
     gchar        submit_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfQueryAlarmRes JpfQueryAlarmRes;
-struct _JpfQueryAlarmRes
+typedef struct _NmpQueryAlarmRes NmpQueryAlarmRes;
+struct _NmpQueryAlarmRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gchar         bss_usr[USER_NAME_LEN];
     gint            req_num;
     gint            total_num;
-    JpfBssAlarm	alarm_list[0];
+    NmpBssAlarm	alarm_list[0];
 };
 
-typedef struct _JpfDelAlarm JpfDelAlarm;
-struct _JpfDelAlarm
+typedef struct _NmpDelAlarm NmpDelAlarm;
+struct _NmpDelAlarm
 {
     gint               type;   //0:删除所有，1：根据告警ID删除，2：根据告警类型，时间段，告警处理情况
     gchar		alarm_ids[MULTI_NAME_LEN];
@@ -1554,8 +1554,8 @@ struct _JpfDelAlarm
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfDelAlarmPolicy JpfDelAlarmPolicy;
-struct _JpfDelAlarmPolicy
+typedef struct _NmpDelAlarmPolicy NmpDelAlarmPolicy;
+struct _NmpDelAlarmPolicy
 {
     gint            enable;
     gint            max_capacity;
@@ -1564,24 +1564,24 @@ struct _JpfDelAlarmPolicy
 };
 
 
-typedef struct _JpfQueryDelAlarmPolicyRes JpfQueryDelAlarmPolicyRes;
-struct _JpfQueryDelAlarmPolicyRes
+typedef struct _NmpQueryDelAlarmPolicyRes NmpQueryDelAlarmPolicyRes;
+struct _NmpQueryDelAlarmPolicyRes
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gint            enable;
     gint            max_capacity;
     gint            del_alarm_num;
 };
 
-typedef struct _JpfAddTw JpfAddTw;
-struct _JpfAddTw
+typedef struct _NmpAddTw NmpAddTw;
+struct _NmpAddTw
 {
     gchar             tw_name[TW_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfModifyTw JpfModifyTw;
-struct _JpfModifyTw
+typedef struct _NmpModifyTw NmpModifyTw;
+struct _NmpModifyTw
 {
     gint                type;
     gint                tw_id;
@@ -1592,8 +1592,8 @@ struct _JpfModifyTw
 };
 
 
-typedef struct _JpfTwInfo JpfTwInfo;
-struct _JpfTwInfo
+typedef struct _NmpTwInfo NmpTwInfo;
+struct _NmpTwInfo
 {
     gint                tw_id;
     gchar             tw_name[TW_NAME_LEN];
@@ -1601,8 +1601,8 @@ struct _JpfTwInfo
     gint                column_num;
 };
 
-typedef struct _JpfQueryTw JpfQueryTw;
-struct _JpfQueryTw
+typedef struct _NmpQueryTw NmpQueryTw;
+struct _NmpQueryTw
 {
     gint               req_num;
     gint               start_num;
@@ -1611,26 +1611,26 @@ struct _JpfQueryTw
     gchar         bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryTwRes JpfQueryTwRes;
-struct _JpfQueryTwRes
+typedef struct _NmpQueryTwRes NmpQueryTwRes;
+struct _NmpQueryTwRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar         bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfTwInfo    tw_info[0];
+    NmpTwInfo    tw_info[0];
 };
 
-typedef struct _JpfDelTw JpfDelTw;
-struct _JpfDelTw
+typedef struct _NmpDelTw NmpDelTw;
+struct _NmpDelTw
 {
     gint                tw_id;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddScreen JpfAddScreen;
-struct _JpfAddScreen
+typedef struct _NmpAddScreen NmpAddScreen;
+struct _NmpAddScreen
 {
     gint                tw_id;
     gchar             dis_domain[DOMAIN_ID_LEN];
@@ -1642,8 +1642,8 @@ struct _JpfAddScreen
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfModifyScreen JpfModifyScreen;
-struct _JpfModifyScreen
+typedef struct _NmpModifyScreen NmpModifyScreen;
+struct _NmpModifyScreen
 {
     gchar             dis_domain[DOMAIN_ID_LEN];
     gchar             dis_guid[MAX_ID_LEN];
@@ -1655,8 +1655,8 @@ struct _JpfModifyScreen
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfScreenInfo JpfScreenInfo;
-struct _JpfScreenInfo
+typedef struct _NmpScreenInfo NmpScreenInfo;
+struct _NmpScreenInfo
 {
     gint                screen_id;
     gint                tw_id;
@@ -1674,8 +1674,8 @@ struct _JpfScreenInfo
     gint              pu_minor_type;
 };
 
-typedef struct _JpfQueryScreen JpfQueryScreen;
-struct _JpfQueryScreen
+typedef struct _NmpQueryScreen NmpQueryScreen;
+struct _NmpQueryScreen
 {
     gint               req_num;
     gint               start_num;
@@ -1684,19 +1684,19 @@ struct _JpfQueryScreen
     gchar         bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryScreenRes JpfQueryScreenRes;
-struct _JpfQueryScreenRes
+typedef struct _NmpQueryScreenRes NmpQueryScreenRes;
+struct _NmpQueryScreenRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar         bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfScreenInfo    screen_info[0];
+    NmpScreenInfo    screen_info[0];
 };
 
-typedef struct _JpfDelScreen JpfDelScreen;
-struct _JpfDelScreen
+typedef struct _NmpDelScreen NmpDelScreen;
+struct _NmpDelScreen
 {
     gint               type;   //0:根据显示通道删除电视墙下某个屏幕，1:删除某个电视墙下所有的屏幕
     gint                tw_id;
@@ -1705,16 +1705,16 @@ struct _JpfDelScreen
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfScrDivInfo JpfScrDivInfo;
-struct _JpfScrDivInfo
+typedef struct _NmpScrDivInfo NmpScrDivInfo;
+struct _NmpScrDivInfo
 {
     gint                div_id;
     gchar             div_name[DIV_NAME_LEN];
     gchar             description[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfQueryScrDiv JpfQueryScrDiv;
-struct _JpfQueryScrDiv
+typedef struct _NmpQueryScrDiv NmpQueryScrDiv;
+struct _NmpQueryScrDiv
 {
     gint               req_num;
     gint               start_num;
@@ -1723,27 +1723,27 @@ struct _JpfQueryScrDiv
     gchar         bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryScrDivRes JpfQueryScrDivRes;
-struct _JpfQueryScrDivRes
+typedef struct _NmpQueryScrDivRes NmpQueryScrDivRes;
+struct _NmpQueryScrDivRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar         bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfScrDivInfo    scr_div_info[0];
+    NmpScrDivInfo    scr_div_info[0];
 };
 
-typedef struct _JpfAddTour JpfAddTour;
-struct _JpfAddTour
+typedef struct _NmpAddTour NmpAddTour;
+struct _NmpAddTour
 {
     gchar              tour_name[TOUR_NAME_LEN];
     gint                auto_jump;
     gchar		     bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfModifyTour JpfModifyTour;
-struct _JpfModifyTour
+typedef struct _NmpModifyTour NmpModifyTour;
+struct _NmpModifyTour
 {
     gint                tour_id;
     gchar             tour_name[TOUR_NAME_LEN];
@@ -1752,16 +1752,16 @@ struct _JpfModifyTour
 };
 
 
-typedef struct _JpfTourInfo JpfTourInfo;
-struct _JpfTourInfo
+typedef struct _NmpTourInfo NmpTourInfo;
+struct _NmpTourInfo
 {
     gint                tour_id;
     gchar             tour_name[TOUR_NAME_LEN];
     gint                auto_jump;
 };
 
-typedef struct _JpfQueryTour JpfQueryTour;
-struct _JpfQueryTour
+typedef struct _NmpQueryTour NmpQueryTour;
+struct _NmpQueryTour
 {
     gint               req_num;
     gint               start_num;
@@ -1770,26 +1770,26 @@ struct _JpfQueryTour
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryTourRes JpfQueryTourRes;
-struct _JpfQueryTourRes
+typedef struct _NmpQueryTourRes NmpQueryTourRes;
+struct _NmpQueryTourRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar		bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfTourInfo    tour_info[0];
+    NmpTourInfo    tour_info[0];
 };
 
-typedef struct _JpfDelTour JpfDelTour;
-struct _JpfDelTour
+typedef struct _NmpDelTour NmpDelTour;
+struct _NmpDelTour
 {
     gchar		     bss_usr[USER_NAME_LEN];
     gint                tour_id;
 };
 
-typedef struct _JpfTourStep JpfTourStep;
-struct _JpfTourStep
+typedef struct _NmpTourStep NmpTourStep;
+struct _NmpTourStep
 {
     gint step_no;
     gint interval;
@@ -1799,17 +1799,17 @@ struct _JpfTourStep
     gint level;
 };
 
-typedef struct _JpfAddTourStep JpfAddTourStep;
-struct _JpfAddTourStep
+typedef struct _NmpAddTourStep NmpAddTourStep;
+struct _NmpAddTourStep
 {
     gint tour_id;
     gchar bss_usr[USER_NAME_LEN];
     gint total_num;
-    JpfTourStep tour_step[0];
+    NmpTourStep tour_step[0];
 };
 
-typedef struct _JpfTourStepInfo JpfTourStepInfo;
-struct _JpfTourStepInfo
+typedef struct _NmpTourStepInfo NmpTourStepInfo;
+struct _NmpTourStepInfo
 {
     gint                step_no;
     gint                interval;
@@ -1817,8 +1817,8 @@ struct _JpfTourStepInfo
     gchar   encoder_domain[DOMAIN_ID_LEN];
 };
 
-typedef struct _JpfQueryTourStep JpfQueryTourStep;
-struct _JpfQueryTourStep
+typedef struct _NmpQueryTourStep NmpQueryTourStep;
+struct _NmpQueryTourStep
 {
     gint              req_num;
     gint              start_num;
@@ -1826,27 +1826,27 @@ struct _JpfQueryTourStep
     gchar		  bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryTourStepRes JpfQueryTourStepRes;
-struct _JpfQueryTourStepRes
+typedef struct _NmpQueryTourStepRes NmpQueryTourStepRes;
+struct _NmpQueryTourStepRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar		     bss_usr[USER_NAME_LEN];
     gint                 total_num;
     gint                 back_num;
     gint                 tour_id;
-    JpfTourStep     tour_step[0];
+    NmpTourStep     tour_step[0];
 };
 
-typedef struct _JpfAddGroup JpfAddGroup;
-struct _JpfAddGroup
+typedef struct _NmpAddGroup NmpAddGroup;
+struct _NmpAddGroup
 {
     gchar             group_name[GROUP_NAME_LEN];
     gint                tw_id;
     gchar		     bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfModifyGroup JpfModifyGroup;
-struct _JpfModifyGroup
+typedef struct _NmpModifyGroup NmpModifyGroup;
+struct _NmpModifyGroup
 {
     gint               group_id;
     gchar             group_name[GROUP_NAME_LEN];
@@ -1854,8 +1854,8 @@ struct _JpfModifyGroup
 };
 
 
-typedef struct _JpfGroupInfo JpfGroupInfo;
-struct _JpfGroupInfo
+typedef struct _NmpGroupInfo NmpGroupInfo;
+struct _NmpGroupInfo
 {
     gint               group_id;
     gchar             group_name[GROUP_NAME_LEN];
@@ -1863,8 +1863,8 @@ struct _JpfGroupInfo
     gchar             tw_name[TW_NAME_LEN];
 };
 
-typedef struct _JpfQueryGroup JpfQueryGroup;
-struct _JpfQueryGroup
+typedef struct _NmpQueryGroup NmpQueryGroup;
+struct _NmpQueryGroup
 {
     gint               req_num;
     gint               start_num;
@@ -1873,26 +1873,26 @@ struct _JpfQueryGroup
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGroupRes JpfQueryGroupRes;
-struct _JpfQueryGroupRes
+typedef struct _NmpQueryGroupRes NmpQueryGroupRes;
+struct _NmpQueryGroupRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar		bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfGroupInfo    group_info[0];
+    NmpGroupInfo    group_info[0];
 };
 
-typedef struct _JpfDelGroup JpfDelGroup;
-struct _JpfDelGroup
+typedef struct _NmpDelGroup NmpDelGroup;
+struct _NmpDelGroup
 {
     gchar		     bss_usr[USER_NAME_LEN];
     gint               group_id;
 };
 
-typedef struct _JpfAddGroupStep JpfAddGroupStep;
-struct _JpfAddGroupStep
+typedef struct _NmpAddGroupStep NmpAddGroupStep;
+struct _NmpAddGroupStep
 {
     gint     		group_id;
     gint			step_no;
@@ -1900,8 +1900,8 @@ struct _JpfAddGroupStep
     gchar			bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfModifyGroupStep JpfModifyGroupStep;
-struct _JpfModifyGroupStep
+typedef struct _NmpModifyGroupStep NmpModifyGroupStep;
+struct _NmpModifyGroupStep
 {
     gint			group_id;
     gint			step_no;
@@ -1910,16 +1910,16 @@ struct _JpfModifyGroupStep
 };
 
 
-typedef struct _JpfGroupSteps JpfGroupSteps;
-struct _JpfGroupSteps
+typedef struct _NmpGroupSteps NmpGroupSteps;
+struct _NmpGroupSteps
 {
     gint                group_id;
     gint			step_no;
     gint			interval;
 };
 
-typedef struct _JpfQueryGroupStep JpfQueryGroupStep;
-struct _JpfQueryGroupStep
+typedef struct _NmpQueryGroupStep NmpQueryGroupStep;
+struct _NmpQueryGroupStep
 {
     gint               req_num;
     gint               start_num;
@@ -1928,27 +1928,27 @@ struct _JpfQueryGroupStep
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGroupStepRes JpfQueryGroupStepRes;
-struct _JpfQueryGroupStepRes
+typedef struct _NmpQueryGroupStepRes NmpQueryGroupStepRes;
+struct _NmpQueryGroupStepRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar		bss_usr[USER_NAME_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfGroupSteps    group_step[0];
+    NmpGroupSteps    group_step[0];
 };
 
-typedef struct _JpfDelGroupStep JpfDelGroupStep;
-struct _JpfDelGroupStep
+typedef struct _NmpDelGroupStep NmpDelGroupStep;
+struct _NmpDelGroupStep
 {
     gchar		      bss_usr[USER_NAME_LEN];
     gint                group_id;
     gint			step_no;
 };
 
-typedef struct _JpfGroupStep JpfGroupStep;
-struct _JpfGroupStep
+typedef struct _NmpGroupStep NmpGroupStep;
+struct _NmpGroupStep
 {
     gint div_no;
     gchar encoder_guid[MAX_ID_LEN];
@@ -1956,8 +1956,8 @@ struct _JpfGroupStep
     gint level;
 };
 
-typedef struct _JpfConfigGroupStep JpfConfigGroupStep;
-struct _JpfConfigGroupStep
+typedef struct _NmpConfigGroupStep NmpConfigGroupStep;
+struct _NmpConfigGroupStep
 {
     gint group_id;
     gint step_no;
@@ -1965,11 +1965,11 @@ struct _JpfConfigGroupStep
     gint div_id;
     gchar bss_usr[USER_NAME_LEN];
     gint total_num;
-    JpfGroupStep group_step[0];
+    NmpGroupStep group_step[0];
 };
 
-typedef struct _JpfGroupStepInfo JpfGroupStepInfo;
-struct _JpfGroupStepInfo
+typedef struct _NmpGroupStepInfo NmpGroupStepInfo;
+struct _NmpGroupStepInfo
 {
    // gint scr_id;
     //gint div_id;
@@ -1984,8 +1984,8 @@ struct _JpfGroupStepInfo
     gint                pu_state;
 };
 
-typedef struct _JpfQueryGroupStepInfo JpfQueryGroupStepInfo;
-struct _JpfQueryGroupStepInfo
+typedef struct _NmpQueryGroupStepInfo NmpQueryGroupStepInfo;
+struct _NmpQueryGroupStepInfo
 {
     gint              req_num;
     gint              start_num;
@@ -1998,33 +1998,33 @@ struct _JpfQueryGroupStepInfo
     gchar		  bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGroupStepInfoRes JpfQueryGroupStepInfoRes;
-struct _JpfQueryGroupStepInfoRes
+typedef struct _NmpQueryGroupStepInfoRes NmpQueryGroupStepInfoRes;
+struct _NmpQueryGroupStepInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar		     bss_usr[USER_NAME_LEN];
     gint                 total_num;
     gint                 back_num;
     gint                 group_id;
     gint scr_id;
     gint div_id;
-    JpfGroupStepInfo    group_step[0];
+    NmpGroupStepInfo    group_step[0];
 };
 
-typedef struct _JpfModifyGroupStepInfo JpfModifyGroupStepInfo;
-struct _JpfModifyGroupStepInfo
+typedef struct _NmpModifyGroupStepInfo NmpModifyGroupStepInfo;
+struct _NmpModifyGroupStepInfo
 {
     gint group_id;
     gint step_no;
     gint scr_id;
     gint level;
     gint div_no;
-    //JpfGroupStep step_info;
+    //NmpGroupStep step_info;
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfDelGroupStepInfo JpfDelGroupStepInfo;
-struct _JpfDelGroupStepInfo
+typedef struct _NmpDelGroupStepInfo NmpDelGroupStepInfo;
+struct _NmpDelGroupStepInfo
 {
 	gchar bss_usr[USER_NAME_LEN];
 	gint group_id;
@@ -2034,24 +2034,24 @@ struct _JpfDelGroupStepInfo
 	gint type;
 };
 
-typedef struct _JpfQueryGroupStepDiv JpfQueryGroupStepDiv;
-struct _JpfQueryGroupStepDiv
+typedef struct _NmpQueryGroupStepDiv NmpQueryGroupStepDiv;
+struct _NmpQueryGroupStepDiv
 {
     gint              group_id;
     gint              scr_id;
     gchar		  bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryGroupStepDivRes JpfQueryGroupStepDivRes;
-struct _JpfQueryGroupStepDivRes
+typedef struct _NmpQueryGroupStepDivRes NmpQueryGroupStepDivRes;
+struct _NmpQueryGroupStepDivRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar		     bss_usr[USER_NAME_LEN];
     gint div_id;
 };
 
-typedef struct _JpfLinkTimePolicyConfig JpfLinkTimePolicyConfig;
-struct _JpfLinkTimePolicyConfig
+typedef struct _NmpLinkTimePolicyConfig NmpLinkTimePolicyConfig;
+struct _NmpLinkTimePolicyConfig
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2059,28 +2059,28 @@ struct _JpfLinkTimePolicyConfig
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkTimePolicyConfig JpfModifyLinkTimePolicy;
+typedef NmpLinkTimePolicyConfig NmpModifyLinkTimePolicy;
 
-typedef struct _JpfQueryLinkTimePolicy JpfQueryLinkTimePolicy;
-struct _JpfQueryLinkTimePolicy
+typedef struct _NmpQueryLinkTimePolicy NmpQueryLinkTimePolicy;
+struct _NmpQueryLinkTimePolicy
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkTimePolicyConfig JpfQueryLinkTimePolicyRes;
+typedef NmpLinkTimePolicyConfig NmpQueryLinkTimePolicyRes;
 
-typedef struct _JpfDelLinkTimePolicy JpfDelLinkTimePolicy;
-struct _JpfDelLinkTimePolicy
+typedef struct _NmpDelLinkTimePolicy NmpDelLinkTimePolicy;
+struct _NmpDelLinkTimePolicy
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkRecord JpfLinkRecord;
-struct _JpfLinkRecord
+typedef struct _NmpLinkRecord NmpLinkRecord;
+struct _NmpLinkRecord
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2089,14 +2089,14 @@ struct _JpfLinkRecord
 	gint level;
 	gint alarm_type;
 	gint time_len;
-	JpfMssId mss[MSS_NUM];
+	NmpMssId mss[MSS_NUM];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkRecord JpfModifyLinkRecord;
+typedef NmpLinkRecord NmpModifyLinkRecord;
 
-typedef struct _JpfQueryLinkRecord JpfQueryLinkRecord;
-struct _JpfQueryLinkRecord
+typedef struct _NmpQueryLinkRecord NmpQueryLinkRecord;
+struct _NmpQueryLinkRecord
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2107,8 +2107,8 @@ struct _JpfQueryLinkRecord
 	gint type;
 	gchar bss_usr[USER_NAME_LEN];
 };
-typedef struct _JpfLinkRecordInfo JpfLinkRecordInfo;
-struct _JpfLinkRecordInfo
+typedef struct _NmpLinkRecordInfo NmpLinkRecordInfo;
+struct _NmpLinkRecordInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2116,23 +2116,23 @@ struct _JpfLinkRecordInfo
 	gint alarm_type;
 	gint time_len;
 	gchar gu_name[GU_NAME_LEN];
-	JpfStoreServer            mss[MSS_NUM];
+	NmpStoreServer            mss[MSS_NUM];
 };
 
-typedef struct _JpfQueryLinkRecordRes JpfQueryLinkRecordRes;
-struct _JpfQueryLinkRecordRes
+typedef struct _NmpQueryLinkRecordRes NmpQueryLinkRecordRes;
+struct _NmpQueryLinkRecordRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkRecordInfo link_record_info[0];
+	NmpLinkRecordInfo link_record_info[0];
 };
 
-typedef struct _JpfDelLinkRecord JpfDelLinkRecord;
-struct _JpfDelLinkRecord
+typedef struct _NmpDelLinkRecord NmpDelLinkRecord;
+struct _NmpDelLinkRecord
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2141,8 +2141,8 @@ struct _JpfDelLinkRecord
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkIO JpfLinkIO;
-struct _JpfLinkIO
+typedef struct _NmpLinkIO NmpLinkIO;
+struct _NmpLinkIO
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2154,10 +2154,10 @@ struct _JpfLinkIO
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkIO JpfModifyLinkIO;
+typedef NmpLinkIO NmpModifyLinkIO;
 
-typedef struct _JpfQueryLinkIO JpfQueryLinkIO;
-struct _JpfQueryLinkIO
+typedef struct _NmpQueryLinkIO NmpQueryLinkIO;
+struct _NmpQueryLinkIO
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2169,8 +2169,8 @@ struct _JpfQueryLinkIO
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkIOInfo JpfLinkIOInfo;
-struct _JpfLinkIOInfo
+typedef struct _NmpLinkIOInfo NmpLinkIOInfo;
+struct _NmpLinkIOInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2180,20 +2180,20 @@ struct _JpfLinkIOInfo
 	gchar io_value[IO_VALUE_LEN];
 };
 
-typedef struct _JpfQueryLinkIORes JpfQueryLinkIORes;
-struct _JpfQueryLinkIORes
+typedef struct _NmpQueryLinkIORes NmpQueryLinkIORes;
+struct _NmpQueryLinkIORes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkIOInfo link_io_info[0];
+	NmpLinkIOInfo link_io_info[0];
 };
 
-typedef struct _JpfDelLinkIO JpfDelLinkIO;
-struct _JpfDelLinkIO
+typedef struct _NmpDelLinkIO NmpDelLinkIO;
+struct _NmpDelLinkIO
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2202,8 +2202,8 @@ struct _JpfDelLinkIO
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkSnapshot JpfLinkSnapshot;
-struct _JpfLinkSnapshot
+typedef struct _NmpLinkSnapshot NmpLinkSnapshot;
+struct _NmpLinkSnapshot
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2212,14 +2212,14 @@ struct _JpfLinkSnapshot
 	gint level;
 	gint alarm_type;
 	gint picture_num;
-	JpfMssId mss[MSS_NUM];
+	NmpMssId mss[MSS_NUM];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkSnapshot JpfModifyLinkSnapshot;
+typedef NmpLinkSnapshot NmpModifyLinkSnapshot;
 
-typedef struct _JpfQueryLinkSnapshot JpfQueryLinkSnapshot;
-struct _JpfQueryLinkSnapshot
+typedef struct _NmpQueryLinkSnapshot NmpQueryLinkSnapshot;
+struct _NmpQueryLinkSnapshot
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2230,8 +2230,8 @@ struct _JpfQueryLinkSnapshot
 	gint type;
 	gchar bss_usr[USER_NAME_LEN];
 };
-typedef struct _JpfLinkSnapshotInfo JpfLinkSnapshotInfo;
-struct _JpfLinkSnapshotInfo
+typedef struct _NmpLinkSnapshotInfo NmpLinkSnapshotInfo;
+struct _NmpLinkSnapshotInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2239,23 +2239,23 @@ struct _JpfLinkSnapshotInfo
 	gint alarm_type;
 	gint picture_num;
 	gchar gu_name[GU_NAME_LEN];
-	JpfStoreServer            mss[MSS_NUM];
+	NmpStoreServer            mss[MSS_NUM];
 };
 
-typedef struct _JpfQueryLinkSnapshotRes JpfQueryLinkSnapshotRes;
-struct _JpfQueryLinkSnapshotRes
+typedef struct _NmpQueryLinkSnapshotRes NmpQueryLinkSnapshotRes;
+struct _NmpQueryLinkSnapshotRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkSnapshotInfo link_snapshot_info[0];
+	NmpLinkSnapshotInfo link_snapshot_info[0];
 };
 
-typedef struct _JpfDelLinkSnapshot JpfDelLinkSnapshot;
-struct _JpfDelLinkSnapshot
+typedef struct _NmpDelLinkSnapshot NmpDelLinkSnapshot;
+struct _NmpDelLinkSnapshot
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2264,8 +2264,8 @@ struct _JpfDelLinkSnapshot
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkStepConfig JpfLinkStepConfig;
-struct _JpfLinkStepConfig
+typedef struct _NmpLinkStepConfig NmpLinkStepConfig;
+struct _NmpLinkStepConfig
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2280,10 +2280,10 @@ struct _JpfLinkStepConfig
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkStepConfig JpfModifyLinkStep;
+typedef NmpLinkStepConfig NmpModifyLinkStep;
 
-typedef struct _JpfQueryLinkStep JpfQueryLinkStep;
-struct _JpfQueryLinkStep
+typedef struct _NmpQueryLinkStep NmpQueryLinkStep;
+struct _NmpQueryLinkStep
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2295,8 +2295,8 @@ struct _JpfQueryLinkStep
 	gint type;
 	gchar bss_usr[USER_NAME_LEN];
 };
-typedef struct _JpfLinkStepInfo JpfLinkStepInfo;
-struct _JpfLinkStepInfo
+typedef struct _NmpLinkStepInfo NmpLinkStepInfo;
+struct _NmpLinkStepInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2311,21 +2311,21 @@ struct _JpfLinkStepInfo
 	gchar screen_name[GU_NAME_LEN];
 };
 
-typedef struct _JpfQueryLinkStepRes JpfQueryLinkStepRes;
-struct _JpfQueryLinkStepRes
+typedef struct _NmpQueryLinkStepRes NmpQueryLinkStepRes;
+struct _NmpQueryLinkStepRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint type;
 	gint            total_num;
 	gint            back_num;
-	JpfLinkStepInfo link_step_info[0];
+	NmpLinkStepInfo link_step_info[0];
 };
 
-typedef struct _JpfDelLinkStep JpfDelLinkStep;
-struct _JpfDelLinkStep
+typedef struct _NmpDelLinkStep NmpDelLinkStep;
+struct _NmpDelLinkStep
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2335,8 +2335,8 @@ struct _JpfDelLinkStep
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkPreset JpfLinkPreset;
-struct _JpfLinkPreset
+typedef struct _NmpLinkPreset NmpLinkPreset;
+struct _NmpLinkPreset
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2347,10 +2347,10 @@ struct _JpfLinkPreset
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkPreset JpfModifyLinkPreset;
+typedef NmpLinkPreset NmpModifyLinkPreset;
 
-typedef struct _JpfQueryLinkPreset JpfQueryLinkPreset;
-struct _JpfQueryLinkPreset
+typedef struct _NmpQueryLinkPreset NmpQueryLinkPreset;
+struct _NmpQueryLinkPreset
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2362,8 +2362,8 @@ struct _JpfQueryLinkPreset
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkPresetInfo JpfLinkPresetInfo;
-struct _JpfLinkPresetInfo
+typedef struct _NmpLinkPresetInfo NmpLinkPresetInfo;
+struct _NmpLinkPresetInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2372,20 +2372,20 @@ struct _JpfLinkPresetInfo
 	gchar gu_name[GU_NAME_LEN];
 };
 
-typedef struct _JpfQueryLinkPresetRes JpfQueryLinkPresetRes;
-struct _JpfQueryLinkPresetRes
+typedef struct _NmpQueryLinkPresetRes NmpQueryLinkPresetRes;
+struct _NmpQueryLinkPresetRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkPresetInfo link_preset_info[0];
+	NmpLinkPresetInfo link_preset_info[0];
 };
 
-typedef struct _JpfDelLinkPreset JpfDelLinkPreset;
-struct _JpfDelLinkPreset
+typedef struct _NmpDelLinkPreset NmpDelLinkPreset;
+struct _NmpDelLinkPreset
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2394,8 +2394,8 @@ struct _JpfDelLinkPreset
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkTourConfig JpfLinkTourConfig;
-struct _JpfLinkTourConfig
+typedef struct _NmpLinkTourConfig NmpLinkTourConfig;
+struct _NmpLinkTourConfig
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2408,10 +2408,10 @@ struct _JpfLinkTourConfig
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkTourConfig JpfModifyLinkTour;
+typedef NmpLinkTourConfig NmpModifyLinkTour;
 
-typedef struct _JpfQueryLinkTour JpfQueryLinkTour;
-struct _JpfQueryLinkTour
+typedef struct _NmpQueryLinkTour NmpQueryLinkTour;
+struct _NmpQueryLinkTour
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2426,8 +2426,8 @@ struct _JpfQueryLinkTour
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkTourInfo JpfLinkTourInfo;
-struct _JpfLinkTourInfo
+typedef struct _NmpLinkTourInfo NmpLinkTourInfo;
+struct _NmpLinkTourInfo
 {
 	gint tw_id;
 	gint screen_id;
@@ -2438,20 +2438,20 @@ struct _JpfLinkTourInfo
 	gchar tour_name[TOUR_NAME_LEN];
 };
 
-typedef struct _JpfQueryLinkTourRes JpfQueryLinkTourRes;
-struct _JpfQueryLinkTourRes
+typedef struct _NmpQueryLinkTourRes NmpQueryLinkTourRes;
+struct _NmpQueryLinkTourRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkTourInfo link_tour_info[0];
+	NmpLinkTourInfo link_tour_info[0];
 };
 
-typedef struct _JpfDelLinkTour JpfDelLinkTour;
-struct _JpfDelLinkTour
+typedef struct _NmpDelLinkTour NmpDelLinkTour;
+struct _NmpDelLinkTour
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2461,8 +2461,8 @@ struct _JpfDelLinkTour
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkGroupConfig JpfLinkGroupConfig;
-struct _JpfLinkGroupConfig
+typedef struct _NmpLinkGroupConfig NmpLinkGroupConfig;
+struct _NmpLinkGroupConfig
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2471,10 +2471,10 @@ struct _JpfLinkGroupConfig
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkGroupConfig JpfModifyLinkGroup;
+typedef NmpLinkGroupConfig NmpModifyLinkGroup;
 
-typedef struct _JpfQueryLinkGroup JpfQueryLinkGroup;
-struct _JpfQueryLinkGroup
+typedef struct _NmpQueryLinkGroup NmpQueryLinkGroup;
+struct _NmpQueryLinkGroup
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2485,28 +2485,28 @@ struct _JpfQueryLinkGroup
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkGroupInfo JpfLinkGroupInfo;
-struct _JpfLinkGroupInfo
+typedef struct _NmpLinkGroupInfo NmpLinkGroupInfo;
+struct _NmpLinkGroupInfo
 {
 	gint group_id;
 	gint alarm_type;
 	gchar group_name[GROUP_NAME_LEN];
 };
 
-typedef struct _JpfQueryLinkGroupRes JpfQueryLinkGroupRes;
-struct _JpfQueryLinkGroupRes
+typedef struct _NmpQueryLinkGroupRes NmpQueryLinkGroupRes;
+struct _NmpQueryLinkGroupRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkGroupInfo link_group_info[0];
+	NmpLinkGroupInfo link_group_info[0];
 };
 
-typedef struct _JpfDelLinkGroup JpfDelLinkGroup;
-struct _JpfDelLinkGroup
+typedef struct _NmpDelLinkGroup NmpDelLinkGroup;
+struct _NmpDelLinkGroup
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2514,8 +2514,8 @@ struct _JpfDelLinkGroup
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkMap JpfLinkMap;
-struct _JpfLinkMap
+typedef struct _NmpLinkMap NmpLinkMap;
+struct _NmpLinkMap
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2526,10 +2526,10 @@ struct _JpfLinkMap
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef JpfLinkMap JpfModifyLinkMap;
+typedef NmpLinkMap NmpModifyLinkMap;
 
-typedef struct _JpfQueryLinkMap JpfQueryLinkMap;
-struct _JpfQueryLinkMap
+typedef struct _NmpQueryLinkMap NmpQueryLinkMap;
+struct _NmpQueryLinkMap
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2541,8 +2541,8 @@ struct _JpfQueryLinkMap
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfLinkMapInfo JpfLinkMapInfo;
-struct _JpfLinkMapInfo
+typedef struct _NmpLinkMapInfo NmpLinkMapInfo;
+struct _NmpLinkMapInfo
 {
 	gchar link_guid[MAX_ID_LEN];
 	gchar link_domain[DOMAIN_ID_LEN];
@@ -2551,20 +2551,20 @@ struct _JpfLinkMapInfo
 	gchar gu_name[GU_NAME_LEN];
 };
 
-typedef struct _JpfQueryLinkMapRes JpfQueryLinkMapRes;
-struct _JpfQueryLinkMapRes
+typedef struct _NmpQueryLinkMapRes NmpQueryLinkMapRes;
+struct _NmpQueryLinkMapRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 	gint            total_num;
 	gint            back_num;
-	JpfLinkMapInfo link_map_info[0];
+	NmpLinkMapInfo link_map_info[0];
 };
 
-typedef struct _JpfDelLinkMap JpfDelLinkMap;
-struct _JpfDelLinkMap
+typedef struct _NmpDelLinkMap NmpDelLinkMap;
+struct _NmpDelLinkMap
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
@@ -2573,16 +2573,16 @@ struct _JpfDelLinkMap
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryServerResourceInfo JpfQueryServerResourceInfo;
-struct _JpfQueryServerResourceInfo
+typedef struct _NmpQueryServerResourceInfo NmpQueryServerResourceInfo;
+struct _NmpQueryServerResourceInfo
 {
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryServerResourceInfoRes JpfQueryServerResourceInfoRes;
-struct _JpfQueryServerResourceInfoRes
+typedef struct _NmpQueryServerResourceInfoRes NmpQueryServerResourceInfoRes;
+struct _NmpQueryServerResourceInfoRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar bss_usr[USER_NAME_LEN];
 	gint            enc_num;
 	gint            enc_online_num;
@@ -2599,25 +2599,25 @@ struct _JpfQueryServerResourceInfoRes
 	gint            system_version;
 	gint            manufactor_type;
 	gint            support_keyboard;
-	JpfExpiredTime expired_time;
+	NmpExpiredTime expired_time;
 };
 
-typedef JpfQueryServerResourceInfo JpfQueryTwAuthInfo;
+typedef NmpQueryServerResourceInfo NmpQueryTwAuthInfo;
 
-typedef struct _JpfQueryTwAuthInfoRes JpfQueryTwAuthInfoRes;
-struct _JpfQueryTwAuthInfoRes
+typedef struct _NmpQueryTwAuthInfoRes NmpQueryTwAuthInfoRes;
+struct _NmpQueryTwAuthInfoRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar bss_usr[USER_NAME_LEN];
 	gint   tw_auth_type;
 };
 
-typedef JpfQueryServerResourceInfo JpfQueryAlarmLinkAuthInfo;
+typedef NmpQueryServerResourceInfo NmpQueryAlarmLinkAuthInfo;
 
-typedef struct _JpfQueryAlarmLinkAuthInfoRes JpfQueryAlarmLinkAuthInfoRes;
-struct _JpfQueryAlarmLinkAuthInfoRes
+typedef struct _NmpQueryAlarmLinkAuthInfoRes NmpQueryAlarmLinkAuthInfoRes;
+struct _NmpQueryAlarmLinkAuthInfoRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar bss_usr[USER_NAME_LEN];
 	gint   alarm_link_auth_type;
 };
@@ -2628,45 +2628,45 @@ typedef struct __search_pu_list
     search_result_t result[0];
 }search_pu_list;
 
-typedef struct _JpfSearchPuRes JpfSearchPuRes;
-struct _JpfSearchPuRes
+typedef struct _NmpSearchPuRes NmpSearchPuRes;
+struct _NmpSearchPuRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gint  pu_count;
 };
 
-typedef struct _JpfGetSearchedPu JpfGetSearchedPu;
-struct _JpfGetSearchedPu
+typedef struct _NmpGetSearchedPu NmpGetSearchedPu;
+struct _NmpGetSearchedPu
 {
 	gint               req_num;
 	gint               start_num;
 };
 
-typedef struct _JpfGetSearchedPuRes JpfGetSearchedPuRes;
-struct _JpfGetSearchedPuRes
+typedef struct _NmpGetSearchedPuRes NmpGetSearchedPuRes;
+struct _NmpGetSearchedPuRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gint  pu_count;  //设备总个数
 	gint  res_count;  // 返回的设备个数
 	search_result_t  search_pu[0];
 };
 
-typedef struct _JpfCmsIp JpfCmsIp;
-struct _JpfCmsIp
+typedef struct _NmpCmsIp NmpCmsIp;
+struct _NmpCmsIp
 {
 	gchar ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfQueryCmsAllIpRes JpfQueryCmsAllIpRes;
-struct _JpfQueryCmsAllIpRes
+typedef struct _NmpQueryCmsAllIpRes NmpQueryCmsAllIpRes;
+struct _NmpQueryCmsAllIpRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gint count;
-	JpfCmsIp ips[0];
+	NmpCmsIp ips[0];
 };
 
-typedef struct _JpfAutoAddPu JpfAutoAddPu;
-struct _JpfAutoAddPu
+typedef struct _NmpAutoAddPu NmpAutoAddPu;
+struct _NmpAutoAddPu
 {
 	gchar bss_usr[USER_NAME_LEN];
 	gchar		manufacturer[MF_ID_LEN];
@@ -2685,114 +2685,114 @@ struct _JpfAutoAddPu
 	gint			connect_cms_enable;
 };
 
-typedef struct _JpfGetNextPuNo JpfGetNextPuNo;
-struct _JpfGetNextPuNo
+typedef struct _NmpGetNextPuNo NmpGetNextPuNo;
+struct _NmpGetNextPuNo
 {
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfGetNextPuNoRes JpfGetNextPuNoRes;
-struct _JpfGetNextPuNoRes
+typedef struct _NmpGetNextPuNoRes NmpGetNextPuNoRes;
+struct _NmpGetNextPuNoRes
 {
-	JpfMsgErrCode     code;
+	NmpMsgErrCode     code;
 	gchar pu_no[PU_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfGetInitName JpfGetInitName;
-struct _JpfGetInitName
+typedef struct _NmpGetInitName NmpGetInitName;
+struct _NmpGetInitName
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfGetInitNameRes JpfGetInitNameRes;
-struct _JpfGetInitNameRes
+typedef struct  _NmpGetInitNameRes NmpGetInitNameRes;
+struct _NmpGetInitNameRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
     gchar			   init_name[USER_NAME_LEN];
 };
 
-typedef struct _JpfSetInitName JpfSetInitName;
-struct _JpfSetInitName
+typedef struct _NmpSetInitName NmpSetInitName;
+struct _NmpSetInitName
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			   init_name[USER_NAME_LEN];
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef struct  _JpfSetInitNameRes JpfSetInitNameRes;
-struct _JpfSetInitNameRes
+typedef struct  _NmpSetInitNameRes NmpSetInitNameRes;
+struct _NmpSetInitNameRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			   session[USER_NAME_LEN];
 };
 
-typedef JpfGetInitName JpfGetIpsanInfo;
+typedef NmpGetInitName NmpGetIpsanInfo;
 
-typedef struct  _JpfIpsanInfo JpfIpsanInfo;
-struct _JpfIpsanInfo
+typedef struct  _NmpIpsanInfo NmpIpsanInfo;
+struct _NmpIpsanInfo
 {
     gchar			   ip[MAX_IP_LEN];
     gint			   port;
 };
 
-typedef struct  _JpfGetIpsanInfoRes JpfGetIpsanInfoRes;
-struct _JpfGetIpsanInfoRes
+typedef struct  _NmpGetIpsanInfoRes NmpGetIpsanInfoRes;
+struct _NmpGetIpsanInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			session[USER_NAME_LEN];
     gint			count;
-    JpfIpsanInfo	ipsan_info[0];
+    NmpIpsanInfo	ipsan_info[0];
 };
 
-typedef struct  _JpfAddOneIpsan JpfAddOneIpsan;
-struct _JpfAddOneIpsan
+typedef struct  _NmpAddOneIpsan NmpAddOneIpsan;
+struct _NmpAddOneIpsan
 {
     gchar   mss_id[MSS_ID_LEN];
     gchar			session[USER_NAME_LEN];
-    JpfIpsanInfo	ipsan_info;
+    NmpIpsanInfo	ipsan_info;
 };
 
-typedef JpfSetInitNameRes JpfAddOneIpsanRes;
+typedef NmpSetInitNameRes NmpAddOneIpsanRes;
 
-typedef JpfAddOneIpsan JpfDeleteOneIpsan;
+typedef NmpAddOneIpsan NmpDeleteOneIpsan;
 
-typedef JpfSetInitNameRes JpfDeleteOneIpsanRes;
+typedef NmpSetInitNameRes NmpDeleteOneIpsanRes;
 
-typedef JpfAddOneIpsan JpfGetOneIpsanDetail;
+typedef NmpAddOneIpsan NmpGetOneIpsanDetail;
 
-typedef struct _JpfGetOneIpsanDetailRes JpfGetOneIpsanDetailRes;
-struct _JpfGetOneIpsanDetailRes
+typedef struct _NmpGetOneIpsanDetailRes NmpGetOneIpsanDetailRes;
+struct _NmpGetOneIpsanDetailRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar			session[USER_NAME_LEN];
     gchar              target[USER_NAME_LEN];
     gint			connect_state;
 };
 
-/*typedef struct _JpfAddGuToUserList JpfAddGuToUserList;
-struct _JpfAddGuToUserList
+/*typedef struct _NmpAddGuToUserList NmpAddGuToUserList;
+struct _NmpAddGuToUserList
 {
     struct  list_head list;
     gint cur_num;
     gint total_num;
     gint page;
     gchar username[USER_NAME_LEN];
-    JpfAddGuToUser add_gu_to_user_head;
+    NmpAddGuToUser add_gu_to_user_head;
 };
 
-typedef struct _JpfAddGuToUserAllList JpfAddGuToUserAllList;
-struct _JpfAddGuToUserAllList
+typedef struct _NmpAddGuToUserAllList NmpAddGuToUserAllList;
+struct _NmpAddGuToUserAllList
 {
-    JpfAddGuToUserList add_gu_to_user_list_head;
+    NmpAddGuToUserList add_gu_to_user_list_head;
     pthread_mutex_t  conn_lock;
 };
 */
 
-typedef struct _JpfQueryLog JpfQueryLog;
-struct _JpfQueryLog
+typedef struct _NmpQueryLog NmpQueryLog;
+struct _NmpQueryLog
 {
 	gint			order_by;
 	gint			req_count;
@@ -2803,8 +2803,8 @@ struct _JpfQueryLog
 	gchar		bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfBssLog JpfBssLog;
-struct _JpfBssLog
+typedef struct _NmpBssLog NmpBssLog;
+struct _NmpBssLog
 {
 	gint			order_num;
 	gint			log_level;
@@ -2817,18 +2817,18 @@ struct _JpfBssLog
 	gchar		child_data3[LOG_CHILD_DATA_LEN];
 };
 
-typedef struct _JpfQueryLogRes JpfQueryLogRes;
-struct _JpfQueryLogRes
+typedef struct _NmpQueryLogRes NmpQueryLogRes;
+struct _NmpQueryLogRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar		bss_usr[USER_NAME_LEN];
 	gint			total_num;
 	gint			req_total;
-	JpfBssLog	log_list[0];
+	NmpBssLog	log_list[0];
 };
 
-typedef struct _JpfQueryAreaDevRate JpfQueryAreaDevRate;
-struct _JpfQueryAreaDevRate
+typedef struct _NmpQueryAreaDevRate NmpQueryAreaDevRate;
+struct _NmpQueryAreaDevRate
 {
     gint              area_id;
     gint              type;
@@ -2838,8 +2838,8 @@ struct _JpfQueryAreaDevRate
     gchar		  bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAreaDevRate JpfAreaDevRate;
-struct _JpfAreaDevRate
+typedef struct _NmpAreaDevRate NmpAreaDevRate;
+struct _NmpAreaDevRate
 {
 	gint              area_id;
 	gchar             area_name[AREA_NAME_LEN];
@@ -2848,26 +2848,26 @@ struct _JpfAreaDevRate
 	gdouble rate;
 };
 
-typedef struct _JpfQueryAreaDevRateRes JpfQueryAreaDevRateRes;
-struct _JpfQueryAreaDevRateRes
+typedef struct _NmpQueryAreaDevRateRes NmpQueryAreaDevRateRes;
+struct _NmpQueryAreaDevRateRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar		     bss_usr[USER_NAME_LEN];
     gint			total_num;
 	gint			back_num;
-	JpfAreaDevRate	area_dev_rate[0];
+	NmpAreaDevRate	area_dev_rate[0];
 };
 
-typedef struct _JpfValidateGuMap JpfValidateGuMap;
-struct _JpfValidateGuMap
+typedef struct _NmpValidateGuMap NmpValidateGuMap;
+struct _NmpValidateGuMap
 {
 	gchar guid[MAX_ID_LEN];
 	gchar domain[DOMAIN_ID_LEN];
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfAddIvs JpfAddIvs;
-struct _JpfAddIvs
+typedef struct _NmpAddIvs NmpAddIvs;
+struct _NmpAddIvs
 {
     gchar   ivs_id[IVS_ID_LEN];
     gchar   ivs_name[IVS_NAME_LEN];
@@ -2876,8 +2876,8 @@ struct _JpfAddIvs
 };
 
 
-typedef struct _JpfIvsInfo  JpfIvsInfo;
-struct _JpfIvsInfo
+typedef struct _NmpIvsInfo  NmpIvsInfo;
+struct _NmpIvsInfo
 {
     gint     type;  // 0: 修改mds ; 1:修改get_ip_enable
     gchar   ivs_id[IVS_ID_LEN];
@@ -2888,8 +2888,8 @@ struct _JpfIvsInfo
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryIvs JpfQueryIvs;
-struct _JpfQueryIvs
+typedef struct _NmpQueryIvs NmpQueryIvs;
+struct _NmpQueryIvs
 {
     gint              req_num;
     gint              start_num;
@@ -2898,38 +2898,38 @@ struct _JpfQueryIvs
     gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfQueryIvsRes JpfQueryIvsRes;
-struct _JpfQueryIvsRes
+typedef struct _NmpQueryIvsRes NmpQueryIvsRes;
+struct _NmpQueryIvsRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar bss_usr[USER_NAME_LEN];
     gint               type;
     gint                     total_num;
     gint                     req_num;
-    JpfIvsInfo          ivs_info[0];
+    NmpIvsInfo          ivs_info[0];
 };
 
 
-typedef struct _JpfDelIvs JpfDelIvs;
-struct _JpfDelIvs
+typedef struct _NmpDelIvs NmpDelIvs;
+struct _NmpDelIvs
 {
     gchar  ivs_id[MULTI_NAME_LEN];
     gchar bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfGetServerFlagRes JpfGetServerFlagRes;
-struct _JpfGetServerFlagRes
+typedef struct _NmpGetServerFlagRes NmpGetServerFlagRes;
+struct _NmpGetServerFlagRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gint					server_flag;
 };
 
 
-typedef struct _JpfGetMdsConfigRes JpfGetMdsConfigRes;
-struct _JpfGetMdsConfigRes
+typedef struct _NmpGetMdsConfigRes NmpGetMdsConfigRes;
+struct _NmpGetMdsConfigRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				mds_id[MDS_ID_LEN];
 	gint					state;
 	gint					start_port;
@@ -2937,8 +2937,8 @@ struct _JpfGetMdsConfigRes
 };
 
 
-typedef struct _JpfSetMdsConfig JpfSetMdsConfig;
-struct _JpfSetMdsConfig
+typedef struct _NmpSetMdsConfig NmpSetMdsConfig;
+struct _NmpSetMdsConfig
 {
 	gchar				mds_id[MDS_ID_LEN];
 	gint					start_port;
@@ -2946,90 +2946,90 @@ struct _JpfSetMdsConfig
 };
 
 
-typedef struct _JpfGetMdsState JpfGetMdsState;
-struct _JpfGetMdsState
+typedef struct _NmpGetMdsState NmpGetMdsState;
+struct _NmpGetMdsState
 {
 	gchar				mds_id[MDS_ID_LEN];
 };
 
-typedef struct _JpfGetMdsStateRes JpfGetMdsStateRes;
-struct _JpfGetMdsStateRes
+typedef struct _NmpGetMdsStateRes NmpGetMdsStateRes;
+struct _NmpGetMdsStateRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gint					state;
 };
 
 
-typedef struct _JpfGetMssConfigRes JpfGetMssConfigRes;
-struct _JpfGetMssConfigRes
+typedef struct _NmpGetMssConfigRes NmpGetMssConfigRes;
+struct _NmpGetMssConfigRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				mss_id[MSS_ID_LEN];
 	gchar				stor_type[MAX_STOR_TYPE_LEN];
 	gint					state;
 };
 
 
-typedef struct _JpfSetMssConfig JpfSetMssConfig;
-struct _JpfSetMssConfig
+typedef struct _NmpSetMssConfig NmpSetMssConfig;
+struct _NmpSetMssConfig
 {
 	gchar				mss_id[MSS_ID_LEN];
 	gchar				stor_type[MAX_STOR_TYPE_LEN];
 };
 
 
-typedef struct _JpfGetMssState JpfGetMssState;
-struct _JpfGetMssState
+typedef struct _NmpGetMssState NmpGetMssState;
+struct _NmpGetMssState
 {
 	gchar				mss_id[MDS_ID_LEN];
 };
 
-typedef struct _JpfGetMssStateRes JpfGetMssStateRes;
-struct _JpfGetMssStateRes
+typedef struct _NmpGetMssStateRes NmpGetMssStateRes;
+struct _NmpGetMssStateRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gint					state;
 };
 
 
-typedef struct _JpfGetIvsConfigRes JpfGetIvsConfigRes;
-struct _JpfGetIvsConfigRes
+typedef struct _NmpGetIvsConfigRes NmpGetIvsConfigRes;
+struct _NmpGetIvsConfigRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				ivs_id[IVS_ID_LEN];
 };
 
 
-typedef struct _JpfSetIvsConfig JpfSetIvsConfig;
-struct _JpfSetIvsConfig
+typedef struct _NmpSetIvsConfig NmpSetIvsConfig;
+struct _NmpSetIvsConfig
 {
 	gchar				ivs_id[IVS_ID_LEN];
 };
 
 
-typedef struct _JpfGetIvsState JpfGetIvsState;
-struct _JpfGetIvsState
+typedef struct _NmpGetIvsState NmpGetIvsState;
+struct _NmpGetIvsState
 {
 	gchar				ivs_id[IVS_ID_LEN];
 };
 
-typedef struct _JpfGetIvsStateRes JpfGetIvsStateRes;
-struct _JpfGetIvsStateRes
+typedef struct _NmpGetIvsStateRes NmpGetIvsStateRes;
+struct _NmpGetIvsStateRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gint					state;
 };
 
 
-typedef struct _JpfAmsId JpfAmsId;
-struct _JpfAmsId
+typedef struct _NmpAmsId NmpAmsId;
+struct _NmpAmsId
 {
 	gchar				ams_id[AMS_ID_LEN];
 };
 
 
-typedef struct _JpfAddAms JpfAddAms;
-struct _JpfAddAms
+typedef struct _NmpAddAms NmpAddAms;
+struct _NmpAddAms
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gchar				ams_name[AMS_NAME_LEN];
@@ -3038,11 +3038,11 @@ struct _JpfAddAms
 };
 
 
-typedef JpfAddAms JpfModifyAms;
+typedef NmpAddAms NmpModifyAms;
 
 
-typedef struct _JpfQueryAms JpfQueryAms;
-struct _JpfQueryAms
+typedef struct _NmpQueryAms NmpQueryAms;
+struct _NmpQueryAms
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gint					type;
@@ -3052,8 +3052,8 @@ struct _JpfQueryAms
 };
 
 
-typedef struct _JpfAmsInfo JpfAmsInfo;
-struct _JpfAmsInfo
+typedef struct _NmpAmsInfo NmpAmsInfo;
+struct _NmpAmsInfo
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gchar				ams_name[AMS_NAME_LEN];
@@ -3062,27 +3062,27 @@ struct _JpfAmsInfo
 	gchar				ams_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfQueryAmsRes JpfQueryAmsRes;
-struct _JpfQueryAmsRes
+typedef struct _NmpQueryAmsRes NmpQueryAmsRes;
+struct _NmpQueryAmsRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				bss_usr[USER_NAME_LEN];
 	gint					total_count;
 	gint					back_count;
-	JpfAmsInfo			ams_info[0];
+	NmpAmsInfo			ams_info[0];
 };
 
 
-typedef struct _JpfDelAms JpfDelAms;
-struct _JpfDelAms
+typedef struct _NmpDelAms NmpDelAms;
+struct _NmpDelAms
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gchar				bss_usr[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfQueryAmsPu JpfQueryAmsPu;
-struct _JpfQueryAmsPu
+typedef struct _NmpQueryAmsPu NmpQueryAmsPu;
+struct _NmpQueryAmsPu
 {
 	gchar				ams_id[AMS_ID_LEN];
 	gint					req_num;
@@ -3091,8 +3091,8 @@ struct _JpfQueryAmsPu
 };
 
 
-typedef struct _JpfAmsPuInfo JpfAmsPuInfo;
-struct _JpfAmsPuInfo
+typedef struct _NmpAmsPuInfo NmpAmsPuInfo;
+struct _NmpAmsPuInfo
 {
 	gchar				puid[MAX_ID_LEN];
 	gchar				domain[DOMAIN_ID_LEN];
@@ -3105,19 +3105,19 @@ struct _JpfAmsPuInfo
 	gint					dev_state;
 };
 
-typedef struct _JpfQueryAmsPuRes JpfQueryAmsPuRes;
-struct _JpfQueryAmsPuRes
+typedef struct _NmpQueryAmsPuRes NmpQueryAmsPuRes;
+struct _NmpQueryAmsPuRes
 {
-	JpfMsgErrCode		code;
+	NmpMsgErrCode		code;
 	gchar				bss_usr[USER_NAME_LEN];
 	gint					total_count;
 	gint					back_count;
-	JpfAmsPuInfo			pu_info[0];
+	NmpAmsPuInfo			pu_info[0];
 };
 
 
-typedef struct _JpfModifyAmsPu JpfModifyAmsPu;
-struct _JpfModifyAmsPu
+typedef struct _NmpModifyAmsPu NmpModifyAmsPu;
+struct _NmpModifyAmsPu
 {
 	gchar				puid[MAX_ID_LEN];
 	gchar				domain[DOMAIN_ID_LEN];

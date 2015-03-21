@@ -10,93 +10,93 @@
 #include "nmp_mod_access.h"
 
 
-G_DEFINE_TYPE(JpfModAccess, nmp_mod_acc, NMP_TYPE_APPMOD);
+G_DEFINE_TYPE(NmpModAccess, nmp_mod_acc, NMP_TYPE_APPMOD);
 
 
 static void 
-nmp_mod_acc_io_fin(gpointer orig_mod, JpfNetIO *io, gint err)
+nmp_mod_acc_io_fin(gpointer orig_mod, NmpNetIO *io, gint err)
 {
-    JpfModAccess *mod = (JpfModAccess*)orig_mod;
+    NmpModAccess *mod = (NmpModAccess*)orig_mod;
     BUG_ON(!mod);
     NMP_MODACCESS_GET_CLASS(mod)->io_close(mod, io, err);
 }
 
 
 static gint
-nmp_mod_acc_io_init(gpointer orig_mod, JpfNetIO *io)
+nmp_mod_acc_io_init(gpointer orig_mod, NmpNetIO *io)
 {
-    JpfModAccess *mod = (JpfModAccess*)orig_mod;
+    NmpModAccess *mod = (NmpModAccess*)orig_mod;
     BUG_ON(!mod);
     return NMP_MODACCESS_GET_CLASS(mod)->io_init(mod, io);  
 }
 
 
 static void
-nmp_mod_acc_on_io_close(JpfModAccess *self, JpfNetIO *io, gint err)
+nmp_mod_acc_on_io_close(NmpModAccess *self, NmpNetIO *io, gint err)
 {
-    jpf_warning("<JpfModAccess> io_close() called!");
+    nmp_warning("<NmpModAccess> io_close() called!");
 }
 
 
 static gint
-nmp_mod_acc_on_io_init(JpfModAccess *self, JpfNetIO *io)
+nmp_mod_acc_on_io_init(NmpModAccess *self, NmpNetIO *io)
 {
-    jpf_warning("<JpfModAccess> io_init() called!");
+    nmp_warning("<NmpModAccess> io_init() called!");
     return -E_NOTSUPPORT;
 }
 
 
-JpfNetIO *
-nmp_mod_acc_create_listen_io(JpfModAccess *self, struct sockaddr *sa, 
+NmpNetIO *
+nmp_mod_acc_create_listen_io(NmpModAccess *self, struct sockaddr *sa, 
 	gint *err)
 {
     G_ASSERT(self != NULL);
 
-    return jpf_net_create_listen_io_2(self->net, sa, err);
+    return nmp_net_create_listen_io_2(self->net, sa, err);
 }
 
 
 static gint
-nmp_mod_acc_recv_sysmsg(gpointer priv_data, JpfNetIO *net_io, 
+nmp_mod_acc_recv_sysmsg(gpointer priv_data, NmpNetIO *net_io, 
 	gpointer msg)
 {
-	JpfModAccess *self;
+	NmpModAccess *self;
 	NmpSysMsg *sys_msg;
 	G_ASSERT(priv_data != NULL);
 
-	self = (JpfModAccess*)priv_data;
+	self = (NmpModAccess*)priv_data;
 	sys_msg = NMP_SYSMSG(msg);
-	jpf_sysmsg_attach_io(sys_msg, net_io);
+	nmp_sysmsg_attach_io(sys_msg, net_io);
 
 	return nmp_app_mod_rcv_f(NMP_APPMOD(self), sys_msg);
 }
 
 
 static void
-nmp_mod_acc_init(JpfModAccess *self)
+nmp_mod_acc_init(NmpModAccess *self)
 {
 	self->net = NULL;
 }
 
 
 gint
-nmp_mod_acc_init_net(JpfModAccess *self, JpfPacketProto *pl, JpfPayloadProto *ph)
+nmp_mod_acc_init_net(NmpModAccess *self, NmpPacketProto *pl, NmpPayloadProto *ph)
 {
-    self->net = jpf_net_new(pl, ph, self);
+    self->net = nmp_net_new(pl, ph, self);
     if (G_UNLIKELY(!self->net))
     {
-        jpf_error("<JpfModAccess> alloc JpfNet object failed!");
+        nmp_error("<NmpModAccess> alloc NmpNet object failed!");
         FATAL_ERROR_EXIT;
 
 		return -1;
     }
 
-	jpf_net_set_reader(
+	nmp_net_set_reader(
 		 self->net,
 		 nmp_mod_acc_recv_sysmsg
 	);
 
-    jpf_net_set_funcs(
+    nmp_net_set_funcs(
         self->net,
         nmp_mod_acc_io_init,
         nmp_mod_acc_io_fin
@@ -107,24 +107,24 @@ nmp_mod_acc_init_net(JpfModAccess *self, JpfPacketProto *pl, JpfPayloadProto *ph
 
 
 gint
-nmp_mod_acc_init_net_full(JpfModAccess *self, guint nloop, gboolean gather,
-	JpfPacketProto *pl, JpfPayloadProto *ph)
+nmp_mod_acc_init_net_full(NmpModAccess *self, guint nloop, gboolean gather,
+	NmpPacketProto *pl, NmpPayloadProto *ph)
 {
-    self->net = jpf_net_new_full(nloop, gather, pl, ph, self);
+    self->net = nmp_net_new_full(nloop, gather, pl, ph, self);
     if (G_UNLIKELY(!self->net))
     {
-        jpf_error("<JpfModAccess> alloc JpfNet object failed!");
+        nmp_error("<NmpModAccess> alloc NmpNet object failed!");
         FATAL_ERROR_EXIT;
 
 		return -1;
     }
 
-	jpf_net_set_reader(
+	nmp_net_set_reader(
 		 self->net,
 		 nmp_mod_acc_recv_sysmsg
 	);
 
-    jpf_net_set_funcs(
+    nmp_net_set_funcs(
         self->net,
         nmp_mod_acc_io_init,
         nmp_mod_acc_io_fin
@@ -137,7 +137,7 @@ nmp_mod_acc_init_net_full(JpfModAccess *self, guint nloop, gboolean gather,
 static void
 nmp_mod_acc_consume_msg(NmpAppMod *s_self, NmpSysMsg *msg)
 {
-    JpfNetIO *io;
+    NmpNetIO *io;
     gint ret;
     G_ASSERT(NMP_IS_APPMOD(s_self) && NMP_IS_SYSMSG(msg));
 
@@ -145,23 +145,23 @@ nmp_mod_acc_consume_msg(NmpAppMod *s_self, NmpSysMsg *msg)
 
 	if (G_LIKELY(io))
 	{
-		ret = jpf_net_write_io(io, msg);	/* trigger io_close() */
+		ret = nmp_net_write_io(io, msg);	/* trigger io_close() */
 		if (G_UNLIKELY(ret < 0))
 		{
-			jpf_print(
-				"<JpfModAccess> consume(), send packet failed, err:%d", -ret
+			nmp_print(
+				"<NmpModAccess> consume(), send packet failed, err:%d", -ret
 			);
 		}
 	}
 	else
-		jpf_warning("<JpfModAccess> consume(), no io specified!");
+		nmp_warning("<NmpModAccess> consume(), no io specified!");
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 }
 
 
 static void
-nmp_mod_acc_class_init(JpfModAccessClass *c_self)
+nmp_mod_acc_class_init(NmpModAccessClass *c_self)
 {
     NmpAppModClass *super_c;
     
@@ -173,12 +173,12 @@ nmp_mod_acc_class_init(JpfModAccessClass *c_self)
 
 
 void
-nmp_mod_acc_release_io(JpfModAccess *self, JpfNetIO *io)
+nmp_mod_acc_release_io(NmpModAccess *self, NmpNetIO *io)
 {
     G_ASSERT(self != NULL && io != NULL);
 
     BUG_ON(!self->net);
-    jpf_net_kill_io(self->net, io);   
+    nmp_net_kill_io(self->net, io);   
 }
 
 

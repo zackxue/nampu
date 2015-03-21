@@ -12,20 +12,20 @@
 search_pu_list *g_search_pu_list = NULL;
 
 
-void jpf_free_search_pu_list()
+void nmp_free_search_pu_list()
 {
 	gint size;
 
 	if (g_search_pu_list)
 	{
 		size = g_search_pu_list->count*sizeof(search_result_t);
-		jpf_mem_kfree(g_search_pu_list, size);
+		nmp_mem_kfree(g_search_pu_list, size);
 		g_search_pu_list = NULL;
 	}
 }
 /*
 void
-jpf_set_search_pu_list(search_array_t *pu_list)
+nmp_set_search_pu_list(search_array_t *pu_list)
 {
 	gint size, count = 10,i;
 	search_pu_list *search_pu = NULL;
@@ -35,47 +35,47 @@ jpf_set_search_pu_list(search_array_t *pu_list)
       {
       		memset(&test[i], 0, sizeof(search_result_t));
 		sprintf(test[i].dst_id, "test:11:22:33:44:55:%2d",i);
-		test[i].jpf_srch.dev_info.av_mun = 8;
-		test[i].jpf_srch.dev_info.pu_type = 2;
-		sprintf(test[i].jpf_srch.dev_info.dev_ip, "192.168.1.%d",i);
-		strcpy(test[i].jpf_srch.dev_info.mnfct,"JXJ");
+		test[i].nmp_srch.dev_info.av_mun = 8;
+		test[i].nmp_srch.dev_info.pu_type = 2;
+		sprintf(test[i].nmp_srch.dev_info.dev_ip, "192.168.1.%d",i);
+		strcpy(test[i].nmp_srch.dev_info.mnfct,"NMP");
       }
 
-	size = sizeof(JpfSearchPuRes) + count*sizeof(search_result_t);
-	search_pu = jpf_mem_kalloc(size);
+	size = sizeof(NmpSearchPuRes) + count*sizeof(search_result_t);
+	search_pu = nmp_mem_kalloc(size);
 	if (search_pu)
 	{
 		memset(search_pu, 0, size);
 		search_pu->count = count;
 		memcpy(search_pu->result, test,
 			count*sizeof(search_result_t));
-		jpf_free_search_pu_list();
+		nmp_free_search_pu_list();
 		g_search_pu_list = search_pu;
 	}
 }*/
 
 void
-jpf_set_search_pu_list(search_array_t *pu_list)
+nmp_set_search_pu_list(search_array_t *pu_list)
 {
 	gint size;
 	search_pu_list *search_pu = NULL;
 
-	size = sizeof(JpfSearchPuRes) + pu_list->count*sizeof(search_result_t);
-	search_pu = jpf_mem_kalloc(size);
+	size = sizeof(NmpSearchPuRes) + pu_list->count*sizeof(search_result_t);
+	search_pu = nmp_mem_kalloc(size);
 	if (search_pu)
 	{
 		memset(search_pu, 0, size);
 		search_pu->count = pu_list->count;
 		memcpy(search_pu->result, pu_list->result,
 			pu_list->count*sizeof(search_result_t));
-		jpf_free_search_pu_list();
+		nmp_free_search_pu_list();
 		g_search_pu_list = search_pu;
 	}
 }
 
 
 search_pu_list*
-jpf_get_search_pu_list()
+nmp_get_search_pu_list()
 {
 	return g_search_pu_list;
 }

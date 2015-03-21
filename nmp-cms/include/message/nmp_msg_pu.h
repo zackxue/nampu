@@ -3,8 +3,8 @@
 
 #include "nmp_msg_share.h"
 
-typedef struct _JpfPuRegInfo JpfPuRegInfo;
-struct _JpfPuRegInfo
+typedef struct _NmpPuRegInfo NmpPuRegInfo;
+struct _NmpPuRegInfo
 {
     gchar       puid[MAX_ID_LEN];
     gchar       cms_ip[MAX_IP_LEN];
@@ -13,42 +13,42 @@ struct _JpfPuRegInfo
     gint     pu_version;
 };
 
-typedef struct _JpfPuRegRes JpfPuRegRes;
-struct _JpfPuRegRes
+typedef struct _NmpPuRegRes NmpPuRegRes;
+struct _NmpPuRegRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar        puid[MAX_ID_LEN];
     gchar        mdu_ip[MAX_IP_LEN];
     gint         mdu_port;
     gint         keep_alive_time;
 };
 
-typedef struct _JpfPuHeart JpfPuHeart;
-struct _JpfPuHeart
+typedef struct _NmpPuHeart NmpPuHeart;
+struct _NmpPuHeart
 {
     gchar        puid[MAX_ID_LEN];
     gchar        pu_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfPuHeartResp JpfPuHeartResp;
-struct _JpfPuHeartResp
+typedef struct _NmpPuHeartResp NmpPuHeartResp;
+struct _NmpPuHeartResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar        puid[MAX_ID_LEN];
     gchar			server_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfGetMdsInfo JpfGetMdsInfo;
-struct _JpfGetMdsInfo
+typedef struct _NmpGetMdsInfo NmpGetMdsInfo;
+struct _NmpGetMdsInfo
 {
     gchar       puid[MAX_ID_LEN];
     gchar       cms_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfGetMdsInfoRes JpfGetMdsInfoRes;
-struct _JpfGetMdsInfoRes
+typedef struct _NmpGetMdsInfoRes NmpGetMdsInfoRes;
+struct _NmpGetMdsInfoRes
 {
-    JpfMsgErrCode     code;
+    NmpMsgErrCode     code;
     gchar        puid[MAX_ID_LEN];
     gchar        mdu_ip[MAX_IP_LEN];
     gint         mdu_port;
@@ -56,8 +56,8 @@ struct _JpfGetMdsInfoRes
 };
 
 
-typedef struct _JpfPuOnlineStatusChange JpfPuOnlineStatusChange;
-struct _JpfPuOnlineStatusChange
+typedef struct _NmpPuOnlineStatusChange NmpPuOnlineStatusChange;
+struct _NmpPuOnlineStatusChange
 {
     gchar       domain_id[DOMAIN_ID_LEN];
     gchar       puid[MAX_ID_LEN];
@@ -68,39 +68,39 @@ struct _JpfPuOnlineStatusChange
 };
 
 
-typedef struct _JpfPuOwnToAllCu JpfPuOwnToAllCu;
-struct _JpfPuOwnToAllCu
+typedef struct _NmpPuOwnToAllCu NmpPuOwnToAllCu;
+struct _NmpPuOwnToAllCu
 {
-    JpfMsgErrCode      code;
-    JpfPuOnlineStatusChange  pu_state;
+    NmpMsgErrCode      code;
+    NmpPuOnlineStatusChange  pu_state;
     gint total_num;
-    JpfAllCuOwnPu cu_list[0];
+    NmpAllCuOwnPu cu_list[0];
 };
 
-typedef struct _JpfTwScr JpfTwScr;
-struct _JpfTwScr
+typedef struct _NmpTwScr NmpTwScr;
+struct _NmpTwScr
 {
     gint tw_id;
     gint scr_id;
 };
 
-typedef struct _JpfPuTwScr JpfPuTwScr;
-struct _JpfPuTwScr
+typedef struct _NmpPuTwScr NmpPuTwScr;
+struct _NmpPuTwScr
 {
-    JpfMsgErrCode      code;
+    NmpMsgErrCode      code;
     gint state;
     gint total_num;
-    JpfTwScr scr_list[0];
+    NmpTwScr scr_list[0];
 };
 
-typedef struct _JpfChangeDispatch JpfChangeDispatch;
-struct _JpfChangeDispatch
+typedef struct _NmpChangeDispatch NmpChangeDispatch;
+struct _NmpChangeDispatch
 {
    gchar        puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfSubmitFormatPos JpfSubmitFormatPos;
-struct _JpfSubmitFormatPos
+typedef struct _NmpSubmitFormatPos NmpSubmitFormatPos;
+struct _NmpSubmitFormatPos
 {
     gchar        domain_id[DOMAIN_ID_LEN];
     gchar        puid[MAX_ID_LEN];
@@ -108,17 +108,17 @@ struct _JpfSubmitFormatPos
     gint           format_pro;
 };
 
-typedef struct _JpfSubmitFormatPosRes JpfSubmitFormatPosRes;
-struct _JpfSubmitFormatPosRes
+typedef struct _NmpSubmitFormatPosRes NmpSubmitFormatPosRes;
+struct _NmpSubmitFormatPosRes
 {
-    JpfMsgErrCode      code;
-	JpfSubmitFormatPos     	pro;
+    NmpMsgErrCode      code;
+	NmpSubmitFormatPos     	pro;
     gint                 total_num;
-    JpfAllCuOwnPu cu_list[0];
+    NmpAllCuOwnPu cu_list[0];
 };
 
-typedef struct _JpfSubmitAlarm JpfSubmitAlarm;
-struct _JpfSubmitAlarm
+typedef struct _NmpSubmitAlarm NmpSubmitAlarm;
+struct _NmpSubmitAlarm
 {
     gchar        domain_id[DOMAIN_ID_LEN];
     gchar        puid[MAX_ID_LEN];
@@ -134,17 +134,17 @@ struct _JpfSubmitAlarm
     gchar	      submit_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfSubmitAlarmRes JpfSubmitAlarmRes;
-struct _JpfSubmitAlarmRes
+typedef struct _NmpSubmitAlarmRes NmpSubmitAlarmRes;
+struct _NmpSubmitAlarmRes
 {
-    JpfMsgErrCode      code;
-    JpfSubmitAlarm     	alarm;
+    NmpMsgErrCode      code;
+    NmpSubmitAlarm     	alarm;
     gint                 total_num;
-    JpfAllCuOwnPu cu_list[0];
+    NmpAllCuOwnPu cu_list[0];
 };
 
-typedef struct _JpfPuGetDivMode JpfPuGetDivMode;
-struct _JpfPuGetDivMode
+typedef struct _NmpPuGetDivMode NmpPuGetDivMode;
+struct _NmpPuGetDivMode
 {
     gchar  puid[MAX_ID_LEN];
     gint req_num;

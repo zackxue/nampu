@@ -6,7 +6,7 @@
  * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
- * JpfNetRealBuf supplies a classic model for production and 
+ * NmpNetRealBuf supplies a classic model for production and 
  * consumption issues. Each object contains several recycling
  * I/O bufferes, which are organized as a big ring buffer.
  * 
@@ -37,7 +37,7 @@ struct _HmBufBlock
  * Generic buff head, for buffering management. 
 */
 
-struct _JpfNetBuf
+struct _NmpNetBuf
 {
     gint            object_size;    //@{sizeof the entity object}
     gint            num_buffers;    //@{buf counts}
@@ -46,7 +46,7 @@ struct _JpfNetBuf
     gint            next_deal;      //@{next buf to flush}
     gint            buffer_bytes;   //@{bytes in all buffers}
     GMutex         *buf_lock;       //@{protect all above}
-    JpfNetBufFlush	flush;			//@{flush worker}
+    NmpNetBufFlush	flush;			//@{flush worker}
 };
 
 
@@ -54,17 +54,17 @@ struct _JpfNetBuf
  * Net real buffer description
 */
 
-typedef struct _JpfNetRealBuf JpfNetRealBuf;
-struct _JpfNetRealBuf
+typedef struct _NmpNetRealBuf NmpNetRealBuf;
+struct _NmpNetRealBuf
 {
-    JpfNetBuf		head;
+    NmpNetBuf		head;
     HmBufBlock		buff[0];
 };
 
 
 static __inline__ void
-jpf_net_buf_init(JpfNetBuf *buff, gsize size, gint n_blocks,
-	gint block_size, JpfNetBufFlush flush)
+nmp_net_buf_init(NmpNetBuf *buff, gsize size, gint n_blocks,
+	gint block_size, NmpNetBufFlush flush)
 {
 	HmBufBlock *block;
 	gint index;
@@ -84,7 +84,7 @@ jpf_net_buf_init(JpfNetBuf *buff, gsize size, gint n_blocks,
 
 	for (index = 0; index < n_blocks; ++index)
 	{
-		block = &((JpfNetRealBuf*)buff)->buff[index];
+		block = &((NmpNetRealBuf*)buff)->buff[index];
 		block->raw_data = g_malloc(block_size);
 		block->block_size = block_size;
 	}
@@ -92,52 +92,52 @@ jpf_net_buf_init(JpfNetBuf *buff, gsize size, gint n_blocks,
 
 
 static __inline__ void
-jpf_net_buf_finalize(JpfNetBuf *buff)
+nmp_net_buf_finalize(NmpNetBuf *buff)
 {
 	gint index;
 	HmBufBlock *block;
 
 	for (index = buff->num_buffers -1; index >= 0; --index)
 	{
-		block = &((JpfNetRealBuf*)buff)->buff[index];
+		block = &((NmpNetRealBuf*)buff)->buff[index];
 		g_free(block->raw_data);
 	}
 }
 
 
 /*
- * Release a JpfNetRealBuf object.
+ * Release a NmpNetRealBuf object.
 */
 __export void
-jpf_net_buf_free(JpfNetBuf *buf)
+nmp_net_buf_free(NmpNetBuf *buf)
 {
     G_ASSERT(buf != NULL);
 
-    jpf_net_buf_finalize(buf);
+    nmp_net_buf_finalize(buf);
 	g_mutex_free(buf->buf_lock);
 	g_free(buf);
 }
 
 
 /*
- * Alloc a new JpfNetRealBuf object.
+ * Alloc a new NmpNetRealBuf object.
  *
  * $n_blocks: buf blocks count we want to use.
  * $flush: flusher
 */
-JpfNetBuf *
-jpf_net_buf_alloc(gint n_blocks, gint block_size,
-	JpfNetBufFlush flush)
+NmpNetBuf *
+nmp_net_buf_alloc(gint n_blocks, gint block_size,
+	NmpNetBufFlush flush)
 {
-    JpfNetBuf *buf;
+    NmpNetBuf *buf;
     gsize size;
 
 	if (n_blocks <= 0 || !flush)
 		return NULL;
 
-    size = sizeof(JpfNetRealBuf) + (n_blocks * sizeof(HmBufBlock));
-	buf = (JpfNetBuf*)g_malloc(size);	/* glib has its own OOM facility */
-	jpf_net_buf_init(buf, size, n_blocks, block_size, flush);
+    size = sizeof(NmpNetRealBuf) + (n_blocks * sizeof(HmBufBlock));
+	buf = (NmpNetBuf*)g_malloc(size);	/* glib has its own OOM facility */
+	nmp_net_buf_init(buf, size, n_blocks, block_size, flush);
 
     return buf;
 }
@@ -147,7 +147,7 @@ jpf_net_buf_alloc(gint n_blocks, gint block_size,
  * Get index of last used I/O buffer.
 */
 static __inline__ gint
-jpf_net_buf_last_pos(JpfNetBuf *buff)
+nmp_net_buf_last_pos(NmpNetBuf *buff)
 {
     HmBufBlock *b;
     gint last;
@@ -157,7 +157,7 @@ jpf_net_buf_last_pos(JpfNetBuf *buff)
     if (--last < 0)
         last = buff->num_buffers - 1;
 
-    b = &((JpfNetRealBuf*)buff)->buff[last];
+    b = &((NmpNetRealBuf*)buff)->buff[last];
     if (b->is_busy)
         return last;
 
@@ -166,7 +166,7 @@ jpf_net_buf_last_pos(JpfNetBuf *buff)
 
 
 static __inline__ void
-jpf_net_buf_write_ok(JpfNetBuf *buff)
+nmp_net_buf_write_ok(NmpNetBuf *buff)
 {
     if (buff->next_deal == buff->num_buffers)
         buff->next_deal = buff->next_use;
@@ -180,11 +180,11 @@ jpf_net_buf_write_ok(JpfNetBuf *buff)
 
 
 static __inline__ void
-jpf_net_buf_flush_ok(JpfNetBuf *buff)
+nmp_net_buf_flush_ok(NmpNetBuf *buff)
 {
     HmBufBlock *b;
 
-    b = &((JpfNetRealBuf*)buff)->buff[buff->next_deal];
+    b = &((NmpNetRealBuf*)buff)->buff[buff->next_deal];
 
     b->is_busy = 0;
     b->start_pos = 0;
@@ -195,7 +195,7 @@ jpf_net_buf_flush_ok(JpfNetBuf *buff)
     if (++buff->next_deal >= buff->num_buffers)
         buff->next_deal = 0;
 
-    b = &((JpfNetRealBuf*)buff)->buff[buff->next_deal];
+    b = &((NmpNetRealBuf*)buff)->buff[buff->next_deal];
     if (!b->is_busy)
         buff->next_deal = buff->num_buffers;
 }
@@ -211,7 +211,7 @@ jpf_net_buf_flush_ok(JpfNetBuf *buff)
  *       > 0, bytes left in buffer.
 */
 gint
-__jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
+__nmp_net_buf_flush(NmpNetBuf *buff, gpointer user_data)
 {
     HmBufBlock *b;
     gint left, ret;
@@ -222,7 +222,7 @@ __jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
         if (buff->next_deal == buff->num_buffers)
             return 0;
 
-        b = &((JpfNetRealBuf*)buff)->buff[buff->next_deal];
+        b = &((NmpNetRealBuf*)buff)->buff[buff->next_deal];
         if (G_UNLIKELY(!b->is_busy))
             BUG();
 
@@ -236,7 +236,7 @@ __jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
             buff->buffer_bytes -= ret;
 
             if (ret == left)
-                jpf_net_buf_flush_ok(buff);
+                nmp_net_buf_flush_ok(buff);
             else
             {
                 BUG_ON(ret > left);
@@ -259,13 +259,13 @@ __jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
  *       >=0, bytes left in buffer.
 */
 gint
-jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
+nmp_net_buf_flush(NmpNetBuf *buff, gpointer user_data)
 {
     gint ret;
     G_ASSERT(buff != NULL);
 
     g_mutex_lock(buff->buf_lock);
-    ret = __jpf_net_buf_flush(buff, user_data);
+    ret = __nmp_net_buf_flush(buff, user_data);
     g_mutex_unlock(buff->buf_lock);
 
     return ret;
@@ -278,7 +278,7 @@ jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data)
  *       < 0, error code.
 */
 static __inline__ gint
-jpf_net_buf_append(JpfNetBuf *buff, gchar *buf, gsize count,
+nmp_net_buf_append(NmpNetBuf *buff, gchar *buf, gsize count,
 	gpointer user_data, gint *pending)
 {
     gint last, left;
@@ -292,7 +292,7 @@ jpf_net_buf_append(JpfNetBuf *buff, gchar *buf, gsize count,
 
 	*pending = 1;	/* we assume buffer is not empty */
 
-    last = jpf_net_buf_last_pos(buff);
+    last = nmp_net_buf_last_pos(buff);
     if (last < 0)	/* no data in buffer, try to send */
     {
     	left = (*buff->flush)(buf, count, user_data);
@@ -302,7 +302,7 @@ jpf_net_buf_append(JpfNetBuf *buff, gchar *buf, gsize count,
     	return left;
     }
 
-    b = &((JpfNetRealBuf*)buff)->buff[last];
+    b = &((NmpNetRealBuf*)buff)->buff[last];
     BUG_ON(!b->is_busy);
 
     left = b->block_size - b->end_pos;
@@ -320,14 +320,14 @@ jpf_net_buf_append(JpfNetBuf *buff, gchar *buf, gsize count,
 
 
 static __inline__ gint
-__jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
+__nmp_net_buf_write(NmpNetBuf *buff, gchar *buf, gsize count,
 	gpointer user_data, gint *pending)
 {
 	gsize size;
 	gint ret;
     HmBufBlock *b;
 
-    ret = jpf_net_buf_append(buff, buf, count, user_data, pending);
+    ret = nmp_net_buf_append(buff, buf, count, user_data, pending);
     if (ret < 0)
         return ret;
 
@@ -340,7 +340,7 @@ __jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
     if (buff->no_blocks)
         return 0;
 
-    b = &((JpfNetRealBuf*)buff)->buff[buff->next_use];
+    b = &((NmpNetRealBuf*)buff)->buff[buff->next_use];
     if (G_UNLIKELY(b->is_busy))
         BUG();
 
@@ -350,7 +350,7 @@ __jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
     memcpy(&b->raw_data[b->start_pos], buf, size);
 
     buff->buffer_bytes += size;
-    jpf_net_buf_write_ok(buff);
+    nmp_net_buf_write_ok(buff);
 
     return count;
 }
@@ -364,14 +364,14 @@ __jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
  *       < 0, error.
 */
 gint
-jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
+nmp_net_buf_write(NmpNetBuf *buff, gchar *buf, gsize count,
 	gpointer user_data, gint *pending)
 {
     gint ret;
     G_ASSERT(buff != NULL && buf != NULL && pending != NULL);
 
     g_mutex_lock(buff->buf_lock);
-    ret = __jpf_net_buf_write(buff, buf, count, user_data,
+    ret = __nmp_net_buf_write(buff, buf, count, user_data,
     	pending);
     g_mutex_unlock(buff->buf_lock);
 

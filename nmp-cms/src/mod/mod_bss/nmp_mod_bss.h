@@ -11,29 +11,29 @@ G_BEGIN_DECLS
 #define NMP_IS_MODBSS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODBSS))
 #define NMP_IS_MODBSS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODBSS))
 #define NMP_MODBSS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODBSS, JpfModBss))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODBSS, NmpModBss))
 #define NMP_MODBSS_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODBSS, JpfModBssClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODBSS, NmpModBssClass))
 #define NMP_MODBSS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODBSS, JpfModBssClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODBSS, NmpModBssClass))
 
-typedef struct _JpfModBss JpfModBss;
-typedef struct _JpfModBssClass JpfModBssClass;
-struct _JpfModBss
+typedef struct _NmpModBss NmpModBss;
+typedef struct _NmpModBssClass NmpModBssClass;
+struct _NmpModBss
 {
-	JpfModAccess		parent_object;
+	NmpModAccess		parent_object;
 
-	JpfGuestContainer	*container;
-	JpfNetIO			*listen_io;
+	NmpGuestContainer	*container;
+	NmpNetIO			*listen_io;
 
 	//LIST_HEAD		list_user;		/* user link list */
 //	GStaticMutex		list_ulock;
 };
 
 
-struct _JpfModBssClass
+struct _NmpModBssClass
 {
-	JpfModAccessClass	parent_class;
+	NmpModAccessClass	parent_class;
 };
 
 
@@ -41,30 +41,30 @@ GType nmp_mod_bss_get_type( void );
 
 
 gint
-nmp_mod_bss_new_admin(JpfModBss *self, JpfNetIO *io, const gchar *id,
-	JpfID *conflict);
+nmp_mod_bss_new_admin(NmpModBss *self, NmpNetIO *io, const gchar *id,
+	NmpID *conflict);
 
 gint
-nmp_mod_bss_sync_req(JpfModBss *self, NmpMsgID msg_id,
+nmp_mod_bss_sync_req(NmpModBss *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size);
 
 gpointer
-nmp_mod_bss_sync_req_2(JpfModBss *self, NmpMsgID msg_id,
+nmp_mod_bss_sync_req_2(NmpModBss *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size);
 
 void
 nmp_mod_bss_deliver_out_msg(NmpAppObj *self, NmpSysMsg *msg);
 
 void
-nmp_mod_bss_force_usr_offline(JpfModBss *self, const char *admin_name, NmpSysMsg *msg);
+nmp_mod_bss_force_usr_offline(NmpModBss *self, const char *admin_name, NmpSysMsg *msg);
 
 void
 nmp_mod_bss_notify_policy_change(NmpAppObj *self,
     gpointer policy_change, gint size);
 
-void jpf_search_pu_lock();
+void nmp_search_pu_lock();
 
-void jpf_search_pu_unlock();
+void nmp_search_pu_unlock();
 
 G_END_DECLS
 

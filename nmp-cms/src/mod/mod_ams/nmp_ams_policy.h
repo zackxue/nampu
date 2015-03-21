@@ -12,75 +12,75 @@
 
 
 
-typedef struct _JpfTime JpfTime;
-struct _JpfTime
+typedef struct _NmpTime NmpTime;
+struct _NmpTime
 {
 	gint		day_of_week;
 	time_t		cur_time;
 };
 
-typedef struct _JpfAlarmInfo JpfAlarmInfo;
-struct _JpfAlarmInfo
+typedef struct _NmpAlarmInfo NmpAlarmInfo;
+struct _NmpAlarmInfo
 {
-	JpfShareGuid	alarm_guid;
-	JpfTime			time;
+	NmpShareGuid	alarm_guid;
+	NmpTime			time;
 	guint			alarm_type;		//1,2,4,8,...
 	gchar	      alarm_time[TIME_INFO_LEN];
 };
 
 
-typedef struct _JpfTimeSegment JpfTimeSegment;
-struct _JpfTimeSegment
+typedef struct _NmpTimeSegment NmpTimeSegment;
+struct _NmpTimeSegment
 {
 	gint			day_of_week;
 	time_t		start;
 	time_t		end;
 };
 
-typedef struct _JpfPolicy JpfPolicy;
-struct _JpfPolicy
+typedef struct _NmpPolicy NmpPolicy;
+struct _NmpPolicy
 {
 	GList		*time_segs;
 	GMutex		*mutex;
 };
 
 
-typedef struct _JpfAction JpfAction;
-typedef JpfAction *JpfActionP;
-typedef struct _JpfActionOps JpfActionOps;
+typedef struct _NmpAction NmpAction;
+typedef NmpAction *NmpActionP;
+typedef struct _NmpActionOps NmpActionOps;
 
-struct _JpfActionOps
+struct _NmpActionOps
 {
-	gint		(*init)(JpfAction *p);
-	gint		(*free)(JpfAction *p);
-	JpfActionP	(*get_data)(JpfMsgAmsGetActionInfoRes *info);
-	gint		(*action)(JpfAction *p, JpfAlarmInfo *alarm_info);
+	gint		(*init)(NmpAction *p);
+	gint		(*free)(NmpAction *p);
+	NmpActionP	(*get_data)(NmpMsgAmsGetActionInfoRes *info);
+	gint		(*action)(NmpAction *p, NmpAlarmInfo *alarm_info);
 };
 
-struct _JpfAction
+struct _NmpAction
 {
-	JpfActionOps	*ops;
-	JpfAmsActionType	type;
+	NmpActionOps	*ops;
+	NmpAmsActionType	type;
 };
 
 
-typedef struct _JpfActions JpfActions;
-struct _JpfActions
+typedef struct _NmpActions NmpActions;
+struct _NmpActions
 {
-	JpfAction	*actions[AMS_ACTION_MAX];
+	NmpAction	*actions[AMS_ACTION_MAX];
 };
 
-typedef struct _JpfAmsGu JpfAmsGu;
-struct _JpfAmsGu
+typedef struct _NmpAmsGu NmpAmsGu;
+struct _NmpAmsGu
 {
-	JpfShareGuid	guid;
+	NmpShareGuid	guid;
 	GTime		time;		//节点加入时间
-	JpfPolicy		*time_policy;
-	JpfActions	*act;
+	NmpPolicy		*time_policy;
+	NmpActions	*act;
 };
 
-typedef struct _JpfGuPool JpfGuPool;
-struct _JpfGuPool
+typedef struct _NmpGuPool NmpGuPool;
+struct _NmpGuPool
 {
 	GHashTable	*gu;
 	GMutex		*mutex;
@@ -90,102 +90,102 @@ struct _JpfGuPool
 
 /********************** action_record **********************/
 
-typedef JpfMsgActionRecordGu JpfActionRecordGu;
+typedef NmpMsgActionRecordGu NmpActionRecordGu;
 
-typedef struct _JpfActionRecord JpfActionRecord;
-struct _JpfActionRecord
+typedef struct _NmpActionRecord NmpActionRecord;
+struct _NmpActionRecord
 {
-	JpfAction		super;
+	NmpAction		super;
 
 	guint		action_gu_count;
-	JpfActionRecordGu	action_gu[0];
+	NmpActionRecordGu	action_gu[0];
 };
 
 /********************** action_io **********************/
 
-typedef JpfMsgActionIOGu JpfActionIOGu;
+typedef NmpMsgActionIOGu NmpActionIOGu;
 
-typedef struct _JpfActionIO JpfActionIO;
-struct _JpfActionIO
+typedef struct _NmpActionIO NmpActionIO;
+struct _NmpActionIO
 {
-	JpfAction		super;
+	NmpAction		super;
 
 	guint		action_gu_count;
-	JpfActionIOGu	action_gu[0];
+	NmpActionIOGu	action_gu[0];
 };
 
 /********************** action_step **********************/
 
-typedef JpfMsgActionStepGu JpfActionStepGu;
+typedef NmpMsgActionStepGu NmpActionStepGu;
 
-typedef struct _JpfActionStep JpfActionStep;
-struct _JpfActionStep
+typedef struct _NmpActionStep NmpActionStep;
+struct _NmpActionStep
 {
-	JpfAction		super;
+	NmpAction		super;
 
 	guint		action_gu_count;
-	JpfActionStepGu	action_gu[0];
+	NmpActionStepGu	action_gu[0];
 };
 
 /********************** action_preset **********************/
 
-typedef JpfMsgActionPresetGu JpfActionPresetGu;
+typedef NmpMsgActionPresetGu NmpActionPresetGu;
 
-typedef struct _JpfActionPreset JpfActionPreset;
-struct _JpfActionPreset
+typedef struct _NmpActionPreset NmpActionPreset;
+struct _NmpActionPreset
 {
-	JpfAction		super;
+	NmpAction		super;
 
 	guint		action_gu_count;
-	JpfActionPresetGu	action_gu[0];
+	NmpActionPresetGu	action_gu[0];
 };
 
 /********************** action_snapshot **********************/
 
-typedef JpfMsgActionSnapshotGu JpfActionSnapshotGu;
+typedef NmpMsgActionSnapshotGu NmpActionSnapshotGu;
 
-typedef struct _JpfActionSnapshot JpfActionSnapshot;
-struct _JpfActionSnapshot
+typedef struct _NmpActionSnapshot NmpActionSnapshot;
+struct _NmpActionSnapshot
 {
-	JpfAction		super;
+	NmpAction		super;
 
 	guint		action_gu_count;
-	JpfActionSnapshotGu	action_gu[0];
+	NmpActionSnapshotGu	action_gu[0];
 };
 
 /********************** action_map **********************/
 
-typedef JpfMsgActionMapGu JpfActionMapGu;
+typedef NmpMsgActionMapGu NmpActionMapGu;
 
-typedef struct _JpfActionMap JpfActionMap;
-struct _JpfActionMap
+typedef struct _NmpActionMap NmpActionMap;
+struct _NmpActionMap
 {
-	JpfAction		super;
+	NmpAction		super;
 
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gchar			gu_name[GU_NAME_LEN];
 	gint			defence_id;
 	gchar			defence_name[AREA_NAME_LEN];
 	gint			map_id;
 	gchar			map_name[MAP_NAME_LEN];
 	guint			action_gu_count;
-	JpfActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
+	NmpActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
 	gint				cu_count;
-	JpfAllCuOwnPu		cu_list[0];
+	NmpAllCuOwnPu		cu_list[0];
 };
 
 
-typedef gint (*jpf_ams_action_handler)(gint dst, gint msg_type, void *parm, guint size);
+typedef gint (*nmp_ams_action_handler)(gint dst, gint msg_type, void *parm, guint size);
 
-void jpf_ams_set_action_handler(jpf_ams_action_handler hook);
+void nmp_ams_set_action_handler(nmp_ams_action_handler hook);
 
-void jpf_ams_policy_init();
+void nmp_ams_policy_init();
 
-gint jpf_ams_find_gu_and_action(JpfAlarmInfo *alarm_info);
+gint nmp_ams_find_gu_and_action(NmpAlarmInfo *alarm_info);
 
-gint jpf_ams_add_gu_action_info(JpfShareGuid *alarm_guid,
-	JpfMsgAmsGetActionInfoRes *action_info);
+gint nmp_ams_add_gu_action_info(NmpShareGuid *alarm_guid,
+	NmpMsgAmsGetActionInfoRes *action_info);
 
-gint jpf_ams_remove_alarm_node(JpfShareGuid *key);
+gint nmp_ams_remove_alarm_node(NmpShareGuid *key);
 
 #endif	/* __NMP_AMS_POLICY_H__ */

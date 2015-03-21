@@ -8,19 +8,19 @@
 USING_MSG_ID_MAP(cms);
 
 NmpSysMsg *
-jpf_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
+nmp_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
 {
-	JpfMsgInfo *msg_info;
+	NmpMsgInfo *msg_info;
 	NmpSysMsg  *sys_msg;
 	gchar     cmd[MAX_CMD_ID_LEN] = {0};
 	gint        msg_id;
 	gint        cmd_len;
 
     printf("================receive xml_buff=%s\n",xml_buff);
-    msg_info = jpf_parse_str_xml(xml_buff, xml_len, seq);
+    msg_info = nmp_parse_str_xml(xml_buff, xml_len, seq);
     if (G_UNLIKELY(!msg_info))
     {
-        jpf_warning("jpf_parse_str_xml() failed!");
+        nmp_warning("nmp_parse_str_xml() failed!");
         return NULL;
     }
 
@@ -37,27 +37,27 @@ jpf_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
     printf("--------------msg_id=%d,cmd=%s\n",msg_id,cmd);
     if (G_UNLIKELY(MESSAGE_INVALID_ID(msg_id)))
     {
-        jpf_warning("translate message \"%s\" to id failed!", msg_info->msg_id);
-        jpf_free_msginfo(msg_info);
+        nmp_warning("translate message \"%s\" to id failed!", msg_info->msg_id);
+        nmp_free_msginfo(msg_info);
         return NULL;
     }
 
-    sys_msg = jpf_sysmsg_new(msg_id,
+    sys_msg = nmp_sysmsg_new(msg_id,
     	 msg_info->private_data,
     	 msg_info->private_size,
     	 seq,
-    	 (JpfMsgPrivDes)msg_info->priv_destroy);
+    	 (NmpMsgPrivDes)msg_info->priv_destroy);
 
-    jpf_free_msginfo_head(msg_info);
+    nmp_free_msginfo_head(msg_info);
 
     return sys_msg;
 }
 
 
 gint
-jpf_proto_create_xml_str(char *xml_buff, int *buff_size, NmpSysMsg *sys_msg)
+nmp_proto_create_xml_str(char *xml_buff, int *buff_size, NmpSysMsg *sys_msg)
 {
-	JpfMsgInfo  msg_info;
+	NmpMsgInfo  msg_info;
 	gint        msg_id;
 	gint        ret;
 
@@ -86,9 +86,9 @@ jpf_proto_create_xml_str(char *xml_buff, int *buff_size, NmpSysMsg *sys_msg)
 	msg_info.private_data = MSG_GET_DATA(sys_msg);
 	msg_info.private_size = MSG_DATA_SIZE(sys_msg);
 
-    ret = jpf_create_str_xml(xml_buff, buff_size, &msg_info);
+    ret = nmp_create_str_xml(xml_buff, buff_size, &msg_info);
 
     return ret;
-	//return jpf_create_str_xml(xml_buff, buff_size, &msg_info);
+	//return nmp_create_str_xml(xml_buff, buff_size, &msg_info);
 }
 

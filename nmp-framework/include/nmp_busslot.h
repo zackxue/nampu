@@ -9,52 +9,52 @@
 G_BEGIN_DECLS
 
 /*
- * JpfBusSlot:
- * This describes system bus slot, it implements "JpfISlot" interface. System
- * bus use JpfBusSlot object to communicate with module. one system bus can own
+ * NmpBusSlot:
+ * This describes system bus slot, it implements "NmpISlot" interface. System
+ * bus use NmpBusSlot object to communicate with module. one system bus can own
  * several this type of objects.
  * 
 */
 
-#define NMP_TYPE_BUSSLOT (jpf_bus_slot_get_type())
+#define NMP_TYPE_BUSSLOT (nmp_bus_slot_get_type())
 #define NMP_IS_BUSSLOT(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_BUSSLOT))
 #define NMP_IS_BUSSLOT_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_BUSSLOT))
 #define NMP_BUSSLOT(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_BUSSLOT, JpfBusSlot))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_BUSSLOT, NmpBusSlot))
 #define NMP_BUSSLOT_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_BUSSLOT, JpfBusSlotClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_BUSSLOT, NmpBusSlotClass))
 #define NMP_BUSSLOT_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_BUSSLOT, JpfBusSlotClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_BUSSLOT, NmpBusSlotClass))
 
-typedef struct _JpfBusSlot JpfBusSlot;
-typedef struct _JpfBusSlotClass JpfBusSlotClass;
+typedef struct _NmpBusSlot NmpBusSlot;
+typedef struct _NmpBusSlotClass NmpBusSlotClass;
 
-struct _JpfBusSlot
+struct _NmpBusSlot
 {
-	JpfObject parent_object;
+	NmpObject parent_object;
 
-	JpfMsgBus *owner;
-	JpfISlot *i_peer;
+	NmpMsgBus *owner;
+	NmpISlot *i_peer;
 
 	gboolean bus_ready;
-	JpfBusSlotPos ibus_slot;
+	NmpBusSlotPos ibus_slot;
 };
 
 
-struct _JpfBusSlotClass
+struct _NmpBusSlotClass
 {
-	JpfObjectClass parent_class;
+	NmpObjectClass parent_class;
 
-	gint (*slot_init)(JpfBusSlot *self, GValue *parm);
-	gint (*bus_snd)(JpfBusSlot *self, NmpSysMsg *p_msg);
-	gint (*bus_rcv)(JpfBusSlot *self, NmpSysMsg *p_msg);
-	gint (*connect)(JpfBusSlot *self, JpfISlot *i_peer);
-	gint (*disconnect)(JpfBusSlot *self);
-	gint (*slot_ok)(JpfBusSlot *self);
+	gint (*slot_init)(NmpBusSlot *self, GValue *parm);
+	gint (*bus_snd)(NmpBusSlot *self, NmpSysMsg *p_msg);
+	gint (*bus_rcv)(NmpBusSlot *self, NmpSysMsg *p_msg);
+	gint (*connect)(NmpBusSlot *self, NmpISlot *i_peer);
+	gint (*disconnect)(NmpBusSlot *self);
+	gint (*slot_ok)(NmpBusSlot *self);
 };
 
 
-GType jpf_bus_slot_get_type( void );
+GType nmp_bus_slot_get_type( void );
 
 G_END_DECLS
 

@@ -14,26 +14,26 @@
 #define AMS_NEW_NODE_TIME			(60)			//60s
 #define AMS_POLICY_CLEAR_TIME		(1000 * 10)	//10s扫描一次
 #define LEVEL_POS					(20)
-#define jpf_ams_print jpf_print
+#define nmp_ams_print nmp_print
 //#define AMS_POLICY_TEST
 
-static JpfGuPool g_gu_pool;
-static JpfAction *g_action[AMS_ACTION_MAX];
-static jpf_ams_action_handler g_ams_action_hook = NULL;
+static NmpGuPool g_gu_pool;
+static NmpAction *g_action[AMS_ACTION_MAX];
+static nmp_ams_action_handler g_ams_action_hook = NULL;
 
-static JpfActionOps g_action_record_ops;
-static JpfActionOps g_action_io_ops;
-static JpfActionOps g_action_step_ops;
-static JpfActionOps g_action_preset_ops;
-static JpfActionOps g_action_snapshot_ops;
-static JpfActionOps g_action_map_ops;
+static NmpActionOps g_action_record_ops;
+static NmpActionOps g_action_io_ops;
+static NmpActionOps g_action_step_ops;
+static NmpActionOps g_action_preset_ops;
+static NmpActionOps g_action_snapshot_ops;
+static NmpActionOps g_action_map_ops;
 
 #define AMS_ACTIONS_CLOSED	(-1)
 #define AMS_ACTION_BIT_CLOSED	(-2)
 
 
 static guint
-jpf_str_hash(const gchar *start, gsize len)
+nmp_str_hash(const gchar *start, gsize len)
 {
     guint g, h = 0;
     const gchar *end;
@@ -56,9 +56,9 @@ jpf_str_hash(const gchar *start, gsize len)
 
 
 static gint
-jpf_check_alarm_action_enabled(guint action_bit)
+nmp_check_alarm_action_enabled(guint action_bit)
 {
-	JpfResourcesCap res_cap;
+	NmpResourcesCap res_cap;
 	memset(&res_cap, 0, sizeof(res_cap));
 
 	nmp_mod_get_resource_cap(&res_cap);
@@ -76,11 +76,11 @@ jpf_check_alarm_action_enabled(guint action_bit)
 }
 
 
-JpfPolicy *jpf_ams_new_policy()
+NmpPolicy *nmp_ams_new_policy()
 {
-	JpfPolicy *p;
+	NmpPolicy *p;
 
-	p = g_malloc0(sizeof(JpfPolicy));
+	p = g_malloc0(sizeof(NmpPolicy));
 	p->time_segs = NULL;
 	p->mutex = g_mutex_new();
 
@@ -89,53 +89,53 @@ JpfPolicy *jpf_ams_new_policy()
 
 
 static void
-jpf_ams_free_seg(gpointer data, gpointer null)
+nmp_ams_free_seg(gpointer data, gpointer null)
 {
 	g_free(data);
 }
 
 static __inline__ void
-__jpf_policy_clear(JpfPolicy *p)
+__nmp_policy_clear(NmpPolicy *p)
 {
-	g_list_foreach(p->time_segs, jpf_ams_free_seg, NULL);
+	g_list_foreach(p->time_segs, nmp_ams_free_seg, NULL);
 	g_list_free(p->time_segs);
 	p->time_segs = NULL;
 }
 
 static void
-jpf_policy_clear(JpfPolicy *p)
+nmp_policy_clear(NmpPolicy *p)
 {
 	g_assert(p != NULL);
 
 	g_mutex_lock(p->mutex);
-	__jpf_policy_clear(p);
+	__nmp_policy_clear(p);
 	g_mutex_unlock(p->mutex);
 }
 
 static void
-jpf_ams_delete_policy(JpfPolicy *p)
+nmp_ams_delete_policy(NmpPolicy *p)
 {
-	jpf_policy_clear(p);
+	nmp_policy_clear(p);
 	g_mutex_free(p->mutex);
 	g_free(p);
 }
 
 
 static void
-jpf_ams_gu_free(gpointer data)
+nmp_ams_gu_free(gpointer data)
 {
 	g_assert(data != NULL);
 	gint i;
 
-	JpfAmsGu *gu = (JpfAmsGu *)data;
+	NmpAmsGu *gu = (NmpAmsGu *)data;
 	if (gu->time_policy)
-		jpf_ams_delete_policy(gu->time_policy);
+		nmp_ams_delete_policy(gu->time_policy);
 
 	if (gu->act)
 	{
 		for (i = 0; i < AMS_ACTION_MAX; i++)
 		{
-			JpfAction *action = gu->act->actions[i];
+			NmpAction *action = gu->act->actions[i];
 			if (!action)
 				break;
 
@@ -152,18 +152,18 @@ jpf_ams_gu_free(gpointer data)
 
 
 static guint
-jpf_gu_hash_fn(gconstpointer key)
+nmp_gu_hash_fn(gconstpointer key)
 {
-	JpfShareGuid *_key;
+	NmpShareGuid *_key;
 	g_assert(key != NULL);
 
-	_key = (JpfShareGuid*)key;
+	_key = (NmpShareGuid*)key;
 
-	return jpf_str_hash(_key->guid, strlen(_key->guid));
+	return nmp_str_hash(_key->guid, strlen(_key->guid));
 }
 
 static gint
-jpf_guid_equal(JpfShareGuid *guid_1, JpfShareGuid *guid_2)
+nmp_guid_equal(NmpShareGuid *guid_1, NmpShareGuid *guid_2)
 {
 	g_assert(guid_1 && guid_2);
 
@@ -172,23 +172,23 @@ jpf_guid_equal(JpfShareGuid *guid_1, JpfShareGuid *guid_2)
 }
 
 static gboolean
-jpf_gu_key_equal(gconstpointer a, gconstpointer b)
+nmp_gu_key_equal(gconstpointer a, gconstpointer b)
 {
-	JpfShareGuid *gu_a, *gu_b;
+	NmpShareGuid *gu_a, *gu_b;
 
-	gu_a = (JpfShareGuid*)a;
-	gu_b = (JpfShareGuid*)b;
+	gu_a = (NmpShareGuid*)a;
+	gu_b = (NmpShareGuid*)b;
 
-	return jpf_guid_equal(gu_a, gu_b);
+	return nmp_guid_equal(gu_a, gu_b);
 }
 
 
-void jpf_ams_set_action_handler(jpf_ams_action_handler hook)
+void nmp_ams_set_action_handler(nmp_ams_action_handler hook)
 {
 	g_ams_action_hook = hook;
 }
 
-gint jpf_ams_action_handle(gint dst, gint msg_type, void *parm, guint size)
+gint nmp_ams_action_handle(gint dst, gint msg_type, void *parm, guint size)
 {
 	if (!g_ams_action_hook)
 	{
@@ -200,11 +200,11 @@ gint jpf_ams_action_handle(gint dst, gint msg_type, void *parm, guint size)
 
 
 static gboolean
-jpf_ams_gu_equal(gpointer key, gpointer value, gpointer user_data)
+nmp_ams_gu_equal(gpointer key, gpointer value, gpointer user_data)
 {
 	g_assert(value);
-	JpfShareGuid *alarm_guid = (JpfShareGuid *)user_data;
-	JpfShareGuid *_key = (JpfShareGuid *)key;
+	NmpShareGuid *alarm_guid = (NmpShareGuid *)user_data;
+	NmpShareGuid *_key = (NmpShareGuid *)key;
 
 	return (!strcmp(alarm_guid->guid, _key->guid) &&
 		!strcmp(alarm_guid->domain_id, _key->domain_id));
@@ -212,16 +212,16 @@ jpf_ams_gu_equal(gpointer key, gpointer value, gpointer user_data)
 
 
 static gint
-jpf_ams_policy_match(gconstpointer a, gconstpointer b)
+nmp_ams_policy_match(gconstpointer a, gconstpointer b)
 {
-	JpfTimeSegment *seg = (JpfTimeSegment *)a;
-	JpfTime *time = (JpfTime *)b;
+	NmpTimeSegment *seg = (NmpTimeSegment *)a;
+	NmpTime *time = (NmpTime *)b;
 /*
-	jpf_warning("zyt, seg->day_of_week:%d", seg->day_of_week);
-	jpf_warning("zyt, seg->start:%ld", seg->start);
-	jpf_warning("zyt, seg->end:%ld", seg->end);
-	jpf_warning("-------zyt, time->day_of_week:%d", time->day_of_week);
-	jpf_warning("-------zyt, time->cur_time:%ld", time->cur_time);
+	nmp_warning("zyt, seg->day_of_week:%d", seg->day_of_week);
+	nmp_warning("zyt, seg->start:%ld", seg->start);
+	nmp_warning("zyt, seg->end:%ld", seg->end);
+	nmp_warning("-------zyt, time->day_of_week:%d", time->day_of_week);
+	nmp_warning("-------zyt, time->cur_time:%ld", time->cur_time);
 */
 	return (time->day_of_week == seg->day_of_week &&
 		time->cur_time >= seg->start &&
@@ -230,21 +230,21 @@ jpf_ams_policy_match(gconstpointer a, gconstpointer b)
 
 
 static gint
-__jpf_ams_policy_check(JpfPolicy *policy, JpfTime *time)
+__nmp_ams_policy_check(NmpPolicy *policy, NmpTime *time)
 {
-	if (g_list_find_custom(policy->time_segs, time, jpf_ams_policy_match))
+	if (g_list_find_custom(policy->time_segs, time, nmp_ams_policy_match))
 		return 0;
 	return -1;
 }
 
 static gint
-jpf_ams_policy_check(JpfPolicy *policy, JpfTime *time)
+nmp_ams_policy_check(NmpPolicy *policy, NmpTime *time)
 {
 	g_assert(policy && time);
 	gint ret;
 
 	g_mutex_lock(policy->mutex);
-	ret = __jpf_ams_policy_check(policy, time);
+	ret = __nmp_ams_policy_check(policy, time);
 	g_mutex_unlock(policy->mutex);
 
 	return ret;
@@ -252,25 +252,25 @@ jpf_ams_policy_check(JpfPolicy *policy, JpfTime *time)
 
 
 gint
-__jpf_ams_find_gu_and_action(JpfAlarmInfo *alarm_info)
+__nmp_ams_find_gu_and_action(NmpAlarmInfo *alarm_info)
 {
-	//jpf_ams_print("func begin------");
-	JpfAmsGu *ams_gu;
+	//nmp_ams_print("func begin------");
+	NmpAmsGu *ams_gu;
 	gint ret;
 	gint i;
 
-	ams_gu = g_hash_table_find(g_gu_pool.gu, jpf_ams_gu_equal,
+	ams_gu = g_hash_table_find(g_gu_pool.gu, nmp_ams_gu_equal,
 		&alarm_info->alarm_guid);
 	if (!ams_gu)
 	{
-		jpf_ams_print("<JpfAmsPolicy>no find gu hash node.");
+		nmp_ams_print("<NmpAmsPolicy>no find gu hash node.");
 		return -1;
 	}
 
-	ret = jpf_ams_policy_check(ams_gu->time_policy, &alarm_info->time);
+	ret = nmp_ams_policy_check(ams_gu->time_policy, &alarm_info->time);
 	if (ret != 0)
 	{
-		jpf_ams_print("<JpfAmsPolicy>ams policy check, no action.");
+		nmp_ams_print("<NmpAmsPolicy>ams policy check, no action.");
 		return 0;
 	}
 
@@ -278,7 +278,7 @@ __jpf_ams_find_gu_and_action(JpfAlarmInfo *alarm_info)
 	{
 		for (i = 0; i < AMS_ACTION_MAX; i++)
 		{
-			JpfAction *action = ams_gu->act->actions[i];
+			NmpAction *action = ams_gu->act->actions[i];
 			if (!action)
 				break;
 
@@ -294,27 +294,27 @@ __jpf_ams_find_gu_and_action(JpfAlarmInfo *alarm_info)
  *			-1:	find failed
  */
 gint
-jpf_ams_find_gu_and_action(JpfAlarmInfo *alarm_info)
+nmp_ams_find_gu_and_action(NmpAlarmInfo *alarm_info)
 {
 	g_assert(alarm_info);
 	gint ret;
 
 	g_mutex_lock(g_gu_pool.mutex);
-	ret = __jpf_ams_find_gu_and_action(alarm_info);
+	ret = __nmp_ams_find_gu_and_action(alarm_info);
 	g_mutex_unlock(g_gu_pool.mutex);
 
 	return ret;
 }
 
 
-JpfActions *jpf_get_actions(JpfMsgAmsGetActionInfoRes *info)
+NmpActions *nmp_get_actions(NmpMsgAmsGetActionInfoRes *info)
 {
-	//jpf_ams_print("func begin------");
+	//nmp_ams_print("func begin------");
 	gint i = 0, action_count = 0;
-	JpfActions *actions = (JpfActions *)g_malloc0(sizeof(JpfActions));
+	NmpActions *actions = (NmpActions *)g_malloc0(sizeof(NmpActions));
 	if (!actions)
 	{
-		jpf_warning("<JpfAmsPolicy>no memory!");
+		nmp_warning("<NmpAmsPolicy>no memory!");
 		return NULL;
 	}
 
@@ -323,17 +323,17 @@ JpfActions *jpf_get_actions(JpfMsgAmsGetActionInfoRes *info)
 		if (!g_action[i])
 			break;
 
-		JpfAction *p = NULL;
+		NmpAction *p = NULL;
 		p = (*g_action[i]->ops->get_data)(info);
 		if (!p)
 			continue;
 
-		jpf_warning("<JpfAmsPolicy> action type = %d", p->type);
+		nmp_warning("<NmpAmsPolicy> action type = %d", p->type);
 		actions->actions[action_count++] = p;
 	}
 	if (action_count == 0)
 	{
-		jpf_warning("<JpfAmsPolicy>get action error, data is NULL.");
+		nmp_warning("<NmpAmsPolicy>get action error, data is NULL.");
 		g_free(actions);
 		return NULL;
 	}
@@ -342,11 +342,11 @@ JpfActions *jpf_get_actions(JpfMsgAmsGetActionInfoRes *info)
 }
 
 
-static void jpf_register_action_type(int size, JpfActionOps *ops)
+static void nmp_register_action_type(int size, NmpActionOps *ops)
 {
 	g_assert(ops);
 	static gint g_action_i = 0;
-	JpfAction *p_action = (JpfAction *)g_malloc0(size);
+	NmpAction *p_action = (NmpAction *)g_malloc0(size);
 	if (!p_action)
 		return ;
 
@@ -357,10 +357,10 @@ static void jpf_register_action_type(int size, JpfActionOps *ops)
 }
 
 
-static JpfAction *jpf_new_action_type(int size, JpfActionOps *ops,
-	JpfAmsActionType type)
+static NmpAction *nmp_new_action_type(int size, NmpActionOps *ops,
+	NmpAmsActionType type)
 {
-	JpfAction *p_action = (JpfAction *)g_malloc0(size);
+	NmpAction *p_action = (NmpAction *)g_malloc0(size);
 	if (!p_action)
 		return NULL;
 
@@ -373,7 +373,7 @@ static JpfAction *jpf_new_action_type(int size, JpfActionOps *ops,
 
 
 static __inline__ gint
-__jpf_gu_pool_add_gu(JpfGuPool *p, JpfAmsGu *gu)
+__nmp_gu_pool_add_gu(NmpGuPool *p, NmpAmsGu *gu)
 {
 	g_hash_table_insert(p->gu, &gu->guid, gu);
 
@@ -381,13 +381,13 @@ __jpf_gu_pool_add_gu(JpfGuPool *p, JpfAmsGu *gu)
 }
 
 gint
-jpf_gu_pool_add_gu(JpfGuPool *p, JpfAmsGu *gu)
+nmp_gu_pool_add_gu(NmpGuPool *p, NmpAmsGu *gu)
 {
 	g_assert(p && gu);
 	gint ret;
 
 	g_mutex_lock(p->mutex);
-	ret = __jpf_gu_pool_add_gu(p, gu);
+	ret = __nmp_gu_pool_add_gu(p, gu);
 	g_mutex_unlock(p->mutex);
 
 	return ret;
@@ -395,7 +395,7 @@ jpf_gu_pool_add_gu(JpfGuPool *p, JpfAmsGu *gu)
 
 
 static __inline__ gint
-jpf_merge_time_seg(JpfTimeSegment *seg1, JpfTimeSegment *seg2)
+nmp_merge_time_seg(NmpTimeSegment *seg1, NmpTimeSegment *seg2)
 {
 	if (seg1->start <= seg2->end && seg2->start <= seg1->end)
 	{
@@ -409,25 +409,25 @@ jpf_merge_time_seg(JpfTimeSegment *seg1, JpfTimeSegment *seg2)
 
 
 static __inline__ gint
-jpf_merge_seg(JpfTimeSegment *seg1, JpfTimeSegment *seg2)
+nmp_merge_seg(NmpTimeSegment *seg1, NmpTimeSegment *seg2)
 {
 	if (seg1->day_of_week != seg2->day_of_week)
 		return -1;
 
-	return jpf_merge_time_seg(seg1, seg2);
+	return nmp_merge_time_seg(seg1, seg2);
 }
 
 
 static void
-jpf_add_seg(gpointer data, gpointer user_data)
+nmp_add_seg(gpointer data, gpointer user_data)
 {
-	JpfTimeSegment **p_seg = (JpfTimeSegment**)user_data;
-	JpfTimeSegment *seg = (JpfTimeSegment*)data;
+	NmpTimeSegment **p_seg = (NmpTimeSegment**)user_data;
+	NmpTimeSegment *seg = (NmpTimeSegment*)data;
 
 	if (!*p_seg)
 		return;
 
-	if (!jpf_merge_seg(seg, *p_seg))
+	if (!nmp_merge_seg(seg, *p_seg))
 	{
 		*p_seg = NULL;
 	}
@@ -435,24 +435,24 @@ jpf_add_seg(gpointer data, gpointer user_data)
 
 
 static __inline__ void
-jpf_policy_add_seg_internal(JpfPolicy *p, JpfTimeSegment *seg)
+nmp_policy_add_seg_internal(NmpPolicy *p, NmpTimeSegment *seg)
 {
-	JpfTimeSegment *seg_dup;
+	NmpTimeSegment *seg_dup;
 
-	g_list_foreach(p->time_segs, jpf_add_seg, &seg);
+	g_list_foreach(p->time_segs, nmp_add_seg, &seg);
 	if (seg)
 	{
-		seg_dup = g_memdup(seg, sizeof(JpfTimeSegment));
+		seg_dup = g_memdup(seg, sizeof(NmpTimeSegment));
 		p->time_segs = g_list_append(p->time_segs, seg_dup);
 	}
 }
 
 
 static void
-jpf_policy_add_time_seg_day(JpfPolicy *p,
+nmp_policy_add_time_seg_day(NmpPolicy *p,
 	gint day, time_t start, time_t end)
 {
-	JpfTimeSegment seg;
+	NmpTimeSegment seg;
 	g_assert(p != NULL);
 
 	memset(&seg, 0, sizeof(seg));
@@ -460,7 +460,7 @@ jpf_policy_add_time_seg_day(JpfPolicy *p,
 	seg.start = start;
 	seg.end = end;
 
-	jpf_policy_add_seg_internal(p, &seg);
+	nmp_policy_add_seg_internal(p, &seg);
 }
 
 
@@ -472,31 +472,31 @@ nmp_mod_policy_adjust_seg(time_t *start, time_t *end)
 
 
 static __inline__ void
-jpf_ams_policy_parse(JpfPolicy *policy, JpfActionPolicy *p)
+nmp_ams_policy_parse(NmpPolicy *policy, NmpActionPolicy *p)
 {
 	gint day, day_upper, seg, seg_upper;
-	JpfWeekday *w;
-	JpfTimeSeg *s;
+	NmpWeekday *w;
+	NmpTimeSeg *s;
 	time_t start, end;
 
-	//jpf_ams_print("p->weekday_num:%d\n", p->weekday_num);
+	//nmp_ams_print("p->weekday_num:%d\n", p->weekday_num);
 	day_upper = p->weekday_num > WEEKDAYS ? WEEKDAYS : p->weekday_num;
 	for (day = 0; day < day_upper; ++day)
 	{
 		w = &p->weekdays[day];
-		//jpf_ams_print("w->time_seg_num:%d\n", w->time_seg_num);
+		//nmp_ams_print("w->time_seg_num:%d\n", w->time_seg_num);
 
 		seg_upper = w->time_seg_num > TIME_SEG_NUM ? TIME_SEG_NUM
 			: w->time_seg_num;
 		for (seg = 0; seg < seg_upper; ++seg)
 		{
 			s = &w->time_segs[seg];
-			//jpf_ams_print("-------weekday:%d------> time_seg:%s\n",
+			//nmp_ams_print("-------weekday:%d------> time_seg:%s\n",
 			//	w->weekday, s->time_seg);
-			if (!jpf_get_string_time_range(s->time_seg, &start, &end))
+			if (!nmp_get_string_time_range(s->time_seg, &start, &end))
 			{
 				nmp_mod_policy_adjust_seg(&start, &end);
-				jpf_policy_add_time_seg_day(policy,
+				nmp_policy_add_time_seg_day(policy,
 					(w->weekday < 7 ? w->weekday : 0), start, end);
 			}
 		}
@@ -505,19 +505,19 @@ jpf_ams_policy_parse(JpfPolicy *policy, JpfActionPolicy *p)
 
 
 #ifdef AMS_POLICY_TEST
-static void ams_src_policy_print(JpfActionPolicy *action_policy)
+static void ams_src_policy_print(NmpActionPolicy *action_policy)
 {
 	gint i, j;
-	jpf_ams_print("<JpfAmsPolicy>weekday_num=%d.", action_policy->weekday_num);
+	nmp_ams_print("<NmpAmsPolicy>weekday_num=%d.", action_policy->weekday_num);
 
 	for (i = 0; i < action_policy->weekday_num; i++)
 	{
-		JpfWeekday *weekday = &action_policy->weekdays[i];
-		jpf_ams_print("<JpfAmsPolicy>----weekday=%d", weekday->weekday);
-		jpf_ams_print("<JpfAmsPolicy>    time_seg_num=%d", weekday->time_seg_num);
+		NmpWeekday *weekday = &action_policy->weekdays[i];
+		nmp_ams_print("<NmpAmsPolicy>----weekday=%d", weekday->weekday);
+		nmp_ams_print("<NmpAmsPolicy>    time_seg_num=%d", weekday->time_seg_num);
 		for (j = 0; j < weekday->time_seg_num; j++)
 		{
-			jpf_ams_print("<JpfAmsPolicy>    enable=%d, time_seg:%s",
+			nmp_ams_print("<NmpAmsPolicy>    enable=%d, time_seg:%s",
 				weekday->time_segs[j].seg_enable, weekday->time_segs[j].time_seg);
 		}
 	}
@@ -525,48 +525,48 @@ static void ams_src_policy_print(JpfActionPolicy *action_policy)
 
 static void policy_print(gpointer data, gpointer user_data)
 {
-	JpfTimeSegment *seg = (JpfTimeSegment *)data;
-	jpf_ams_print("<JpfAmsPolicy>****policy print");
-	jpf_ams_print("<JpfAmsPolicy>    day_of_week=%d", seg->day_of_week);
-	jpf_ams_print("<JpfAmsPolicy>    start=%ld", seg->start);
-	jpf_ams_print("<JpfAmsPolicy>    end=%ld", seg->end);
+	NmpTimeSegment *seg = (NmpTimeSegment *)data;
+	nmp_ams_print("<NmpAmsPolicy>****policy print");
+	nmp_ams_print("<NmpAmsPolicy>    day_of_week=%d", seg->day_of_week);
+	nmp_ams_print("<NmpAmsPolicy>    start=%ld", seg->start);
+	nmp_ams_print("<NmpAmsPolicy>    end=%ld", seg->end);
 }
 
-static void ams_alarm_policy_print(JpfPolicy *policy)
+static void ams_alarm_policy_print(NmpPolicy *policy)
 {
 	g_mutex_lock(policy->mutex);
-	jpf_ams_print("<JpfAmsPolicy> ams_alarm_policy_print begin...");
+	nmp_ams_print("<NmpAmsPolicy> ams_alarm_policy_print begin...");
 	g_list_foreach(policy->time_segs, policy_print, NULL);
 	g_mutex_unlock(policy->mutex);
 }
 #endif
 
 
-gint jpf_ams_get_gu_info(JpfAmsGu *ams_gu, JpfShareGuid *alarm_guid,
-	JpfMsgAmsGetActionInfoRes *action_info)
+gint nmp_ams_get_gu_info(NmpAmsGu *ams_gu, NmpShareGuid *alarm_guid,
+	NmpMsgAmsGetActionInfoRes *action_info)
 {
 	ams_gu->guid = *alarm_guid;
-	JpfPolicy *policy;
-	JpfActions *actions;
+	NmpPolicy *policy;
+	NmpActions *actions;
 
-	policy = jpf_ams_new_policy();
+	policy = nmp_ams_new_policy();
 	if (!policy)
 	{
-		jpf_warning("<JpfAmsPolicy>no memory!");
+		nmp_warning("<NmpAmsPolicy>no memory!");
 		return -1;
 	}
 
-	jpf_ams_policy_parse(policy, &action_info->action_policy);
+	nmp_ams_policy_parse(policy, &action_info->action_policy);
 
 #ifdef AMS_POLICY_TEST
 	ams_src_policy_print(&action_info->action_policy);
 	ams_alarm_policy_print(policy);
 #endif
 
-	actions = jpf_get_actions(action_info);
+	actions = nmp_get_actions(action_info);
 	if (!actions)
 	{
-		jpf_ams_delete_policy(policy);
+		nmp_ams_delete_policy(policy);
 		return -1;
 	}
 
@@ -577,36 +577,36 @@ gint jpf_ams_get_gu_info(JpfAmsGu *ams_gu, JpfShareGuid *alarm_guid,
 }
 
 
-gint jpf_ams_add_gu_action_info(JpfShareGuid *alarm_guid,
-	JpfMsgAmsGetActionInfoRes *action_info)
+gint nmp_ams_add_gu_action_info(NmpShareGuid *alarm_guid,
+	NmpMsgAmsGetActionInfoRes *action_info)
 {
 	g_assert(alarm_guid && action_info);
-	JpfAmsGu *ams_gu;
+	NmpAmsGu *ams_gu;
 	gint ret;
 
-	ams_gu = (JpfAmsGu *)g_malloc0(sizeof(JpfAmsGu));
+	ams_gu = (NmpAmsGu *)g_malloc0(sizeof(NmpAmsGu));
 	if (!ams_gu)
 	{
-		jpf_warning("<JpfAmsPolicy>no memory!");
+		nmp_warning("<NmpAmsPolicy>no memory!");
 		return -1;
 	}
 
-	ret = jpf_ams_get_gu_info(ams_gu, alarm_guid, action_info);
+	ret = nmp_ams_get_gu_info(ams_gu, alarm_guid, action_info);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy>jpf_ams_get_gu_info failed!");
-		jpf_ams_gu_free(ams_gu);
+		nmp_warning("<NmpAmsPolicy>nmp_ams_get_gu_info failed!");
+		nmp_ams_gu_free(ams_gu);
 		return -1;
 	}
 
 	ams_gu->time = CUR_TIME;
-	jpf_gu_pool_add_gu(&g_gu_pool, ams_gu);
+	nmp_gu_pool_add_gu(&g_gu_pool, ams_gu);
 
 	return ret;
 }
 
 
-gint jpf_ams_remove_alarm_node(JpfShareGuid *key)
+gint nmp_ams_remove_alarm_node(NmpShareGuid *key)
 {
 	g_assert(key);
 	gint ret;
@@ -619,10 +619,10 @@ gint jpf_ams_remove_alarm_node(JpfShareGuid *key)
 }
 
 
-static int jpf_action_record_init(JpfAction *p)
+static int nmp_action_record_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionRecord *ar = (JpfActionRecord *)p;
+	NmpActionRecord *ar = (NmpActionRecord *)p;
 
 	ar->action_gu_count = 0;
 
@@ -630,32 +630,32 @@ static int jpf_action_record_init(JpfAction *p)
 }
 
 
-static int jpf_action_record_free(JpfAction *p)
+static int nmp_action_record_free(NmpAction *p)
 {
 	g_assert(p);
-	//JpfActionRecord *ar = (JpfActionRecord *)p;
+	//NmpActionRecord *ar = (NmpActionRecord *)p;
 
 	return 0;
 }
 
 
-static JpfActionP jpf_action_record_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_record_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_record_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_record_get_data begin------");
 	g_assert(info);
-	JpfMsgActionRecord *ar_src;
-	JpfActionRecord *ar;
+	NmpMsgActionRecord *ar_src;
+	NmpActionRecord *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_RECORD])
 		return NULL;
 
-	ar_src = (JpfMsgActionRecord *)info->actions[AMS_ACTION_RECORD];
+	ar_src = (NmpMsgActionRecord *)info->actions[AMS_ACTION_RECORD];
 	count = ar_src->action_gu_count;
-	size = sizeof(JpfActionRecord) + sizeof(JpfActionRecordGu) * count;
+	size = sizeof(NmpActionRecord) + sizeof(NmpActionRecordGu) * count;
 
-	ar = (JpfActionRecord *)jpf_new_action_type(size, &g_action_record_ops,
+	ar = (NmpActionRecord *)nmp_new_action_type(size, &g_action_record_ops,
 		AMS_ACTION_RECORD);
 	if (!ar)
 		return NULL;
@@ -666,29 +666,29 @@ static JpfActionP jpf_action_record_get_data(JpfMsgAmsGetActionInfoRes *info)
 		ar->action_gu[i] = ar_src->action_gu[i];
 	}
 
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 
-static int jpf_action_record_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_record_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_record_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_record_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionRecord *ar = (JpfActionRecord *)p;
-	JpfAmsActionRecord action_info;
+	NmpActionRecord *ar = (NmpActionRecord *)p;
+	NmpAmsActionRecord action_info;
 	gint ret = 0;
 	gint i, j;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_RECORD_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_RECORD_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action record not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action record not enabled, ret = %d.", ret);
 		return 0;
 	}
 
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionRecordGu *act_gu = &ar->action_gu[i];
+		NmpActionRecordGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
 			continue;
@@ -701,15 +701,15 @@ static int jpf_action_record_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		action_info.alarm_type = alarm_info->alarm_type;
 
 		if (act_gu->mss_count == 0)
-			jpf_warning("<JpfAmsPolicy> act_gu->mss_count = 0.");
+			nmp_warning("<NmpAmsPolicy> act_gu->mss_count = 0.");
 		for (j = 0; j < act_gu->mss_count; j++)
 		{
 			action_info.mss_id = act_gu->mss_id[j];
-			if (jpf_ams_action_handle(BUSSLOT_POS_MSS, MESSAGE_ALARM_LINK_RECORD,
+			if (nmp_ams_action_handle(BUSSLOT_POS_MSS, MESSAGE_ALARM_LINK_RECORD,
 				&action_info, sizeof(action_info)) != 0)
 			{
 				ret = -1;
-				jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+				nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 				break;
 			}
 		}
@@ -719,19 +719,19 @@ static int jpf_action_record_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 }
 
 
-static JpfActionOps g_action_record_ops =
+static NmpActionOps g_action_record_ops =
 {
-	.init = jpf_action_record_init,
-	.free = jpf_action_record_free,
-	.get_data = jpf_action_record_get_data,
-	.action = jpf_action_record_do
+	.init = nmp_action_record_init,
+	.free = nmp_action_record_free,
+	.get_data = nmp_action_record_get_data,
+	.action = nmp_action_record_do
 };
 
 
-static int jpf_action_io_init(JpfAction *p)
+static int nmp_action_io_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionIO *ar = (JpfActionIO *)p;
+	NmpActionIO *ar = (NmpActionIO *)p;
 
 	ar->action_gu_count = 0;
 
@@ -739,7 +739,7 @@ static int jpf_action_io_init(JpfAction *p)
 }
 
 
-static int jpf_action_io_free(JpfAction *p)
+static int nmp_action_io_free(NmpAction *p)
 {
 	g_assert(p);
 
@@ -747,23 +747,23 @@ static int jpf_action_io_free(JpfAction *p)
 }
 
 
-static JpfActionP jpf_action_io_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_io_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_io_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_io_get_data begin------");
 	g_assert(info);
-	JpfMsgActionIO *ar_src;
-	JpfActionIO *ar;
+	NmpMsgActionIO *ar_src;
+	NmpActionIO *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_IO])
 		return NULL;
 
-	ar_src = (JpfMsgActionIO *)info->actions[AMS_ACTION_IO];
+	ar_src = (NmpMsgActionIO *)info->actions[AMS_ACTION_IO];
 	count = ar_src->action_gu_count;
-	size = sizeof(JpfActionIO) + sizeof(JpfActionIOGu) * count;
+	size = sizeof(NmpActionIO) + sizeof(NmpActionIOGu) * count;
 
-	ar = (JpfActionIO *)jpf_new_action_type(size, &g_action_io_ops,
+	ar = (NmpActionIO *)nmp_new_action_type(size, &g_action_io_ops,
 		AMS_ACTION_IO);
 	if (!ar)
 		return NULL;
@@ -774,29 +774,29 @@ static JpfActionP jpf_action_io_get_data(JpfMsgAmsGetActionInfoRes *info)
 		ar->action_gu[i] = ar_src->action_gu[i];
 	}
 
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 
-static int jpf_action_io_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_io_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_io_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_io_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionIO *ar = (JpfActionIO *)p;
-	JpfAmsActionIO action_info;
+	NmpActionIO *ar = (NmpActionIO *)p;
+	NmpAmsActionIO action_info;
 	gint ret = 0;
 	gint i;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_IO_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_IO_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action io not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action io not enabled, ret = %d.", ret);
 		return 0;
 	}
 
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionIOGu *act_gu = &ar->action_gu[i];
+		NmpActionIOGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
 			continue;
@@ -806,13 +806,13 @@ static int jpf_action_io_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		action_info.action_guid = act_gu->action_guid;
 		action_info.time_len = act_gu->time_len;
 		strncpy(action_info.io_value, act_gu->io_value, IO_VALUE_LEN - 1);
-		strncpy(action_info.session, jpf_get_local_domain_id(), SESSION_ID_LEN - 1);
+		strncpy(action_info.session, nmp_get_local_domain_id(), SESSION_ID_LEN - 1);
 
-		if (jpf_ams_action_handle(BUSSLOT_POS_PU, MESSAGE_ALARM_LINK_IO,
+		if (nmp_ams_action_handle(BUSSLOT_POS_PU, MESSAGE_ALARM_LINK_IO,
 			&action_info, sizeof(action_info)) != 0)
 		{
 			ret = -1;
-			jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+			nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 		}
 	}
 
@@ -820,19 +820,19 @@ static int jpf_action_io_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 }
 
 
-static JpfActionOps g_action_io_ops =
+static NmpActionOps g_action_io_ops =
 {
-	.init = jpf_action_io_init,
-	.free = jpf_action_io_free,
-	.get_data = jpf_action_io_get_data,
-	.action = jpf_action_io_do
+	.init = nmp_action_io_init,
+	.free = nmp_action_io_free,
+	.get_data = nmp_action_io_get_data,
+	.action = nmp_action_io_do
 };
 
 
-static int jpf_action_step_init(JpfAction *p)
+static int nmp_action_step_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionStep *ar = (JpfActionStep *)p;
+	NmpActionStep *ar = (NmpActionStep *)p;
 
 	ar->action_gu_count = 0;
 
@@ -840,7 +840,7 @@ static int jpf_action_step_init(JpfAction *p)
 }
 
 
-static int jpf_action_step_free(JpfAction *p)
+static int nmp_action_step_free(NmpAction *p)
 {
 	g_assert(p);
 
@@ -848,23 +848,23 @@ static int jpf_action_step_free(JpfAction *p)
 }
 
 
-static JpfActionP jpf_action_step_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_step_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_step_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_step_get_data begin------");
 	g_assert(info);
-	JpfMsgActionStep *ar_src;
-	JpfActionStep *ar;
+	NmpMsgActionStep *ar_src;
+	NmpActionStep *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_STEP])
 		return NULL;
 
-	ar_src = (JpfMsgActionStep *)info->actions[AMS_ACTION_STEP];
+	ar_src = (NmpMsgActionStep *)info->actions[AMS_ACTION_STEP];
 	count = ar_src->action_gu_count;
-	size = sizeof(JpfActionStep) + sizeof(JpfActionStepGu) * count;
+	size = sizeof(NmpActionStep) + sizeof(NmpActionStepGu) * count;
 
-	ar = (JpfActionStep *)jpf_new_action_type(size, &g_action_step_ops,
+	ar = (NmpActionStep *)nmp_new_action_type(size, &g_action_step_ops,
 		AMS_ACTION_STEP);
 	if (!ar)
 		return NULL;
@@ -876,29 +876,29 @@ static JpfActionP jpf_action_step_get_data(JpfMsgAmsGetActionInfoRes *info)
 		ar->action_gu[i].ec_guid[LEVEL_POS] = (gchar)(ar->action_gu[i].level % 10 + '0');	//设置码流
 	}
 
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 
-static int jpf_action_step_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_step_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_step_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_step_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionStep *ar = (JpfActionStep *)p;
+	NmpActionStep *ar = (NmpActionStep *)p;
 	tw_run_step_request action_info;
 	gint ret = 0;
 	gint i;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_TW_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_TW_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action tw(step) not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action tw(step) not enabled, ret = %d.", ret);
 		return 0;
 	}
 
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionStepGu *act_gu = &ar->action_gu[i];
+		NmpActionStepGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
 			continue;
@@ -915,11 +915,11 @@ static int jpf_action_step_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		strncpy(action_info.ec_domain_id, act_gu->ec_domain_id, TW_ID_LEN - 1);
 		strncpy(action_info.ec_guid, act_gu->ec_guid, TW_ID_LEN - 1);
 
-		if (jpf_ams_action_handle(BUSSLOT_POS_TW, MSG_LINK_RUN_STEP,
+		if (nmp_ams_action_handle(BUSSLOT_POS_TW, MSG_LINK_RUN_STEP,
 			&action_info, sizeof(action_info)) != 0)
 		{
 			ret = -1;
-			jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+			nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 		}
 	}
 
@@ -927,19 +927,19 @@ static int jpf_action_step_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 }
 
 
-static JpfActionOps g_action_step_ops =
+static NmpActionOps g_action_step_ops =
 {
-	.init = jpf_action_step_init,
-	.free = jpf_action_step_free,
-	.get_data = jpf_action_step_get_data,
-	.action = jpf_action_step_do
+	.init = nmp_action_step_init,
+	.free = nmp_action_step_free,
+	.get_data = nmp_action_step_get_data,
+	.action = nmp_action_step_do
 };
 
 
-static int jpf_action_preset_init(JpfAction *p)
+static int nmp_action_preset_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionPreset *ar = (JpfActionPreset *)p;
+	NmpActionPreset *ar = (NmpActionPreset *)p;
 
 	ar->action_gu_count = 0;
 
@@ -947,7 +947,7 @@ static int jpf_action_preset_init(JpfAction *p)
 }
 
 
-static int jpf_action_preset_free(JpfAction *p)
+static int nmp_action_preset_free(NmpAction *p)
 {
 	g_assert(p);
 
@@ -955,23 +955,23 @@ static int jpf_action_preset_free(JpfAction *p)
 }
 
 
-static JpfActionP jpf_action_preset_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_preset_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_preset_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_preset_get_data begin------");
 	g_assert(info);
-	JpfMsgActionPreset *ar_src;
-	JpfActionPreset *ar;
+	NmpMsgActionPreset *ar_src;
+	NmpActionPreset *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_PRESET])
 		return NULL;
 
-	ar_src = (JpfMsgActionPreset *)info->actions[AMS_ACTION_PRESET];
+	ar_src = (NmpMsgActionPreset *)info->actions[AMS_ACTION_PRESET];
 	count = ar_src->action_gu_count;
-	size = sizeof(JpfActionPreset) + sizeof(JpfActionPresetGu) * count;
+	size = sizeof(NmpActionPreset) + sizeof(NmpActionPresetGu) * count;
 
-	ar = (JpfActionPreset *)jpf_new_action_type(size, &g_action_preset_ops,
+	ar = (NmpActionPreset *)nmp_new_action_type(size, &g_action_preset_ops,
 		AMS_ACTION_PRESET);
 	if (!ar)
 		return NULL;
@@ -982,40 +982,40 @@ static JpfActionP jpf_action_preset_get_data(JpfMsgAmsGetActionInfoRes *info)
 		ar->action_gu[i] = ar_src->action_gu[i];
 	}
 
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 #if 0
-static void jpf_action_preset_print(JpfAmsActionPreset *action_info)
+static void nmp_action_preset_print(NmpAmsActionPreset *action_info)
 {
-	jpf_ams_print("_____________________jpf_action_preset_print begin...");
-	jpf_ams_print("action_info->action_guid.guid:%s", action_info->action_guid.guid);
-	jpf_ams_print("action_info->action_guid.domain_id:%s", action_info->action_guid.domain_id);
-	jpf_ams_print("action_info->preset_num = %d", action_info->preset_num);
-	jpf_ams_print("action_info->session:%s", action_info->session);
-	jpf_ams_print("______end...");
+	nmp_ams_print("_____________________nmp_action_preset_print begin...");
+	nmp_ams_print("action_info->action_guid.guid:%s", action_info->action_guid.guid);
+	nmp_ams_print("action_info->action_guid.domain_id:%s", action_info->action_guid.domain_id);
+	nmp_ams_print("action_info->preset_num = %d", action_info->preset_num);
+	nmp_ams_print("action_info->session:%s", action_info->session);
+	nmp_ams_print("______end...");
 }
 #endif
 
-static int jpf_action_preset_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_preset_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_preset_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_preset_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionPreset *ar = (JpfActionPreset *)p;
-	JpfAmsActionPreset action_info;
+	NmpActionPreset *ar = (NmpActionPreset *)p;
+	NmpAmsActionPreset action_info;
 	gint ret = 0;
 	gint i;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_PRESET_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_PRESET_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action preset not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action preset not enabled, ret = %d.", ret);
 		return 0;
 	}
 
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionPresetGu *act_gu = &ar->action_gu[i];
+		NmpActionPresetGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
 			continue;
@@ -1024,14 +1024,14 @@ static int jpf_action_preset_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		memset(&action_info, 0, sizeof(action_info));
 		action_info.action_guid = act_gu->action_guid;
 		action_info.preset_num = act_gu->preset_num;
-		strncpy(action_info.session, jpf_get_local_domain_id(), SESSION_ID_LEN - 1);
-		//jpf_action_preset_print(&action_info);
+		strncpy(action_info.session, nmp_get_local_domain_id(), SESSION_ID_LEN - 1);
+		//nmp_action_preset_print(&action_info);
 
-		if (jpf_ams_action_handle(BUSSLOT_POS_PU, MESSAGE_ALARM_LINK_PRESET,
+		if (nmp_ams_action_handle(BUSSLOT_POS_PU, MESSAGE_ALARM_LINK_PRESET,
 			&action_info, sizeof(action_info)) != 0)
 		{
 			ret = -1;
-			jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+			nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 		}
 	}
 
@@ -1039,19 +1039,19 @@ static int jpf_action_preset_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 }
 
 
-static JpfActionOps g_action_preset_ops =
+static NmpActionOps g_action_preset_ops =
 {
-	.init = jpf_action_preset_init,
-	.free = jpf_action_preset_free,
-	.get_data = jpf_action_preset_get_data,
-	.action = jpf_action_preset_do
+	.init = nmp_action_preset_init,
+	.free = nmp_action_preset_free,
+	.get_data = nmp_action_preset_get_data,
+	.action = nmp_action_preset_do
 };
 
 
-static int jpf_action_snapshot_init(JpfAction *p)
+static int nmp_action_snapshot_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionSnapshot *ar = (JpfActionSnapshot *)p;
+	NmpActionSnapshot *ar = (NmpActionSnapshot *)p;
 
 	ar->action_gu_count = 0;
 
@@ -1059,7 +1059,7 @@ static int jpf_action_snapshot_init(JpfAction *p)
 }
 
 
-static int jpf_action_snapshot_free(JpfAction *p)
+static int nmp_action_snapshot_free(NmpAction *p)
 {
 	g_assert(p);
 
@@ -1067,23 +1067,23 @@ static int jpf_action_snapshot_free(JpfAction *p)
 }
 
 
-static JpfActionP jpf_action_snapshot_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_snapshot_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_snapshot_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_snapshot_get_data begin------");
 	g_assert(info);
-	JpfMsgActionSnapshot *ar_src;
-	JpfActionSnapshot *ar;
+	NmpMsgActionSnapshot *ar_src;
+	NmpActionSnapshot *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_SNAPSHOT])
 		return NULL;
 
-	ar_src = (JpfMsgActionSnapshot *)info->actions[AMS_ACTION_SNAPSHOT];
+	ar_src = (NmpMsgActionSnapshot *)info->actions[AMS_ACTION_SNAPSHOT];
 	count = ar_src->action_gu_count;
-	size = sizeof(JpfActionSnapshot) + sizeof(JpfActionSnapshotGu) * count;
+	size = sizeof(NmpActionSnapshot) + sizeof(NmpActionSnapshotGu) * count;
 
-	ar = (JpfActionSnapshot *)jpf_new_action_type(size, &g_action_snapshot_ops,
+	ar = (NmpActionSnapshot *)nmp_new_action_type(size, &g_action_snapshot_ops,
 		AMS_ACTION_SNAPSHOT);
 	if (!ar)
 		return NULL;
@@ -1094,45 +1094,45 @@ static JpfActionP jpf_action_snapshot_get_data(JpfMsgAmsGetActionInfoRes *info)
 		ar->action_gu[i] = ar_src->action_gu[i];
 	}
 
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 #if 0
-static void jpf_action_snapshop_print(JpfAmsActionSnapshot *action_info)
+static void nmp_action_snapshop_print(NmpAmsActionSnapshot *action_info)
 {
-	jpf_ams_print("_____________________jpf_action_snapshop_print begin...");
-	jpf_ams_print("action_info->action_guid.guid:%s", action_info->action_guid.guid);
-	jpf_ams_print("action_info->action_guid.domain_id:%s", action_info->action_guid.domain_id);
-	jpf_ams_print("action_info->level:%d", action_info->level);
-	jpf_ams_print("action_info->mss_id.mss_id:%s", action_info->mss_id.mss_id);
-	jpf_ams_print("action_info->picture_count:%u", action_info->picture_count);
-	jpf_ams_print("action_info->alarm_type:%u", action_info->alarm_type);
-	jpf_ams_print("______end...");
+	nmp_ams_print("_____________________nmp_action_snapshop_print begin...");
+	nmp_ams_print("action_info->action_guid.guid:%s", action_info->action_guid.guid);
+	nmp_ams_print("action_info->action_guid.domain_id:%s", action_info->action_guid.domain_id);
+	nmp_ams_print("action_info->level:%d", action_info->level);
+	nmp_ams_print("action_info->mss_id.mss_id:%s", action_info->mss_id.mss_id);
+	nmp_ams_print("action_info->picture_count:%u", action_info->picture_count);
+	nmp_ams_print("action_info->alarm_type:%u", action_info->alarm_type);
+	nmp_ams_print("______end...");
 }
 #endif
 
-static int jpf_action_snapshot_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_snapshot_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_snapshot_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_snapshot_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionSnapshot *ar = (JpfActionSnapshot *)p;
-	JpfAmsActionSnapshot action_info;
+	NmpActionSnapshot *ar = (NmpActionSnapshot *)p;
+	NmpAmsActionSnapshot action_info;
 	gint ret = 0;
 	gint i, j;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_CAP_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_CAP_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action snapshot not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action snapshot not enabled, ret = %d.", ret);
 		return 0;
 	}
 
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionSnapshotGu *act_gu = &ar->action_gu[i];
+		NmpActionSnapshotGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
-			jpf_ams_print("<JpfAmsPolicy> action_snapshot alarm_type(s):%d, " \
+			nmp_ams_print("<NmpAmsPolicy> action_snapshot alarm_type(s):%d, " \
 				"alarm_info->alarm_type:%d, not action",
 				act_gu->alarm_type, alarm_info->alarm_type);
 			continue;
@@ -1145,17 +1145,17 @@ static int jpf_action_snapshot_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		action_info.alarm_type = alarm_info->alarm_type;
 
 		if (act_gu->mss_count == 0)
-			jpf_warning("<JpfAmsPolicy> act_gu->mss_count = 0.");
+			nmp_warning("<NmpAmsPolicy> act_gu->mss_count = 0.");
 		for (j = 0; j < act_gu->mss_count; j++)
 		{
 			action_info.mss_id = act_gu->mss_id[j];
-			//jpf_action_snapshop_print(&action_info);
+			//nmp_action_snapshop_print(&action_info);
 
-			if (jpf_ams_action_handle(BUSSLOT_POS_MSS, MESSAGE_ALARM_LINK_SNAPSHOT,
+			if (nmp_ams_action_handle(BUSSLOT_POS_MSS, MESSAGE_ALARM_LINK_SNAPSHOT,
 				&action_info, sizeof(action_info)) != 0)
 			{
 				ret = -1;
-				jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+				nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 				break;
 			}
 		}
@@ -1165,19 +1165,19 @@ static int jpf_action_snapshot_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 }
 
 
-static JpfActionOps g_action_snapshot_ops =
+static NmpActionOps g_action_snapshot_ops =
 {
-	.init = jpf_action_snapshot_init,
-	.free = jpf_action_snapshot_free,
-	.get_data = jpf_action_snapshot_get_data,
-	.action = jpf_action_snapshot_do
+	.init = nmp_action_snapshot_init,
+	.free = nmp_action_snapshot_free,
+	.get_data = nmp_action_snapshot_get_data,
+	.action = nmp_action_snapshot_do
 };
 
 
-static int jpf_action_map_init(JpfAction *p)
+static int nmp_action_map_init(NmpAction *p)
 {
 	g_assert(p);
-	JpfActionMap *ar = (JpfActionMap *)p;
+	NmpActionMap *ar = (NmpActionMap *)p;
 
 	ar->action_gu_count = 0;
 	ar->cu_count= 0;
@@ -1186,7 +1186,7 @@ static int jpf_action_map_init(JpfAction *p)
 }
 
 
-static int jpf_action_map_free(JpfAction *p)
+static int nmp_action_map_free(NmpAction *p)
 {
 	g_assert(p);
 
@@ -1194,23 +1194,23 @@ static int jpf_action_map_free(JpfAction *p)
 }
 
 
-static JpfActionP jpf_action_map_get_data(JpfMsgAmsGetActionInfoRes *info)
+static NmpActionP nmp_action_map_get_data(NmpMsgAmsGetActionInfoRes *info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_map_get_data begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_map_get_data begin------");
 	g_assert(info);
-	JpfMsgActionMap *ar_src;
-	JpfActionMap *ar;
+	NmpMsgActionMap *ar_src;
+	NmpActionMap *ar;
 	gint count, size;
 	gint i;
 
 	if (!info->actions[AMS_ACTION_MAP])
 		return NULL;
 
-	ar_src = (JpfMsgActionMap *)info->actions[AMS_ACTION_MAP];
+	ar_src = (NmpMsgActionMap *)info->actions[AMS_ACTION_MAP];
 	count = ar_src->cu_count;
-	size = sizeof(JpfActionMap) + sizeof(JpfAllCuOwnPu) * count;
+	size = sizeof(NmpActionMap) + sizeof(NmpAllCuOwnPu) * count;
 
-	ar = (JpfActionMap *)jpf_new_action_type(size, &g_action_map_ops,
+	ar = (NmpActionMap *)nmp_new_action_type(size, &g_action_map_ops,
 		AMS_ACTION_MAP);
 	if (!ar)
 		return NULL;
@@ -1232,32 +1232,32 @@ static JpfActionP jpf_action_map_get_data(JpfMsgAmsGetActionInfoRes *info)
 	ar->map_id = ar_src->map_id;
 	strncpy(ar->map_name, ar_src->map_name, MAP_NAME_LEN - 1);
 	strncpy(ar->gu_name, ar_src->gu_name, GU_NAME_LEN - 1);
-	return (JpfAction *)ar;
+	return (NmpAction *)ar;
 }
 
 
-static int jpf_action_map_do(JpfAction *p, JpfAlarmInfo *alarm_info)
+static int nmp_action_map_do(NmpAction *p, NmpAlarmInfo *alarm_info)
 {
-	jpf_ams_print("<JpfAmsPolicy> jpf_action_map_do begin------");
+	nmp_ams_print("<NmpAmsPolicy> nmp_action_map_do begin------");
 	g_assert(p && alarm_info);
-	JpfActionMap *ar = (JpfActionMap *)p;
-	JpfAmsActionMap *action_info;
+	NmpActionMap *ar = (NmpActionMap *)p;
+	NmpAmsActionMap *action_info;
 	gint ret = 0;
 	gint i, size, gu_count = 0;
 
-	ret = jpf_check_alarm_action_enabled(ACTION_EMAP_BIT);
+	ret = nmp_check_alarm_action_enabled(ACTION_EMAP_BIT);
 	if (ret != 0)
 	{
-		jpf_warning("<JpfAmsPolicy> action io not enabled, ret = %d.", ret);
+		nmp_warning("<NmpAmsPolicy> action io not enabled, ret = %d.", ret);
 		return 0;
 	}
 
-	size = sizeof(JpfAmsActionMap) + sizeof(JpfAllCuOwnPu)*ar->cu_count;
-	action_info = jpf_mem_kalloc(size);
+	size = sizeof(NmpAmsActionMap) + sizeof(NmpAllCuOwnPu)*ar->cu_count;
+	action_info = nmp_mem_kalloc(size);
 	memset(action_info, 0, size);
 	for (i = 0; i < ar->action_gu_count; i++)
 	{
-		JpfActionMapGu *act_gu = &ar->action_gu[i];
+		NmpActionMapGu *act_gu = &ar->action_gu[i];
 		if (!(act_gu->alarm_type & alarm_info->alarm_type))
 		{
 			continue;
@@ -1283,39 +1283,39 @@ static int jpf_action_map_do(JpfAction *p, JpfAlarmInfo *alarm_info)
 		action_info->map_id = ar->map_id;
 		strcpy(action_info->map_name, ar->map_name);
 		action_info->cu_count = ar->cu_count;
-		memcpy(action_info->cu_list, ar->cu_list, ar->cu_count*sizeof(JpfAllCuOwnPu));
+		memcpy(action_info->cu_list, ar->cu_list, ar->cu_count*sizeof(NmpAllCuOwnPu));
 		action_info->action_gu_count = gu_count;
-		if (jpf_ams_action_handle(BUSSLOT_POS_CU, MESSAGE_ALARM_LINK_MAP,
+		if (nmp_ams_action_handle(BUSSLOT_POS_CU, MESSAGE_ALARM_LINK_MAP,
 			action_info, size) != 0)
 		{
 			ret = -1;
-			jpf_warning("<JpfAmsPolicy>send msg failed, may be no memory!");
+			nmp_warning("<NmpAmsPolicy>send msg failed, may be no memory!");
 		}
 	}
 
-	jpf_mem_kfree(action_info, size);
+	nmp_mem_kfree(action_info, size);
 
 	return ret;
 }
 
 
-static JpfActionOps g_action_map_ops =
+static NmpActionOps g_action_map_ops =
 {
-	.init = jpf_action_map_init,
-	.free = jpf_action_map_free,
-	.get_data = jpf_action_map_get_data,
-	.action = jpf_action_map_do
+	.init = nmp_action_map_init,
+	.free = nmp_action_map_free,
+	.get_data = nmp_action_map_get_data,
+	.action = nmp_action_map_do
 };
 
 
 
 
 static gboolean
-jpf_ams_if_old_node(gpointer key, gpointer value, gpointer user_data)
+nmp_ams_if_old_node(gpointer key, gpointer value, gpointer user_data)
 {
 	g_assert(key && value);
 
-	JpfAmsGu *gu = (JpfAmsGu *)value;
+	NmpAmsGu *gu = (NmpAmsGu *)value;
 	GTime cur_time = CUR_TIME;
 
 	if (cur_time >= gu->time && cur_time - gu->time <= AMS_NEW_NODE_TIME)
@@ -1328,50 +1328,50 @@ jpf_ams_if_old_node(gpointer key, gpointer value, gpointer user_data)
 
 
 static gboolean
-jpf_ams_pool_timer(gpointer user_data)
+nmp_ams_pool_timer(gpointer user_data)
 {
-	JpfGuPool *p = (JpfGuPool *)user_data;
+	NmpGuPool *p = (NmpGuPool *)user_data;
 	gint n_del;
 
 	g_mutex_lock(p->mutex);
 
-	n_del = g_hash_table_foreach_remove(p->gu, jpf_ams_if_old_node, NULL);
+	n_del = g_hash_table_foreach_remove(p->gu, nmp_ams_if_old_node, NULL);
 
 	g_mutex_unlock(p->mutex);
 	if (n_del != 0)
-		jpf_print("********************* n_del = %d.", n_del);
+		nmp_print("********************* n_del = %d.", n_del);
 	return TRUE;
 }
 
 
-void jpf_ams_init_gu_pool()
+void nmp_ams_init_gu_pool()
 {
-	memset(&g_gu_pool, 0, sizeof(JpfGuPool));
+	memset(&g_gu_pool, 0, sizeof(NmpGuPool));
 
 	g_gu_pool.mutex = g_mutex_new();
 
-	g_gu_pool.gu = g_hash_table_new_full(jpf_gu_hash_fn, jpf_gu_key_equal,
-		NULL, jpf_ams_gu_free);
+	g_gu_pool.gu = g_hash_table_new_full(nmp_gu_hash_fn, nmp_gu_key_equal,
+		NULL, nmp_ams_gu_free);
 
-	g_gu_pool.timer = jpf_set_timer(AMS_POLICY_CLEAR_TIME,
-		jpf_ams_pool_timer, &g_gu_pool);
+	g_gu_pool.timer = nmp_set_timer(AMS_POLICY_CLEAR_TIME,
+		nmp_ams_pool_timer, &g_gu_pool);
 }
 
 
-void jpf_ams_init_actions()
+void nmp_ams_init_actions()
 {
-	jpf_register_action_type(sizeof(JpfActionRecord), &g_action_record_ops);
-	jpf_register_action_type(sizeof(JpfActionIO), &g_action_io_ops);
-	jpf_register_action_type(sizeof(JpfActionStep), &g_action_step_ops);
-	jpf_register_action_type(sizeof(JpfActionPreset), &g_action_preset_ops);
-	jpf_register_action_type(sizeof(JpfActionSnapshot), &g_action_snapshot_ops);
-	jpf_register_action_type(sizeof(JpfActionMap), &g_action_map_ops);
+	nmp_register_action_type(sizeof(NmpActionRecord), &g_action_record_ops);
+	nmp_register_action_type(sizeof(NmpActionIO), &g_action_io_ops);
+	nmp_register_action_type(sizeof(NmpActionStep), &g_action_step_ops);
+	nmp_register_action_type(sizeof(NmpActionPreset), &g_action_preset_ops);
+	nmp_register_action_type(sizeof(NmpActionSnapshot), &g_action_snapshot_ops);
+	nmp_register_action_type(sizeof(NmpActionMap), &g_action_map_ops);
 }
 
 
-void jpf_ams_policy_init()
+void nmp_ams_policy_init()
 {
-	jpf_ams_init_gu_pool();
-	jpf_ams_init_actions();
+	nmp_ams_init_gu_pool();
+	nmp_ams_init_actions();
 }
 

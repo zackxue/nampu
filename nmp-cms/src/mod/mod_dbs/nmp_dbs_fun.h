@@ -18,59 +18,59 @@ typedef enum
 	DS_OVER_FLAG	= 1 << 1,
 	AI_OVER_FLAG	= 1 << 2,
 	AO_OVER_FLAG 	= 1 << 3
-}JpfDevGuOverFlag;
+}NmpDevGuOverFlag;
 
 void
-jpf_dbs_modify_sysmsg(NmpSysMsg *sys_msg,
+nmp_dbs_modify_sysmsg(NmpSysMsg *sys_msg,
 					 gpointer   priv_data,
 					 gsize size,
-					 JpfBusSlotPos src_pos,
-					 JpfBusSlotPos dst_pos,
-					 JpfMsgPrivDes msg_priv_destroy
+					 NmpBusSlotPos src_pos,
+					 NmpBusSlotPos dst_pos,
+					 NmpMsgPrivDes msg_priv_destroy
 				     );
 
 void
-jpf_dbs_modify_sysmsg_2(NmpSysMsg *sys_msg,
+nmp_dbs_modify_sysmsg_2(NmpSysMsg *sys_msg,
 					 gpointer   priv_data,
 					 gsize size,
-					 JpfBusSlotPos src_pos,
-					 JpfBusSlotPos dst_pos
+					 NmpBusSlotPos src_pos,
+					 NmpBusSlotPos dst_pos
 				     );
 
-gint jpf_get_mds_ip(JpfMysqlRes *mysql_result, JpfMsgGetMdsIpRes *res_info);
+gint nmp_get_mds_ip(NmpMysqlRes *mysql_result, NmpMsgGetMdsIpRes *res_info);
 
-gint jpf_dbs_get_mds_info(NmpAppObj *app_obj, gchar *cms_ip,
-    gchar *puid, gchar *domain_id, JpfMsgGetMdsIpRes *mds_ip);
+gint nmp_dbs_get_mds_info(NmpAppObj *app_obj, gchar *cms_ip,
+    gchar *puid, gchar *domain_id, NmpMsgGetMdsIpRes *mds_ip);
 
 gint
-jpf_get_scr_display_guid(NmpAppObj *app_obj,
+nmp_get_scr_display_guid(NmpAppObj *app_obj,
                         tw_general_guid *guid, gint screen_id, gint tw_id);
 
-JpfGetDivModeRes *
-jpf_dbs_get_div_mode(JpfMysqlRes *mysql_res, gint *size);
+NmpGetDivModeRes *
+nmp_dbs_get_div_mode(NmpMysqlRes *mysql_res, gint *size);
 
 gint
-jpf_get_pu_cms_ip(NmpAppObj *app_obj, gchar *puid,
+nmp_get_pu_cms_ip(NmpAppObj *app_obj, gchar *puid,
 	char *domain_id, gchar *cms_ip);
 
 gint
-jpf_dbs_check_gu_type_count(NmpAppObj *app_obj,
+nmp_dbs_check_gu_type_count(NmpAppObj *app_obj,
 	gint add_count, gint total_num, gchar *gu_type);
 
 gint
-jpf_dbs_get_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
+nmp_dbs_get_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
 
 gint
-jpf_dbs_get_online_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
+nmp_dbs_get_online_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
 
 gint
-jpf_dbs_get_dev_total_count(NmpAppObj *app_obj);
+nmp_dbs_get_dev_total_count(NmpAppObj *app_obj);
 
 gint
-jpf_dbs_get_online_dev_total_count(NmpAppObj *app_obj);
+nmp_dbs_get_online_dev_total_count(NmpAppObj *app_obj);
 
 gint
-jpf_dbs_get_gu_type_count(NmpAppObj *app_obj,  gchar *gu_type);
+nmp_dbs_get_gu_type_count(NmpAppObj *app_obj,  gchar *gu_type);
 
 void
 nmp_mod_dbs_deliver_out_msg(NmpAppObj *self, NmpSysMsg *msg);

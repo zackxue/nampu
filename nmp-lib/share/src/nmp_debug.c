@@ -1,5 +1,5 @@
 /*
- * jpf_debug.c
+ * nmp_debug.c
  *
  * This file include routes and macros for debugging 
  * and system running information logging purpose.
@@ -37,7 +37,7 @@ static GMutex *log_mutex = NULL;
 static gsize max_log_size = 10; /* default: 10MB */
 
 static __inline__ gint
-jpf_debug_get_sub_str(const gchar *start, const gchar *end, 
+nmp_debug_get_sub_str(const gchar *start, const gchar *end, 
     gchar buf[], gsize size)
 {
     gint len;
@@ -55,7 +55,7 @@ jpf_debug_get_sub_str(const gchar *start, const gchar *end,
 
 
 static __inline__ gint
-jpf_debug_create_path(const gchar *path, mode_t mode, gchar abs_p[])
+nmp_debug_create_path(const gchar *path, mode_t mode, gchar abs_p[])
 {
     const gchar *start, *end;
     gchar c;
@@ -115,7 +115,7 @@ jpf_debug_create_path(const gchar *path, mode_t mode, gchar abs_p[])
 
         memset(file_name, 0, sizeof(file_name));
 
-        if (jpf_debug_get_sub_str(start, end, 
+        if (nmp_debug_get_sub_str(start, end, 
             file_name, MAX_FILE_NAME))
         {
             return -ENAMETOOLONG;
@@ -145,7 +145,7 @@ jpf_debug_create_path(const gchar *path, mode_t mode, gchar abs_p[])
 
 
 static __inline__ gint
-jpf_debug_create_log_file(const gchar *file_folder, const gchar *name)
+nmp_debug_create_log_file(const gchar *file_folder, const gchar *name)
 {
     gint err;
     time_t time_now;
@@ -157,7 +157,7 @@ jpf_debug_create_log_file(const gchar *file_folder, const gchar *name)
     if (!file_folder || !name)
         return -E_INVAL;
 
-    if ((err = jpf_debug_create_path(file_folder,
+    if ((err = nmp_debug_create_path(file_folder,
         PATH_FOLDER_PERM, log_file_path)))
         return err;
 
@@ -214,7 +214,7 @@ jpf_debug_create_log_file(const gchar *file_folder, const gchar *name)
 
 
 static __inline__ void
-jpf_debug_check_rewind( void )
+nmp_debug_check_rewind( void )
 {
     static glong file_size = 0;
     glong now_size, limit_size;
@@ -249,19 +249,19 @@ jpf_debug_check_rewind( void )
 
 
 FILE *
-jpf_debug_get_log_file( void )
+nmp_debug_get_log_file( void )
 {
     if (G_UNLIKELY(!log_file))
         return stderr;
 
-    jpf_debug_check_rewind();
+    nmp_debug_check_rewind();
 
     return log_file;
 }
 
 
 static __inline__ const gchar *
-jpf_debug_get_level_str(GLogLevelFlags log_level)
+nmp_debug_get_level_str(GLogLevelFlags log_level)
 {
     switch (log_level)
     {
@@ -281,11 +281,11 @@ jpf_debug_get_level_str(GLogLevelFlags log_level)
 
 
 static void
-jpf_debug_log_assertion(const gchar *msg)
+nmp_debug_log_assertion(const gchar *msg)
 {
     FILE *fp;
 
-    fp = jpf_debug_get_log_file();
+    fp = nmp_debug_get_log_file();
 
     AQUIRE_LOG_LOCK;
     fprintf(fp, "%s", msg);
@@ -295,7 +295,7 @@ jpf_debug_log_assertion(const gchar *msg)
 
 
 static void
-jpf_debug_log_to_file(const gchar *log_domain, GLogLevelFlags log_level,
+nmp_debug_log_to_file(const gchar *log_domain, GLogLevelFlags log_level,
     const gchar *msg, gpointer user_data)
 {
     time_t t;
@@ -306,8 +306,8 @@ jpf_debug_log_to_file(const gchar *log_domain, GLogLevelFlags log_level,
     t = time(NULL);
     localtime_r(&t, &tm);
 
-    fp = jpf_debug_get_log_file();
-    level = jpf_debug_get_level_str(log_level);
+    fp = nmp_debug_get_log_file();
+    level = nmp_debug_get_level_str(log_level);
 
     AQUIRE_LOG_LOCK;
 
@@ -339,21 +339,21 @@ jpf_debug_log_to_file(const gchar *log_domain, GLogLevelFlags log_level,
 
 
 static __inline__ void
-jpf_debug_on_exit(gint status, gpointer arg)
+nmp_debug_on_exit(gint status, gpointer arg)
 {
-    jpf_print("<EXIT> SERVER EXITED.");
+    nmp_print("<EXIT> SERVER EXITED.");
 }
 
 
 static __inline__ void
-jpf_debug_log_set_exit_handler( void )
+nmp_debug_log_set_exit_handler( void )
 {
-    on_exit(jpf_debug_on_exit, NULL);
+    on_exit(nmp_debug_on_exit, NULL);
 }
 
 
 __export void
-jpf_debug_set_log_size(gint size)
+nmp_debug_set_log_size(gint size)
 {
     if (size > MAX_LOG_SIZE)
         size = MAX_LOG_SIZE;
@@ -366,7 +366,7 @@ jpf_debug_set_log_size(gint size)
 
 
 static __inline__ gint
-jpf_debug_set_fp_nonblock(FILE *fp)
+nmp_debug_set_fp_nonblock(FILE *fp)
 {
 	gint fd, old_flgs;
 
@@ -390,16 +390,16 @@ jpf_debug_set_fp_nonblock(FILE *fp)
 
 
 static __inline__ void
-jpf_debug_set_fps_nonblock( void )
+nmp_debug_set_fps_nonblock( void )
 {
-	jpf_debug_set_fp_nonblock(stdout);
-	jpf_debug_set_fp_nonblock(stderr);
-	jpf_debug_set_fp_nonblock(log_file);
+	nmp_debug_set_fp_nonblock(stdout);
+	nmp_debug_set_fp_nonblock(stderr);
+	nmp_debug_set_fp_nonblock(log_file);
 }
 
 
 __export gint
-jpf_debug_log_facility_init(const gchar *folder_path, const gchar *name)
+nmp_debug_log_facility_init(const gchar *folder_path, const gchar *name)
 {
     int err;
     
@@ -407,7 +407,7 @@ jpf_debug_log_facility_init(const gchar *folder_path, const gchar *name)
     if (G_UNLIKELY(!log_mutex))
         return -E_NEWMUTEX;
 
-    err = jpf_debug_create_log_file(folder_path, name);
+    err = nmp_debug_create_log_file(folder_path, name);
     if (G_UNLIKELY(err))
     {
         g_mutex_free(log_mutex);
@@ -415,18 +415,18 @@ jpf_debug_log_facility_init(const gchar *folder_path, const gchar *name)
         return err;
     }
 
-	jpf_debug_set_fps_nonblock();
+	nmp_debug_set_fps_nonblock();
 
     g_log_set_handler(
         G_LOG_DOMAIN,
         G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_WARNING |G_LOG_LEVEL_ERROR,
-        jpf_debug_log_to_file,
+        nmp_debug_log_to_file,
         NULL
     );
 
-    g_set_printerr_handler(jpf_debug_log_assertion);
+    g_set_printerr_handler(nmp_debug_log_assertion);
 
-    jpf_debug_log_set_exit_handler();
+    nmp_debug_log_set_exit_handler();
 
     return 0;
 }

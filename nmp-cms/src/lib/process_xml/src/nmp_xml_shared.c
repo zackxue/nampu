@@ -12,7 +12,7 @@
 #include "nmp_share_struct.h"
 
 void
-jpf_get_weekday(xmlDocPtr doc, char *weekpath,JpfWeekday *weekdays,int *weekday_num)
+nmp_get_weekday(xmlDocPtr doc, char *weekpath,NmpWeekday *weekdays,int *weekday_num)
 {
     xmlXPathObjectPtr app_result;
     xmlNodePtr cur, node, node1;
@@ -21,10 +21,10 @@ jpf_get_weekday(xmlDocPtr doc, char *weekpath,JpfWeekday *weekdays,int *weekday_
     char *enable = NULL;
     int i, timeseg_num = 0;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)weekpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)weekpath);
     if (app_result == NULL)
     {
-        jpf_warning("get weekday xml node:%s error",weekpath);
+        nmp_warning("get weekday xml node:%s error",weekpath);
         return;
     }
 
@@ -61,7 +61,7 @@ jpf_get_weekday(xmlDocPtr doc, char *weekpath,JpfWeekday *weekdays,int *weekday_
                                 weekdays[i].time_segs[timeseg_num].seg_enable = atoi(enable);
                                 xmlFree(enable);
                            	}
-                            jpf_deal_text(
+                            nmp_deal_text(
                                 doc, node1,
                                 weekdays[i].time_segs[timeseg_num].time_seg,
                                 TIME_SEG_LEN
@@ -88,7 +88,7 @@ jpf_get_weekday(xmlDocPtr doc, char *weekpath,JpfWeekday *weekdays,int *weekday_
 
 
 void
-jpf_set_weekday(xmlNodePtr node, JpfWeekday *weekdays, int weekday_num)
+nmp_set_weekday(xmlNodePtr node, NmpWeekday *weekdays, int weekday_num)
 {
 xmlNodePtr content, node1, node2, node3;
     char str[INT_TO_CHAR_LEN] = {0};
@@ -119,7 +119,7 @@ xmlNodePtr content, node1, node2, node3;
 }
 
 
-void jpf_get_time_policy(xmlDocPtr doc, xmlNodePtr root_node, JpfActionPolicy *time_policy)
+void nmp_get_time_policy(xmlDocPtr doc, xmlNodePtr root_node, NmpActionPolicy *time_policy)
 {
     xmlNodePtr cur, node;
     char *day = NULL;
@@ -144,7 +144,7 @@ void jpf_get_time_policy(xmlDocPtr doc, xmlNodePtr root_node, JpfActionPolicy *t
                 {
                     if (timeseg_num >= TIME_SEG_NUM)
 		           break;
-                    jpf_deal_text(
+                    nmp_deal_text(
                         doc, node,
                         time_policy->weekdays[i].time_segs[timeseg_num].time_seg,
                         TIME_SEG_LEN
@@ -171,7 +171,7 @@ void jpf_get_time_policy(xmlDocPtr doc, xmlNodePtr root_node, JpfActionPolicy *t
 
 
 void
-jpf_xml_parse_time_policy(char *time_policy, void *res_info)
+nmp_xml_parse_time_policy(char *time_policy, void *res_info)
 {
 	gint xml_len;
 	xmlNodePtr root_node = NULL;
@@ -195,7 +195,7 @@ jpf_xml_parse_time_policy(char *time_policy, void *res_info)
 			return;
 		}
 
-		jpf_get_time_policy(doc_str, root_node, (JpfActionPolicy *)res_info);
+		nmp_get_time_policy(doc_str, root_node, (NmpActionPolicy *)res_info);
 
 		xmlFreeDoc(doc_str);
 	}
@@ -204,16 +204,16 @@ jpf_xml_parse_time_policy(char *time_policy, void *res_info)
 
 
 void
-jpf_get_rectarea(xmlDocPtr doc, char *rectpath, JpfRectangle *detect_area, int *rect_num)
+nmp_get_rectarea(xmlDocPtr doc, char *rectpath, NmpRectangle *detect_area, int *rect_num)
 {
     xmlXPathObjectPtr app_result;
     xmlNodePtr cur, node;
     int i;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)rectpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)rectpath);
     if (app_result == NULL)
     {
-        jpf_warning("get rectarea xml node:%s error",rectpath);
+        nmp_warning("get rectarea xml node:%s error",rectpath);
         return;
     }
 
@@ -228,13 +228,13 @@ jpf_get_rectarea(xmlDocPtr doc, char *rectpath, JpfRectangle *detect_area, int *
             while (node != NULL)
             {
                 if ((!xmlStrcmp(node->name, (const xmlChar *)"left")))
-                    jpf_deal_value(doc, node, &detect_area[i].left);
+                    nmp_deal_value(doc, node, &detect_area[i].left);
                 else if ((!xmlStrcmp(node->name, (const xmlChar *)"top")))
-                    jpf_deal_value(doc, node, &detect_area[i].top);
+                    nmp_deal_value(doc, node, &detect_area[i].top);
                 else if ((!xmlStrcmp(node->name, (const xmlChar *)"right")))
-                    jpf_deal_value(doc, node, &detect_area[i].right);
+                    nmp_deal_value(doc, node, &detect_area[i].right);
                 else if ((!xmlStrcmp(node->name, (const xmlChar *)"bottom")))
-                    jpf_deal_value(doc, node, &detect_area[i].bottom);
+                    nmp_deal_value(doc, node, &detect_area[i].bottom);
 
                 node = node->next;
             }
@@ -249,7 +249,7 @@ jpf_get_rectarea(xmlDocPtr doc, char *rectpath, JpfRectangle *detect_area, int *
 
 
 void
-jpf_set_rectarea(xmlNodePtr node, JpfRectangle *detect_area, int rect_num)
+nmp_set_rectarea(xmlNodePtr node, NmpRectangle *detect_area, int rect_num)
 {
     xmlNodePtr node1;
     char str[INT_TO_CHAR_LEN] = {0};
@@ -293,7 +293,7 @@ jpf_set_rectarea(xmlNodePtr node, JpfRectangle *detect_area, int rect_num)
 }
 
 
-void jpf_create_ptz_para(xmlNodePtr parent_node, JpfPtzPara para)
+void nmp_create_ptz_para(xmlNodePtr parent_node, NmpPtzPara para)
 {
     char str[INT_TO_CHAR_LEN] = {0};
     xmlNodePtr node;
@@ -337,22 +337,22 @@ void jpf_create_ptz_para(xmlNodePtr parent_node, JpfPtzPara para)
 }
 
 
-void jpf_parse_ptz_para(xmlDocPtr doc,xmlNodePtr cur, JpfPtzPara *para)
+void nmp_parse_ptz_para(xmlDocPtr doc,xmlNodePtr cur, NmpPtzPara *para)
 {
     if ((!xmlStrcmp(cur->name, (const xmlChar *)"serialNo")))
-        jpf_deal_value(doc, cur, &para->serial_no);
+        nmp_deal_value(doc, cur, &para->serial_no);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ptzProt")))
-        jpf_deal_value(doc, cur, &para->ptz_protocol);
+        nmp_deal_value(doc, cur, &para->ptz_protocol);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ptzAddr")))
-        jpf_deal_value(doc, cur, &para->ptz_address);
+        nmp_deal_value(doc, cur, &para->ptz_address);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"baudRate")))
-        jpf_deal_value(doc, cur, &para->baud_rate);
+        nmp_deal_value(doc, cur, &para->baud_rate);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"dataBit")))
-        jpf_deal_value(doc, cur, &para->data_bit);
+        nmp_deal_value(doc, cur, &para->data_bit);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stopBit")))
-        jpf_deal_value(doc, cur, &para->stop_bit);
+        nmp_deal_value(doc, cur, &para->stop_bit);
     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"verify")))
-        jpf_deal_value(doc, cur, &para->verify);
+        nmp_deal_value(doc, cur, &para->verify);
     else
         xml_warning("Warning, not parse the node %s \n", cur->name);
 }

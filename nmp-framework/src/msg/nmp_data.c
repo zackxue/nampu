@@ -1,10 +1,10 @@
 #include "nmp_data.h"
 #include "nmp_memory.h"
 
-G_DEFINE_TYPE(JpfData, jpf_data, G_TYPE_OBJECT);
+G_DEFINE_TYPE(NmpData, nmp_data, G_TYPE_OBJECT);
 
 static void
-jpf_data_init(JpfData *self)
+nmp_data_init(NmpData *self)
 {
 	self->data_addr = NULL;
 	self->data_size = 0;
@@ -13,29 +13,29 @@ jpf_data_init(JpfData *self)
 
 
 static void
-jpf_data_dispose(GObject *object)
+nmp_data_dispose(GObject *object)
 {
-	JpfData *jpf_data = NMP_DATA(object);
+	NmpData *nmp_data = NMP_DATA(object);
 
-	if (G_UNLIKELY(!jpf_data))
+	if (G_UNLIKELY(!nmp_data))
 		return;
 
-	if (jpf_data->data_addr)
+	if (nmp_data->data_addr)
 	{
-		jpf_mem_kfree(jpf_data->data_addr, jpf_data->space_capacity);
-		jpf_data_init(jpf_data);
+		nmp_mem_kfree(nmp_data->data_addr, nmp_data->space_capacity);
+		nmp_data_init(nmp_data);
 	}
 
-	G_OBJECT_CLASS(jpf_data_parent_class)->dispose(object);
+	G_OBJECT_CLASS(nmp_data_parent_class)->dispose(object);
 }
 
 
 static void
-jpf_data_class_init(JpfDataClass *c_self)
+nmp_data_class_init(NmpDataClass *c_self)
 {
 	GObjectClass *gobject_class = (GObjectClass*)c_self;
 
-	gobject_class->dispose = jpf_data_dispose;
+	gobject_class->dispose = nmp_data_dispose;
 }
 
 

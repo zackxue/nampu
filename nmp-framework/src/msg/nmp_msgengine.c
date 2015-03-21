@@ -4,31 +4,31 @@
 #include "nmp_appmod.h"
 #include "nmp_memory.h"
 
-G_DEFINE_TYPE(NmpMsgEngine, jpf_msg_engine, NMP_TYPE_OBJECT);
+G_DEFINE_TYPE(NmpMsgEngine, nmp_msg_engine, NMP_TYPE_OBJECT);
 
 static void
-jpf_msg_engine_run_task(gpointer data, gpointer user_data);
+nmp_msg_engine_run_task(gpointer data, gpointer user_data);
 static gboolean g_msg_engine_thread_exclusive = FALSE;
 static guint g_msg_engine_fthreads = MAX_MSG_ENGINE_THREADS/2;
 static guint g_msg_engine_bthreads = MAX_MSG_ENGINE_THREADS/2;
 
 
 static __inline__ void
-jpf_msg_table_init(JpfMsgTable *table)
+nmp_msg_table_init(NmpMsgTable *table)
 {
     memset(table, 0, sizeof(*table));
 }
 
 
 void
-jpf_msg_engine_set_thread_exclusive(gboolean exclusive)
+nmp_msg_engine_set_thread_exclusive(gboolean exclusive)
 {
 	g_msg_engine_thread_exclusive = exclusive;
 }
 
 
 void
-jpf_msg_engine_set_threads(guint fthreads, guint bthreads)
+nmp_msg_engine_set_threads(guint fthreads, guint bthreads)
 {
 	g_msg_engine_fthreads = fthreads;
 	g_msg_engine_bthreads = bthreads;
@@ -36,24 +36,24 @@ jpf_msg_engine_set_threads(guint fthreads, guint bthreads)
 
 
 static void
-jpf_msg_engine_init(NmpMsgEngine *self)
+nmp_msg_engine_init(NmpMsgEngine *self)
 {
     memset(self->name, 0, sizeof(self->name));
     self->owner = NULL;
 
-    self->msg_dict = jpf_new(JpfMsgTable, 1);
+    self->msg_dict = nmp_new(NmpMsgTable, 1);
     if (G_UNLIKELY(!self->msg_dict))
     {
-        jpf_error(
+        nmp_error(
             "<NmpMsgEngine> alloc msg table failed!"
         );
         FATAL_ERROR_EXIT;
     }
 
-    jpf_msg_table_init(self->msg_dict);
+    nmp_msg_table_init(self->msg_dict);
 
     self->th_pool_f = g_thread_pool_new(
-        jpf_msg_engine_run_task,
+        nmp_msg_engine_run_task,
         self,
         g_msg_engine_fthreads,
         g_msg_engine_thread_exclusive,
@@ -62,14 +62,14 @@ jpf_msg_engine_init(NmpMsgEngine *self)
 
     if (G_UNLIKELY(!self->th_pool_f))
     {
-        jpf_error(
+        nmp_error(
             "<NmpMsgEngine> alloc forward thread pool failed!"
         );
         FATAL_ERROR_EXIT;
     }
 
     self->th_pool_b = g_thread_pool_new(
-        jpf_msg_engine_run_task,
+        nmp_msg_engine_run_task,
         self,
         g_msg_engine_bthreads,
         g_msg_engine_thread_exclusive,
@@ -78,7 +78,7 @@ jpf_msg_engine_init(NmpMsgEngine *self)
 
     if (G_UNLIKELY(!self->th_pool_b))
     {
-        jpf_error(
+        nmp_error(
             "<NmpMsgEngine> alloc backward thread pool failed!"
         );
         FATAL_ERROR_EXIT;
@@ -87,7 +87,7 @@ jpf_msg_engine_init(NmpMsgEngine *self)
 
 
 static void
-jpf_msg_engine_dispose(GObject *object)
+nmp_msg_engine_dispose(GObject *object)
 {
     NmpMsgEngine *self = (NmpMsgEngine*)object;
 
@@ -99,28 +99,28 @@ jpf_msg_engine_dispose(GObject *object)
         g_thread_pool_free(self->th_pool_f, FALSE, TRUE);
         self->th_pool_f = NULL;
 
-        jpf_free(self->msg_dict);
+        nmp_free(self->msg_dict);
         self->msg_dict = NULL;
 
         self->owner = NULL;
     }
 
-    G_OBJECT_CLASS(jpf_msg_engine_parent_class)->dispose(object);
+    G_OBJECT_CLASS(nmp_msg_engine_parent_class)->dispose(object);
 }
 
 
 static void
-jpf_msg_engine_class_init(NmpMsgEngineClass *c_self)
+nmp_msg_engine_class_init(NmpMsgEngineClass *c_self)
 {
     GObjectClass *gobject_class;
 
     gobject_class = (GObjectClass*)c_self;
-    gobject_class->dispose = jpf_msg_engine_dispose;
+    gobject_class->dispose = nmp_msg_engine_dispose;
 }
 
 
 void
-jpf_msg_engine_set_name(NmpMsgEngine *self, const gchar *name)
+nmp_msg_engine_set_name(NmpMsgEngine *self, const gchar *name)
 {
      G_ASSERT(self != NULL);
 
@@ -130,7 +130,7 @@ jpf_msg_engine_set_name(NmpMsgEngine *self, const gchar *name)
 
 
 gint
-jpf_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner)
+nmp_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner)
 {
     G_ASSERT(self != NULL);
 
@@ -143,16 +143,16 @@ jpf_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner)
 
 
 static __inline__ void
-jpf_msg_engine_destroy_msg(NmpSysMsg *msg)
+nmp_msg_engine_destroy_msg(NmpSysMsg *msg)
 {
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 }
 
 
 #ifdef MSGID_USE_INTEGER
 
 static __inline__ gint
-jpf_msg_table_register(JpfMsgTable *table, NmpMsgID msg_id,
+nmp_msg_table_register(NmpMsgTable *table, NmpMsgID msg_id,
     NmpMsgFun f_fun, NmpMsgFun b_fun, guint flags)
 {
     guint msg_iid;
@@ -179,7 +179,7 @@ jpf_msg_table_register(JpfMsgTable *table, NmpMsgID msg_id,
 
 
 static __inline__ void
-__jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
+__nmp_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 {
     guint msg_iid;
     NmpMsgFun fun;
@@ -187,7 +187,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 
     if (G_UNLIKELY(!self->msg_dict))
     {
-        jpf_warning(
+        nmp_warning(
             "<NmpMsgEngine> [%s] dispatch msg but no dict!",
             self->name
         );
@@ -200,7 +200,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 
         if (!(guint)ENTRY_MSG_BYINDEX(self->msg_dict, msg_iid))
         {
-            jpf_warning(
+            nmp_warning(
                 "<NmpMsgEngine> [%s] dispatch msg %d but no handler, sync request timeout?",
                 self->name,
                 msg_iid
@@ -213,7 +213,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
             fun = ENTRY_BFUN_BYINDEX(self->msg_dict, msg_iid);
             if (G_UNLIKELY(!fun))
             {
-                jpf_warning(
+                nmp_warning(
                     "<NmpMsgEngine> [%s] msg %d has no handler "
                     "in backward direction!",
                     self->name,
@@ -238,7 +238,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
             fun = ENTRY_FFUN_BYINDEX(self->msg_dict, msg_iid);
             if (G_UNLIKELY(!fun))
             {
-                jpf_warning(
+                nmp_warning(
                     "<NmpMsgEngine> [%s] msg %d has no handler "
                     "in forward direction!",
                     self->name,
@@ -259,20 +259,20 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
         }
     }
 
-    jpf_warning(
+    nmp_warning(
         "<NmpMsgEngine> [%s] dispatch msg %d but no handler, sync request timeout?",
         self->name,
         MSG_GETID(msg)
     );
 
 dispatch_msg_end:
-    jpf_msg_engine_destroy_msg(msg);
+    nmp_msg_engine_destroy_msg(msg);
 }
 
 #else   /* MSGID_USE_INTEGER */
 
 static __inline__ gint
-jpf_msg_table_ent_exist(JpfMsgTable *table, NmpMsgID msg_id)
+nmp_msg_table_ent_exist(NmpMsgTable *table, NmpMsgID msg_id)
 {
     gint index = 0;
 
@@ -289,7 +289,7 @@ jpf_msg_table_ent_exist(JpfMsgTable *table, NmpMsgID msg_id)
 
 
 static __inline__ gint
-jpf_msg_table_register(JpfMsgTable *table, NmpMsgID msg_id,
+nmp_msg_table_register(NmpMsgTable *table, NmpMsgID msg_id,
     NmpMsgFun f_fun, NmpMsgFun b_fun, guint flags)
 {
     G_ASSERT(table != NULL);
@@ -297,7 +297,7 @@ jpf_msg_table_register(JpfMsgTable *table, NmpMsgID msg_id,
     if (G_UNLIKELY(table->counts >= MAX_MSG_ENTRIES))
         return -E_MSGTBLFULL;
 
-    if (jpf_msg_table_ent_exist(table, msg_id))
+    if (nmp_msg_table_ent_exist(table, msg_id))
         return -E_MSGEXIST;
 
     SET_MSGID(table->msg_enties[table->counts].entry_msg, msg_id);
@@ -311,7 +311,7 @@ jpf_msg_table_register(JpfMsgTable *table, NmpMsgID msg_id,
 
 
 static __inline__ void
-__jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
+__nmp_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 {
     gint index;
     NmpMsgFun fun;
@@ -319,7 +319,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 
     if (G_UNLIKELY(!self->msg_dict))
     {
-        jpf_warning(
+        nmp_warning(
             "<NmpMsgEngine> [%s] dispatch msg but no dict!",
             self->name
         );
@@ -337,7 +337,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
                 fun = ENTRY_BFUN_BYINDEX(self->msg_dict, index);
                 if (G_UNLIKELY(!fun))
                 {
-                    jpf_warning(
+                    nmp_warning(
                         "<NmpMsgEngine> [%s] msg %s has no handler "
                         "in backward direction!",
                         self->name,
@@ -362,7 +362,7 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
                 fun = ENTRY_FFUN_BYINDEX(self->msg_dict, index);
                 if (G_UNLIKELY(!fun))
                 {
-                    jpf_warning(
+                    nmp_warning(
                         "<NmpMsgEngine> [%s] msg %s has no handler "
                         "in forward direction!",
                         self->name,
@@ -384,44 +384,44 @@ __jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
         }
     }
 
-    jpf_warning(
+    nmp_warning(
         "<NmpMsgEngine> [%s] dispatch msg %s but no handler, sync request timeout?",
         self->name,
         MSG_STR(msg)
     );
 
 dispatch_msg_end:
-    jpf_msg_engine_destroy_msg(msg);
+    nmp_msg_engine_destroy_msg(msg);
 }
 
 #endif  /* MSGID_USE_INTEGER */
 
 
 gint
-jpf_msg_engine_register_msg(NmpMsgEngine *self, NmpMsgID msg_id,
+nmp_msg_engine_register_msg(NmpMsgEngine *self, NmpMsgID msg_id,
     NmpMsgFun f_fun, NmpMsgFun b_fun, guint flags)
 {
     G_ASSERT(self != NULL);
 
-    return jpf_msg_table_register(self->msg_dict, msg_id,
+    return nmp_msg_table_register(self->msg_dict, msg_id,
         f_fun, b_fun, flags);
 }
 
 
 static __inline__ void
-jpf_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
+nmp_msg_engine_dispatch_msg(NmpMsgEngine *self, NmpSysMsg *msg)
 {
     G_ASSERT(self != NULL && msg != NULL);
 
     BUG_ON(!self->owner);
 
     if (MSG_FORWARD(msg) || nmp_app_obj_hook_from_bus(self->owner, msg))
-        __jpf_msg_engine_dispatch_msg(self, msg);
+        __nmp_msg_engine_dispatch_msg(self, msg);
 }
 
 
 gint
-jpf_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg)
+nmp_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg)
 {
     GError *err = NULL;
     G_ASSERT(self != NULL && msg != NULL);
@@ -437,7 +437,7 @@ jpf_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg)
 
 
 gint
-jpf_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg)
+nmp_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg)
 {
     GError *err = NULL;
     G_ASSERT(self != NULL && msg != NULL);
@@ -453,12 +453,12 @@ jpf_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg)
 
 
 static void
-jpf_msg_engine_run_task(gpointer data, gpointer user_data)
+nmp_msg_engine_run_task(gpointer data, gpointer user_data)
 {
     NmpMsgEngine *self = (NmpMsgEngine*)user_data;
     NmpSysMsg *msg = (NmpSysMsg*)data;
 
-    jpf_msg_engine_dispatch_msg(self, msg);
+    nmp_msg_engine_dispatch_msg(self, msg);
 }
 
 

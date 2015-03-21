@@ -5,17 +5,17 @@
 #include "nmp_list_head.h"
 
 
-typedef struct _JpfMssRegister JpfMssRegister;
-struct _JpfMssRegister
+typedef struct _NmpMssRegister NmpMssRegister;
+struct _NmpMssRegister
 {
     gchar mss_id[MSS_ID_LEN];
     gchar  mss_version[VERSION_LEN];
 };
 
-typedef struct _JpfMssRegisterRes JpfMssRegisterRes;
-struct _JpfMssRegisterRes
+typedef struct _NmpMssRegisterRes NmpMssRegisterRes;
+struct _NmpMssRegisterRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar                    domain_id[DOMAIN_ID_LEN];
     gint                       keep_alive_time;
     gint                       storage_type;
@@ -24,72 +24,72 @@ struct _JpfMssRegisterRes
     gchar              mss_name[MSS_NAME_LEN];
 };
 
-typedef struct _JpfMssHeart JpfMssHeart;
-struct _JpfMssHeart
+typedef struct _NmpMssHeart NmpMssHeart;
+struct _NmpMssHeart
 {
     gchar		mss_id[MSS_ID_LEN];
 };
 
-typedef struct _JpfMssHeartRes JpfMssHeartRes;
-struct _JpfMssHeartRes
+typedef struct _NmpMssHeartRes NmpMssHeartRes;
+struct _NmpMssHeartRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			server_time[TIME_INFO_LEN];
 };
 
-typedef struct _JpfMssGetGuid JpfMssGetGuid;
-struct _JpfMssGetGuid
+typedef struct _NmpMssGetGuid NmpMssGetGuid;
+struct _NmpMssGetGuid
 {
     gchar		mss_id[MSS_ID_LEN];
     gint        req_num;
     gint        start_row;
 };
 
-typedef struct _JpfMssGuid JpfMssGuid;
-struct _JpfMssGuid
+typedef struct _NmpMssGuid NmpMssGuid;
+struct _NmpMssGuid
 {
     gchar         guid[MAX_ID_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
 };
 
-typedef struct _JpfMssGetGuidRes JpfMssGetGuidRes;
-struct _JpfMssGetGuidRes
+typedef struct _NmpMssGetGuidRes NmpMssGetGuidRes;
+struct _NmpMssGetGuidRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar		   mss_id[MSS_ID_LEN];
     gint            total_count;
     gint            back_count;
-    JpfMssGuid guid_info[0];
+    NmpMssGuid guid_info[0];
 };
 
-typedef struct _JpfMssGetRecordPolicy JpfMssGetRecordPolicy;
-struct _JpfMssGetRecordPolicy
+typedef struct _NmpMssGetRecordPolicy NmpMssGetRecordPolicy;
+struct _NmpMssGetRecordPolicy
 {
     gchar		   mss_id[MSS_ID_LEN];
     gchar         guid[MAX_ID_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
 };
 
-typedef struct _JpfMssHdGroup JpfMssHdGroup;
-struct _JpfMssHdGroup
+typedef struct _NmpMssHdGroup NmpMssHdGroup;
+struct _NmpMssHdGroup
 {
     gchar              hd_group_id[HD_GROUP_ID_LEN];
 };
 
-typedef struct _JpfMssGetRecordPolicyRes JpfMssGetRecordPolicyRes;
-struct _JpfMssGetRecordPolicyRes
+typedef struct _NmpMssGetRecordPolicyRes NmpMssGetRecordPolicyRes;
+struct _NmpMssGetRecordPolicyRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar		    mss_id[MSS_ID_LEN];
     gchar         guid[MAX_ID_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
     gint           level;
-    JpfMssHdGroup		hd_group[HD_GROUP_NUM];
+    NmpMssHdGroup		hd_group[HD_GROUP_NUM];
     gchar         policy[POLICY_LEN];
 };
 
-typedef struct _JpfMssGetRoute JpfMssGetRoute;
-struct _JpfMssGetRoute
+typedef struct _NmpMssGetRoute NmpMssGetRoute;
+struct _NmpMssGetRoute
 {
     gchar		   mss_id[MSS_ID_LEN];
     gchar         guid[MAX_ID_LEN];
@@ -97,18 +97,18 @@ struct _JpfMssGetRoute
     gchar         cms_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfMssGetRouteRes JpfMssGetRouteRes;
-struct _JpfMssGetRouteRes
+typedef struct _NmpMssGetRouteRes NmpMssGetRouteRes;
+struct _NmpMssGetRouteRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar		    mss_id[MSS_ID_LEN];
 	 gchar         guid[MAX_ID_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
     gchar		    url[MAX_URL_LEN];
 };
 
-typedef struct _JpfNotifyPolicyChange JpfNotifyPolicyChange;
-struct _JpfNotifyPolicyChange
+typedef struct _NmpNotifyPolicyChange NmpNotifyPolicyChange;
+struct _NmpNotifyPolicyChange
 {
     gchar         guid[MAX_ID_LEN];
     gchar         domain_id[DOMAIN_ID_LEN];
@@ -116,42 +116,42 @@ struct _JpfNotifyPolicyChange
     gint           all_changed;   //0:单个配置，1:修改该存储服务器所有的业务点策略
 };
 
-typedef struct _JpfMssGetMds JpfMssGetMds;
-struct _JpfMssGetMds
+typedef struct _NmpMssGetMds NmpMssGetMds;
+struct _NmpMssGetMds
 {
     gchar		mss_id[MSS_ID_LEN];
     gint           req_num;
     gint           start_row;
 };
 
-typedef struct _JpfMssMds JpfMssMds;
-struct _JpfMssMds
+typedef struct _NmpMssMds NmpMssMds;
+struct _NmpMssMds
 {
     gchar		mds_id[MDS_ID_LEN];
 };
 
-typedef struct _JpfMssGetMdsRes JpfMssGetMdsRes;
-struct _JpfMssGetMdsRes
+typedef struct _NmpMssGetMdsRes NmpMssGetMdsRes;
+struct _NmpMssGetMdsRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar		mss_id[MSS_ID_LEN];
     gint            total_count;
     gint            back_count;
-    JpfMssMds  mds_info[0];
+    NmpMssMds  mds_info[0];
 };
 
-typedef struct _JpfMssGetMdsIp JpfMssGetMdsIp;
-struct _JpfMssGetMdsIp
+typedef struct _NmpMssGetMdsIp NmpMssGetMdsIp;
+struct _NmpMssGetMdsIp
 {
     gchar		mss_id[MSS_ID_LEN];
     gchar		mds_id[MDS_ID_LEN];
     gchar         cms_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfMssGetMdsIpRes JpfMssGetMdsIpRes;
-struct _JpfMssGetMdsIpRes
+typedef struct _NmpMssGetMdsIpRes NmpMssGetMdsIpRes;
+struct _NmpMssGetMdsIpRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar		       mss_id[MSS_ID_LEN];
     gchar		       mds_id[MDS_ID_LEN];
     gchar                mds_ip[MAX_IP_LEN];

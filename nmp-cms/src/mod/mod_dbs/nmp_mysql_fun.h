@@ -10,74 +10,74 @@
 
 
 int
-jpf_mysql_do_query(JpfMysql *db, const char *query);
+nmp_mysql_do_query(NmpMysql *db, const char *query);
 
 
-JpfMysqlRes*
-jpf_process_query(JpfMysql *mysql, const char *query_buf);
+NmpMysqlRes*
+nmp_process_query(NmpMysql *mysql, const char *query_buf);
 
 void
-jpf_dbs_do_query_code(NmpAppObj *app_obj,
+nmp_dbs_do_query_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect);
 
 void
-jpf_dbs_do_del_code(NmpAppObj *app_obj,
+nmp_dbs_do_del_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect);
 
-JpfMysqlRes*
-jpf_dbs_do_query_res(NmpAppObj *app_obj, char *query);
+NmpMysqlRes*
+nmp_dbs_do_query_res(NmpAppObj *app_obj, char *query);
 
-JpfMysqlRes*
-jpf_process_query_res(JpfMysql *mysql, const char *query_buf);
+NmpMysqlRes*
+nmp_process_query_res(NmpMysql *mysql, const char *query_buf);
 
 int
-jpf_process_query_procedure(JpfMysql *mysql, const char *query_buf);
+nmp_process_query_procedure(NmpMysql *mysql, const char *query_buf);
 
 gint
-jpf_get_record_count(NmpAppObj *app_obj, char *query);
+nmp_get_record_count(NmpAppObj *app_obj, char *query);
 
-gint jpf_get_count_value(JpfMysqlRes *result);
+gint nmp_get_count_value(NmpMysqlRes *result);
 
-gint jpf_dbs_get_row_num(NmpAppObj *app_obj,
+gint nmp_dbs_get_row_num(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query);
 unsigned long long
-jpf_sql_get_num_rows(JpfMysqlRes *res);
+nmp_sql_get_num_rows(NmpMysqlRes *res);
 
 unsigned int
-jpf_sql_get_num_fields(JpfMysqlRes *res);
+nmp_sql_get_num_fields(NmpMysqlRes *res);
 
-JpfMysqlRes*
-jpf_sql_get_res(JpfMysql *db);
+NmpMysqlRes*
+nmp_sql_get_res(NmpMysql *db);
 
-JpfMysqlRow
-jpf_sql_fetch_row(JpfMysqlRes *res);
+NmpMysqlRow
+nmp_sql_fetch_row(NmpMysqlRes *res);
 
-JpfMysqlField*
-jpf_sql_fetch_field(JpfMysqlRes *res);
+NmpMysqlField*
+nmp_sql_fetch_field(NmpMysqlRes *res);
 
-JpfMysqlField*
-jpf_sql_fetch_fields(JpfMysqlRes *res) ;
+NmpMysqlField*
+nmp_sql_fetch_fields(NmpMysqlRes *res) ;
 
 char*
-jpf_sql_get_field_name(JpfMysqlField *field, int num);
+nmp_sql_get_field_name(NmpMysqlField *field, int num);
 
 int32_t
-jpf_sql_get_field_type(JpfMysqlField *field, int num);
+nmp_sql_get_field_type(NmpMysqlField *field, int num);
 
 char *
-jpf_sql_get_field_value(JpfMysqlRow row,int num);
+nmp_sql_get_field_value(NmpMysqlRow row,int num);
 
-JpfMysqlFieldOffset
-jpf_sql_field_seek(JpfMysqlRes *res, JpfMysqlFieldOffset offset);
+NmpMysqlFieldOffset
+nmp_sql_field_seek(NmpMysqlRes *res, NmpMysqlFieldOffset offset);
 
 void
-jpf_sql_put_res(JpfMysqlRes *res, guint size);
+nmp_sql_put_res(NmpMysqlRes *res, guint size);
 
 #endif //__NMP_MYSQLFUN_H__

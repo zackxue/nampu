@@ -10,17 +10,17 @@
 #include "nmp_proto.h"
 
 
-G_DEFINE_TYPE(JpfModCu, nmp_mod_cu, NMP_TYPE_MODACCESS);
+G_DEFINE_TYPE(NmpModCu, nmp_mod_cu, NMP_TYPE_MODACCESS);
 
 void
-nmp_mod_cu_register_msg_handler(JpfModCu *self);
+nmp_mod_cu_register_msg_handler(NmpModCu *self);
 
 GStaticMutex gen_sid_lock = G_STATIC_MUTEX_INIT;
 //:TODO
 //static guint msg_seq_generator = 0;
 
 static __inline__ void
-nmp_mod_cu_cal_ttl(JpfCu *cu)
+nmp_mod_cu_cal_ttl(NmpCu *cu)
 {
 	G_ASSERT(cu != NULL);
 
@@ -37,7 +37,7 @@ nmp_mod_cu_gen_session_id(gchar buf[], gsize size)
 
 	snprintf(
 		buf, size, "%s-%05d",
-		jpf_get_local_domain_id(),
+		nmp_get_local_domain_id(),
 		(++sid_no) % 1000000
 	);
 
@@ -46,7 +46,7 @@ nmp_mod_cu_gen_session_id(gchar buf[], gsize size)
 
 
 static __inline__ void
-nmp_mod_cu_struct_init(JpfCu *cu)
+nmp_mod_cu_struct_init(NmpCu *cu)
 {
 	cu->hb_freq = HB_FREQ_DEFAULT;
 	nmp_mod_cu_cal_ttl(cu);
@@ -55,7 +55,7 @@ nmp_mod_cu_struct_init(JpfCu *cu)
 
 
 static __inline__ void
-nmp_mod_cu_group_ref(JpfUsrGroup *grp)
+nmp_mod_cu_group_ref(NmpUsrGroup *grp)
 {
 	G_ASSERT(grp != NULL && g_atomic_int_get(&grp->ref_count) > 0);
 
@@ -64,25 +64,25 @@ nmp_mod_cu_group_ref(JpfUsrGroup *grp)
 
 
 static __inline__ void
-nmp_mod_cu_group_release(JpfUsrGroup *grp)
+nmp_mod_cu_group_release(NmpUsrGroup *grp)
 {
 	G_ASSERT(grp != NULL);
 
-	jpf_wait_free(grp->wait);
+	nmp_wait_free(grp->wait);
 	g_free(grp);
 }
 
 
-static __inline__ JpfUsr *
+static __inline__ NmpUsr *
 nmp_mod_cu_user_new(const gchar *name)
 {
-	JpfUsr *user;
+	NmpUsr *user;
 
-	user = g_new0(JpfUsr, 1);
+	user = g_new0(NmpUsr, 1);
 	if (G_UNLIKELY(!user))
 		return NULL;
 
-	user->wait = jpf_wait_new();
+	user->wait = nmp_wait_new();
 	if (G_UNLIKELY(!user->wait))
 	{
 		g_free(user);
@@ -106,17 +106,17 @@ nmp_mod_cu_user_new(const gchar *name)
 
 
 static __inline__ void
-nmp_mod_cu_user_release(JpfUsr *user)
+nmp_mod_cu_user_release(NmpUsr *user)
 {
 	G_ASSERT(user != NULL);
 
-	jpf_wait_free(user->wait);
+	nmp_wait_free(user->wait);
 	g_free(user);
 }
 
 
 void
-nmp_mod_cu_add_user_info(JpfUsr *user, gchar *passwd, gint grp_id)
+nmp_mod_cu_add_user_info(NmpUsr *user, gchar *passwd, gint grp_id)
 {
 	G_ASSERT(user != NULL && passwd != NULL);
 
@@ -128,10 +128,10 @@ nmp_mod_cu_add_user_info(JpfUsr *user, gchar *passwd, gint grp_id)
 }
 
 
-static __inline__ JpfUsrState
-nmp_mod_cu_user_state(JpfUsr *user)
+static __inline__ NmpUsrState
+nmp_mod_cu_user_state(NmpUsr *user)
 {
-	JpfUsrState state;
+	NmpUsrState state;
 
 	g_static_mutex_lock(&user->lock);
 	state = user->user_state;
@@ -144,7 +144,7 @@ nmp_mod_cu_user_state(JpfUsr *user)
 
 
 static __inline__ void
-nmp_mod_cu_set_user_state(JpfUsr *user, JpfUsrState state)
+nmp_mod_cu_set_user_state(NmpUsr *user, NmpUsrState state)
 {
 	g_static_mutex_lock(&user->lock);
 	user->user_state = state;
@@ -152,10 +152,10 @@ nmp_mod_cu_set_user_state(JpfUsr *user, JpfUsrState state)
 }
 
 
-JpfUsrShareMode
-nmp_mod_cu_user_mode(JpfUsr *user)
+NmpUsrShareMode
+nmp_mod_cu_user_mode(NmpUsr *user)
 {
-	JpfUsrShareMode mode;
+	NmpUsrShareMode mode;
 
 	g_static_mutex_lock(&user->lock);
 	mode = user->share_mode;
@@ -166,7 +166,7 @@ nmp_mod_cu_user_mode(JpfUsr *user)
 
 
 static __inline__ gint
-nmp_mod_cu_set_user_errno(JpfUsr *user, gint err)
+nmp_mod_cu_set_user_errno(NmpUsr *user, gint err)
 {
 	G_ASSERT(user != NULL);
 
@@ -175,7 +175,7 @@ nmp_mod_cu_set_user_errno(JpfUsr *user, gint err)
 
 
 static __inline__ gint
-nmp_mod_cu_get_user_errno(JpfUsr *user)
+nmp_mod_cu_get_user_errno(NmpUsr *user)
 {
 	G_ASSERT(user != NULL);
 
@@ -184,23 +184,23 @@ nmp_mod_cu_get_user_errno(JpfUsr *user)
 
 
 static __inline__ gint
-nmp_mod_cu_is_user_new(JpfUsr *user)
+nmp_mod_cu_is_user_new(NmpUsr *user)
 {
 	return nmp_mod_cu_user_state(user) == STAT_USR_NEW;
 }
 
 
 static __inline__ gint
-nmp_mod_cu_user_failed(JpfUsrState state)
+nmp_mod_cu_user_failed(NmpUsrState state)
 {
 	return state == STAT_USR_FAILED;
 }
 
 
 static __inline__ gint
-nmp_mod_cu_need_wait_user(JpfUsr *user)
+nmp_mod_cu_need_wait_user(NmpUsr *user)
 {
-	JpfUsrState state;
+	NmpUsrState state;
 	G_ASSERT(user != NULL);
 
 	state = nmp_mod_cu_user_state(user);
@@ -211,9 +211,9 @@ nmp_mod_cu_need_wait_user(JpfUsr *user)
 
 
 static __inline__ gint
-nmp_mod_cu_is_user_complete(JpfUsr *user)
+nmp_mod_cu_is_user_complete(NmpUsr *user)
 {
-	JpfUsrState state;
+	NmpUsrState state;
 	G_ASSERT(user != NULL);
 
 	state = nmp_mod_cu_user_state(user);
@@ -223,34 +223,34 @@ nmp_mod_cu_is_user_complete(JpfUsr *user)
 
 
 static __inline__ void
-nmp_mod_cu_user_wakeup(JpfUsr *user, gint err)
+nmp_mod_cu_user_wakeup(NmpUsr *user, gint err)
 {
-	JpfUsrState state;
+	NmpUsrState state;
 	G_ASSERT(user != NULL);
 
 	state = err ? STAT_USR_FAILED : STAT_USR_COMPLETED;
-	jpf_wait_begin(user->wait);
+	nmp_wait_begin(user->wait);
 	nmp_mod_cu_set_user_state(user, state);
 	user->err_no = err;
-	jpf_wait_wakeup_all(user->wait);
-	jpf_wait_end(user->wait);
+	nmp_wait_wakeup_all(user->wait);
+	nmp_wait_end(user->wait);
 }
 
 
 static __inline__ void
-nmp_mod_cu_wait_user(JpfUsr *user)
+nmp_mod_cu_wait_user(NmpUsr *user)
 {
-	jpf_wait_begin(user->wait);
+	nmp_wait_begin(user->wait);
 
 	while (nmp_mod_cu_need_wait_user(user))
-		jpf_wait_waiting(user->wait);
+		nmp_wait_waiting(user->wait);
 
-	jpf_wait_end(user->wait);
+	nmp_wait_end(user->wait);
 }
 
 
 void
-nmp_mod_cu_add_user_session(JpfUsr *user, JpfCu *cu)
+nmp_mod_cu_add_user_session(NmpUsr *user, NmpCu *cu)
 {
 	G_ASSERT(user != NULL && cu != NULL);
 
@@ -263,16 +263,16 @@ nmp_mod_cu_add_user_session(JpfUsr *user, JpfCu *cu)
 }
 
 
-static __inline__ JpfUsrGroup *
-nmp_mod_cu_group_new(JpfModCu *mod, gint grp_id)
+static __inline__ NmpUsrGroup *
+nmp_mod_cu_group_new(NmpModCu *mod, gint grp_id)
 {
-	JpfUsrGroup *grp;
+	NmpUsrGroup *grp;
 
-	grp = g_new0(JpfUsrGroup, 1);
+	grp = g_new0(NmpUsrGroup, 1);
 	if (G_UNLIKELY(!grp))
 		return NULL;
 
-	grp->wait = jpf_wait_new();
+	grp->wait = nmp_wait_new();
 	if (G_UNLIKELY(!grp->wait))
 	{
 		g_free(grp);
@@ -291,7 +291,7 @@ nmp_mod_cu_group_new(JpfModCu *mod, gint grp_id)
 
 
 void
-nmp_mod_cu_add_group_info(JpfUsrGroup *grp, gint rank, guint perm)
+nmp_mod_cu_add_group_info(NmpUsrGroup *grp, gint rank, guint perm)
 {
 	G_ASSERT(grp != NULL);
 
@@ -300,15 +300,15 @@ nmp_mod_cu_add_group_info(JpfUsrGroup *grp, gint rank, guint perm)
 }
 
 
-static __inline__ JpfUsrGroup *
-__nmp_mod_cu_find_group(JpfModCu *self, gint grp_id)
+static __inline__ NmpUsrGroup *
+__nmp_mod_cu_find_group(NmpModCu *self, gint grp_id)
 {
 	LIST_HEAD *l;
-	JpfUsrGroup *grp;
+	NmpUsrGroup *grp;
 
 	list_for_each(l, &self->list_group)
 	{
-		grp = list_entry(l, JpfUsrGroup, list);
+		grp = list_entry(l, NmpUsrGroup, list);
 		if (grp->id == grp_id)
 			return grp;
 	}
@@ -317,10 +317,10 @@ __nmp_mod_cu_find_group(JpfModCu *self, gint grp_id)
 }
 
 
-static __inline__ JpfUsrGroup *
-nmp_mod_cu_find_and_get_group(JpfModCu *self, gint grp_id)
+static __inline__ NmpUsrGroup *
+nmp_mod_cu_find_and_get_group(NmpModCu *self, gint grp_id)
 {
-	JpfUsrGroup *grp;
+	NmpUsrGroup *grp;
 	G_ASSERT(self != NULL);
 
 	g_static_mutex_lock(&self->list_glock);
@@ -334,7 +334,7 @@ nmp_mod_cu_find_and_get_group(JpfModCu *self, gint grp_id)
 
 
 static __inline__ void
-nmp_mod_cu_put_group(JpfModCu *self, JpfUsrGroup *grp)
+nmp_mod_cu_put_group(NmpModCu *self, NmpUsrGroup *grp)
 {
 	G_ASSERT(self != NULL && grp != NULL);
 
@@ -349,9 +349,9 @@ nmp_mod_cu_put_group(JpfModCu *self, JpfUsrGroup *grp)
 
 
 static __inline__ gint
-nmp_mod_cu_add_group(JpfModCu *self, JpfUsrGroup *grp)
+nmp_mod_cu_add_group(NmpModCu *self, NmpUsrGroup *grp)
 {
-	JpfUsrGroup *old;
+	NmpUsrGroup *old;
 	gint ret = -E_USRGRPEXIST;
 
 	g_static_mutex_lock(&self->list_glock);
@@ -367,10 +367,10 @@ nmp_mod_cu_add_group(JpfModCu *self, JpfUsrGroup *grp)
 }
 
 
-static __inline__ JpfUsrGroup *
-nmp_mod_cu_get_group(JpfModCu *self, gint grp_id)
+static __inline__ NmpUsrGroup *
+nmp_mod_cu_get_group(NmpModCu *self, gint grp_id)
 {
-	JpfUsrGroup *grp;
+	NmpUsrGroup *grp;
 	G_ASSERT(self != NULL);
 
 	for (;;)
@@ -396,10 +396,10 @@ nmp_mod_cu_get_group(JpfModCu *self, gint grp_id)
 }
 
 
-static __inline__ JpfUsrGrpState
-nmp_mod_cu_group_state(JpfUsrGroup *grp)
+static __inline__ NmpUsrGrpState
+nmp_mod_cu_group_state(NmpUsrGroup *grp)
 {
-	JpfUsrGrpState state;
+	NmpUsrGrpState state;
 	G_ASSERT(grp != NULL);
 
 	g_static_mutex_lock(&grp->lock);
@@ -413,7 +413,7 @@ nmp_mod_cu_group_state(JpfUsrGroup *grp)
 
 
 static __inline__ void
-nmp_mod_cu_set_group_state(JpfUsrGroup *grp, JpfUsrGrpState state)
+nmp_mod_cu_set_group_state(NmpUsrGroup *grp, NmpUsrGrpState state)
 {
 	G_ASSERT(grp != NULL);
 
@@ -424,9 +424,9 @@ nmp_mod_cu_set_group_state(JpfUsrGroup *grp, JpfUsrGrpState state)
 
 
 static __inline__ gint
-nmp_mod_cu_need_wait_group(JpfUsrGroup *grp)
+nmp_mod_cu_need_wait_group(NmpUsrGroup *grp)
 {
-	JpfUsrGrpState state;
+	NmpUsrGrpState state;
 	G_ASSERT(grp != NULL);
 
 	state = nmp_mod_cu_group_state(grp);
@@ -435,7 +435,7 @@ nmp_mod_cu_need_wait_group(JpfUsrGroup *grp)
 
 
 static __inline__ gint
-nmp_mod_cu_is_group_new(JpfUsrGroup *grp)
+nmp_mod_cu_is_group_new(NmpUsrGroup *grp)
 {
 	G_ASSERT(grp != NULL);
 
@@ -444,9 +444,9 @@ nmp_mod_cu_is_group_new(JpfUsrGroup *grp)
 
 
 static __inline__ gint
-nmp_mod_cu_is_group_complete(JpfUsrGroup *grp)
+nmp_mod_cu_is_group_complete(NmpUsrGroup *grp)
 {
-	JpfUsrGrpState state;
+	NmpUsrGrpState state;
 	G_ASSERT(grp != NULL);
 
 	state = nmp_mod_cu_group_state(grp);
@@ -456,7 +456,7 @@ nmp_mod_cu_is_group_complete(JpfUsrGroup *grp)
 
 
 static __inline__ void
-nmp_mod_cu_add_group_user(JpfUsrGroup *grp, JpfUsr *user)
+nmp_mod_cu_add_group_user(NmpUsrGroup *grp, NmpUsr *user)
 {
 	G_ASSERT(grp != NULL && user != NULL);
 
@@ -466,7 +466,7 @@ nmp_mod_cu_add_group_user(JpfUsrGroup *grp, JpfUsr *user)
 
 
 static __inline__ gint
-nmp_mod_cu_get_group_errno(JpfUsrGroup *grp)
+nmp_mod_cu_get_group_errno(NmpUsrGroup *grp)
 {
 	G_ASSERT(grp != NULL);
 
@@ -475,41 +475,41 @@ nmp_mod_cu_get_group_errno(JpfUsrGroup *grp)
 
 
 static __inline__ void
-nmp_mod_cu_group_wakeup(JpfUsrGroup *grp, gint err)
+nmp_mod_cu_group_wakeup(NmpUsrGroup *grp, gint err)
 {
-	JpfUsrGrpState state;
+	NmpUsrGrpState state;
 	G_ASSERT(grp != NULL);
 
 	state = err ? STAT_GRP_FAILED : STAT_GRP_COMPLETED;
-	jpf_wait_begin(grp->wait);
+	nmp_wait_begin(grp->wait);
 	nmp_mod_cu_set_group_state(grp, state);
 	grp->err_no = err;
-	jpf_wait_wakeup_all(grp->wait);
-	jpf_wait_end(grp->wait);
+	nmp_wait_wakeup_all(grp->wait);
+	nmp_wait_end(grp->wait);
 }
 
 
 static __inline__ void
-nmp_mod_cu_wait_group(JpfUsrGroup *grp)
+nmp_mod_cu_wait_group(NmpUsrGroup *grp)
 {
-	jpf_wait_begin(grp->wait);
+	nmp_wait_begin(grp->wait);
 
 	while (nmp_mod_cu_need_wait_group(grp))
-		jpf_wait_waiting(grp->wait);
+		nmp_wait_waiting(grp->wait);
 
-	jpf_wait_end(grp->wait);
+	nmp_wait_end(grp->wait);
 }
 
 
-static __inline__ JpfUsr *
-__nmp_mod_cu_find_user(JpfModCu *self, const gchar *name)
+static __inline__ NmpUsr *
+__nmp_mod_cu_find_user(NmpModCu *self, const gchar *name)
 {
 	LIST_HEAD *l;
-	JpfUsr *user;
+	NmpUsr *user;
 
 	list_for_each(l, &self->list_user)
 	{
-		user = list_entry(l, JpfUsr, list);
+		user = list_entry(l, NmpUsr, list);
 		if (!strcmp(user->user_name, name))
 			return user;
 	}
@@ -518,10 +518,10 @@ __nmp_mod_cu_find_user(JpfModCu *self, const gchar *name)
 }
 
 
-static __inline__ JpfUsr *
-nmp_mod_cu_find_and_get_user(JpfModCu *self, const gchar *name)
+static __inline__ NmpUsr *
+nmp_mod_cu_find_and_get_user(NmpModCu *self, const gchar *name)
 {
-	JpfUsr *user;
+	NmpUsr *user;
 	G_ASSERT(self != NULL && name != NULL);
 
 	g_static_mutex_lock(&self->list_ulock);
@@ -535,9 +535,9 @@ nmp_mod_cu_find_and_get_user(JpfModCu *self, const gchar *name)
 
 
 static __inline__ void
-nmp_mod_cu_put_user(JpfModCu *self, JpfUsr *user)
+nmp_mod_cu_put_user(NmpModCu *self, NmpUsr *user)
 {
-	JpfUsrGroup *grp = NULL;
+	NmpUsrGroup *grp = NULL;
 	G_ASSERT(user != NULL);
 
 	g_static_mutex_lock(&self->list_ulock);
@@ -555,9 +555,9 @@ nmp_mod_cu_put_user(JpfModCu *self, JpfUsr *user)
 
 
 static __inline__ gint
-nmp_mod_cu_add_user(JpfModCu *self, JpfUsr *user)
+nmp_mod_cu_add_user(NmpModCu *self, NmpUsr *user)
 {
-	JpfUsr *old;
+	NmpUsr *old;
 	gint ret = -E_USREXIST;
 	G_ASSERT(self != NULL && user != NULL);
 
@@ -575,9 +575,9 @@ nmp_mod_cu_add_user(JpfModCu *self, JpfUsr *user)
 
 
 void
-nmp_mod_cu_del_user_session(JpfCu *cu)
+nmp_mod_cu_del_user_session(NmpCu *cu)
 {
-	JpfUsr *user;
+	NmpUsr *user;
 	G_ASSERT(cu != NULL);
 
 	user = cu->user;
@@ -593,27 +593,27 @@ nmp_mod_cu_del_user_session(JpfCu *cu)
 	BUG_ON(!user->user_group->owner);
 
 	nmp_mod_cu_put_user(
-		(JpfModCu*)user->user_group->owner,
+		(NmpModCu*)user->user_group->owner,
 		user
 	);
 }
 
 
 static void
-nmp_mod_cu_destroy(JpfGuestBase *obj, gpointer priv_data)
+nmp_mod_cu_destroy(NmpGuestBase *obj, gpointer priv_data)
 {
-	JpfCu *cu;
+	NmpCu *cu;
 	G_ASSERT(obj != NULL);
 
-	cu = (JpfCu*)obj;
+	cu = (NmpCu*)obj;
 	nmp_mod_cu_del_user_session(cu);
 }
 
 
 void
-nmp_mod_cu_del_user(JpfModCu *self, const gchar *name)
+nmp_mod_cu_del_user(NmpModCu *self, const gchar *name)
 {
-	JpfUsr *user = NULL;
+	NmpUsr *user = NULL;
 	G_ASSERT(self != NULL && name != NULL);
 
     user = nmp_mod_cu_find_and_get_user(self, name);
@@ -621,10 +621,10 @@ nmp_mod_cu_del_user(JpfModCu *self, const gchar *name)
 	    nmp_mod_cu_put_user(self, user);
 }
 
-static __inline__ JpfUsr *
-nmp_mod_cu_get_user(JpfModCu *self, const gchar *name)
+static __inline__ NmpUsr *
+nmp_mod_cu_get_user(NmpModCu *self, const gchar *name)
 {
-	JpfUsr *user;
+	NmpUsr *user;
 	G_ASSERT(self != NULL && name != NULL);
 
 	for (;;)
@@ -651,15 +651,15 @@ nmp_mod_cu_get_user(JpfModCu *self, const gchar *name)
 
 
 gint
-nmp_mod_cu_user_session_new(JpfModCu *self, JpfNetIO *io,
+nmp_mod_cu_user_session_new(NmpModCu *self, NmpNetIO *io,
 	const gchar *name, const gchar *passwd, gchar session[], gsize size)
 {
-	JpfUsr *user;
-	JpfCu *cu = NULL;
+	NmpUsr *user;
+	NmpCu *cu = NULL;
 	gint err = 0;
-	JpfUsrGroup *grp = NULL;
-	JpfUsrShareMode	share_mode;
-	JpfID conflict;
+	NmpUsrGroup *grp = NULL;
+	NmpUsrShareMode	share_mode;
+	NmpID conflict;
 	gchar session_id[MAX_NAME_LEN];
 
 	G_ASSERT(self != NULL && io != NULL);
@@ -730,7 +730,7 @@ nmp_mod_cu_user_session_new(JpfModCu *self, JpfNetIO *io,
 			goto new_session_out;
 		}
 		nmp_mod_cu_gen_session_id(session_id, MAX_NAME_LEN);
-		cu = (JpfCu*)jpf_mods_guest_new(sizeof(JpfCu),
+		cu = (NmpCu*)nmp_mods_guest_new(sizeof(NmpCu),
 			session_id, nmp_mod_cu_destroy, NULL);
 		if (G_UNLIKELY(!cu))
 		{
@@ -739,11 +739,11 @@ nmp_mod_cu_user_session_new(JpfModCu *self, JpfNetIO *io,
 		}
 
 		nmp_mod_cu_struct_init(cu);
-		jpf_mods_guest_attach_io((JpfGuestBase*)cu, io);
+		nmp_mods_guest_attach_io((NmpGuestBase*)cu, io);
 		nmp_mod_cu_add_user_session(user, cu);
 
-		err = jpf_mods_container_add_guest(self->container,
-			(JpfGuestBase*)cu, &conflict);
+		err = nmp_mods_container_add_guest(self->container,
+			(NmpGuestBase*)cu, &conflict);
 		if (G_UNLIKELY(err))
 			goto new_session_out;
 
@@ -766,7 +766,7 @@ nmp_mod_cu_user_session_new(JpfModCu *self, JpfNetIO *io,
 
 new_session_out:
 	if (cu)
-		jpf_mods_guest_unref((JpfGuestBase*)cu);
+		nmp_mods_guest_unref((NmpGuestBase*)cu);
 
 	if (grp)
 		nmp_mod_cu_put_group(self, grp);
@@ -789,19 +789,19 @@ alloc_user_failed:
 
 
 static void
-nmp_mod_cu_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
+nmp_mod_cu_io_close(NmpModAccess *s_self, NmpNetIO *io, gint err)
 {
 	gint ret;
-	JpfModCu *self;
+	NmpModCu *self;
 	G_ASSERT(s_self != NULL);
 
-	self = (JpfModCu*)s_self;
+	self = (NmpModCu*)s_self;
 
 	ret = nmp_mod_container_del_io(self->container, io);
 	if (G_UNLIKELY(!ret))
 	{
-		jpf_print(
-			"<JpfModCu> unrecognized connection closed, err:%d.",
+		nmp_print(
+			"<NmpModCu> unrecognized connection closed, err:%d.",
 			err
 		);
 	}
@@ -809,25 +809,25 @@ nmp_mod_cu_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 
 
 static gint
-nmp_mod_cu_io_init(JpfModAccess *s_self, JpfNetIO *io)
+nmp_mod_cu_io_init(NmpModAccess *s_self, NmpNetIO *io)
 {
 	gint err;
-	JpfModCu *self;
+	NmpModCu *self;
 	G_ASSERT(s_self != NULL);
 
-	self = (JpfModCu*)s_self;
+	self = (NmpModCu*)s_self;
 
 	err = nmp_mod_container_add_io(self->container, io);
 	if (err)
 	{
-		jpf_error(
-			"<JpfModCu> insert io to temp list err: %d!",
+		nmp_error(
+			"<NmpModCu> insert io to temp list err: %d!",
 			err
 		);
 		return err;
 	}
 
-	jpf_net_unref_io(io);
+	nmp_net_unref_io(io);
 	return 0;
 }
 
@@ -836,31 +836,31 @@ gint
 nmp_mod_cu_setup(NmpAppMod *am_self)
 {
 	gint err;
-	JpfModAccess *ma_self;
-	JpfModCu *self;
+	NmpModAccess *ma_self;
+	NmpModCu *self;
 	struct sockaddr_in sin;
 	G_ASSERT(am_self != NULL);
 
-	self = (JpfModCu*)am_self;
-	ma_self  = (JpfModAccess*)am_self;
+	self = (NmpModCu*)am_self;
+	ma_self  = (NmpModAccess*)am_self;
 
 	bzero(&sin, sizeof(sin));
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(JPFCMS_CU_PORT);
 	sin.sin_addr.s_addr = INADDR_ANY;
 
-	nmp_mod_acc_init_net(ma_self, &jxj_packet_proto, &jxj_xml_proto);
+	nmp_mod_acc_init_net(ma_self, &nmp_packet_proto, &nmp_xml_proto);
 
 	self->listen_io = nmp_mod_acc_create_listen_io(
 		ma_self, (struct sockaddr*)&sin, &err
 	);
 	if (!self->listen_io)
 	{
-		jpf_error("<JpfModPu> create listen io failed!");
+		nmp_error("<NmpModPu> create listen io failed!");
 		return err;
 	}
 
-	jpf_net_set_heavy_io_load(self->listen_io);
+	nmp_net_set_heavy_io_load(self->listen_io);
 	nmp_app_mod_set_name(am_self, "MOD-CU");
  	nmp_mod_cu_register_msg_handler(self);
 
@@ -869,15 +869,15 @@ nmp_mod_cu_setup(NmpAppMod *am_self)
 
 
 static void
-nmp_mod_cu_init(JpfModCu *self)
+nmp_mod_cu_init(NmpModCu *self)
 {
-	self->container = jpf_mods_container_new(
+	self->container = nmp_mods_container_new(
 		self,
-		jpf_get_sys_parm_int(SYS_PARM_WAIT_AFTER_CONNECTED)
+		nmp_get_sys_parm_int(SYS_PARM_WAIT_AFTER_CONNECTED)
 	);
 	if (G_UNLIKELY(!self->container))
 	{
-		jpf_error("<JpfModCu> alloc guest container failed!");
+		nmp_error("<NmpModCu> alloc guest container failed!");
 		FATAL_ERROR_EXIT;
 	}
 
@@ -895,9 +895,9 @@ nmp_mod_cu_init(JpfModCu *self)
 
 
 static void
-nmp_mod_cu_class_init(JpfModCuClass *k_class)
+nmp_mod_cu_class_init(NmpModCuClass *k_class)
 {
-	JpfModAccessClass *ma_class = (JpfModAccessClass*)k_class;
+	NmpModAccessClass *ma_class = (NmpModAccessClass*)k_class;
 	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
 	ma_class->io_close	= nmp_mod_cu_io_close;
@@ -906,66 +906,66 @@ nmp_mod_cu_class_init(JpfModCuClass *k_class)
 }
 
 
-JpfCu *
-nmp_mod_cu_get_cu(JpfModCu *self, JpfNetIO *io)
+NmpCu *
+nmp_mod_cu_get_cu(NmpModCu *self, NmpNetIO *io)
 {
 	G_ASSERT(self != NULL && io != NULL);
 
-	return (JpfCu*)jpf_mods_container_get_guest(
+	return (NmpCu*)nmp_mods_container_get_guest(
 		self->container, io);
 }
 
 
-JpfCu *
-nmp_mod_cu_get_cu_2(JpfModCu *self, const gchar *sid)
+NmpCu *
+nmp_mod_cu_get_cu_2(NmpModCu *self, const gchar *sid)
 {
 	G_ASSERT(self != NULL && sid != NULL);
 
-	return (JpfCu*)jpf_mods_container_get_guest_2(
+	return (NmpCu*)nmp_mods_container_get_guest_2(
 		self->container, sid);
 }
 
 
 void
-nmp_mod_cu_put_cu(JpfModCu *self, JpfCu *cu)
+nmp_mod_cu_put_cu(NmpModCu *self, NmpCu *cu)
 {
 	G_ASSERT(self != NULL && cu != NULL);
 
-	jpf_mods_container_put_guest(
-		self->container, (JpfGuestBase*)cu);
+	nmp_mods_container_put_guest(
+		self->container, (NmpGuestBase*)cu);
 }
 
 
 gint
-nmp_mod_cu_del_cu(JpfModCu *self, JpfCu *cu)
+nmp_mod_cu_del_cu(NmpModCu *self, NmpCu *cu)
 {
 	G_ASSERT(self != NULL && cu != NULL);
 
-	return jpf_mods_container_del_guest(
-		self->container, (JpfGuestBase*)cu);
+	return nmp_mods_container_del_guest(
+		self->container, (NmpGuestBase*)cu);
 }
 
 
 gint
-nmp_mod_cu_del_cu_2(JpfModCu *self, JpfNetIO *io, JpfID *out)
+nmp_mod_cu_del_cu_2(NmpModCu *self, NmpNetIO *io, NmpID *out)
 {
 	G_ASSERT(self != NULL && io != NULL && out != NULL);
 
-	return jpf_mods_container_del_guest_2(self->container,
+	return nmp_mods_container_del_guest_2(self->container,
 		io, out);
 }
 
 
 gint
-nmp_mod_cu_sync_req(JpfModCu *self, NmpMsgID msg_id,
+nmp_mod_cu_sync_req(NmpModCu *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size)
 {
 	gint err = 0;
-	JpfMsgErrCode *res_info;
+	NmpMsgErrCode *res_info;
 	NmpSysMsg *msg;
 	G_ASSERT(self != NULL);
 
-	msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
+	msg = nmp_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
@@ -973,17 +973,17 @@ nmp_mod_cu_sync_req(JpfModCu *self, NmpMsgID msg_id,
 	err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
  	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModCu> request cmd %d failed!", msg_id
+		nmp_warning(
+			"<NmpModCu> request cmd %d failed!", msg_id
 		);
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 		return err;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModCu> request cmd %d timeout!", msg_id
+		nmp_warning(
+			"<NmpModCu> request cmd %d timeout!", msg_id
 		);
 		return -E_TIMEOUT;
 	}
@@ -995,41 +995,41 @@ nmp_mod_cu_sync_req(JpfModCu *self, NmpMsgID msg_id,
 		memcpy(res, MSG_GET_DATA(msg), res_size);
 
 	err = RES_CODE(res_info);
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 
 	return err;
 }
 
 
 gpointer
-nmp_mod_cu_sync_req_2(JpfModCu *self, NmpMsgID msg_id,
+nmp_mod_cu_sync_req_2(NmpModCu *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size)
 {
     gint err = 0;
-    JpfMsgErrCode *res_info;
+    NmpMsgErrCode *res_info;
     gpointer res;
     NmpSysMsg *msg;
     guint len;
 
     G_ASSERT(self != NULL);
 
-    msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
+    msg = nmp_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
     if (G_UNLIKELY(!msg))
     	return NULL;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    len = sizeof(JpfMsgErrCode);
+    len = sizeof(NmpMsgErrCode);
 
     err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(err))	/* send failed */
     {
-    	jpf_warning(
-    		"<JpfModCu> request cmd %d failed!", msg_id
+    	nmp_warning(
+    		"<NmpModCu> request cmd %d failed!", msg_id
     	);
 
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
 
-    	res_info = jpf_mem_kalloc(len);
+    	res_info = nmp_mem_kalloc(len);
     	if (res_info)
     	{
     		SET_CODE(res_info, err);
@@ -1041,10 +1041,10 @@ nmp_mod_cu_sync_req_2(JpfModCu *self, NmpMsgID msg_id,
 
     if (G_UNLIKELY(!msg))	/* sent, but no response */
     {
-        jpf_warning(
-    		"<JpfModCu> request cmd %d timeout!", msg_id
+        nmp_warning(
+    		"<NmpModCu> request cmd %d timeout!", msg_id
     	 );
-    	 res_info = jpf_mem_kalloc(len);
+    	 res_info = nmp_mem_kalloc(len);
     	 err = -E_TIMEOUT;
         if (res_info)
     	{
@@ -1057,20 +1057,20 @@ nmp_mod_cu_sync_req_2(JpfModCu *self, NmpMsgID msg_id,
     res = MSG_GET_DATA(msg);
     if (!res)
     {
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
     	return NULL;
     }
 
-    res_info = jpf_mem_kalloc(MSG_DATA_SIZE(msg));
+    res_info = nmp_mem_kalloc(MSG_DATA_SIZE(msg));
     if (G_UNLIKELY(!res_info))
     {
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
     	return NULL;
     }
 
     *res_size =  MSG_DATA_SIZE(msg);
     memcpy(res_info, res, *res_size);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return res_info;
 }
@@ -1078,28 +1078,28 @@ nmp_mod_cu_sync_req_2(JpfModCu *self, NmpMsgID msg_id,
 //#define TEST_CODES
 #ifdef TEST_CODES
 static __inline__ void
-__nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
+__nmp_mod_cu_deliver_to_usr(NmpModCu *self, NmpUsr *usr, NmpSysMsg *msg)
 {
-	JpfCu *cu;
+	NmpCu *cu;
 	LIST_HEAD *list;
 	NmpSysMsg *msg_copy;
  	gint i;
 
 	list_for_each(list, &usr->list_session)
 	{
-		cu = list_entry(list, JpfCu, list);
+		cu = list_entry(list, NmpCu, list);
 		for (i = 0; i <5000; i++)
 		{
-	    		msg_copy = jpf_sysmsg_copy_one(msg);
+	    		msg_copy = nmp_sysmsg_copy_one(msg);
 	    		if (!msg_copy)
 	    		{
-	    			jpf_error(
-	    				"<JpfModCu> copy sys-msg failed while delivering msg to cu."
+	    			nmp_error(
+	    				"<NmpModCu> copy sys-msg failed while delivering msg to cu."
 	    			);
 	    			FATAL_ERROR_EXIT;
 	    		}
 
-	    		jpf_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
+	    		nmp_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
 	    		nmp_app_obj_deliver_in((NmpAppObj*)self, msg_copy);
 	    		if (i%100 == 0)
 	    		 usleep(200*1000);
@@ -1110,25 +1110,25 @@ __nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
 #else
 
 static __inline__ void
-__nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
+__nmp_mod_cu_deliver_to_usr(NmpModCu *self, NmpUsr *usr, NmpSysMsg *msg)
 {
-	JpfCu *cu;
+	NmpCu *cu;
 	LIST_HEAD *list;
 	NmpSysMsg *msg_copy;
 
 	list_for_each(list, &usr->list_session)
 	{
-		cu = list_entry(list, JpfCu, list);
-		msg_copy = jpf_sysmsg_copy_one(msg);
+		cu = list_entry(list, NmpCu, list);
+		msg_copy = nmp_sysmsg_copy_one(msg);
 		if (!msg_copy)
 		{
-			jpf_error(
-				"<JpfModCu> copy sys-msg failed while delivering msg to cu."
+			nmp_error(
+				"<NmpModCu> copy sys-msg failed while delivering msg to cu."
 			);
 			FATAL_ERROR_EXIT;
 		}
 
-		jpf_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
+		nmp_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
 		nmp_app_obj_deliver_in((NmpAppObj*)self, msg_copy);
 	}
 }
@@ -1136,7 +1136,7 @@ __nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
 #endif
 
 static __inline__ void
-nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
+nmp_mod_cu_deliver_to_usr(NmpModCu *self, NmpUsr *usr, NmpSysMsg *msg)
 {
 	g_static_mutex_lock(&usr->list_slock);
 	__nmp_mod_cu_deliver_to_usr(self, usr, msg);
@@ -1145,14 +1145,14 @@ nmp_mod_cu_deliver_to_usr(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
 
 
 static __inline__ void
-__nmp_mod_cu_deliver_msg(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
+__nmp_mod_cu_deliver_msg(NmpModCu *self, const char *usr_name, NmpSysMsg *msg)
 {
-	JpfUsr *usr;
+	NmpUsr *usr;
 	LIST_HEAD *list;
 
 	list_for_each(list, &self->list_user)
 	{
-		usr = list_entry(list, JpfUsr, list);
+		usr = list_entry(list, NmpUsr, list);
 		if (!usr_name || !strcmp(usr_name, usr->user_name))
 			nmp_mod_cu_deliver_to_usr(self, usr, msg);
 	}
@@ -1160,7 +1160,7 @@ __nmp_mod_cu_deliver_msg(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
 
 
 void
-nmp_mod_cu_deliver_msg(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
+nmp_mod_cu_deliver_msg(NmpModCu *self, const char *usr_name, NmpSysMsg *msg)
 {
 	G_ASSERT(self != NULL && msg != NULL);
 
@@ -1171,21 +1171,21 @@ nmp_mod_cu_deliver_msg(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
 
 
 static __inline__ void
-__nmp_mod_cu_deliver_msg_2(JpfModCu *self, NmpSysMsg *msg)
+__nmp_mod_cu_deliver_msg_2(NmpModCu *self, NmpSysMsg *msg)
 {
-	JpfUsr *usr;
+	NmpUsr *usr;
 	LIST_HEAD *list;
 
 	list_for_each(list, &self->list_user)
 	{
-		usr = list_entry(list, JpfUsr, list);
+		usr = list_entry(list, NmpUsr, list);
 		nmp_mod_cu_deliver_to_usr(self, usr, msg);
 	}
 }
 
 
 void
-nmp_mod_cu_deliver_msg_2(JpfModCu *self, NmpSysMsg *msg)
+nmp_mod_cu_deliver_msg_2(NmpModCu *self, NmpSysMsg *msg)
 {
 	G_ASSERT(self != NULL && msg != NULL);
 
@@ -1195,34 +1195,34 @@ nmp_mod_cu_deliver_msg_2(JpfModCu *self, NmpSysMsg *msg)
 }
 
 static __inline__ void
-__nmp_mod_cu_deliver_to_usr_offline(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
+__nmp_mod_cu_deliver_to_usr_offline(NmpModCu *self, NmpUsr *usr, NmpSysMsg *msg)
 {
-    JpfCu *cu;
+    NmpCu *cu;
     LIST_HEAD *list;
     NmpSysMsg *msg_copy;
 
     list_for_each(list, &usr->list_session)
     {
-        cu = list_entry(list, JpfCu, list);
-        msg_copy = jpf_sysmsg_copy_one(msg);
+        cu = list_entry(list, NmpCu, list);
+        msg_copy = nmp_sysmsg_copy_one(msg);
         if (!msg_copy)
         {
-            jpf_error(
-            	"<JpfModCu> copy sys-msg failed while delivering msg to cu."
+            nmp_error(
+            	"<NmpModCu> copy sys-msg failed while delivering msg to cu."
             );
             FATAL_ERROR_EXIT;
         }
 
-        jpf_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
+        nmp_sysmsg_attach_io(msg_copy, IO_OF_GUEST(cu));
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg_copy);
-        nmp_mod_acc_release_io((JpfModAccess*)self,  IO_OF_GUEST(cu));
+        nmp_mod_acc_release_io((NmpModAccess*)self,  IO_OF_GUEST(cu));
         nmp_mod_container_del_io(self->container,  IO_OF_GUEST(cu));
     }
 }
 
 
 static __inline__ void
-nmp_mod_cu_deliver_to_usr_offline(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
+nmp_mod_cu_deliver_to_usr_offline(NmpModCu *self, NmpUsr *usr, NmpSysMsg *msg)
 {
 	g_static_mutex_lock(&usr->list_slock);
 	__nmp_mod_cu_deliver_to_usr_offline(self, usr, msg);
@@ -1230,14 +1230,14 @@ nmp_mod_cu_deliver_to_usr_offline(JpfModCu *self, JpfUsr *usr, NmpSysMsg *msg)
 }
 
 static __inline__ void
-__nmp_mod_cu_force_usr_offline(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
+__nmp_mod_cu_force_usr_offline(NmpModCu *self, const char *usr_name, NmpSysMsg *msg)
 {
-	JpfUsr *usr;
+	NmpUsr *usr;
 	LIST_HEAD *list;
 
 	list_for_each(list, &self->list_user)
 	{
-		usr = list_entry(list, JpfUsr, list);
+		usr = list_entry(list, NmpUsr, list);
 		if (!usr_name || !strcmp(usr_name, usr->user_name))
 		{
 			nmp_mod_cu_deliver_to_usr_offline(self, usr, msg);
@@ -1247,7 +1247,7 @@ __nmp_mod_cu_force_usr_offline(JpfModCu *self, const char *usr_name, NmpSysMsg *
 
 
 void
-nmp_mod_cu_force_usr_offline(JpfModCu *self, const char *usr_name, NmpSysMsg *msg)
+nmp_mod_cu_force_usr_offline(NmpModCu *self, const char *usr_name, NmpSysMsg *msg)
 {
 	G_ASSERT(self != NULL && msg != NULL);
 
@@ -1258,15 +1258,15 @@ nmp_mod_cu_force_usr_offline(JpfModCu *self, const char *usr_name, NmpSysMsg *ms
 
 
 static __inline__ void
-__nmp_mod_cu_force_usr_offline_by_group(JpfModCu *self,
+__nmp_mod_cu_force_usr_offline_by_group(NmpModCu *self,
     gint group_id, NmpSysMsg *msg)
 {
-	JpfUsr *usr;
+	NmpUsr *usr;
 	LIST_HEAD *list;
 
 	list_for_each(list, &self->list_user)
 	{
-		usr = list_entry(list, JpfUsr, list);
+		usr = list_entry(list, NmpUsr, list);
 		if (group_id == usr->group_id)
 		{
 			nmp_mod_cu_deliver_to_usr_offline(self, usr, msg);
@@ -1276,7 +1276,7 @@ __nmp_mod_cu_force_usr_offline_by_group(JpfModCu *self,
 
 
 void
-nmp_mod_cu_force_usr_offline_by_group(JpfModCu *self,
+nmp_mod_cu_force_usr_offline_by_group(NmpModCu *self,
     gint group_id, NmpSysMsg *msg)
 {
 	G_ASSERT(self != NULL && msg != NULL);
@@ -1288,14 +1288,14 @@ nmp_mod_cu_force_usr_offline_by_group(JpfModCu *self,
 
 
 static __inline__ void
-__nmp_mod_cu_all_user(JpfModCu *self, NmpSysMsg *msg)
+__nmp_mod_cu_all_user(NmpModCu *self, NmpSysMsg *msg)
 {
 	LIST_HEAD *l;
-	JpfUsr *user;
+	NmpUsr *user;
 
 	list_for_each(l, &self->list_user)
 	{
-		user = list_entry(l, JpfUsr, list);
+		user = list_entry(l, NmpUsr, list);
 		{
             nmp_mod_cu_deliver_msg(self, user->user_name, msg);
 		}
@@ -1305,19 +1305,19 @@ __nmp_mod_cu_all_user(JpfModCu *self, NmpSysMsg *msg)
 
 
 void
-nmp_mod_cu_broadcast_to_all_user(JpfModCu *self, NmpSysMsg *msg)
+nmp_mod_cu_broadcast_to_all_user(NmpModCu *self, NmpSysMsg *msg)
 {
 	 __nmp_mod_cu_all_user(self, msg);
 }
 
 
 void
-nmp_mod_cu_broadcast_generic_msg(JpfModCu *self, gint id, gchar *parm1,
+nmp_mod_cu_broadcast_generic_msg(NmpModCu *self, gint id, gchar *parm1,
 	gchar *parm2, gchar *parm3, gchar *content)
 {
     NmpSysMsg *broadcast_msg;
     int seq;
-    JpfNotifyMessage general_msg;
+    NmpNotifyMessage general_msg;
 
     memset(&general_msg, 0, sizeof(general_msg));
     general_msg.msg_id = id;
@@ -1331,25 +1331,25 @@ nmp_mod_cu_broadcast_generic_msg(JpfModCu *self, gint id, gchar *parm1,
 	strncpy(general_msg.content, content, DESCRIPTION_INFO_LEN - 1);
 
     seq = time(NULL);
-    broadcast_msg = jpf_sysmsg_new_2(MESSAGE_BROADCAST_GENERAL_MSG, &general_msg, sizeof(general_msg), seq);
+    broadcast_msg = nmp_sysmsg_new_2(MESSAGE_BROADCAST_GENERAL_MSG, &general_msg, sizeof(general_msg), seq);
     if (broadcast_msg)
     {
         nmp_mod_cu_broadcast_to_all_user(self, broadcast_msg);
-	 jpf_sysmsg_destroy(broadcast_msg);
+	 nmp_sysmsg_destroy(broadcast_msg);
     }
 }
 
 
 static __inline__ void
-__nmp_mod_cu_update_usr_group_permissions(JpfModCu *self,
+__nmp_mod_cu_update_usr_group_permissions(NmpModCu *self,
     gint group_id, gint permission, gint rank)
 {
-	JpfUsrGroup *usr_group;
+	NmpUsrGroup *usr_group;
 	LIST_HEAD *list;
 
 	list_for_each(list, &self->list_group)
 	{
-		usr_group = list_entry(list, JpfUsrGroup, list);
+		usr_group = list_entry(list, NmpUsrGroup, list);
 		if (group_id == usr_group->id)
 		{
 			usr_group->rank = rank;
@@ -1360,7 +1360,7 @@ __nmp_mod_cu_update_usr_group_permissions(JpfModCu *self,
 
 
 void
-nmp_mod_cu_update_usr_group_permissions(JpfModCu *self,
+nmp_mod_cu_update_usr_group_permissions(NmpModCu *self,
     gint group_id, gint permission, gint rank)
 {
 	G_ASSERT(self != NULL);

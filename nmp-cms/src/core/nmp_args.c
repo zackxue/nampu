@@ -4,7 +4,7 @@
 #include "nmp_args.h"
 #include "nmp_version.h"
 
-void jpf_print_help_manual()
+void nmp_print_help_manual()
 {
 	const char* p_manual_msg =
 	"CMS(Center Management Server) Help Manual.\n"
@@ -22,7 +22,7 @@ void jpf_print_help_manual()
 	printf("%s", p_manual_msg);
 }
 
-void jpf_print_usage()
+void nmp_print_usage()
 {
 	const char* p_usage_msg =
 	"Usage: cms [-hvH]\n"
@@ -30,7 +30,7 @@ void jpf_print_usage()
 	printf("%s", p_usage_msg);
 }
 
-void jpf_print_version()
+void nmp_print_version()
 {
 	printf(
 		"Center Management Server(CMS)\n"
@@ -56,7 +56,7 @@ static struct option optlongs[] =
 
 
 
-void jpf_process_main_args(int argc, char* argv[])
+void nmp_process_main_args(int argc, char* argv[])
 {
 	int opt;
 
@@ -67,24 +67,24 @@ void jpf_process_main_args(int argc, char* argv[])
 		{
 			case 'h':
 			{
-				jpf_print_usage();
+				nmp_print_usage();
 				exit(0);
 			}
 			case 'H':
 			{
-				jpf_print_help_manual();
+				nmp_print_help_manual();
 				exit(0);
 			}
 			case 'v':
 			{
-				jpf_print_version();
+				nmp_print_version();
 				exit(0);
 			}
 
 			case ':':
 			case '?':
 			{
-				jpf_print_usage();
+				nmp_print_usage();
 				exit(1);
 			}
 		}//switch

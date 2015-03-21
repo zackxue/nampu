@@ -12,27 +12,27 @@ G_BEGIN_DECLS
 #define NMP_IS_MODIVS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODIVS))
 #define NMP_IS_MODIVS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODIVS))
 #define NMP_MODIVS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODIVS, JpfModIvs))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODIVS, NmpModIvs))
 #define NMP_MODIVS_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODIVS, JpfModIvsClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODIVS, NmpModIvsClass))
 #define NMP_MODIVS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODIVS, JpfModIvsClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODIVS, NmpModIvsClass))
 
-typedef struct _JpfModIvs JpfModIvs;
-typedef struct _JpfModIvsClass JpfModIvsClass;
-struct _JpfModIvs
+typedef struct _NmpModIvs NmpModIvs;
+typedef struct _NmpModIvsClass NmpModIvsClass;
+struct _NmpModIvs
 {
-	JpfModAccess		parent_object;
+	NmpModAccess		parent_object;
 
-	JpfGuestContainer	*container;
-	JpfNetIO			*listen_io;
+	NmpGuestContainer	*container;
+	NmpNetIO			*listen_io;
 
 };
 
 
-struct _JpfModIvsClass
+struct _NmpModIvsClass
 {
-	JpfModAccessClass	parent_class;
+	NmpModAccessClass	parent_class;
 };
 
 
@@ -40,20 +40,20 @@ GType nmp_mod_ivs_get_type( void );
 
 
 gint
-nmp_mod_ivs_new_ivs(JpfModIvs *self, JpfNetIO *io, const gchar *id,
-	JpfID *conflict);
+nmp_mod_ivs_new_ivs(NmpModIvs *self, NmpNetIO *io, const gchar *id,
+	NmpID *conflict);
 
 gint
-nmp_mod_ivs_sync_req(JpfModIvs *self, NmpMsgID msg_id,
+nmp_mod_ivs_sync_req(NmpModIvs *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size);
 
 gpointer
-nmp_mod_ivs_sync_req_2(JpfModIvs *self, NmpMsgID msg_id,
+nmp_mod_ivs_sync_req_2(NmpModIvs *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size);
 
 void
 nmp_mod_ivs_change_ivs_online_status(NmpAppObj *app_obj,
-    JpfMsgIvsOnlineChange notify_info);
+    NmpMsgIvsOnlineChange notify_info);
 
 G_END_DECLS
 

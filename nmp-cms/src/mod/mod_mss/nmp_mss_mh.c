@@ -13,11 +13,11 @@ USING_MSG_ID_MAP(cms);
 //static guint msg_seq_generator = 0;
 
 static __inline__ gint
-nmp_mod_mss_mss_register(JpfModMss *self, JpfNetIO *io,  NmpMsgID msg_id,
-    JpfMssRegister *req, JpfMssRegisterRes *res)
+nmp_mod_mss_mss_register(NmpModMss *self, NmpNetIO *io,  NmpMsgID msg_id,
+    NmpMssRegister *req, NmpMssRegisterRes *res)
 {
     gint ret;
-    JpfID conflict;
+    NmpID conflict;
 
     G_ASSERT(self != NULL && io != NULL && req != NULL && res != NULL);
 
@@ -26,7 +26,7 @@ nmp_mod_mss_mss_register(JpfModMss *self, JpfNetIO *io,  NmpMsgID msg_id,
         return ret;
 
     ret = nmp_mod_mss_sync_req(self, msg_id, req,
-         sizeof(JpfMssRegister), res, sizeof(JpfMssRegisterRes));
+         sizeof(NmpMssRegister), res, sizeof(NmpMssRegisterRes));
 
     return ret;
 }
@@ -35,19 +35,19 @@ nmp_mod_mss_mss_register(JpfModMss *self, JpfNetIO *io,  NmpMsgID msg_id,
 NmpMsgFunRet
 nmp_mod_mss_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfMssRegister *req_info;
-    JpfMssRegisterRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpMssRegister *req_info;
+    NmpMssRegisterRes res_info;
     NmpMsgID msg_id;
-    JpfGuestBase *mss_base;
-    JpfMss *mss;
-    JpfMsgMssOnlineChange notify_info;
+    NmpGuestBase *mss_base;
+    NmpMss *mss;
+    NmpMsgMssOnlineChange notify_info;
     gint ret;
     gchar *mss_ip;
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -71,45 +71,45 @@ nmp_mod_mss_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
  mss_register_err:
     if (ret)
     {
-        jpf_print(
-            "<JpfModMss> mss:%s register failed, err:%d",
+        nmp_print(
+            "<NmpModMss> mss:%s register failed, err:%d",
             req_info->mss_id, -ret
         );
 
         SET_CODE(&res_info, -ret);
         MSG_SET_RESPONSE(msg);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_acc_release_io((NmpModAccess*)self, io);
         nmp_mod_container_del_io(self->container, io);
 
         return MFR_ACCEPTED;
     }
 
-    mss_base = jpf_mods_container_get_guest(self->container, io);
+    mss_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-	 jpf_warning("<JpfModMss> Can't find mss:'%s' in container, io timeout?", notify_info.mss_id);
+	 nmp_warning("<NmpModMss> Can't find mss:'%s' in container, io timeout?", notify_info.mss_id);
     }
     else
    {
-        mss = (JpfMss *)mss_base;
+        mss = (NmpMss *)mss_base;
         mss->mss_state = STAT_MSS_ONLINE;
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 
-        jpf_print(
-             "<JpfModMss> mss:%s register ok",
+        nmp_print(
+             "<NmpModMss> mss:%s register ok",
              req_info->mss_id
          );
 
-        strncpy(res_info.domain_id, jpf_get_local_domain_id(), DOMAIN_ID_LEN - 1);
+        strncpy(res_info.domain_id, nmp_get_local_domain_id(), DOMAIN_ID_LEN - 1);
 
-        jpf_check_keepalive_time(&res_info.keep_alive_time);
-        jpf_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
+        nmp_check_keepalive_time(&res_info.keep_alive_time);
+        nmp_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
 
-        mss_ip = jpf_net_get_io_peer_name(io);
+        mss_ip = nmp_net_get_io_peer_name(io);
         if (G_LIKELY(mss_ip))
         {
              strncpy(notify_info.mss_ip, mss_ip, MAX_IP_LEN - 1);
@@ -121,7 +121,7 @@ nmp_mod_mss_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     SET_CODE(&res_info, -ret);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 
 }
@@ -130,16 +130,16 @@ nmp_mod_mss_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssHeart *req_info;
-    JpfMssHeartRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssHeart *req_info;
+    NmpMssHeartRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -152,26 +152,26 @@ nmp_mod_mss_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (!(res_cap.module_bits&MODULE_MSS_BIT))
     {
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_acc_release_io((NmpModAccess*)self, io);
         nmp_mod_container_del_io(self->container, io);
         return MFR_ACCEPTED;
     }
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
-        jpf_get_utc_time(res_info.server_time);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_get_utc_time(res_info.server_time);
+        nmp_mods_container_put_guest(self->container, mss_base);
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -181,15 +181,15 @@ NmpMsgFunRet
 nmp_mod_mss_get_guid_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssGetGuid *req_info;
-    JpfMssGetGuidRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssGetGuid *req_info;
+    NmpMssGetGuidRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -198,41 +198,41 @@ nmp_mod_mss_get_guid_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
 
 
 NmpMsgFunRet
-nmp_mod_mss_backward(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str)
+nmp_mod_mss_backward(NmpModMss *self, NmpSysMsg *msg, const gchar *id_str)
 {
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    mss_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -241,29 +241,29 @@ nmp_mod_mss_backward(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str)
     BUG_ON(!io);
 
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
 NmpMsgFunRet
-nmp_mod_mss_backward_2(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
+nmp_mod_mss_backward_2(NmpModMss *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
 {
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
     gint msg_id;
-    JpfErrRes      code;
+    NmpErrRes      code;
 
     memset(&code, 0, sizeof(code));
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    mss_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        //jpf_sysmsg_destroy(msg);
+        //nmp_sysmsg_destroy(msg);
 
 
         SET_CODE(&code.code, E_NOSUCHGUEST);
@@ -271,7 +271,7 @@ nmp_mod_mss_backward_2(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str, con
             memcpy(code.session, session_id, USER_NAME_LEN - 1);
 
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_BSS);
-        jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+        nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
         MSG_SET_RESPONSE(msg);
         return MFR_DELIVER_BACK;
     }
@@ -279,8 +279,8 @@ nmp_mod_mss_backward_2(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str, con
     io = IO_OF_GUEST(mss_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -290,10 +290,10 @@ nmp_mod_mss_backward_2(JpfModMss *self, NmpSysMsg *msg, const gchar *id_str, con
 NmpMsgFunRet
 nmp_mod_mss_get_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfMssGetGuidRes *res_info;
+    NmpModMss *self;
+    NmpMssGetGuidRes *res_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -305,15 +305,15 @@ NmpMsgFunRet
 nmp_mod_mss_get_record_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssGetRecordPolicy *req_info;
-    JpfMssGetRecordPolicyRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssGetRecordPolicy *req_info;
+    NmpMssGetRecordPolicyRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -322,22 +322,22 @@ nmp_mod_mss_get_record_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -346,10 +346,10 @@ nmp_mod_mss_get_record_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_record_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfMssGetRecordPolicyRes *res_info;
+    NmpModMss *self;
+    NmpMssGetRecordPolicyRes *res_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -360,10 +360,10 @@ nmp_mod_mss_get_record_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_notify_policy_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfNotifyPolicyChange *res_info = NULL;
-    JpfModMss *self;
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpNotifyPolicyChange *res_info = NULL;
+    NmpModMss *self;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
     gint msg_id;
 
     self = NMP_MODMSS(app_obj);
@@ -371,12 +371,12 @@ nmp_mod_mss_notify_policy_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!res_info);
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, res_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, res_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), res_info->mss_id);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -384,8 +384,8 @@ nmp_mod_mss_notify_policy_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     io = IO_OF_GUEST(mss_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -394,27 +394,27 @@ nmp_mod_mss_notify_policy_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_gu_list_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGuestBase *mss_base;
+    NmpModMss *self;
+    NmpGuestBase *mss_base;
     gint msg_id;
-    JpfMssId *req_info = NULL;
+    NmpMssId *req_info = NULL;
 
     self = NMP_MODMSS(app_obj);
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), req_info->mss_id);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
-    jpf_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -424,15 +424,15 @@ NmpMsgFunRet
 nmp_mod_mss_get_route_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssGetRoute *req_info;
-    JpfMssGetRouteRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssGetRoute *req_info;
+    NmpMssGetRouteRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -441,22 +441,22 @@ nmp_mod_mss_get_route_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -465,10 +465,10 @@ nmp_mod_mss_get_route_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_route_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfMssGetRouteRes *res_info;
+    NmpModMss *self;
+    NmpMssGetRouteRes *res_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -480,15 +480,15 @@ NmpMsgFunRet
 nmp_mod_mss_get_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssGetMds *req_info;
-    JpfMssGetMdsRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssGetMds *req_info;
+    NmpMssGetMdsRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -497,22 +497,22 @@ nmp_mod_mss_get_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -521,10 +521,10 @@ nmp_mod_mss_get_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfMssGetMdsRes *res_info;
+    NmpModMss *self;
+    NmpMssGetMdsRes *res_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -536,15 +536,15 @@ NmpMsgFunRet
 nmp_mod_mss_get_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfMssGetMdsIp *req_info;
-    JpfMssGetMdsIpRes res_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpMssGetMdsIp *req_info;
+    NmpMssGetMdsIpRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -553,22 +553,22 @@ nmp_mod_mss_get_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -577,10 +577,10 @@ nmp_mod_mss_get_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfMssGetMdsIpRes *res_info;
+    NmpModMss *self;
+    NmpMssGetMdsIpRes *res_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -588,20 +588,20 @@ nmp_mod_mss_get_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 }
 
 gint
-nmp_mod_mss_forward(JpfModMss *self, NmpSysMsg *msg)
+nmp_mod_mss_forward(NmpModMss *self, NmpSysMsg *msg)
 {
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
 
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    mss_base = jpf_mods_container_get_guest(self->container, io);
+    mss_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!mss_base))
         return -E_NOSUCHGUEST;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_BSS);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return 0;
 }
@@ -611,11 +611,11 @@ NmpMsgFunRet
 nmp_mod_mss_add_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfAddHdGroupRes *res_info;
+    NmpModMss *self;
+    NmpAddHdGroupRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -624,8 +624,8 @@ nmp_mod_mss_add_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-        jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+        nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -636,10 +636,10 @@ nmp_mod_mss_add_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_add_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfAddHdGroup *req_info;
+    NmpModMss *self;
+    NmpAddHdGroup *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -651,11 +651,11 @@ NmpMsgFunRet
 nmp_mod_mss_add_hd_to_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfAddHdToGroupRes *res_info;
+    NmpModMss *self;
+    NmpAddHdToGroupRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -664,8 +664,8 @@ nmp_mod_mss_add_hd_to_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -676,10 +676,10 @@ nmp_mod_mss_add_hd_to_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_add_hd_to_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfAddHdToGroup *req_info;
+    NmpModMss *self;
+    NmpAddHdToGroup *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -691,11 +691,11 @@ NmpMsgFunRet
 nmp_mod_mss_del_hd_from_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfDelHdFromGroupRes *res_info;
+    NmpModMss *self;
+    NmpDelHdFromGroupRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -704,8 +704,8 @@ nmp_mod_mss_del_hd_from_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -716,10 +716,10 @@ nmp_mod_mss_del_hd_from_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_del_hd_from_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfDelHdFromGroup *req_info;
+    NmpModMss *self;
+    NmpDelHdFromGroup *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -731,11 +731,11 @@ NmpMsgFunRet
 nmp_mod_mss_reboot_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfRebootMssRes *res_info;
+    NmpModMss *self;
+    NmpRebootMssRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -744,8 +744,8 @@ nmp_mod_mss_reboot_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -756,10 +756,10 @@ nmp_mod_mss_reboot_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_reboot_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfRebootMss *req_info;
+    NmpModMss *self;
+    NmpRebootMss *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -771,11 +771,11 @@ NmpMsgFunRet
 nmp_mod_mss_query_all_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfQueryAllHdGroupRes *res_info;
+    NmpModMss *self;
+    NmpQueryAllHdGroupRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -784,8 +784,8 @@ nmp_mod_mss_query_all_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -796,10 +796,10 @@ nmp_mod_mss_query_all_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_query_all_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfQueryAllHdGroup *req_info;
+    NmpModMss *self;
+    NmpQueryAllHdGroup *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -811,11 +811,11 @@ NmpMsgFunRet
 nmp_mod_mss_query_hd_group_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfQueryHdGroupInfoRes *res_info;
+    NmpModMss *self;
+    NmpQueryHdGroupInfoRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -824,8 +824,8 @@ nmp_mod_mss_query_hd_group_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -836,10 +836,10 @@ nmp_mod_mss_query_hd_group_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_query_hd_group_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfQueryHdGroupInfo *req_info;
+    NmpModMss *self;
+    NmpQueryHdGroupInfo *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -851,11 +851,11 @@ NmpMsgFunRet
 nmp_mod_mss_query_all_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfQueryAllHdRes *res_info;
+    NmpModMss *self;
+    NmpQueryAllHdRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -864,8 +864,8 @@ nmp_mod_mss_query_all_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -876,10 +876,10 @@ nmp_mod_mss_query_all_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_query_all_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfQueryAllHd *req_info;
+    NmpModMss *self;
+    NmpQueryAllHd *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -891,11 +891,11 @@ NmpMsgFunRet
 nmp_mod_mss_del_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfDelHdGroupRes *res_info;
+    NmpModMss *self;
+    NmpDelHdGroupRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -904,8 +904,8 @@ nmp_mod_mss_del_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -916,10 +916,10 @@ nmp_mod_mss_del_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_del_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfDelHdGroup *req_info;
+    NmpModMss *self;
+    NmpDelHdGroup *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -931,11 +931,11 @@ NmpMsgFunRet
 nmp_mod_mss_get_hd_format_progress_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfGetHdFormatProgressRes *res_info;
+    NmpModMss *self;
+    NmpGetHdFormatProgressRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -944,8 +944,8 @@ nmp_mod_mss_get_hd_format_progress_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -956,10 +956,10 @@ nmp_mod_mss_get_hd_format_progress_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_hd_format_progress_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetHdFormatProgress *req_info;
+    NmpModMss *self;
+    NmpGetHdFormatProgress *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -971,29 +971,29 @@ nmp_mod_mss_get_hd_format_progress_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetStoreLogRes *res_info;
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpModMss *self;
+    NmpGetStoreLogRes *res_info;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    mss_base = jpf_mods_container_get_guest(self->container, io);
+    mss_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!mss_base))
     {
         SET_CODE(&res_info->code, E_NOSUCHGUEST);
-        jpf_warning("<JpfModMss> mssId: No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> mssId: No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -1002,29 +1002,29 @@ nmp_mod_mss_get_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetMssStoreLog *req_info;
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpModMss *self;
+    NmpGetMssStoreLog *req_info;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
     gint msg_id;
-    JpfErrRes      code;
+    NmpErrRes      code;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
     memset(&code, 0, sizeof(code));
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, req_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, req_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), req_info->mss_id);
 
         SET_CODE(&code.code, E_NOSUCHGUEST);
         memcpy(code.session, req_info->session, SESSION_ID_LEN - 1);
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-        jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+        nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
         MSG_SET_RESPONSE(msg);
         return MFR_DELIVER_BACK;
     }
@@ -1032,8 +1032,8 @@ nmp_mod_mss_get_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     io = IO_OF_GUEST(mss_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -1043,11 +1043,11 @@ NmpMsgFunRet
 nmp_mod_mss_query_gu_record_status_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfQueryGuRecordStatusRes *res_info;
+    NmpModMss *self;
+    NmpQueryGuRecordStatusRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1056,8 +1056,8 @@ nmp_mod_mss_query_gu_record_status_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1068,10 +1068,10 @@ nmp_mod_mss_query_gu_record_status_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_query_gu_record_status_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfQueryGuRecordStatus *req_info;
+    NmpModMss *self;
+    NmpQueryGuRecordStatus *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1082,10 +1082,10 @@ nmp_mod_mss_query_gu_record_status_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_notify_mss_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfChangeMss *res_info = NULL;
-    JpfModMss *self;
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpChangeMss *res_info = NULL;
+    NmpModMss *self;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
     gint msg_id;
 
     self = NMP_MODMSS(app_obj);
@@ -1093,20 +1093,20 @@ nmp_mod_mss_notify_mss_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!res_info);
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container, res_info->mss_id);
+    mss_base = nmp_mods_container_get_guest_2(self->container, res_info->mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), res_info->mss_id);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
     io = IO_OF_GUEST(mss_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -1115,28 +1115,28 @@ nmp_mod_mss_notify_mss_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_alarm_link_record_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGuestBase *mss_base;
+    NmpModMss *self;
+    NmpGuestBase *mss_base;
     gint msg_id;
-    JpfAmsActionRecord *req_info = NULL;
+    NmpAmsActionRecord *req_info = NULL;
 
     self = NMP_MODMSS(app_obj);
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container,
+    mss_base = nmp_mods_container_get_guest_2(self->container,
 		req_info->mss_id.mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), req_info->mss_id.mss_id);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
-    jpf_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -1145,28 +1145,28 @@ nmp_mod_mss_alarm_link_record_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_alarm_link_snapshot_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGuestBase *mss_base;
+    NmpModMss *self;
+    NmpGuestBase *mss_base;
     gint msg_id;
-    JpfAmsActionSnapshot *req_info = NULL;
+    NmpAmsActionSnapshot *req_info = NULL;
 
     self = NMP_MODMSS(app_obj);
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
     msg_id = MSG_GETID(msg);
-    mss_base = jpf_mods_container_get_guest_2(self->container,
+    mss_base = nmp_mods_container_get_guest_2(self->container,
 		req_info->mss_id.mss_id);
     if (G_UNLIKELY(!mss_base))
     {
-        jpf_warning("<JpfModMss> deliver msg '%s' failed, MssId:%s no such mss.",
+        nmp_warning("<NmpModMss> deliver msg '%s' failed, MssId:%s no such mss.",
             MESSAGE_ID_TO_STR(cms, msg_id), req_info->mss_id.mss_id);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
-    jpf_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_sysmsg_attach_io(msg, IO_OF_GUEST(mss_base));
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -1176,11 +1176,11 @@ NmpMsgFunRet
 nmp_mod_mss_get_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfGetInitNameRes *res_info;
+    NmpModMss *self;
+    NmpGetInitNameRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1189,8 +1189,8 @@ nmp_mod_mss_get_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1201,10 +1201,10 @@ nmp_mod_mss_get_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_initiator_name_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetInitName *req_info;
+    NmpModMss *self;
+    NmpGetInitName *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1216,11 +1216,11 @@ NmpMsgFunRet
 nmp_mod_mss_set_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfSetInitNameRes *res_info;
+    NmpModMss *self;
+    NmpSetInitNameRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1229,8 +1229,8 @@ nmp_mod_mss_set_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1241,10 +1241,10 @@ nmp_mod_mss_set_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_set_initiator_name_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfSetInitName *req_info;
+    NmpModMss *self;
+    NmpSetInitName *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1256,11 +1256,11 @@ NmpMsgFunRet
 nmp_mod_mss_get_ipsan_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfGetIpsanInfoRes *res_info;
+    NmpModMss *self;
+    NmpGetIpsanInfoRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1269,8 +1269,8 @@ nmp_mod_mss_get_ipsan_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1281,10 +1281,10 @@ nmp_mod_mss_get_ipsan_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_ipsan_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetIpsanInfo *req_info;
+    NmpModMss *self;
+    NmpGetIpsanInfo *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1296,11 +1296,11 @@ NmpMsgFunRet
 nmp_mod_mss_add_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfAddOneIpsanRes *res_info;
+    NmpModMss *self;
+    NmpAddOneIpsanRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1309,8 +1309,8 @@ nmp_mod_mss_add_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1321,10 +1321,10 @@ nmp_mod_mss_add_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_add_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfAddOneIpsan *req_info;
+    NmpModMss *self;
+    NmpAddOneIpsan *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1336,11 +1336,11 @@ NmpMsgFunRet
 nmp_mod_mss_delete_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfDeleteOneIpsanRes *res_info;
+    NmpModMss *self;
+    NmpDeleteOneIpsanRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1349,8 +1349,8 @@ nmp_mod_mss_delete_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1361,10 +1361,10 @@ nmp_mod_mss_delete_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_delete_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfDeleteOneIpsan *req_info;
+    NmpModMss *self;
+    NmpDeleteOneIpsan *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1376,11 +1376,11 @@ NmpMsgFunRet
 nmp_mod_mss_get_one_ipsan_detail_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfGetOneIpsanDetailRes *res_info;
+    NmpModMss *self;
+    NmpGetOneIpsanDetailRes *res_info;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -1389,8 +1389,8 @@ nmp_mod_mss_get_one_ipsan_detail_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (ret)
     {
         SET_CODE(res_info, -ret);
-        jpf_warning("<JpfModMss> No such guest.");
-	 jpf_sysmsg_destroy(msg);
+        nmp_warning("<NmpModMss> No such guest.");
+	 nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -1401,10 +1401,10 @@ nmp_mod_mss_get_one_ipsan_detail_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_mss_get_one_ipsan_detail_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModMss *self;
-    JpfGetOneIpsanDetail *req_info;
+    NmpModMss *self;
+    NmpGetOneIpsanDetail *req_info;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1416,14 +1416,14 @@ NmpMsgFunRet
 nmp_mod_mss_notify_message_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
-    JpfModMss *self;
-    JpfNetIO *io;
-    JpfGuestBase *mss_base;
-    JpfNotifyMessage *req_info;
+    NmpModMss *self;
+    NmpNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpNotifyMessage *req_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModMss*)app_obj;
+    self = (NmpModMss*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -1431,26 +1431,26 @@ nmp_mod_mss_notify_message_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    mss_base = jpf_mods_container_get_guest(self->container, io);
+    mss_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!mss_base))
     {
         ret = -E_NOSUCHGUEST;
-        //jpf_warning("<JpfModMss> mssId:%s No such guest.", req_info->mss_id);
+        //nmp_warning("<NmpModMss> mssId:%s No such guest.", req_info->mss_id);
     }
     else
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-        jpf_mods_container_put_guest(self->container, mss_base);
+        nmp_mods_container_put_guest(self->container, mss_base);
 	  return MFR_DELIVER_AHEAD;
     }
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
     return MFR_ACCEPTED;
 }
 
 
 void
-nmp_mod_mss_register_msg_handler(JpfModMss *self)
+nmp_mod_mss_register_msg_handler(NmpModMss *self)
 {
     NmpAppMod *super_self = (NmpAppMod*)self;
 

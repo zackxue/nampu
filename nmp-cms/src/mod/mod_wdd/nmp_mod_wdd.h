@@ -18,22 +18,22 @@ G_BEGIN_DECLS
 #define NMP_IS_MODWDD(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODWDD))
 #define NMP_IS_MODWDD_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODWDD))
 #define NMP_MODWDD(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODWDD, JpfModWdd))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODWDD, NmpModWdd))
 #define NMP_MODWDD_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODWDD, JpfModWddClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODWDD, NmpModWddClass))
 #define NMP_MODWDD_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODWDD, JpfModWddClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODWDD, NmpModWddClass))
 
 
-typedef struct _JpfModWdd JpfModWdd;
-typedef struct _JpfModWddClass JpfModWddClass;
+typedef struct _NmpModWdd NmpModWdd;
+typedef struct _NmpModWddClass NmpModWddClass;
 
-struct _JpfModWdd
+struct _NmpModWdd
 {
 	NmpAppMod	parent_object;
 };
 
-struct _JpfModWddClass
+struct _NmpModWddClass
 {
 	NmpAppModClass	parent_class;
 };
@@ -42,10 +42,10 @@ struct _JpfModWddClass
 GType nmp_mod_wdd_get_type(void);
 
 gint
-jpf_wdd_get_expired_time(JpfExpiredTime *expired_time);
+nmp_wdd_get_expired_time(NmpExpiredTime *expired_time);
 
 gint
-jpf_wdd_get_version();
+nmp_wdd_get_version();
 
 G_END_DECLS
 

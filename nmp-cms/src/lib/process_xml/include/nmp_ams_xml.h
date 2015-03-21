@@ -22,26 +22,26 @@
 #define AMS_GET_DEVICE_INFO_RESP	"AmsGetDeviceInfoResponse"
 
 
-JpfMsgInfo *
-jpf_parse_ams_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_ams_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_ams_register_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_ams_register_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_ams_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_ams_heart_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+NmpMsgInfo *
+nmp_parse_ams_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_ams_device_info_change(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_ams_get_device_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+nmp_create_ams_heart_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
 int
-jpf_create_ams_get_device_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_ams_device_info_change(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_ams_get_device_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_ams_get_device_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
 
 #endif  //__NMP_AMS_XML__

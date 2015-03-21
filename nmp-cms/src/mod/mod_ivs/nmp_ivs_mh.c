@@ -13,11 +13,11 @@ USING_MSG_ID_MAP(cms);
 //static guint msg_seq_generator = 0;
 
 static __inline__ gint
-nmp_mod_ivs_ivs_register(JpfModIvs *self, JpfNetIO *io,  NmpMsgID msg_id,
-    JpfIvsRegister *req, JpfIvsRegisterRes *res)
+nmp_mod_ivs_ivs_register(NmpModIvs *self, NmpNetIO *io,  NmpMsgID msg_id,
+    NmpIvsRegister *req, NmpIvsRegisterRes *res)
 {
     gint ret;
-    JpfID conflict;
+    NmpID conflict;
 
     G_ASSERT(self != NULL && io != NULL && req != NULL && res != NULL);
 
@@ -26,7 +26,7 @@ nmp_mod_ivs_ivs_register(JpfModIvs *self, JpfNetIO *io,  NmpMsgID msg_id,
         return ret;
 
     ret = nmp_mod_ivs_sync_req(self, msg_id, req,
-         sizeof(JpfIvsRegister), res, sizeof(JpfIvsRegisterRes));
+         sizeof(NmpIvsRegister), res, sizeof(NmpIvsRegisterRes));
 
     return ret;
 }
@@ -35,19 +35,19 @@ nmp_mod_ivs_ivs_register(JpfModIvs *self, JpfNetIO *io,  NmpMsgID msg_id,
 NmpMsgFunRet
 nmp_mod_ivs_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModIvs *self;
-    JpfNetIO *io;
-    JpfIvsRegister *req_info;
-    JpfIvsRegisterRes res_info;
+    NmpModIvs *self;
+    NmpNetIO *io;
+    NmpIvsRegister *req_info;
+    NmpIvsRegisterRes res_info;
     NmpMsgID msg_id;
-    JpfGuestBase *ivs_base;
-    JpfIvs *ivs;
-    JpfMsgIvsOnlineChange notify_info;
+    NmpGuestBase *ivs_base;
+    NmpIvs *ivs;
+    NmpMsgIvsOnlineChange notify_info;
     gint ret;
     gchar *ivs_ip;
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModIvs*)app_obj;
+    self = (NmpModIvs*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -71,45 +71,45 @@ nmp_mod_ivs_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
  //ivs_register_err:
     if (ret)
     {
-        jpf_print(
-            "<JpfModIvs> ivs:%s register failed, err:%d",
+        nmp_print(
+            "<NmpModIvs> ivs:%s register failed, err:%d",
             req_info->ivs_id, -ret
         );
 
         SET_CODE(&res_info, -ret);
         MSG_SET_RESPONSE(msg);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_acc_release_io((NmpModAccess*)self, io);
         nmp_mod_container_del_io(self->container, io);
 
         return MFR_ACCEPTED;
     }
 
-    ivs_base = jpf_mods_container_get_guest(self->container, io);
+    ivs_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!ivs_base))
     {
         ret = -E_NOSUCHGUEST;
-	 jpf_warning("<JpfModIvs> Can't find ivs:'%s' in container, io timeout?", notify_info.ivs_id);
+	 nmp_warning("<NmpModIvs> Can't find ivs:'%s' in container, io timeout?", notify_info.ivs_id);
     }
     else
    {
-        ivs = (JpfIvs *)ivs_base;
+        ivs = (NmpIvs *)ivs_base;
         ivs->ivs_state = STAT_IVS_ONLINE;
-        jpf_mods_container_put_guest(self->container, ivs_base);
+        nmp_mods_container_put_guest(self->container, ivs_base);
 
-        jpf_print(
-             "<JpfModIvs> ivs:%s register ok",
+        nmp_print(
+             "<NmpModIvs> ivs:%s register ok",
              req_info->ivs_id
          );
 
-        strncpy(res_info.domain_id, jpf_get_local_domain_id(), DOMAIN_ID_LEN - 1);
+        strncpy(res_info.domain_id, nmp_get_local_domain_id(), DOMAIN_ID_LEN - 1);
 
-        jpf_check_keepalive_time(&res_info.keep_alive_time);
-        jpf_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
+        nmp_check_keepalive_time(&res_info.keep_alive_time);
+        nmp_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
 
-        ivs_ip = jpf_net_get_io_peer_name(io);
+        ivs_ip = nmp_net_get_io_peer_name(io);
         if (G_LIKELY(ivs_ip))
         {
              strncpy(notify_info.ivs_ip, ivs_ip, MAX_IP_LEN - 1);
@@ -121,7 +121,7 @@ nmp_mod_ivs_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     SET_CODE(&res_info, -ret);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 
 }
@@ -130,16 +130,16 @@ nmp_mod_ivs_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_ivs_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModIvs *self;
-    JpfNetIO *io;
-    JpfGuestBase *ivs_base;
-    JpfIvsHeart *req_info;
-    JpfIvsHeartRes res_info;
+    NmpModIvs *self;
+    NmpNetIO *io;
+    NmpGuestBase *ivs_base;
+    NmpIvsHeart *req_info;
+    NmpIvsHeartRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModIvs*)app_obj;
+    self = (NmpModIvs*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -152,45 +152,45 @@ nmp_mod_ivs_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     if (!(res_cap.module_bits&MODULE_IVS_BIT))
     {
         nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_acc_release_io((NmpModAccess*)self, io);
         nmp_mod_container_del_io(self->container, io);
         return MFR_ACCEPTED;
     }*/
     memset(&res_info, 0, sizeof(res_info));
-    ivs_base = jpf_mods_container_get_guest_2(self->container, req_info->ivs_id);
+    ivs_base = nmp_mods_container_get_guest_2(self->container, req_info->ivs_id);
     if (G_UNLIKELY(!ivs_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModIvs> ivsId:%s No such guest.", req_info->ivs_id);
+        nmp_warning("<NmpModIvs> ivsId:%s No such guest.", req_info->ivs_id);
     }
     else
     {
-        jpf_get_utc_time(res_info.server_time);
-        jpf_mods_container_put_guest(self->container, ivs_base);
+        nmp_get_utc_time(res_info.server_time);
+        nmp_mods_container_put_guest(self->container, ivs_base);
     }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
 
 
 NmpMsgFunRet
-nmp_mod_ivs_backward(JpfModIvs *self, NmpSysMsg *msg, const gchar *id_str)
+nmp_mod_ivs_backward(NmpModIvs *self, NmpSysMsg *msg, const gchar *id_str)
 {
-    JpfGuestBase *ivs_base;
-    JpfNetIO *io;
+    NmpGuestBase *ivs_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    ivs_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    ivs_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!ivs_base))
     {
-        jpf_warning("<JpfModIvs> deliver msg '%s' failed, IvsId:%s no such ivs.",
+        nmp_warning("<NmpModIvs> deliver msg '%s' failed, IvsId:%s no such ivs.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -199,29 +199,29 @@ nmp_mod_ivs_backward(JpfModIvs *self, NmpSysMsg *msg, const gchar *id_str)
     BUG_ON(!io);
 
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, ivs_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, ivs_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
 NmpMsgFunRet
-nmp_mod_ivs_backward_2(JpfModIvs *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
+nmp_mod_ivs_backward_2(NmpModIvs *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
 {
-    JpfGuestBase *ivs_base;
-    JpfNetIO *io;
+    NmpGuestBase *ivs_base;
+    NmpNetIO *io;
     gint msg_id;
-    JpfErrRes      code;
+    NmpErrRes      code;
 
     memset(&code, 0, sizeof(code));
     msg_id = MSG_GETID(msg);
-    ivs_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    ivs_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!ivs_base))
     {
-        jpf_warning("<JpfModIvs> deliver msg '%s' failed, IvsId:%s no such ivs.",
+        nmp_warning("<NmpModIvs> deliver msg '%s' failed, IvsId:%s no such ivs.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        //jpf_sysmsg_destroy(msg);
+        //nmp_sysmsg_destroy(msg);
 
 
         SET_CODE(&code.code, E_NOSUCHGUEST);
@@ -229,7 +229,7 @@ nmp_mod_ivs_backward_2(JpfModIvs *self, NmpSysMsg *msg, const gchar *id_str, con
             memcpy(code.session, session_id, USER_NAME_LEN - 1);
 
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-        jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+        nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
         MSG_SET_RESPONSE(msg);
         return MFR_DELIVER_BACK;
     }
@@ -237,35 +237,35 @@ nmp_mod_ivs_backward_2(JpfModIvs *self, NmpSysMsg *msg, const gchar *id_str, con
     io = IO_OF_GUEST(ivs_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, ivs_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, ivs_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
 gint
-nmp_mod_ivs_forward(JpfModIvs *self, NmpSysMsg *msg)
+nmp_mod_ivs_forward(NmpModIvs *self, NmpSysMsg *msg)
 {
-    JpfGuestBase *mss_base;
-    JpfNetIO *io;
+    NmpGuestBase *mss_base;
+    NmpNetIO *io;
 
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    mss_base = jpf_mods_container_get_guest(self->container, io);
+    mss_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!mss_base))
         return -E_NOSUCHGUEST;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-    jpf_mods_container_put_guest(self->container, mss_base);
+    nmp_mods_container_put_guest(self->container, mss_base);
 
     return 0;
 }
 
 
 void
-nmp_mod_ivs_register_msg_handler(JpfModIvs *self)
+nmp_mod_ivs_register_msg_handler(NmpModIvs *self)
 {
     NmpAppMod *super_self = (NmpAppMod*)self;
 

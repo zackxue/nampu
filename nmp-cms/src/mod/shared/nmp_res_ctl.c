@@ -6,16 +6,16 @@
 
 #define MAX_CONTROL_TIME   60
 
-JpfResourcesCap jpf_resource_cap;
+NmpResourcesCap nmp_resource_cap;
 
 
-void nmp_mod_init_resource(JpfResourcesCtl *res)
+void nmp_mod_init_resource(NmpResourcesCtl *res)
 {
-    memset(res, 0, sizeof(JpfResourcesCtl));
+    memset(res, 0, sizeof(NmpResourcesCtl));
 }
 
 
-gint  nmp_mod_ctl_resource(JpfResourcesCtl *res, gint type, gint weight)
+gint  nmp_mod_ctl_resource(NmpResourcesCtl *res, gint type, gint weight)
 {
 	time_t t = time(NULL);
 
@@ -32,49 +32,49 @@ gint  nmp_mod_ctl_resource(JpfResourcesCtl *res, gint type, gint weight)
 }
 
 
-static __inline__ void __nmp_mod_init_resource_cap(JpfResourcesCap *cap)
+static __inline__ void __nmp_mod_init_resource_cap(NmpResourcesCap *cap)
 {
-	memset(cap, 0, sizeof(JpfResourcesCap));
+	memset(cap, 0, sizeof(NmpResourcesCap));
 	cap->expired_time.type = WDD_AUTH_NO_SOFTDOG;
 }
 
 void nmp_mod_init_resource_cap()
 {
-	__nmp_mod_init_resource_cap(&jpf_resource_cap);
+	__nmp_mod_init_resource_cap(&nmp_resource_cap);
 }
 
 
 gint nmp_mod_get_capability_av()
 {
-	return jpf_resource_cap.av_count;
+	return nmp_resource_cap.av_count;
 }
 
 
 gint nmp_mod_get_capability_ds()
 {
-	return jpf_resource_cap.ds_count;
+	return nmp_resource_cap.ds_count;
 }
 
 
 gint nmp_mod_get_capability_ai()
 {
-	return jpf_resource_cap.ai_count;
+	return nmp_resource_cap.ai_count;
 }
 
 
 gint nmp_mod_get_capability_ao()
 {
-	return jpf_resource_cap.ao_count;
+	return nmp_resource_cap.ao_count;
 }
 
-void nmp_mod_set_resource_cap(JpfResourcesCap *res_cap)
+void nmp_mod_set_resource_cap(NmpResourcesCap *res_cap)
 {
-	memcpy(&jpf_resource_cap, res_cap, sizeof(jpf_resource_cap));;
+	memcpy(&nmp_resource_cap, res_cap, sizeof(nmp_resource_cap));;
 }
 
-void nmp_mod_get_resource_cap(JpfResourcesCap *req_cap)
+void nmp_mod_get_resource_cap(NmpResourcesCap *req_cap)
 {
-	memcpy(req_cap, &jpf_resource_cap, sizeof(jpf_resource_cap));;
+	memcpy(req_cap, &nmp_resource_cap, sizeof(nmp_resource_cap));;
 }
 
 

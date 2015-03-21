@@ -27,26 +27,26 @@ extern void nmp_cms_wdd_insert(void);
 extern void nmp_cms_log_insert(void);
 extern void nmp_init_xml_cmd(void);
 
-extern gint jpf_set_system_time_zone(gchar *zone);
+extern gint nmp_set_system_time_zone(gchar *zone);
 
 
 static __inline__ void
 nmp_cms_setup_signals( void )
 {
-	jpf_sig_setup_signals();
+	nmp_sig_setup_signals();
 }
 
 
 static __inline__ void
 nmp_cms_log_facility_init( void )
 {//TODO: PATH
-	jpf_debug_log_facility_init(
-		jpf_get_sys_parm_str(SYS_PARM_LOGFILEPATH),
-		"Jpf-cms.log"
+	nmp_debug_log_facility_init(
+		nmp_get_sys_parm_str(SYS_PARM_LOGFILEPATH),
+		"Nmp-cms.log"
 	);
-	jpf_tw_init_log_path(
-		jpf_get_sys_parm_str(SYS_PARM_LOGFILEPATH),
-		"Jpf-cms-tw.log"
+	nmp_tw_init_log_path(
+		nmp_get_sys_parm_str(SYS_PARM_LOGFILEPATH),
+		"Nmp-cms-tw.log"
 	);
 }
 
@@ -61,7 +61,7 @@ nmp_cms_open_core_facility( void )
 
 	if (setrlimit(RLIMIT_CORE, &rli) < 0)
 	{
-		jpf_error("<main> set core resource limit error!");
+		nmp_error("<main> set core resource limit error!");
 		FATAL_ERROR_EXIT;
 	}
 }
@@ -71,7 +71,7 @@ static __inline__ void
 nmp_cms_running_env_init( void )
 {
 #ifndef G_THREADS_ENABLED
-	jpf_error("<main> CMS compiled without 'G_THREADS_ENABLED' defined!");
+	nmp_error("<main> CMS compiled without 'G_THREADS_ENABLED' defined!");
 	FATAL_ERROR_EXIT;
 #endif
 
@@ -80,10 +80,10 @@ nmp_cms_running_env_init( void )
     g_thread_init(NULL);
     g_type_init();
 
-    jpf_sysctl_init();
-    jpf_set_system_time_zone(jpf_get_sys_parm_str(SYS_PARM_TIMEZONE));
+    nmp_sysctl_init();
+    nmp_set_system_time_zone(nmp_get_sys_parm_str(SYS_PARM_TIMEZONE));
     nmp_cms_log_facility_init();
-    jpf_debug_set_log_size(jpf_get_sys_parm_int(SYS_PARM_LOGFILESIZE));
+    nmp_debug_set_log_size(nmp_get_sys_parm_int(SYS_PARM_LOGFILESIZE));
     nmp_cms_setup_signals();
 /*    nmp_cms_open_core_facility(); */
 }
@@ -117,9 +117,9 @@ int main(int argc, char *argv[])
 {
     GMainLoop *loop;
 
-    jpf_process_main_args(argc, argv);
+    nmp_process_main_args(argc, argv);
     nmp_cms_running_env_init();
-    jpf_afx_core_init();
+    nmp_afx_core_init();
     nmp_cms_lib_init();
     nmp_cms_mods_init();
     loop = g_main_loop_new(NULL, FALSE);

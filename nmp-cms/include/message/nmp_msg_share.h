@@ -78,33 +78,33 @@
 #define AMS_DEV_PASSWD_LEN	64
 
 
-#define RES_CODE(res) (((JpfMsgErrCode*)(res))->err_no)
+#define RES_CODE(res) (((NmpMsgErrCode*)(res))->err_no)
 #define SET_CODE(res, code) (RES_CODE(res) = (code))
 
-typedef struct _JpfMsgErrCode JpfMsgErrCode;
-struct _JpfMsgErrCode
+typedef struct _NmpMsgErrCode NmpMsgErrCode;
+struct _NmpMsgErrCode
 {
 	gint			err_no;
 };
 
-typedef struct _JpfMsgCode JpfMsgCode;
-struct _JpfMsgCode
+typedef struct _NmpMsgCode NmpMsgCode;
+struct _NmpMsgCode
 {
-	JpfMsgErrCode			code;
+	NmpMsgErrCode			code;
 	glong      affect_num;
 	gchar bss_usr[USER_NAME_LEN];
 };
 
-typedef struct _JpfDivMode JpfDivMode;
-struct _JpfDivMode
+typedef struct _NmpDivMode NmpDivMode;
+struct _NmpDivMode
 {
     gint                div_id;
     gchar             div_name[DIV_NAME_LEN];
     gchar             description[DESCRIPTION_INFO_LEN];
 };
 
-typedef struct _JpfGetDivMode JpfGetDivMode;
-struct _JpfGetDivMode
+typedef struct _NmpGetDivMode NmpGetDivMode;
+struct _NmpGetDivMode
 {
     gchar			  session[SESSION_ID_LEN];
     gint               req_num;
@@ -113,35 +113,35 @@ struct _JpfGetDivMode
     gchar            key[USER_NAME_LEN];
 };
 
-typedef struct _JpfGetDivModeRes JpfGetDivModeRes;
-struct _JpfGetDivModeRes
+typedef struct _NmpGetDivModeRes NmpGetDivModeRes;
+struct _NmpGetDivModeRes
 {
-    JpfMsgErrCode  code;
+    NmpMsgErrCode  code;
     gchar			  session[MAX_ID_LEN];
     gint            total_num;
     gint            back_num;
     gint            type;
-    JpfDivMode    scr_div_info[0];
+    NmpDivMode    scr_div_info[0];
 };
 
-typedef struct __JpfExpiredTime JpfExpiredTime;
-struct __JpfExpiredTime
+typedef struct __NmpExpiredTime NmpExpiredTime;
+struct __NmpExpiredTime
 {
 	gint type;  //到期时间类型:WDD_TIME_TYPE
 	gchar expired_time[TIME_LEN];
 };
 
-typedef struct _JpfAllCuOwnPu JpfAllCuOwnPu;
-struct _JpfAllCuOwnPu
+typedef struct _NmpAllCuOwnPu NmpAllCuOwnPu;
+struct _NmpAllCuOwnPu
 {
     gchar username[USER_NAME_LEN];
 };
 
 
-typedef struct _JpfResult JpfResult;
-struct _JpfResult
+typedef struct _NmpResult NmpResult;
+struct _NmpResult
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			session[SESSION_ID_LEN];
 };
 

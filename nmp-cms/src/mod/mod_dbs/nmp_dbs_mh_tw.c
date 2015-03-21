@@ -27,7 +27,7 @@ static int get_ec_url(NmpAppObj *app_obj, char *dis_guid, char *dis_domain_id,
 	G_ASSERT(app_obj != NULL && ec_url != NULL&& dis_guid != NULL
 		&& dis_domain_id != NULL&& ec_guid != NULL&& ec_domain_id != NULL);
 
-	JpfMsgGetMdsIpRes mds_ip;
+	NmpMsgGetMdsIpRes mds_ip;
 	gchar dis_puid[MAX_ID_LEN] = {0};
 	gchar enc_puid[MAX_ID_LEN] = {0};
 	gchar cms_ip[MAX_IP_LEN] = {0};
@@ -35,19 +35,19 @@ static int get_ec_url(NmpAppObj *app_obj, char *dis_guid, char *dis_domain_id,
 	gint channel = 0, level = 0;
 	gint code = 0;
 
-	jpf_get_puid_from_guid(dis_guid, dis_puid);
-	jpf_get_pu_cms_ip(app_obj, dis_puid, dis_domain_id, cms_ip);
-	jpf_get_puid_from_guid(ec_guid, enc_puid);
-	jpf_get_channel_from_guid(ec_guid, &channel);
-	jpf_get_level_from_guid(ec_guid, &level);
+	nmp_get_puid_from_guid(dis_guid, dis_puid);
+	nmp_get_pu_cms_ip(app_obj, dis_puid, dis_domain_id, cms_ip);
+	nmp_get_puid_from_guid(ec_guid, enc_puid);
+	nmp_get_channel_from_guid(ec_guid, &channel);
+	nmp_get_level_from_guid(ec_guid, &level);
 	if (ec_dec_plug)
 	{
-		jpf_get_mf_from_guid(ec_guid, ec_dec_plug);
-		if (!strcmp(ec_dec_plug, MANUFACTUR_JXJ_2))
-			strcpy(ec_dec_plug, MANUFACTUR_JXJ);
+		nmp_get_mf_from_guid(ec_guid, ec_dec_plug);
+		if (!strcmp(ec_dec_plug, MANUFACTUR_NMP_2))
+			strcpy(ec_dec_plug, MANUFACTUR_NMP);
 	}
 	memset(&mds_ip, 0, sizeof(mds_ip));
-	code = jpf_dbs_get_mds_info(app_obj, cms_ip, enc_puid, ec_domain_id, &mds_ip);
+	code = nmp_dbs_get_mds_info(app_obj, cms_ip, enc_puid, ec_domain_id, &mds_ip);
 	if (G_LIKELY(!code))
 	{
 		snprintf(ec_url, MAX_URL_LEN,
@@ -56,7 +56,7 @@ static int get_ec_url(NmpAppObj *app_obj, char *dis_guid, char *dis_domain_id,
 		);
 	}
 	else
-		jpf_warning("<TwGetRoute> No route to Mds,error:%d", code);
+		nmp_warning("<TwGetRoute> No route to Mds,error:%d", code);
 
 	return code;
 }
@@ -75,10 +75,10 @@ nmp_mod_dbs_get_dis_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 	BUG_ON(!req_info);
 
 	memset(&res_info, 0, sizeof(res_info));
-	code = jpf_get_scr_display_guid(app_obj, &res_info.dis_guid,
+	code = nmp_get_scr_display_guid(app_obj, &res_info.dis_guid,
 		req_info->screen_id, req_info->tw_id);
 	res_info.result = code;
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_TW);
 
 	return MFR_DELIVER_BACK;
@@ -98,8 +98,8 @@ nmp_mod_dbs_get_ec_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 	/* 构造返回数据 */
 	res_info.result = get_ec_url(app_obj, req_info->dis_guid, req_info->dis_domain_id,
 		req_info->ec_guid, req_info->ec_domain_id, res_info.ec_url, res_info.ec_dec_plug);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
-	printf("<JpfModDbs> res_info.ec_url:%s\n", res_info.ec_url);
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	printf("<NmpModDbs> res_info.ec_url:%s\n", res_info.ec_url);
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_TW);
 
@@ -108,30 +108,30 @@ nmp_mod_dbs_get_ec_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 
 static __inline__ void
-nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
+nmp_mod_dbs_get_tour_info(NmpMysqlRes *mysql_res,
 	tw_tour_msg_response *tour_res)
 {
 	G_ASSERT(mysql_res != NULL);
 
-	JpfMysqlRow mysql_row;
-	JpfMysqlField* mysql_fields;
+	NmpMysqlRow mysql_row;
+	NmpMysqlField* mysql_fields;
 	unsigned int row_num, field_num;
 	int step_num = 0;
 	gchar *name, *value;
 	gint field_i = 0, step_i = 0;
 
-	row_num = jpf_sql_get_num_rows(mysql_res);
-	field_num =jpf_sql_get_num_fields(mysql_res);
+	row_num = nmp_sql_get_num_rows(mysql_res);
+	field_num =nmp_sql_get_num_fields(mysql_res);
 
-	while ((mysql_row = jpf_sql_fetch_row(mysql_res)))
+	while ((mysql_row = nmp_sql_fetch_row(mysql_res)))
 	{
-		jpf_sql_field_seek(mysql_res, 0);
-		mysql_fields = jpf_sql_fetch_fields(mysql_res);
+		nmp_sql_field_seek(mysql_res, 0);
+		mysql_fields = nmp_sql_fetch_fields(mysql_res);
 
 		for (field_i = 0; field_i < field_num; field_i++)
 		{
 			tw_tour_step_response *tour_step = &tour_res->steps[step_i];
-			name = jpf_sql_get_field_name(mysql_fields, field_i);
+			name = nmp_sql_get_field_name(mysql_fields, field_i);
 
 			if (!strcmp(name, "step_no"))
 			{
@@ -139,13 +139,13 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 			}
 			else if (!strcmp(name, "interval"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tour_step->step_ttl = atoi(value);
 			}
 			else if (!strcmp(name, "gu_name"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					tour_step->ec_name[TW_MAX_VALUE_LEN - 1] = '\0';
@@ -154,7 +154,7 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 			}
 			else if (!strcmp(name, "encoder_domain"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					tour_step->ec_domain_id[TW_ID_LEN - 1] = '\0';
@@ -163,7 +163,7 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 			}
 			else if (!strcmp(name, "encoder_guid"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					tour_step->ec_guid[TW_ID_LEN - 1] = '\0';
@@ -172,7 +172,7 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 			}
 			else if (!strcmp(name, "level"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tour_step->level = atoi(value);
 			}
@@ -181,7 +181,7 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 				continue;
 			if (!strcmp(name, "tour_name"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					tour_res->tour_name[TW_MAX_VALUE_LEN - 1] = '\0';
@@ -190,7 +190,7 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 			}
 			else if (!strcmp(name, "auto_jump"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tour_res->auto_jump = atoi(value);
 			}
@@ -203,30 +203,30 @@ nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 
 
 static __inline__ tw_tour_msg_response *
-nmp_mod_dbs_get_tour(JpfMysqlRes *mysql_res, gint *size)
+nmp_mod_dbs_get_tour(NmpMysqlRes *mysql_res, gint *size)
 {
 	tw_tour_msg_response *tour_res;
 	gint row_num, len;
 
-	row_num = jpf_sql_get_num_rows(mysql_res);
+	row_num = nmp_sql_get_num_rows(mysql_res);
 	if (row_num == 0)
 	{
 		len = sizeof(tw_tour_msg_response);
-		tour_res = jpf_mem_kalloc(len);
+		tour_res = nmp_mem_kalloc(len);
 		if (G_UNLIKELY(!tour_res))
 			return NULL;
 
 		memset(tour_res, 0, len);
 		tour_res->result = 0;
 		tour_res->step_count = 0;
-		jpf_warning("tour has no step");
+		nmp_warning("tour has no step");
 	}
 	else
 	{
 		len = sizeof(tw_tour_msg_response) + row_num *
 			sizeof(tw_tour_step_response);
 
-		tour_res = jpf_mem_kalloc(len);
+		tour_res = nmp_mem_kalloc(len);
 		if (G_UNLIKELY(!tour_res))
 			return NULL;
 
@@ -249,7 +249,7 @@ nmp_mod_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_tour_msg_request *req_info;
 	tw_tour_msg_response *res_info;
-	JpfMysqlRes *result;
+	NmpMysqlRes *result;
 	char query_buf[QUERY_STR_LEN] = {0};
 	gint size, ret;
 
@@ -264,7 +264,7 @@ nmp_mod_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		TOUR_TABLE, TOUR_STEP_TABLE, GU_TABLE, req_info->tour_id
 	);
 
-	result = jpf_dbs_do_query_res(app_obj, query_buf);
+	result = nmp_dbs_do_query_res(app_obj, query_buf);
 	BUG_ON(!result);
 
 	if (G_LIKELY(!MYSQL_RESULT_CODE(result)))	//success:0 fail:!0
@@ -272,8 +272,8 @@ nmp_mod_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		res_info = nmp_mod_dbs_get_tour(result, &size);
 		if (G_UNLIKELY(!res_info))
 		{
-			jpf_warning("<dbs_mh_tw> alloc error");
-			jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+			nmp_warning("<dbs_mh_tw> alloc error");
+			nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 			return MFR_ACCEPTED;
 		}
 	}
@@ -287,11 +287,11 @@ nmp_mod_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 sql_operate_failed:
 	size = sizeof(tw_tour_msg_response);
-	res_info = jpf_mem_kalloc(size);
+	res_info = nmp_mem_kalloc(size);
 	if (!res_info)
 	{
-		jpf_warning("<dbs_mh_tw> alloc error");
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_warning("<dbs_mh_tw> alloc error");
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 		return MFR_ACCEPTED;
 	}
 	memset(res_info, 0, size);
@@ -299,44 +299,44 @@ sql_operate_failed:
 
 	/* 构造返回数据 */
 end_get_tour:
-	jpf_sysmsg_set_private(msg, res_info, size, (JpfMsgPrivDes)jpf_mem_kfree);
+	nmp_sysmsg_set_private(msg, res_info, size, (NmpMsgPrivDes)nmp_mem_kfree);
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_TW);
 	if (result)
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 	return MFR_DELIVER_BACK;
 }
 
 
 static void nmp_mod_get_group_info(tw_group_msg_response *res_info,
-	JpfMysqlRes *mysql_res)
+	NmpMysqlRes *mysql_res)
 {
-	JpfMysqlRow mysql_row;
-	JpfMysqlField* mysql_fields;
+	NmpMysqlRow mysql_row;
+	NmpMysqlField* mysql_fields;
 	unsigned int row_num, field_num;
 	gchar *name, *value;
 	gint field_i = 0;
 
-	row_num = jpf_sql_get_num_rows(mysql_res);
-	field_num =jpf_sql_get_num_fields(mysql_res);
+	row_num = nmp_sql_get_num_rows(mysql_res);
+	field_num =nmp_sql_get_num_fields(mysql_res);
 
-	while ((mysql_row = jpf_sql_fetch_row(mysql_res)))
+	while ((mysql_row = nmp_sql_fetch_row(mysql_res)))
 	{
-		jpf_sql_field_seek(mysql_res, 0);
-		mysql_fields = jpf_sql_fetch_fields(mysql_res);
+		nmp_sql_field_seek(mysql_res, 0);
+		mysql_fields = nmp_sql_fetch_fields(mysql_res);
 
 		for (field_i = 0; field_i < field_num; field_i++)
 		{
-			name = jpf_sql_get_field_name(mysql_fields, field_i);
+			name = nmp_sql_get_field_name(mysql_fields, field_i);
 
 			if (!strcmp(name, "tw_id"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					res_info->tw_id = atoi(value);
 			}
 			else if (!strcmp(name, "group_name"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					res_info->group_name[TW_MAX_VALUE_LEN - 1] = '\0';
@@ -375,30 +375,30 @@ insert_step_num_sort(tw_group_msg_response *res_info, unsigned int step_num)
 }
 
 static void nmp_mod_get_group_info_2(tw_group_msg_response *res_info,
-	JpfMysqlRes *mysql_res)
+	NmpMysqlRes *mysql_res)
 {
-	JpfMysqlRow mysql_row;
-	JpfMysqlField* mysql_fields;
+	NmpMysqlRow mysql_row;
+	NmpMysqlField* mysql_fields;
 	unsigned int row_num, field_num;
 	unsigned int step_num;
 	gchar *name, *value;
 	gint field_i = 0;
 
-	row_num = jpf_sql_get_num_rows(mysql_res);
-	field_num =jpf_sql_get_num_fields(mysql_res);
+	row_num = nmp_sql_get_num_rows(mysql_res);
+	field_num =nmp_sql_get_num_fields(mysql_res);
 
-	while ((mysql_row = jpf_sql_fetch_row(mysql_res)))
+	while ((mysql_row = nmp_sql_fetch_row(mysql_res)))
 	{
-		jpf_sql_field_seek(mysql_res, 0);
-		mysql_fields = jpf_sql_fetch_fields(mysql_res);
+		nmp_sql_field_seek(mysql_res, 0);
+		mysql_fields = nmp_sql_fetch_fields(mysql_res);
 
 		for (field_i = 0; field_i < field_num; field_i++)
 		{
-			name = jpf_sql_get_field_name(mysql_fields, field_i);
+			name = nmp_sql_get_field_name(mysql_fields, field_i);
 
 			if (!strcmp(name, "step_no"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 				{
 					step_num = (unsigned int)atoi(value);
@@ -422,7 +422,7 @@ nmp_mod_dbs_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_group_msg_request *req_info;
 	tw_group_msg_response res_info;
-	JpfMysqlRes *result;
+	NmpMysqlRes *result;
 	char query_buf[QUERY_STR_LEN] = {0};
 	gint ret;
 	memset(&res_info, 0, sizeof(tw_group_msg_response));
@@ -435,7 +435,7 @@ nmp_mod_dbs_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		GROUP_TABLE, req_info->group_id
 	);
 
-	result = jpf_dbs_do_query_res(app_obj, query_buf);
+	result = nmp_dbs_do_query_res(app_obj, query_buf);
 	BUG_ON(!result);
 	if (G_UNLIKELY(MYSQL_RESULT_CODE(result)))	//success:0 fail:!0
 	{
@@ -444,14 +444,14 @@ nmp_mod_dbs_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 	}
 
 	nmp_mod_get_group_info(&res_info, result);
-	jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+	nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 
 	snprintf(query_buf, QUERY_STR_LEN,
 		"select step_no from %s where group_id=%d",
 		GROUP_STEP_TABLE, req_info->group_id
 	);
 
-	result = jpf_dbs_do_query_res(app_obj, query_buf);
+	result = nmp_dbs_do_query_res(app_obj, query_buf);
 	BUG_ON(!result);
 	if (G_UNLIKELY(MYSQL_RESULT_CODE(result)))	//success:0 fail:!0
 	{
@@ -467,10 +467,10 @@ sql_operate_failed:
 	res_info.result = ret;
 
 end:
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_TW);
 	if (result)
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 	return MFR_DELIVER_BACK;
 }
 
@@ -502,7 +502,7 @@ stor_group_info(tw_group_step_n_response *res, group_read_one_line *info)
 
 	if (!screen)
 	{
-		jpf_warning("<dbs_mh_tw> get screen error, maybe group has been changed, " \
+		nmp_warning("<dbs_mh_tw> get screen error, maybe group has been changed, " \
 			"screen_sum = %d!", screen_sum);
 		return -1;
 	}
@@ -516,82 +516,82 @@ stor_group_info(tw_group_step_n_response *res, group_read_one_line *info)
 }
 
 static int
-nmp_mod_dbs_get_group_step(JpfMysqlRes *mysql_res,
+nmp_mod_dbs_get_group_step(NmpMysqlRes *mysql_res,
 	tw_group_step_n_response *res)
 {
 	G_ASSERT(mysql_res != NULL && res != NULL);
 
-	JpfMysqlRow mysql_row;
-	JpfMysqlField* mysql_fields;
+	NmpMysqlRow mysql_row;
+	NmpMysqlField* mysql_fields;
 	unsigned int row_num, field_num;
 	group_read_one_line tmp;
 	gchar *name, *value;
 	gint field_i = 0;
 
-	row_num = jpf_sql_get_num_rows(mysql_res);
-	field_num =jpf_sql_get_num_fields(mysql_res);
+	row_num = nmp_sql_get_num_rows(mysql_res);
+	field_num =nmp_sql_get_num_fields(mysql_res);
 
-	while ((mysql_row = jpf_sql_fetch_row(mysql_res)))
+	while ((mysql_row = nmp_sql_fetch_row(mysql_res)))
 	{
-		jpf_sql_field_seek(mysql_res, 0);
-		mysql_fields = jpf_sql_fetch_fields(mysql_res);
+		nmp_sql_field_seek(mysql_res, 0);
+		mysql_fields = nmp_sql_fetch_fields(mysql_res);
 		memset(&tmp, 0, sizeof(group_read_one_line));
 
 		for (field_i = 0; field_i < field_num; field_i++)
 		{
-			name = jpf_sql_get_field_name(mysql_fields, field_i);
+			name = nmp_sql_get_field_name(mysql_fields, field_i);
 
 			if (!strcmp(name, "scr_id"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tmp.scr_id = atoi(value);
 			}
 			else if (!strcmp(name, "div_id"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tmp.div_id= atoi(value);
 			}
 			else if (!strcmp(name, "level"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tmp.division.level= atoi(value);
 			}
 			else if (!strcmp(name, "dis_guid"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					strncpy(tmp.dis_guid, value, TW_ID_LEN - 1);
 			}
 			else if (!strcmp(name, "dis_domain"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					strncpy(tmp.dis_domain_id, value, TW_ID_LEN - 1);
 			}
 			else if (!strcmp(name, "div_no"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					tmp.division.division_num = atoi(value);
 			}
 			else if (!strcmp(name, "encoder_domain"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					strncpy(tmp.division.ec_domain_id, value, TW_ID_LEN - 1);
 			}
 			else if (!strcmp(name, "encoder_guid"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					strncpy(tmp.division.ec_guid, value, TW_ID_LEN - 1);
 			}
 			else if (!strcmp(name, "gu_name"))
 			{
-				value = jpf_sql_get_field_value(mysql_row, field_i);
+				value = nmp_sql_get_field_value(mysql_row, field_i);
 				if (value)
 					strncpy(tmp.division.ec_name, value, TW_MAX_VALUE_LEN - 1);
 			}
@@ -610,7 +610,7 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_group_step_n_request *req_info;
 	tw_group_step_n_response *res_info;
-	JpfMysqlRes *result = NULL;
+	NmpMysqlRes *result = NULL;
 	char query_buf[QUERY_STR_LEN] = {0};
 	gint interval, screen_sum, size, ret;
 
@@ -621,11 +621,11 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		"select `interval` as count from %s where group_id=%d and step_no=%d",
 		GROUP_STEP_TABLE, req_info->group_id, req_info->step_num
 	);
-	interval = jpf_get_record_count(app_obj, query_buf);
+	interval = nmp_get_record_count(app_obj, query_buf);
 	if (interval <= 0)
 	{
 		ret = -1;
-		jpf_warning("<dbs_mh_tw> group step interval = %d", interval);
+		nmp_warning("<dbs_mh_tw> group step interval = %d", interval);
 		goto sql_operate_failed;
 	}
 
@@ -633,17 +633,17 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		"select count(distinct scr_id) as count from %s where step_no=%d",
 		GROUP_STEP_INFO_TABLE, req_info->step_num
 	);
-	screen_sum = jpf_get_record_count(app_obj, query_buf);
+	screen_sum = nmp_get_record_count(app_obj, query_buf);
 	if (screen_sum < 0)
 	{
 		ret = -1;
-		jpf_warning("<dbs_mh_tw> screen_sum = %d", screen_sum);
+		nmp_warning("<dbs_mh_tw> screen_sum = %d", screen_sum);
 		goto sql_operate_failed;
 	}
 	if (screen_sum == 0)
 	{
 		ret = 0;
-		jpf_warning("<dbs_mh_tw> screen_sum = 0");
+		nmp_warning("<dbs_mh_tw> screen_sum = 0");
 	}
 
 	snprintf(query_buf, QUERY_STR_LEN,
@@ -655,7 +655,7 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		req_info->step_num, req_info->group_id
 	);
 
-	result = jpf_dbs_do_query_res(app_obj, query_buf);
+	result = nmp_dbs_do_query_res(app_obj, query_buf);
 	BUG_ON(!result);
 	if (G_UNLIKELY(MYSQL_RESULT_CODE(result)))	//success:0 fail:!0
 	{
@@ -665,11 +665,11 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 	size = sizeof(tw_group_step_n_response) + screen_sum *
 		sizeof(tw_group_screen_response);
-	res_info = jpf_mem_kalloc(size);
+	res_info = nmp_mem_kalloc(size);
 	if (G_UNLIKELY(!res_info))
 	{
-		jpf_warning("<dbs_mh_tw> alloc error");
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_warning("<dbs_mh_tw> alloc error");
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 		return MFR_ACCEPTED;
 	}
 
@@ -690,21 +690,21 @@ nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 sql_operate_failed:
 	size = sizeof(tw_group_step_n_response);
-	res_info = jpf_mem_kalloc(size);
+	res_info = nmp_mem_kalloc(size);
 	if (!res_info)
 	{
-		jpf_warning("<dbs_mh_tw> alloc error");
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_warning("<dbs_mh_tw> alloc error");
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 		return MFR_ACCEPTED;
 	}
 	memset(res_info, 0, size);
 	res_info->result = ret;
 
 end:
-	jpf_sysmsg_set_private(msg, res_info, size, (JpfMsgPrivDes)jpf_mem_kfree);
+	nmp_sysmsg_set_private(msg, res_info, size, (NmpMsgPrivDes)nmp_mem_kfree);
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_TW);
 	if (result)
-		jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 	return MFR_DELIVER_BACK;
 }
 
@@ -725,7 +725,7 @@ nmp_mod_dbs_check_ec_url_update_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 	if (result)
 	{
-		jpf_warning("get_ec_url failed");
+		nmp_warning("get_ec_url failed");
 		goto end;
 	}
 
@@ -735,13 +735,13 @@ nmp_mod_dbs_check_ec_url_update_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		res_info.ec_url[MAX_URL_LEN - 1] = '\0';
 		strncpy(res_info.ec_url, new_url, MAX_URL_LEN - 1);
 
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 
-		res_msg = jpf_sysmsg_new_2(MSG_TW_INFO_NOTIFY_UPDATE_EC_URL, &res_info,
+		res_msg = nmp_sysmsg_new_2(MSG_TW_INFO_NOTIFY_UPDATE_EC_URL, &res_info,
 			sizeof(tw_update_url), ++msg_seq_generator);
 		if (G_UNLIKELY(!res_msg))
 		{
-			jpf_warning("jpf_sysmsg_new_2 failed");
+			nmp_warning("nmp_sysmsg_new_2 failed");
 			return MFR_ACCEPTED;
 		}
 		MSG_SET_DSTPOS(res_msg, BUSSLOT_POS_TW);
@@ -750,13 +750,13 @@ nmp_mod_dbs_check_ec_url_update_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 	}
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 
 void
-nmp_mod_dbs_register_tw_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_tw_msg_handler(NmpModDbs *self)
 {
 	NmpAppMod *super_self = (NmpAppMod*)self;
 

@@ -10,6 +10,6 @@
 #ifndef __NMP_SIGNAL_H__
 #define __NMP_SIGNAL_H__
 
-void jpf_sig_setup_signals( void );
+void nmp_sig_setup_signals( void );
 
 #endif	//__NMP_SIGNAL_H__

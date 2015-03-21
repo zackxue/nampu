@@ -46,9 +46,9 @@ typedef enum
 		fmt, __FUNCTION__, __LINE__, ##args);	\
 } while (0)
 */
-#define jpf_tw_log_msg(fmt, args ...) do {	\
+#define nmp_tw_log_msg(fmt, args ...) do {	\
 	if (g_log_num & 0x02)	\
-		printf("<jtw,jpf_tw_log_msg> %s[%d]:"fmt, __FUNCTION__, __LINE__, ##args);	\
+		printf("<jtw,nmp_tw_log_msg> %s[%d]:"fmt, __FUNCTION__, __LINE__, ##args);	\
 } while (0)
 
 #define log_2(fmt, args ...) do {	\

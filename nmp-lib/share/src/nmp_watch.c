@@ -29,36 +29,36 @@
 
 typedef gboolean (*HmWatchCallback)(HmWatch *watch, 
     gpointer user_data);
-static void jpf_watch_kill_unref(HmWatch *watch);
+static void nmp_watch_kill_unref(HmWatch *watch);
 static gint total_watch_count = 0;
 
 
 static __inline__ void
-jpf_watch_add_child(HmWatch *watch, HmWatch *child)
+nmp_watch_add_child(HmWatch *watch, HmWatch *child)
 {
-    JpfNetIO *net_io;
+    NmpNetIO *net_io;
 
-    net_io = (JpfNetIO*)watch->priv_data;
+    net_io = (NmpNetIO*)watch->priv_data;
     if (net_io)
     {
-        jpf_net_io_add_child_watch(net_io, child);
+        nmp_net_io_add_child_watch(net_io, child);
     }
     else
     {
-        jpf_watch_kill_unref(child);
+        nmp_watch_kill_unref(child);
     }
 }
 
 
 static __inline__ void
-jpf_watch_on_establish(HmWatch *watch)
+nmp_watch_on_establish(HmWatch *watch)
 {
-    JpfNetIO *net_io;
+    NmpNetIO *net_io;
 
-    net_io = (JpfNetIO*)watch->priv_data;
+    net_io = (NmpNetIO*)watch->priv_data;
     if (net_io)
     {
-        jpf_net_io_establish(net_io);
+        nmp_net_io_establish(net_io);
     }
     else
     {
@@ -68,32 +68,32 @@ jpf_watch_on_establish(HmWatch *watch)
 
 
 static __inline__ gint
-jpf_watch_deliver_message(gpointer to, gpointer msg)
+nmp_watch_deliver_message(gpointer to, gpointer msg)
 {
-    JpfNetIO *net_io = (JpfNetIO*)to;
+    NmpNetIO *net_io = (NmpNetIO*)to;
 
-    return jpf_net_io_read_message(net_io, msg);
+    return nmp_net_io_read_message(net_io, msg);
 }
 
 
 static gint
-jpf_watch_write_out(gchar *buf, gsize size, gpointer w)
+nmp_watch_write_out(gchar *buf, gsize size, gpointer w)
 {
     HmWatch *watch = (HmWatch*)w;
 
-    return jpf_connection_write(watch->conn, buf, size);
+    return nmp_connection_write(watch->conn, buf, size);
 }
 
 
 static __inline__ void
-jpf_watch_destroy_private(gpointer priv_data)
+nmp_watch_destroy_private(gpointer priv_data)
 {
-    JpfNetIO *net_io;
+    NmpNetIO *net_io;
 
-    net_io = (JpfNetIO*)priv_data;
+    net_io = (NmpNetIO*)priv_data;
     if (net_io)
     {
-        jpf_net_io_unref(net_io);
+        nmp_net_io_unref(net_io);
     }
 }
 
@@ -103,22 +103,22 @@ jpf_watch_destroy_private(gpointer priv_data)
  * #watch->lock held.
 */
 static __inline__ void
-jpf_watch_on_clear(HmWatch *watch, gint err)
+nmp_watch_on_clear(HmWatch *watch, gint err)
 {
-    JpfNetIO *net_io;
+    NmpNetIO *net_io;
 
-    net_io = (JpfNetIO*)watch->priv_data;
+    net_io = (NmpNetIO*)watch->priv_data;
     if (net_io)
     {
         g_mutex_unlock(watch->lock);    /* drop the lock */
-        jpf_net_io_async_kill(net_io, err);
+        nmp_net_io_async_kill(net_io, err);
         g_mutex_lock(watch->lock);
     }
 }
 
 
 static __inline__ void
-__jpf_watch_close(HmWatch *watch, gint async)
+__nmp_watch_close(HmWatch *watch, gint async)
 {
     HmWatchFuncs *funcs;
 
@@ -135,13 +135,13 @@ __jpf_watch_close(HmWatch *watch, gint async)
 
     if (async)
     {
-        jpf_watch_on_clear(watch, 0);
+        nmp_watch_on_clear(watch, 0);
     }
 }
 
 
 static __inline__ void
-__jpf_watch_error(HmWatch *watch, gint rw, gint err)
+__nmp_watch_error(HmWatch *watch, gint rw, gint err)
 {
     HmWatchFuncs *funcs;
 
@@ -156,12 +156,12 @@ __jpf_watch_error(HmWatch *watch, gint rw, gint err)
         (*funcs->error)(watch, rw, err);
     }
 
-    jpf_watch_on_clear(watch, err);
+    nmp_watch_on_clear(watch, err);
 }
 
 
 static gboolean
-jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
+nmp_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
 {
     HmWatchFuncs *funcs;
     gint err = 0, timeout = 1;
@@ -187,7 +187,7 @@ jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
             if (watch->killed)
                 return FALSE;   /* end the loop if killed, funcs->recv() may drop lock. */
 
-            err = jpf_connection_read(watch->conn, buf, MAX_IO_BUFFER_SIZE);
+            err = nmp_connection_read(watch->conn, buf, MAX_IO_BUFFER_SIZE);
             if (err == 0)
             {
                 goto conn_reset;
@@ -222,11 +222,11 @@ jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
     {
         timeout = 0;
 
-        if (G_UNLIKELY(jpf_connection_is_ingrogress(watch->conn, 1)))
+        if (G_UNLIKELY(nmp_connection_is_ingrogress(watch->conn, 1)))
         {
             if (getsockopt(watch->w_fd.fd, SOL_SOCKET, SO_ERROR, &err, &len))
             {
-                jpf_warning("getsockopt() after connect() failed");
+                nmp_warning("getsockopt() after connect() failed");
                 err = -errno;
                 goto write_error;
             }
@@ -242,7 +242,7 @@ jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
             g_source_add_poll((GSource*)watch, &watch->r_fd);
 
             g_mutex_unlock(watch->lock);    /* drop the lock*/
-            jpf_watch_on_establish(watch);
+            nmp_watch_on_establish(watch);
             g_mutex_lock(watch->lock);          
         }
         else
@@ -255,7 +255,7 @@ jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
                 goto write_error;
             }
     
-            err = jpf_net_buf_flush(watch->buffer, watch);
+            err = nmp_net_buf_flush(watch->buffer, watch);
             if (!err)   /* all data flushed */
             {
                 watch->w_fd.revents = 0;
@@ -272,31 +272,31 @@ jpf_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
 
     if (timeout)
     {
-        jpf_print(
+        nmp_print(
             "Net IO '%p' timeout.", NET_IO(watch)
         );
-        __jpf_watch_error(watch, 0, -E_CONNTIMEOUT);
+        __nmp_watch_error(watch, 0, -E_CONNTIMEOUT);
         return FALSE;
     }
 
     return TRUE;
 
 conn_reset:
-    __jpf_watch_close(watch, 1);
+    __nmp_watch_close(watch, 1);
     return FALSE;
 
 read_error:
-    __jpf_watch_error(watch, 0, err);
+    __nmp_watch_error(watch, 0, err);
     return FALSE;
 
 write_error:
-    __jpf_watch_error(watch, 1, err);
+    __nmp_watch_error(watch, 1, err);
     return FALSE;       
 }
 
 
 static gboolean
-jpf_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
+nmp_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
 {
     HmWatchFuncs *funcs;
     gint err;
@@ -321,7 +321,7 @@ jpf_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
             if (watch->killed)
                 return FALSE;   /* end the loop if killed, lock dropped below. */
 
-            conn = jpf_connection_accept(watch->conn, &err);
+            conn = nmp_connection_accept(watch->conn, &err);
             if (!conn)
             {
                 if (err == -EAGAIN)
@@ -333,22 +333,22 @@ jpf_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
             {
                 if (watch->heavy_io_load)
                 {
-                    jpf_connection_set_heavy(conn);
+                    nmp_connection_set_heavy(conn);
                 }
 
-                jpf_connection_set_buffer_size(conn, watch->block_size);
+                nmp_connection_set_buffer_size(conn, watch->block_size);
 
                 child_watch = (*funcs->create)(watch, conn);
                 if (child_watch)
                 {
                     g_mutex_unlock(watch->lock);    /* drop the lock */
-                    jpf_watch_add_child(watch, child_watch);
+                    nmp_watch_add_child(watch, child_watch);
                     g_mutex_lock(watch->lock);
                 }
             }
             else
             {
-                jpf_connection_close(conn);
+                nmp_connection_close(conn);
             }
         }
     }
@@ -356,13 +356,13 @@ jpf_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
     return TRUE;
 
 listen_io_error:
-    __jpf_watch_error(watch, 0, err);
+    __nmp_watch_error(watch, 0, err);
     return FALSE;
 }
 
 
 static __inline__ glong
-jpf_watch_time_val_diff(const GTimeVal *compare, const GTimeVal *now)  
+nmp_watch_time_val_diff(const GTimeVal *compare, const GTimeVal *now)  
 {  
     return (compare->tv_sec - now->tv_sec) * 1000 +     /* millisecond */
         (compare->tv_usec - now->tv_usec) / 1000;  
@@ -370,7 +370,7 @@ jpf_watch_time_val_diff(const GTimeVal *compare, const GTimeVal *now)
 
 
 static __inline__ void
-jpf_watch_update_time(HmWatch *watch, const GTimeVal *now)
+nmp_watch_update_time(HmWatch *watch, const GTimeVal *now)
 {
     if (!now)
     {
@@ -383,17 +383,17 @@ jpf_watch_update_time(HmWatch *watch, const GTimeVal *now)
     }
 
     g_time_val_add(&watch->next_timeout,
-        jpf_connection_get_timeout(watch->conn) * 1000);
+        nmp_connection_get_timeout(watch->conn) * 1000);
 }
 
 
 static __inline__ gint
-jpf_watch_clock_timeout(HmWatch *watch, const GTimeVal *now)
+nmp_watch_clock_timeout(HmWatch *watch, const GTimeVal *now)
 {
     glong ms;   /* millisecond */
 
-    ms = jpf_watch_time_val_diff(&watch->next_timeout, now);
-    if (ms <= 0 || ms > jpf_connection_get_timeout(watch->conn) + 1)
+    ms = nmp_watch_time_val_diff(&watch->next_timeout, now);
+    if (ms <= 0 || ms > nmp_connection_get_timeout(watch->conn) + 1)
         return 1;
     return 0;
 }
@@ -402,7 +402,7 @@ jpf_watch_clock_timeout(HmWatch *watch, const GTimeVal *now)
 #ifdef USE_MONOTONIC_CLOCK
 
 static __inline__ gint
-jpf_watch_get_monotonic_sec(HmWatch *watch)
+nmp_watch_get_monotonic_sec(HmWatch *watch)
 {
     /* g_get_monotonic_time() isn't implemented yet */
     struct timespec ts;
@@ -414,14 +414,14 @@ jpf_watch_get_monotonic_sec(HmWatch *watch)
 
 
 static __inline__ gint
-jpf_watch_time_drifted(HmWatch *watch, const GTimeVal *now)
+nmp_watch_time_drifted(HmWatch *watch, const GTimeVal *now)
 {
     gint delta, diff;
 
     if (watch->delta_time == MONOTIME_ERR)
         return 0;
 
-    delta = now->tv_sec - jpf_watch_get_monotonic_sec(watch);
+    delta = now->tv_sec - nmp_watch_get_monotonic_sec(watch);
     diff = watch->delta_time - delta;
     if (diff >= -DRIFTED_TIME && diff <= DRIFTED_TIME)
         return 0;
@@ -438,7 +438,7 @@ jpf_watch_time_drifted(HmWatch *watch, const GTimeVal *now)
  *  -1 means never timeout.
 */
 static gboolean
-jpf_watch_prepare(GSource *source, gint *timeout)
+nmp_watch_prepare(GSource *source, gint *timeout)
 {
     GTimeVal now;
     glong diff;
@@ -452,7 +452,7 @@ jpf_watch_prepare(GSource *source, gint *timeout)
     }
 
     g_source_get_current_time(source, &now);
-    diff = jpf_watch_time_val_diff(&watch->next_timeout, &now);
+    diff = nmp_watch_time_val_diff(&watch->next_timeout, &now);
     if (diff <= 0)
     {
         *timeout = 0;
@@ -460,7 +460,7 @@ jpf_watch_prepare(GSource *source, gint *timeout)
     }
     else
     {
-        if (diff <= jpf_connection_get_timeout(watch->conn))
+        if (diff <= nmp_connection_get_timeout(watch->conn))
         {
             *timeout = diff;
             return FALSE;
@@ -476,7 +476,7 @@ jpf_watch_prepare(GSource *source, gint *timeout)
  *  satisfied.
 */
 static gboolean
-jpf_watch_check(GSource *source)
+nmp_watch_check(GSource *source)
 {
     HmWatch *watch;
     GTimeVal now;
@@ -488,7 +488,7 @@ jpf_watch_check(GSource *source)
     {
         if (watch->buffer)
         {
-            jpf_watch_update_time(watch, NULL);
+            nmp_watch_update_time(watch, NULL);
         }
         return TRUE;
     }
@@ -499,11 +499,11 @@ jpf_watch_check(GSource *source)
     if (watch->buffer)
     {
         g_source_get_current_time(source, &now);
-        if (jpf_watch_clock_timeout(watch, &now))
+        if (nmp_watch_clock_timeout(watch, &now))
         {
-            jpf_watch_update_time(watch, &now);
+            nmp_watch_update_time(watch, &now);
 #ifdef USE_MONOTONIC_CLOCK
-            if (jpf_watch_time_drifted(watch, &now))
+            if (nmp_watch_time_drifted(watch, &now))
                 return FALSE;
 #endif
             return TRUE;
@@ -519,7 +519,7 @@ jpf_watch_check(GSource *source)
  * automatically by glib main loop when condition is satisfied. 
 */
 gboolean
-jpf_watch_dispatch(GSource *source, GSourceFunc callback,
+nmp_watch_dispatch(GSource *source, GSourceFunc callback,
     gpointer user_data)
 {
     HmWatchCallback dispath;
@@ -529,7 +529,7 @@ jpf_watch_dispatch(GSource *source, GSourceFunc callback,
     watch = (HmWatch*)source;
     dispath = (HmWatchCallback)callback;
 
-    /* avoid race against jpf_watch_kill() and _write()*/
+    /* avoid race against nmp_watch_kill() and _write()*/
     g_mutex_lock(watch->lock);
     if (!watch->killed)
     {
@@ -548,7 +548,7 @@ jpf_watch_dispatch(GSource *source, GSourceFunc callback,
  *  of it.
 */
 static void
-jpf_watch_finalize(GSource *source)
+nmp_watch_finalize(GSource *source)
 {
     HmWatch *watch;
     G_ASSERT(source != NULL);
@@ -557,7 +557,7 @@ jpf_watch_finalize(GSource *source)
 
     watch = (HmWatch*)source;
 
-    jpf_debug(
+    nmp_debug(
         "Net IO '%p' finalized. total %d left.",
         NET_IO(watch), g_atomic_int_get(&total_watch_count)
     );
@@ -567,29 +567,29 @@ jpf_watch_finalize(GSource *source)
         (*watch->funcs->finalize)(watch);
     }
 
-    jpf_watch_destroy_private(watch->priv_data);
+    nmp_watch_destroy_private(watch->priv_data);
     watch->priv_data = NULL;
 
     if (watch->conn)    /* we need to flush the rest of data!!! */
     {
-        jpf_connection_close(watch->conn);
+        nmp_connection_close(watch->conn);
     }
 
     if (watch->buffer)
     {
-        jpf_net_buf_free(watch->buffer);
+        nmp_net_buf_free(watch->buffer);
     }
 
     g_mutex_free(watch->lock);
 }
 
 
-static GSourceFuncs jpf_watch_funcs =
+static GSourceFuncs nmp_watch_funcs =
 {
-    .prepare        = jpf_watch_prepare,
-    .check          = jpf_watch_check,
-    .dispatch       = jpf_watch_dispatch,
-    .finalize       = jpf_watch_finalize
+    .prepare        = nmp_watch_prepare,
+    .check          = nmp_watch_check,
+    .dispatch       = nmp_watch_dispatch,
+    .finalize       = nmp_watch_finalize
 };
 
 
@@ -597,7 +597,7 @@ static GSourceFuncs jpf_watch_funcs =
  * Set GSource dispatch callback function.
 */
 static __inline__ void
-jpf_watch_set_callback(HmWatch *watch, HmWatchCallback callback,
+nmp_watch_set_callback(HmWatch *watch, HmWatchCallback callback,
     gpointer user_data)
 {
     G_ASSERT(watch != NULL && callback != NULL);
@@ -614,7 +614,7 @@ jpf_watch_set_callback(HmWatch *watch, HmWatchCallback callback,
  * (2) Action of timeout can't be affected by user time setting.
 */
 static __inline__ void
-jpf_watch_init_time(HmWatch *watch)
+nmp_watch_init_time(HmWatch *watch)
 {
     BUG_ON(!watch || !watch->conn);
 
@@ -622,7 +622,7 @@ jpf_watch_init_time(HmWatch *watch)
     g_get_current_time(&watch->next_timeout);
 
 #ifdef USE_MONOTONIC_CLOCK
-    gint mono_sec = jpf_watch_get_monotonic_sec(watch);
+    gint mono_sec = nmp_watch_get_monotonic_sec(watch);
     if (mono_sec)
     {
         watch->delta_time = watch->next_timeout.tv_sec - mono_sec;
@@ -634,7 +634,7 @@ jpf_watch_init_time(HmWatch *watch)
 #endif
 
     g_time_val_add(&watch->next_timeout, 
-        jpf_connection_get_timeout(watch->conn) * 1000);
+        nmp_connection_get_timeout(watch->conn) * 1000);
 }
 
 
@@ -643,23 +643,23 @@ jpf_watch_init_time(HmWatch *watch)
  * will be added to "Event Context" for polling. 
 */ 
 __export HmWatch *
-jpf_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
+nmp_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
 {
     GSource *source;
     HmWatch *watch;
     G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(HmWatch));
 
-    source = g_source_new(&jpf_watch_funcs, size);
+    source = g_source_new(&nmp_watch_funcs, size);
     watch = (HmWatch*)source;
 
-    watch->buffer = jpf_net_buf_alloc(
-        jpf_connection_is_heavy(conn) ? LARGE_BUFFER_BLOCKS : SMALL_BUFFER_BLOCKS,
-        jpf_connection_get_buffer_size(conn),
-        jpf_watch_write_out);
+    watch->buffer = nmp_net_buf_alloc(
+        nmp_connection_is_heavy(conn) ? LARGE_BUFFER_BLOCKS : SMALL_BUFFER_BLOCKS,
+        nmp_connection_get_buffer_size(conn),
+        nmp_watch_write_out);
     if (!watch->buffer)
     {
         g_source_unref(source);
-        jpf_warning(
+        nmp_warning(
             "Net create watch, alloc buffer failed."
         );
         return NULL;
@@ -669,23 +669,23 @@ jpf_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
     watch->conn = conn;
     watch->funcs = funcs;
 
-    watch->r_fd.fd = jpf_connection_get_fd(conn);
-    watch->w_fd.fd = jpf_connection_get_fd(conn);
+    watch->r_fd.fd = nmp_connection_get_fd(conn);
+    watch->w_fd.fd = nmp_connection_get_fd(conn);
     watch->r_fd.events = READ_COND;
     watch->w_fd.events = WRITE_COND;
     watch->r_fd.revents = 0;
     watch->w_fd.revents = 0;
 
-    jpf_watch_init_time(watch);
+    nmp_watch_init_time(watch);
 
     watch->w_pending = 0;
     watch->killed = 0;
-    watch->heavy_io_load = jpf_connection_is_heavy(conn);
-    watch->block_size = jpf_connection_get_buffer_size(conn);
+    watch->heavy_io_load = nmp_connection_is_heavy(conn);
+    watch->block_size = nmp_connection_get_buffer_size(conn);
 
-    jpf_watch_set_callback(watch, jpf_watch_rw_dispatch, NULL);
+    nmp_watch_set_callback(watch, nmp_watch_rw_dispatch, NULL);
 
-    if (jpf_connection_is_ingrogress(conn, 0))
+    if (nmp_connection_is_ingrogress(conn, 0))
         g_source_add_poll(source, &watch->w_fd);
     else
         g_source_add_poll(source, &watch->r_fd);
@@ -700,13 +700,13 @@ jpf_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
  * will be added to "Event Context" for polling. 
 */ 
 __export HmWatch *
-jpf_listen_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
+nmp_listen_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
 {
     GSource *source;
     HmWatch *watch;
     G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(HmWatch));
 
-    source = g_source_new(&jpf_watch_funcs, size);
+    source = g_source_new(&nmp_watch_funcs, size);
     watch = (HmWatch*)source;
 
     watch->buffer = NULL;
@@ -715,18 +715,18 @@ jpf_listen_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
     watch->conn = conn;
     watch->funcs = funcs;
 
-    watch->r_fd.fd = jpf_connection_get_fd(conn);
+    watch->r_fd.fd = nmp_connection_get_fd(conn);
     watch->r_fd.events = READ_COND;
     watch->r_fd.revents = 0;
 
-    jpf_watch_init_time(watch);
+    nmp_watch_init_time(watch);
 
     watch->w_pending = 0;
     watch->killed = 0;
-    watch->heavy_io_load = jpf_connection_is_heavy(conn);
-    watch->block_size = jpf_connection_get_buffer_size(conn);
+    watch->heavy_io_load = nmp_connection_is_heavy(conn);
+    watch->block_size = nmp_connection_get_buffer_size(conn);
 
-    jpf_watch_set_callback(watch, jpf_watch_listen_dispatch, NULL);
+    nmp_watch_set_callback(watch, nmp_watch_listen_dispatch, NULL);
     g_source_add_poll(source, &watch->r_fd);
     g_atomic_int_add(&total_watch_count, 1);
 
@@ -735,7 +735,7 @@ jpf_listen_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
 
 
 __export void
-jpf_watch_attach(HmWatch *watch, GMainContext *context)
+nmp_watch_attach(HmWatch *watch, GMainContext *context)
 {
     G_ASSERT(watch != NULL);
 
@@ -744,7 +744,7 @@ jpf_watch_attach(HmWatch *watch, GMainContext *context)
 
 
 __export void
-jpf_watch_ref(HmWatch *watch)
+nmp_watch_ref(HmWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -753,7 +753,7 @@ jpf_watch_ref(HmWatch *watch)
 
 
 __export void
-jpf_watch_unref(HmWatch *watch)
+nmp_watch_unref(HmWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -770,7 +770,7 @@ jpf_watch_unref(HmWatch *watch)
  * registered by net-io user will not be called.
 */
 __export void
-jpf_watch_kill(HmWatch *watch)
+nmp_watch_kill(HmWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -778,23 +778,23 @@ jpf_watch_kill(HmWatch *watch)
     g_source_destroy((GSource*)watch);
 
     g_mutex_lock(watch->lock);
-    __jpf_watch_close(watch, 0);
+    __nmp_watch_close(watch, 0);
     g_mutex_unlock(watch->lock);
 }
 
 
 static void
-jpf_watch_kill_unref(HmWatch *watch)
+nmp_watch_kill_unref(HmWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
-    jpf_watch_kill(watch);
-    jpf_watch_unref(watch);
+    nmp_watch_kill(watch);
+    nmp_watch_unref(watch);
 }
 
 
 __export void
-jpf_watch_set_private(HmWatch *watch, gpointer priv_data)
+nmp_watch_set_private(HmWatch *watch, gpointer priv_data)
 {
     G_ASSERT(watch != NULL);
 
@@ -806,7 +806,7 @@ jpf_watch_set_private(HmWatch *watch, gpointer priv_data)
 
 
 __export gboolean
-jpf_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
+nmp_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
 {
     gboolean set_ok = FALSE;
 
@@ -814,8 +814,8 @@ jpf_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
     if (!watch->killed)
     {
         set_ok = TRUE;
-        jpf_connection_set_timeout(watch->conn, milli_sec);
-        jpf_watch_init_time(watch);
+        nmp_connection_set_timeout(watch->conn, milli_sec);
+        nmp_watch_init_time(watch);
     }
     g_mutex_unlock(watch->lock);
 
@@ -829,7 +829,7 @@ jpf_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
  * indirectly, lock has already been held.
 */
 __export gint
-jpf_watch_recv_message(HmWatch *watch, gpointer msg)
+nmp_watch_recv_message(HmWatch *watch, gpointer msg)
 {
     gint rc;
     G_ASSERT(watch != NULL && msg != NULL);
@@ -839,7 +839,7 @@ jpf_watch_recv_message(HmWatch *watch, gpointer msg)
 
     g_mutex_unlock(watch->lock);    /* drop the lock */
 
-    rc = jpf_watch_deliver_message(watch->priv_data, msg);
+    rc = nmp_watch_deliver_message(watch->priv_data, msg);
 
     g_mutex_lock(watch->lock);
 
@@ -848,7 +848,7 @@ jpf_watch_recv_message(HmWatch *watch, gpointer msg)
 
 
 static __inline__ gint
-__jpf_watch_write_message(HmWatch *watch, gpointer msg)
+__nmp_watch_write_message(HmWatch *watch, gpointer msg)
 {
     gchar packet[MAX_IO_BUFFER_SIZE];
     gint ret = 0, pending = 0;
@@ -863,28 +863,28 @@ __jpf_watch_write_message(HmWatch *watch, gpointer msg)
             MAX_IO_BUFFER_SIZE);
         if (ret > 0)
         {
-            ret = jpf_net_buf_write(watch->buffer, packet, ret, 
+            ret = nmp_net_buf_write(watch->buffer, packet, ret, 
                 watch, &pending);
             if (!ret)
             {
 #ifdef __HANDLE_SENDING_FAIL_EVENT
-              jpf_print(
+              nmp_print(
                   "Net watch '%p' snd buffer full, drop 1 packet.",
                   watch
               );
 
               g_source_destroy((GSource*)watch);
-              __jpf_watch_error(watch, 1, -E_SNDBUFFULL);
+              __nmp_watch_error(watch, 1, -E_SNDBUFFULL);
 #endif
             }
             else if (ret < 0)
             {
-                jpf_print(
+                nmp_print(
                     "Net IO '%p' send failed.", NET_IO(watch)
                 );
 
                 g_source_destroy((GSource*)watch);
-                __jpf_watch_error(watch, 1, ret);
+                __nmp_watch_error(watch, 1, ret);
             }
             else
             {
@@ -898,7 +898,7 @@ __jpf_watch_write_message(HmWatch *watch, gpointer msg)
         }
         else
         {
-            jpf_print(
+            nmp_print(
                 "Net format packet failed while sending, drop."
             );
         }
@@ -914,7 +914,7 @@ __jpf_watch_write_message(HmWatch *watch, gpointer msg)
  * return the size written.
 */
 __export gint
-jpf_watch_write_message(HmWatch *watch, gpointer msg)
+nmp_watch_write_message(HmWatch *watch, gpointer msg)
 {
     gint ret = -E_WATCHDIE;
     G_ASSERT(watch != NULL);
@@ -922,7 +922,7 @@ jpf_watch_write_message(HmWatch *watch, gpointer msg)
     g_mutex_lock(watch->lock);
 
     /**
-     *  if writes failed, __jpf_watch_error() has been invoked,
+     *  if writes failed, __nmp_watch_error() has been invoked,
      *  and the watch may be destroyed (because __finalize() can
      *  be called by this execute flow, just here. so, we must
      *  increase the watch ref-count before writing.
@@ -930,7 +930,7 @@ jpf_watch_write_message(HmWatch *watch, gpointer msg)
 
     if (!watch->killed)
     {
-        ret = __jpf_watch_write_message(watch, msg);
+        ret = __nmp_watch_write_message(watch, msg);
     }
     g_mutex_unlock(watch->lock);
 
@@ -939,11 +939,11 @@ jpf_watch_write_message(HmWatch *watch, gpointer msg)
 
 
 static __inline__ gchar *
-__jpf_watch_get_peer(HmWatch *watch)
+__nmp_watch_get_peer(HmWatch *watch)
 {
     if (watch->conn)
     {
-        return jpf_connection_get_peer(watch->conn);
+        return nmp_connection_get_peer(watch->conn);
     }
 
     return NULL;
@@ -951,14 +951,14 @@ __jpf_watch_get_peer(HmWatch *watch)
 
 
 __export gchar *
-jpf_watch_get_peer(HmWatch *watch)
+nmp_watch_get_peer(HmWatch *watch)
 {
     gchar *ip = NULL;
 
     g_mutex_lock(watch->lock);
     if (!watch->killed)
     {
-        ip = __jpf_watch_get_peer(watch);
+        ip = __nmp_watch_get_peer(watch);
     }
     g_mutex_unlock(watch->lock);
 
@@ -967,7 +967,7 @@ jpf_watch_get_peer(HmWatch *watch)
 
 
 __export void
-jpf_watch_set_heavy_load(HmWatch *watch)
+nmp_watch_set_heavy_load(HmWatch *watch)
 {
     g_mutex_lock(watch->lock);
     if (!watch->killed)
@@ -979,7 +979,7 @@ jpf_watch_set_heavy_load(HmWatch *watch)
 
 
 __export void
-jpf_watch_set_block_size(HmWatch *watch, gint block_size)
+nmp_watch_set_block_size(HmWatch *watch, gint block_size)
 {
 	if (block_size < 0)
 		return;

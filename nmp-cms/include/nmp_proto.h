@@ -1,7 +1,7 @@
 /*
  * nmp_proto.h
  *
- * jxj private proto, private packet header.
+ * nmp private proto, private packet header.
  *
  * Copyright(c) by Nampu, 2010~2014
  * Author:
@@ -37,8 +37,8 @@
 #define GET_PROTO_PACKNO(head) \
 	((head)->packet_no)
 
-typedef struct _JpfProtoHead JpfProtoHead;
-struct _JpfProtoHead
+typedef struct _NmpProtoHead NmpProtoHead;
+struct _NmpProtoHead
 {
 	uint32_t        magic;
 	uint32_t   		seq;
@@ -49,7 +49,7 @@ struct _JpfProtoHead
 };
 
 
-extern JpfPacketProto jxj_packet_proto;
-extern JpfPayloadProto jxj_xml_proto;
+extern NmpPacketProto nmp_packet_proto;
+extern NmpPayloadProto nmp_xml_proto;
 
 #endif	//__NMP_PROTO_H__

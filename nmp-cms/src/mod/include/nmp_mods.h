@@ -31,24 +31,24 @@
 //:}
 
 #define MAX_ID_LEN			32
-#define ID_OF_GUEST(pbo)	(&(((JpfGuestBase*)pbo)->id.id_value[0]))
-#define ID_STR(pid)			(&((JpfID*)pid)->id_value[0])
-#define IO_OF_GUEST(guest)   (((JpfGuestBase*)guest)->io)
+#define ID_OF_GUEST(pbo)	(&(((NmpGuestBase*)pbo)->id.id_value[0]))
+#define ID_STR(pid)			(&((NmpID*)pid)->id_value[0])
+#define IO_OF_GUEST(guest)   (((NmpGuestBase*)guest)->io)
 
 extern guint msg_seq_generator;
 
 G_BEGIN_DECLS
 
-typedef struct _JpfID JpfID;
-struct _JpfID
+typedef struct _NmpID NmpID;
+struct _NmpID
 {
 	guint		id_hash;	/* Hash value */
 	gchar		id_value[MAX_ID_LEN];
 };
 
 
-typedef struct _JpfNewIOList JpfNewIOList;
-struct _JpfNewIOList
+typedef struct _NmpNewIOList NmpNewIOList;
+struct _NmpNewIOList
 {
 	GList			*list;		/* hold io objects */
 	GMutex			*lock;		/* list lock */
@@ -59,11 +59,11 @@ struct _JpfNewIOList
 };
 
 
-typedef struct _JpfNewIO JpfNewIO;
-struct _JpfNewIO
+typedef struct _NmpNewIO NmpNewIO;
+struct _NmpNewIO
 {
-	JpfNewIOList	*list;		/* list we are in */
-	JpfNetIO		*io;
+	NmpNewIOList	*list;		/* list we are in */
+	NmpNetIO		*io;
 	guint			elapse;
 };
 
@@ -72,23 +72,23 @@ typedef enum
 {
 	MOD_CMD_DESTROY_ENT = 1,
 	MOD_CMD_CHECK_ENT
-}JpfModCmd;
+}NmpModCmd;
 
 
-typedef void (*JpfCmdBlockPrivDes)(gpointer priv);
-typedef struct _JpfCmdBlock JpfCmdBlock;
-struct _JpfCmdBlock
+typedef void (*NmpCmdBlockPrivDes)(gpointer priv);
+typedef struct _NmpCmdBlock NmpCmdBlock;
+struct _NmpCmdBlock
 {
-	JpfModCmd			cmd;		/* cmd id */
+	NmpModCmd			cmd;		/* cmd id */
 	gpointer			priv;		/* private data */
-	JpfCmdBlockPrivDes	priv_des;	/* private data destructor */
+	NmpCmdBlockPrivDes	priv_des;	/* private data destructor */
 };
 
 
-typedef struct _JpfGuestContainer JpfGuestContainer;
-struct _JpfGuestContainer
+typedef struct _NmpGuestContainer NmpGuestContainer;
+struct _NmpGuestContainer
 {
-	JpfNewIOList	*unrecognized_list;	/* unrecognized io objects */
+	NmpNewIOList	*unrecognized_list;	/* unrecognized io objects */
 
 	GAsyncQueue		*cmd_queue;
 	GHashTable		*guest_table;
@@ -99,60 +99,60 @@ struct _JpfGuestContainer
 };
 
 
-typedef struct _JpfGuestBase JpfGuestBase;
-typedef void (*JpfGuestFin)(JpfGuestBase *obj, gpointer priv_data);
-struct _JpfGuestBase
+typedef struct _NmpGuestBase NmpGuestBase;
+typedef void (*NmpGuestFin)(NmpGuestBase *obj, gpointer priv_data);
+struct _NmpGuestBase
 {
-	JpfID				id;				/* must be first */
+	NmpID				id;				/* must be first */
 	gint				ref_count;
 
-	JpfNetIO			*io;
-	JpfGuestContainer	*container;
-	JpfGuestFin			finalize;
+	NmpNetIO			*io;
+	NmpGuestContainer	*container;
+	NmpGuestFin			finalize;
 	gpointer			priv_data;
 };
 
-typedef void (*JpfGuestVisit)(JpfGuestBase *obj, gpointer data);
+typedef void (*NmpGuestVisit)(NmpGuestBase *obj, gpointer data);
 
 
-JpfGuestContainer *jpf_mods_container_new(gpointer owner,
+NmpGuestContainer *nmp_mods_container_new(gpointer owner,
 	guint timeout);
 
-gint nmp_mod_container_add_io(JpfGuestContainer *container,
-	JpfNetIO *io);
-gint nmp_mod_container_del_io(JpfGuestContainer *container,
-	JpfNetIO *io);
+gint nmp_mod_container_add_io(NmpGuestContainer *container,
+	NmpNetIO *io);
+gint nmp_mod_container_del_io(NmpGuestContainer *container,
+	NmpNetIO *io);
 
-gint jpf_mods_container_add_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest, JpfID *conflict);
-gint jpf_mods_container_del_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest);
-gint jpf_mods_container_del_guest_2(JpfGuestContainer *container,
-	JpfNetIO *io, JpfID *out);
+gint nmp_mods_container_add_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest, NmpID *conflict);
+gint nmp_mods_container_del_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest);
+gint nmp_mods_container_del_guest_2(NmpGuestContainer *container,
+	NmpNetIO *io, NmpID *out);
 
-JpfGuestBase *jpf_mods_container_get_guest(JpfGuestContainer *container,
-	JpfNetIO *io);
-JpfGuestBase *jpf_mods_container_get_guest_2(JpfGuestContainer *container,
+NmpGuestBase *nmp_mods_container_get_guest(NmpGuestContainer *container,
+	NmpNetIO *io);
+NmpGuestBase *nmp_mods_container_get_guest_2(NmpGuestContainer *container,
 	const gchar *id_str);
-void jpf_mods_container_put_guest(JpfGuestContainer *container,
-	JpfGuestBase *guest);
+void nmp_mods_container_put_guest(NmpGuestContainer *container,
+	NmpGuestBase *guest);
 
-gint jpf_mods_container_guest_counts(JpfGuestContainer *container);
+gint nmp_mods_container_guest_counts(NmpGuestContainer *container);
 
-JpfGuestBase *jpf_mods_guest_new(gsize size, const gchar *id,
-	JpfGuestFin finalize, gpointer priv_data);
+NmpGuestBase *nmp_mods_guest_new(gsize size, const gchar *id,
+	NmpGuestFin finalize, gpointer priv_data);
 
-void jpf_mods_guest_attach_io(JpfGuestBase *guest, JpfNetIO *io);
-void jpf_mods_guest_ref(JpfGuestBase *base_obj);
-void jpf_mods_guest_unref(JpfGuestBase *base_obj);
+void nmp_mods_guest_attach_io(NmpGuestBase *guest, NmpNetIO *io);
+void nmp_mods_guest_ref(NmpGuestBase *base_obj);
+void nmp_mods_guest_unref(NmpGuestBase *base_obj);
 gint nmp_cms_mod_deliver_msg(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size, void (*destroy)(void *, gsize size));
 gint nmp_cms_mod_deliver_msg_2(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size);
 gint nmp_cms_mod_cpy_msg(NmpAppObj *app_obj,NmpSysMsg *msg,  gint dst);
 
-void jpf_mods_container_do_for_each(JpfGuestContainer *container,
-	JpfGuestVisit func, gpointer user_data);
+void nmp_mods_container_do_for_each(NmpGuestContainer *container,
+	NmpGuestVisit func, gpointer user_data);
 
 G_END_DECLS
 

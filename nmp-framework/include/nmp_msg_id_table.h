@@ -7,10 +7,10 @@
 #define MESSAGE_RANGE_LOWER                         -1  /* {{Range lower */
 #define MESSAGE_RANGE_UPPER                         512 /* Range upper}} */
 
-typedef struct _JpfMsgMap JpfMsgMap;
-struct _JpfMsgMap
+typedef struct _NmpMsgMap NmpMsgMap;
+struct _NmpMsgMap
 {
-    struct _JpfMsgMapEntry
+    struct _NmpMsgMapEntry
     {
         const gchar *msg_str;
     }map_entries[MESSAGE_RANGE_UPPER];
@@ -20,17 +20,17 @@ struct _JpfMsgMap
     ((msg_id) <= MESSAGE_RANGE_LOWER || (msg_id) >= MESSAGE_RANGE_UPPER)
 
 #define MESSAGE_ID_TO_STR(map, msg_id) \
-	jpf_message_id_2_str_##map(msg_id)
+	nmp_message_id_2_str_##map(msg_id)
 
 #define MESSAGE_STR_TO_ID(map, msg_str)  \
-    jpf_message_str_2_id_##map(msg_str)
+    nmp_message_str_2_id_##map(msg_str)
 
 #define USING_MSG_ID_MAP(map) \
-	extern gint jpf_message_str_2_id_##map(const gchar *msg_str); \
-	extern const gchar *jpf_message_id_2_str_##map(gint id);
+	extern gint nmp_message_str_2_id_##map(const gchar *msg_str); \
+	extern const gchar *nmp_message_id_2_str_##map(gint id);
 
 #define BEGIN_MSG_ID_MAPPING(name) \
-JpfMsgMap g_msg_map_##name = \
+NmpMsgMap g_msg_map_##name = \
 {\
 	{
 
@@ -40,7 +40,7 @@ JpfMsgMap g_msg_map_##name = \
 };\
 \
 \
-gint jpf_message_str_2_id_##name(const gchar *msg_str) \
+gint nmp_message_str_2_id_##name(const gchar *msg_str) \
 {\
     gint id = MESSAGE_RANGE_LOWER;\
     G_ASSERT(msg_str != NULL);\
@@ -56,7 +56,7 @@ gint jpf_message_str_2_id_##name(const gchar *msg_str) \
 }\
 \
 \
-const gchar *jpf_message_id_2_str_##name(gint msg_id)\
+const gchar *nmp_message_id_2_str_##name(gint msg_id)\
 {\
 	return MESSAGE_INVALID_ID(msg_id) ? "InvalidMsg" \
 		: g_msg_map_##name.map_entries[msg_id].msg_str; \

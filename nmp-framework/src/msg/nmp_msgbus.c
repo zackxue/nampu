@@ -4,56 +4,56 @@
 #include "nmp_msgbus.h"
 #include "nmp_busslot.h"
 
-G_DEFINE_TYPE(JpfMsgBus, jpf_msg_bus, NMP_TYPE_OBJECT);
+G_DEFINE_TYPE(NmpMsgBus, nmp_msg_bus, NMP_TYPE_OBJECT);
 
 #define MAX_MSG_HOOKS		8
 
-typedef struct __JpfBusHook JpfBusHook;
-struct __JpfBusHook
+typedef struct __NmpBusHook NmpBusHook;
+struct __NmpBusHook
 {
-	JpfBusSlotPos	who;
-	JpfMsgHookFn	fun;
+	NmpBusSlotPos	who;
+	NmpMsgHookFn	fun;
 };
 
-static JpfBusHook msg_hooks_array[MAX_MSG_HOOKS];
+static NmpBusHook msg_hooks_array[MAX_MSG_HOOKS];
 static guint msg_hooks_count = 0;
 
 static gpointer
-jpf_msg_bus_thread_worker(gpointer user_data);
+nmp_msg_bus_thread_worker(gpointer user_data);
 
 static gint
-jpf_msg_bus_setup_slots(JpfMsgBus *self);
+nmp_msg_bus_setup_slots(NmpMsgBus *self);
 
-static JpfBusHookRet
-jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg);
+static NmpBusHookRet
+nmp_msg_bus_default_hook(NmpMsgBus *bus, NmpSysMsg *msg);
 
 static void
-jpf_msg_bus_init_zero(JpfMsgBus *self)
+nmp_msg_bus_init_zero(NmpMsgBus *self)
 {
     self->msg_queue = NULL;
-    self->msg_hook = jpf_msg_bus_default_hook;
+    self->msg_hook = nmp_msg_bus_default_hook;
     self->bus_thread = NULL;
-    jpf_bus_slots_init(&self->bus_slots);
+    nmp_bus_slots_init(&self->bus_slots);
 }
 
 
 static void
-jpf_msg_bus_init(JpfMsgBus *self)
+nmp_msg_bus_init(NmpMsgBus *self)
 {
-    jpf_msg_bus_init_zero(self);
+    nmp_msg_bus_init_zero(self);
 
     self->msg_queue = g_async_queue_new();
     if (G_UNLIKELY(!self->msg_queue))
     {
-        jpf_error("<JpfMsgBus> alloc async queue failed!");
+        nmp_error("<NmpMsgBus> alloc async queue failed!");
         FATAL_ERROR_EXIT;
     }
 
 	self->bus_bypass = FALSE;
-    jpf_msg_bus_setup_slots(self);
+    nmp_msg_bus_setup_slots(self);
 
     self->bus_thread = g_thread_create(
-        jpf_msg_bus_thread_worker,
+        nmp_msg_bus_thread_worker,
         self,
         FALSE,
         NULL
@@ -61,57 +61,57 @@ jpf_msg_bus_init(JpfMsgBus *self)
 
     if (G_UNLIKELY(!self->bus_thread))
     {
-        jpf_error("<JpfMsgBus> alloc thread obj failed!");
+        nmp_error("<NmpMsgBus> alloc thread obj failed!");
         FATAL_ERROR_EXIT;
     }
 }
 
 
 static void
-jpf_msg_bus_dispose(GObject *object)
+nmp_msg_bus_dispose(GObject *object)
 {
     exit(-1);
-    G_OBJECT_CLASS(jpf_msg_bus_parent_class)->dispose(object);
+    G_OBJECT_CLASS(nmp_msg_bus_parent_class)->dispose(object);
 }
 
 
 static void
-jpf_msg_bus_class_init(JpfMsgBusClass *c_self)
+nmp_msg_bus_class_init(NmpMsgBusClass *c_self)
 {
     GObjectClass *gobject_class;
 
     gobject_class = (GObjectClass*)c_self;
-    gobject_class->dispose = jpf_msg_bus_dispose;
+    gobject_class->dispose = nmp_msg_bus_dispose;
 }
 
 
 static void
-jpf_msg_bus_destroy_slots(JpfMsgBus *self)
+nmp_msg_bus_destroy_slots(NmpMsgBus *self)
 {
 
 }
 
 
 static gint
-jpf_msg_bus_setup_slots(JpfMsgBus *self)
+nmp_msg_bus_setup_slots(NmpMsgBus *self)
 {
-    JpfBusSlot *slot;
+    NmpBusSlot *slot;
     GValue v = {0, };
-    JpfBusSlotIdx idx = BUSSLOT_IDX_MIN + 1;
+    NmpBusSlotIdx idx = BUSSLOT_IDX_MIN + 1;
 
     for (; idx < BUSSLOT_IDX_MAX; ++idx)
     {
         slot = g_object_new(NMP_TYPE_BUSSLOT, NULL);
         if (G_UNLIKELY(!slot))
         {
-            jpf_error("<JpfMsgBus> alloc bus slot failed!");
-            jpf_msg_bus_destroy_slots(self);
+            nmp_error("<NmpMsgBus> alloc bus slot failed!");
+            nmp_msg_bus_destroy_slots(self);
             return -E_NOMEM;
         }
 
         v.data[0].v_pointer = self;
         v.data[1].v_int = 1 << idx;
-        jpf_islot_init(NMP_ISLOT(slot), &v);
+        nmp_islot_init(NMP_ISLOT(slot), &v);
     }
 
     return 0;
@@ -119,44 +119,44 @@ jpf_msg_bus_setup_slots(JpfMsgBus *self)
 
 
 gint
-jpf_msg_bus_request_slot(JpfMsgBus *self, gpointer slot, JpfBusSlotPos i_slot)
+nmp_msg_bus_request_slot(NmpMsgBus *self, gpointer slot, NmpBusSlotPos i_slot)
 {
     if (!NMP_IS_BUSSLOT(slot))
         return -E_INVAL;
 
-    if (jpf_bus_slots_get(&self->bus_slots, i_slot))
+    if (nmp_bus_slots_get(&self->bus_slots, i_slot))
         return -E_SLOTEXIST;
 
-    jpf_bus_slots_set(&self->bus_slots, i_slot, slot);
+    nmp_bus_slots_set(&self->bus_slots, i_slot, slot);
     return 0;
 }
 
 
 gint
-jpf_msg_bus_slot_link(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpModIO *modio)
+nmp_msg_bus_slot_link(NmpMsgBus *self, NmpBusSlotPos i_slot, NmpModIO *modio)
 {
     gint err;
-    JpfBusSlot *slot;
+    NmpBusSlot *slot;
 
     g_return_val_if_fail(NMP_IS_MSGBUS(self), EINVAL);
     g_return_val_if_fail(NMP_IS_MODIO(modio), EINVAL);
 
-    slot = jpf_bus_slots_get(&self->bus_slots, i_slot);
+    slot = nmp_bus_slots_get(&self->bus_slots, i_slot);
     if (G_UNLIKELY(!slot))
         return -E_SLOTNEXIST;
 
-    err = jpf_islot_link(NMP_ISLOT(slot), NMP_ISLOT(modio));
+    err = nmp_islot_link(NMP_ISLOT(slot), NMP_ISLOT(modio));
     if (G_UNLIKELY(err))
     {
-        jpf_warning("<JpfMsgBus> link failed, bus slot isn't ready!");
+        nmp_warning("<NmpMsgBus> link failed, bus slot isn't ready!");
         return err;
     }
 
-    err = jpf_islot_link(NMP_ISLOT(modio), NMP_ISLOT(slot));
+    err = nmp_islot_link(NMP_ISLOT(modio), NMP_ISLOT(slot));
     if (G_UNLIKELY(err))
     {
-        jpf_warning("<JpfMsgBus> link failed, MOD-IO isn't ready!");
-        jpf_islot_unlink(NMP_ISLOT(slot));
+        nmp_warning("<NmpMsgBus> link failed, MOD-IO isn't ready!");
+        nmp_islot_unlink(NMP_ISLOT(slot));
         return err;
     }
 
@@ -164,43 +164,43 @@ jpf_msg_bus_slot_link(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpModIO *modio)
 }
 
 
-JpfBusMsgHook	/* implict */
-jpf_msg_bus_set_hook(JpfMsgBus *self, JpfBusMsgHook hook)
+NmpBusMsgHook	/* implict */
+nmp_msg_bus_set_hook(NmpMsgBus *self, NmpBusMsgHook hook)
 {
     g_return_val_if_fail(NMP_IS_MSGBUS(self), NULL);
 
-    JpfBusMsgHook old = self->msg_hook;
+    NmpBusMsgHook old = self->msg_hook;
     self->msg_hook = hook;
     return old;
 }
 
 
 static void
-jpf_msg_bus_destroy_msg(JpfMsgBus *self, NmpSysMsg *msg)
+nmp_msg_bus_destroy_msg(NmpMsgBus *self, NmpSysMsg *msg)
 {
     g_return_if_fail(NMP_IS_MSGBUS(self));
     g_return_if_fail(NMP_IS_SYSMSG(msg));
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 }
 
 
 static __inline__ gint
-jpf_msg_bus_deliver_unicast(JpfMsgBus *self, NmpSysMsg *msg)
+nmp_msg_bus_deliver_unicast(NmpMsgBus *self, NmpSysMsg *msg)
 {
 	gpointer next_slot;
 
-	if (!(next_slot = jpf_bus_slots_get(&self->bus_slots, msg->dst)))
+	if (!(next_slot = nmp_bus_slots_get(&self->bus_slots, msg->dst)))
 	    return -E_SLOTNEXIST;
 
-	return jpf_islot_send(NMP_ISLOT(next_slot), NMP_DATA(msg));			
+	return nmp_islot_send(NMP_ISLOT(next_slot), NMP_DATA(msg));			
 }
 
 
 static __inline__ gint
-jpf_msg_bus_deliver_multicast(JpfMsgBus *self, NmpSysMsg *msg)
+nmp_msg_bus_deliver_multicast(NmpMsgBus *self, NmpSysMsg *msg)
 {
-    JpfBusSlotIdx idx;
+    NmpBusSlotIdx idx;
     NmpSysMsg *msg_cpy;
     gint msgs = 0, err;
     guint next = (guint)msg->dst;
@@ -217,34 +217,34 @@ jpf_msg_bus_deliver_multicast(JpfMsgBus *self, NmpSysMsg *msg)
 		{
 			if (--msgs > 0)
 			{
-				msg_cpy = jpf_sysmsg_copy_one(msg);
+				msg_cpy = nmp_sysmsg_copy_one(msg);
 				if (G_LIKELY(msg_cpy))
 				{
 					MSG_SET_DSTPOS(msg_cpy, 1 << idx);
-					err = jpf_msg_bus_deliver_unicast(self, msg_cpy);
+					err = nmp_msg_bus_deliver_unicast(self, msg_cpy);
 					if (err)
 					{
-						jpf_warning(
+						nmp_warning(
 							"Error while bus multicast delivering, deliver sysmsg failed."
 						);
 						/* orignal msg will be destroyed by caller */
-						jpf_msg_bus_destroy_msg(self, msg_cpy);
+						nmp_msg_bus_destroy_msg(self, msg_cpy);
 						return err;
 					}
 				}
 				else
 				{
-					jpf_warning(
+					nmp_warning(
 						"Error while bus multicast delivering, copy sysmsg failed."
 					);
 					MSG_SET_DSTPOS(msg, 1 << idx);
-					return jpf_msg_bus_deliver_unicast(self, msg);
+					return nmp_msg_bus_deliver_unicast(self, msg);
 				}
 			}
 			else
 			{
 				MSG_SET_DSTPOS(msg, 1 << idx);
-				return jpf_msg_bus_deliver_unicast(self, msg);
+				return nmp_msg_bus_deliver_unicast(self, msg);
 			}
 		}
 	}
@@ -255,7 +255,7 @@ jpf_msg_bus_deliver_multicast(JpfMsgBus *self, NmpSysMsg *msg)
 
 
 static gint
-jpf_msg_bus_deliver(JpfMsgBus *self, NmpSysMsg *msg)
+nmp_msg_bus_deliver(NmpMsgBus *self, NmpSysMsg *msg)
 {
     guint next = (guint)msg->dst;
 
@@ -264,28 +264,28 @@ jpf_msg_bus_deliver(JpfMsgBus *self, NmpSysMsg *msg)
 
 	if (G_LIKELY(!(next & (next - 1))))
 	{	/* fast path */
-		return jpf_msg_bus_deliver_unicast(self, msg);
+		return nmp_msg_bus_deliver_unicast(self, msg);
 	}
 
-	return jpf_msg_bus_deliver_multicast(self, msg);
+	return nmp_msg_bus_deliver_multicast(self, msg);
 }
 
 
 gint
-jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpSysMsg *msg)
+nmp_msg_bus_rcv_msg(NmpMsgBus *self, NmpBusSlotPos i_slot, NmpSysMsg *msg)
 {
     g_return_val_if_fail(NMP_IS_MSGBUS(self), EINVAL);
     g_return_val_if_fail(NMP_IS_SYSMSG(msg), EINVAL);
 
-	BUG_ON(!jpf_bus_slots_get(&self->bus_slots, i_slot));
+	BUG_ON(!nmp_bus_slots_get(&self->bus_slots, i_slot));
 	MSG_SET_SRCPOS(msg, i_slot);
 
 	if (self->bus_bypass)
 	{
-        if (jpf_msg_bus_deliver(self, msg))
+        if (nmp_msg_bus_deliver(self, msg))
         {
-            jpf_warning("<JpfMsgBus> deliver msg failed!");
-            jpf_msg_bus_destroy_msg(self, msg);
+            nmp_warning("<NmpMsgBus> deliver msg failed!");
+            nmp_msg_bus_destroy_msg(self, msg);
         }
         return 0;		
 	}
@@ -296,10 +296,10 @@ jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpSysMsg *msg)
 
 
 static gpointer
-jpf_msg_bus_thread_worker(gpointer user_data)
+nmp_msg_bus_thread_worker(gpointer user_data)
 {
     NmpSysMsg *msg;
-    JpfMsgBus *self = (JpfMsgBus*)user_data;
+    NmpMsgBus *self = (NmpMsgBus*)user_data;
 
     for (;;)
     {
@@ -312,7 +312,7 @@ jpf_msg_bus_thread_worker(gpointer user_data)
                 break;
 
             case BHR_DROP:
-                jpf_msg_bus_destroy_msg(self, msg);
+                nmp_msg_bus_destroy_msg(self, msg);
                 continue;
 
             case BHR_QUEUE:
@@ -324,30 +324,30 @@ jpf_msg_bus_thread_worker(gpointer user_data)
             }
         }
 
-        if (jpf_msg_bus_deliver(self, msg))
+        if (nmp_msg_bus_deliver(self, msg))
         {
-            jpf_warning("<JpfMsgBus> deliver msg failed!");
-            jpf_msg_bus_destroy_msg(self, msg);
+            nmp_warning("<NmpMsgBus> deliver msg failed!");
+            nmp_msg_bus_destroy_msg(self, msg);
         }
     }
 
-    jpf_error("<JpfMsgBus> worker thread exit loop!");
+    nmp_error("<NmpMsgBus> worker thread exit loop!");
     return NULL;
 }
 
 
 void
-jpf_msg_bus_set_bypass(JpfMsgBus *self)
+nmp_msg_bus_set_bypass(NmpMsgBus *self)
 {
 	g_return_if_fail(NMP_IS_MSGBUS(self));
 	self->bus_bypass = TRUE;
 }
 
 
-static JpfBusHookRet
-jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg)
+static NmpBusHookRet
+nmp_msg_bus_default_hook(NmpMsgBus *bus, NmpSysMsg *msg)
 {
-	JpfBusHook *hook;
+	NmpBusHook *hook;
 	gint ihook = 0;
 	NmpSysMsg *msg_copy;
 
@@ -356,14 +356,14 @@ jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg)
 		hook = &msg_hooks_array[ihook];
 		if (hook->fun && !(*hook->fun)(msg))
 		{
-			msg_copy = jpf_sysmsg_copy_one(msg);
+			msg_copy = nmp_sysmsg_copy_one(msg);
 			BUG_ON(!msg_copy);
 			MSG_SET_DSTPOS(msg_copy, hook->who);
 
-		    if (jpf_msg_bus_deliver(bus, msg_copy))
+		    if (nmp_msg_bus_deliver(bus, msg_copy))
 		    {
-		        jpf_warning("<JpfMsgBus> deliver msg failed!");
-		        jpf_msg_bus_destroy_msg(bus, msg_copy);
+		        nmp_warning("<NmpMsgBus> deliver msg failed!");
+		        nmp_msg_bus_destroy_msg(bus, msg_copy);
 		    }
 		}
 	}
@@ -373,9 +373,9 @@ jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg)
 
 
 gint
-jpf_msg_bus_add_msg_hook(JpfBusSlotPos who, JpfMsgHookFn fun)
+nmp_msg_bus_add_msg_hook(NmpBusSlotPos who, NmpMsgHookFn fun)
 {
-	JpfBusHook *hook;
+	NmpBusHook *hook;
 
 	if (msg_hooks_count >= MAX_MSG_HOOKS)
 		return -ENOMEM;

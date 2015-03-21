@@ -8,14 +8,14 @@ typedef enum
 	STAT_MSS_REGISTERING,
 	STAT_MSS_ONLINE,
 	STAT_MSS_OFFLINE
-}JpfMssState;
+}NmpMssState;
 
-typedef struct _JpfMss JpfMss;
-struct _JpfMss
+typedef struct _NmpMss NmpMss;
+struct _NmpMss
 {
-	JpfGuestBase	guest_base;
+	NmpGuestBase	guest_base;
 
-	JpfMssState 	mss_state;
+	NmpMssState 	mss_state;
 	gint            ttl;      /*time to live*/
 	gint            hb_freq;  /*keep alive frequency(sec)*/
 };

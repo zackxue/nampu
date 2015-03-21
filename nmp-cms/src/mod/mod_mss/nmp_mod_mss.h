@@ -12,27 +12,27 @@ G_BEGIN_DECLS
 #define NMP_IS_MODMSS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODMSS))
 #define NMP_IS_MODMSS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODMSS))
 #define NMP_MODMSS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODMSS, JpfModMss))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODMSS, NmpModMss))
 #define NMP_MODMSS_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODMSS, JpfModMssClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODMSS, NmpModMssClass))
 #define NMP_MODMSS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODMSS, JpfModMssClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODMSS, NmpModMssClass))
 
-typedef struct _JpfModMss JpfModMss;
-typedef struct _JpfModMssClass JpfModMssClass;
-struct _JpfModMss
+typedef struct _NmpModMss NmpModMss;
+typedef struct _NmpModMssClass NmpModMssClass;
+struct _NmpModMss
 {
-	JpfModAccess		parent_object;
+	NmpModAccess		parent_object;
 
-	JpfGuestContainer	*container;
-	JpfNetIO			*listen_io;
+	NmpGuestContainer	*container;
+	NmpNetIO			*listen_io;
 
 };
 
 
-struct _JpfModMssClass
+struct _NmpModMssClass
 {
-	JpfModAccessClass	parent_class;
+	NmpModAccessClass	parent_class;
 };
 
 
@@ -40,20 +40,20 @@ GType nmp_mod_mss_get_type( void );
 
 
 gint
-nmp_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
-	JpfID *conflict);
+nmp_mod_mss_new_mss(NmpModMss *self, NmpNetIO *io, const gchar *id,
+	NmpID *conflict);
 
 gint
-nmp_mod_mss_sync_req(JpfModMss *self, NmpMsgID msg_id,
+nmp_mod_mss_sync_req(NmpModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size);
 
 gpointer
-nmp_mod_mss_sync_req_2(JpfModMss *self, NmpMsgID msg_id,
+nmp_mod_mss_sync_req_2(NmpModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size);
 
 void
 nmp_mod_mss_change_mss_online_status(NmpAppObj *app_obj,
-    JpfMsgMssOnlineChange notify_info);
+    NmpMsgMssOnlineChange notify_info);
 
 G_END_DECLS
 

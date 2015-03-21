@@ -1,5 +1,5 @@
 /********************************************************************
- * jpf_stream_xml.c  - deal xml of stream, parse and create xml
+ * nmp_stream_xml.c  - deal xml of stream, parse and create xml
  * Function£ºparse or create xml relate to stream.
  * Author:yangy
  * Description:users can add parse or create message of stream,define

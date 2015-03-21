@@ -14,7 +14,7 @@
 		ret = MYSQL_RESULT_CODE(mysql_result);	\
 		goto end;	\
 	}	\
-	row_num = jpf_sql_get_num_rows(mysql_result);	\
+	row_num = nmp_sql_get_num_rows(mysql_result);	\
 	if (G_UNLIKELY(row_num == 0)) {	\
 		ret = E_USRINFO;	\
 		goto end;	\
@@ -26,7 +26,7 @@
 G_BEGIN_DECLS
 
 #define MYSQL_HOST			"127.0.0.1"
-#define DB_NAME				"jxj_platform_db"
+#define DB_NAME				"nmp_platform_db"
 #define DB_ADMIN_NAME		"root"
 #define DB_ADMIN_PASSWORD	""
 
@@ -93,15 +93,15 @@ G_BEGIN_DECLS
 #define NMP_IS_MODDBS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODDBS))
 #define NMP_IS_MODDBS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODDBS))
 #define NMP_MODDBS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODDBS, JpfModDbs))
-#define JpfModDBSClass(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODDBS, JpfModDbsClass))
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODDBS, NmpModDbs))
+#define NmpModDBSClass(c) \
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODDBS, NmpModDbsClass))
 #define NMP_MODDBS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODDBS, JpfModDbsClass))
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODDBS, NmpModDbsClass))
 
-typedef struct _JpfModDbs JpfModDbs;
-typedef struct _JpfModDbsClass JpfModDbsClass;
-struct _JpfModDbs
+typedef struct _NmpModDbs NmpModDbs;
+typedef struct _NmpModDbsClass NmpModDbsClass;
+struct _NmpModDbs
 {
 	NmpAppMod	  parent_object;
 	db_conn_pool_conf *pool_conf;
@@ -113,7 +113,7 @@ struct _JpfModDbs
 	gint time_status;  //时间状态，0:正常，1:系统时间错误
 };
 
-struct _JpfModDbsClass
+struct _NmpModDbsClass
 {
 	NmpAppModClass	parent_class;
 };
@@ -122,13 +122,13 @@ struct _JpfModDbsClass
 GType nmp_mod_dbs_get_type( void );
 
 void
-nmp_mod_dbs_register_bss_msg_handler(JpfModDbs *self);
+nmp_mod_dbs_register_bss_msg_handler(NmpModDbs *self);
 
 void
-nmp_mod_dbs_register_cu_msg_handler(JpfModDbs *self);
+nmp_mod_dbs_register_cu_msg_handler(NmpModDbs *self);
 
 void
-jpf_mods_dbs_broadcast_msg(JpfModDbs * self, gpointer priv, gsize size);
+nmp_mods_dbs_broadcast_msg(NmpModDbs * self, gpointer priv, gsize size);
 G_END_DECLS
 
 

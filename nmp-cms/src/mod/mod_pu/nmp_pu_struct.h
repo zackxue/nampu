@@ -15,21 +15,21 @@ typedef enum
 	STAT_PU_REGISTERING,	/* Register packet was sent, but no response yet */
 	STAT_PU_ONLINE,			/* Register successfully */
 	STAT_PU_OFFLINE			/* Keep alive timout */
-}JpfPuState;
+}NmpPuState;
 
 
-typedef struct _JpfPu JpfPu;
-struct _JpfPu
+typedef struct _NmpPu NmpPu;
+struct _NmpPu
 {
-	JpfGuestBase	guest_base;		/* Including PU ID */
+	NmpGuestBase	guest_base;		/* Including PU ID */
 
-	JpfPuType		type;			/* Type: DVR, IPC ... */
-	JpfPuState		state;			/* PU State */
+	NmpPuType		type;			/* Type: DVR, IPC ... */
+	NmpPuState		state;			/* PU State */
 	guint			age;	/* heart beating counter  */
 
 	gint				recheck;		/* to recheck if in database */
 
-	JpfResourcesCtl	res_ctl;
+	NmpResourcesCtl	res_ctl;
 };
 
 

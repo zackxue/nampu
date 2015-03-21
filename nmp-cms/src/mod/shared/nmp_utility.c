@@ -9,14 +9,14 @@
 
 
 time_t
-jpf_get_seconds_of_time(gint hour, gint min, gint sec)
+nmp_get_seconds_of_time(gint hour, gint min, gint sec)
 {
 	return sec + min * 60 + hour * 60 * 60;
 }
 
 
 static __inline__ gint
-jpf_check_format(gint hour, gint min, gint sec)
+nmp_check_format(gint hour, gint min, gint sec)
 {
 	if (hour > 23 || hour < 0)
 		return -EINVAL;
@@ -32,7 +32,7 @@ jpf_check_format(gint hour, gint min, gint sec)
 
 
 gint
-jpf_get_string_time_range(const gchar *str, time_t *start,
+nmp_get_string_time_range(const gchar *str, time_t *start,
 	time_t *end)
 {
 	gint s_hour, s_min, s_sec, e_hour, e_min, e_sec;
@@ -46,14 +46,14 @@ jpf_get_string_time_range(const gchar *str, time_t *start,
 		return -EINVAL;
 	}
 
-	if (jpf_check_format(s_hour, s_min, s_sec))
+	if (nmp_check_format(s_hour, s_min, s_sec))
 		return -EINVAL;
 
-	if (jpf_check_format(e_hour, e_min, e_sec))
+	if (nmp_check_format(e_hour, e_min, e_sec))
 		return -EINVAL;
 
-	*start = jpf_get_seconds_of_time(s_hour, s_min, s_sec);
-	*end = jpf_get_seconds_of_time(e_hour, e_min, e_sec);
+	*start = nmp_get_seconds_of_time(s_hour, s_min, s_sec);
+	*end = nmp_get_seconds_of_time(e_hour, e_min, e_sec);
 
 	return 0;
 }

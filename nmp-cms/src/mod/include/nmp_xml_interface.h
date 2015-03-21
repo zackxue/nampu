@@ -2,7 +2,7 @@
 #define __XML_INTERFACE_H__
 
 void
-jpf_parse_ams_time_policy(gchar *time_policy, JpfActionPolicy *res_info);
+nmp_parse_ams_time_policy(gchar *time_policy, NmpActionPolicy *res_info);
 
 #endif
 

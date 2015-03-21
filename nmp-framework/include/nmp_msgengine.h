@@ -34,10 +34,10 @@ typedef NmpMsgFunRet (*NmpMsgFun)(NmpAppObj *app_obj, NmpSysMsg *msg);
  * This is POD type
  */
 
-typedef struct _JpfMsgTable JpfMsgTable;
-struct _JpfMsgTable
+typedef struct _NmpMsgTable NmpMsgTable;
+struct _NmpMsgTable
 {
-	struct _JpfMsgTableEntry {
+	struct _NmpMsgTableEntry {
 		NmpMsgID entry_msg;
 		guint entry_flags;
 		NmpMsgFun fun_forward;
@@ -46,7 +46,7 @@ struct _JpfMsgTable
 	guint counts;
 };
 
-#define NMP_TYPE_MSGENGINE	(jpf_msg_engine_get_type())
+#define NMP_TYPE_MSGENGINE	(nmp_msg_engine_get_type())
 #define NMP_IS_MSGENGINE(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MSGENGINE))
 #define NMP_IS_MSGENGINE_CLASS(c) \
 	(G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MSGENGINE))
@@ -63,11 +63,11 @@ typedef struct _NmpMsgEngineClass NmpMsgEngineClass;
 
 struct _NmpMsgEngine
 {
-	JpfObject parent_object;
+	NmpObject parent_object;
 
 	gchar		name[ENGINE_NAME];
 	NmpAppObj	*owner;
-	JpfMsgTable *msg_dict;
+	NmpMsgTable *msg_dict;
 	GThreadPool	*th_pool_f;		/* Forward msg threads pool */
 	GThreadPool	*th_pool_b;		/* Backward msg threads pool */
 };
@@ -75,19 +75,19 @@ struct _NmpMsgEngine
 
 struct _NmpMsgEngineClass
 {
-	JpfObjectClass parent_class;
+	NmpObjectClass parent_class;
 };
 
 
-GType jpf_msg_engine_get_type( void );
-void jpf_msg_engine_set_thread_exclusive(gboolean exclusive);
-void jpf_msg_engine_set_threads(guint fthreads, guint bthreads);
-void jpf_msg_engine_set_name(NmpMsgEngine *self, const gchar *name);
-gint jpf_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner);
-gint jpf_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg);
-gint jpf_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg);
+GType nmp_msg_engine_get_type( void );
+void nmp_msg_engine_set_thread_exclusive(gboolean exclusive);
+void nmp_msg_engine_set_threads(guint fthreads, guint bthreads);
+void nmp_msg_engine_set_name(NmpMsgEngine *self, const gchar *name);
+gint nmp_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner);
+gint nmp_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg);
+gint nmp_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg);
 
-gint jpf_msg_engine_register_msg(NmpMsgEngine *self, NmpMsgID msg_id,
+gint nmp_msg_engine_register_msg(NmpMsgEngine *self, NmpMsgID msg_id,
 	NmpMsgFun f_fun, NmpMsgFun b_fun, guint flags);
 
 G_END_DECLS

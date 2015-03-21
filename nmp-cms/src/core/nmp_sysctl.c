@@ -13,10 +13,10 @@
 
 #define SC_CONFIG_ENV_NAME		"CMS_CONFIG_PATH"
 #define SC_DEFAULT_CONFIG_PATH	 "/etc/"
-#define SC_CONFIG_FILE_NAME		"jxj_server.conf"
+#define SC_CONFIG_FILE_NAME		"nmp_server.conf"
 #define SC_PLATFORM_UPGRADE_SCRIPT  "upgrade-platform-system"
 
-JpfSysCtl nmp_cms_params =
+NmpSysCtl nmp_cms_params =
 {
 	.base_port			= 9902,
 	.max_log_file_size	= 50,
@@ -25,7 +25,7 @@ JpfSysCtl nmp_cms_params =
 	.db_max_conn_num = 100,
 	.log_file_path = "./log",
 	.db_host = "127.0.0.1",
-	.db_name = "jxj_platform_db",
+	.db_name = "nmp_platform_db",
 	.db_user_name = "root",
 	.db_user_password = "",
 	.db_backup_path = "/home",
@@ -36,7 +36,7 @@ JpfSysCtl nmp_cms_params =
 	.sre_type = "general"
 };
 
-void __jpf_set_sys_parm_int(JpfSysCtl *sc, gint id, gint value)
+void __nmp_set_sys_parm_int(NmpSysCtl *sc, gint id, gint value)
 {
     switch(id)
     {
@@ -67,13 +67,13 @@ void __jpf_set_sys_parm_int(JpfSysCtl *sc, gint id, gint value)
 
 }
 
-void jpf_set_sys_parm_int(gint id, gint value)
+void nmp_set_sys_parm_int(gint id, gint value)
 {
-	__jpf_set_sys_parm_int(&nmp_cms_params, id, value);
+	__nmp_set_sys_parm_int(&nmp_cms_params, id, value);
 }
 
 
-gint __jpf_get_sys_parm_int(JpfSysCtl *sc, gint id)
+gint __nmp_get_sys_parm_int(NmpSysCtl *sc, gint id)
 {
     switch(id)
     {
@@ -101,13 +101,13 @@ gint __jpf_get_sys_parm_int(JpfSysCtl *sc, gint id)
 }
 
 
-gint jpf_get_sys_parm_int(gint id)
+gint nmp_get_sys_parm_int(gint id)
 {
-    return __jpf_get_sys_parm_int(&nmp_cms_params, id);
+    return __nmp_get_sys_parm_int(&nmp_cms_params, id);
 }
 
 
-void __jpf_set_sys_parm_str(JpfSysCtl *sc, gint id, gchar *value)
+void __nmp_set_sys_parm_str(NmpSysCtl *sc, gint id, gchar *value)
 {
 	 switch(id)
     {
@@ -166,13 +166,13 @@ void __jpf_set_sys_parm_str(JpfSysCtl *sc, gint id, gchar *value)
 }
 
 
-void jpf_set_sys_parm_str(gint id, gchar *value)
+void nmp_set_sys_parm_str(gint id, gchar *value)
 {
-	__jpf_set_sys_parm_str(&nmp_cms_params, id, value);
+	__nmp_set_sys_parm_str(&nmp_cms_params, id, value);
 }
 
 
-gchar* __jpf_get_sys_parm_str(JpfSysCtl *sc, gint id)
+gchar* __nmp_get_sys_parm_str(NmpSysCtl *sc, gint id)
 {
     switch(id)
     {
@@ -216,82 +216,82 @@ gchar* __jpf_get_sys_parm_str(JpfSysCtl *sc, gint id)
 	 return NULL;
 }
 
-gchar* jpf_get_sys_parm_str(gint id)
+gchar* nmp_get_sys_parm_str(gint id)
 {
-    return __jpf_get_sys_parm_str(&nmp_cms_params, id);
+    return __nmp_get_sys_parm_str(&nmp_cms_params, id);
 }
 
 
 static __inline__ void
-__jpf_sysctl_init(rw_file *conf)
+__nmp_sysctl_init(rw_file *conf)
 {
 	if (get_value_of(conf, "section.global", 0, "base_port"))
 	{
-		jpf_set_sys_parm_int(SYS_PARM_BASEPORT,
+		nmp_set_sys_parm_int(SYS_PARM_BASEPORT,
 		atoi(get_value_of(conf, "section.global", 0, "base_port")));
 	}
 
 	if (get_value_of(conf, "section.global", 0, "log_max_size"))
 	{
-		jpf_set_sys_parm_int(SYS_PARM_LOGFILESIZE,
+		nmp_set_sys_parm_int(SYS_PARM_LOGFILESIZE,
 		atoi(get_value_of(conf, "section.global", 0, "log_max_size")));
 	}
 
-	jpf_set_sys_parm_str(SYS_PARM_LOGFILEPATH,
+	nmp_set_sys_parm_str(SYS_PARM_LOGFILEPATH,
 		(gchar*)get_value_of(conf, "section.global", 0, "log_dir"));
 
-	jpf_set_sys_parm_str(SYS_PARM_DECODERPATH,
+	nmp_set_sys_parm_str(SYS_PARM_DECODERPATH,
 		(gchar*)get_value_of(conf, "section.global", 0, "decoder_dir"));
 
-	jpf_set_sys_parm_str(SYS_PARM_MAPPATH,
+	nmp_set_sys_parm_str(SYS_PARM_MAPPATH,
 		(gchar*)get_value_of(conf, "section.global", 0, "map_dir"));
 
-	jpf_set_sys_parm_str(SYS_PARM_TIMEZONE,
+	nmp_set_sys_parm_str(SYS_PARM_TIMEZONE,
 		(gchar*)get_value_of(conf, "section.global", 0, "time_zone"));
 
 	if (get_value_of(conf, "section.cms", 0, "db_min_conn_num"))
 	{
-		jpf_set_sys_parm_int(SYS_PARM_DBMINCONNNUM,
+		nmp_set_sys_parm_int(SYS_PARM_DBMINCONNNUM,
 		atoi(get_value_of(conf, "section.cms", 0, "db_min_conn_num")));
 	}
 
 	if (get_value_of(conf, "section.cms", 0, "db_max_conn_num"))
 	{
-		jpf_set_sys_parm_int(SYS_PARM_DBMAXCONNNUM,
+		nmp_set_sys_parm_int(SYS_PARM_DBMAXCONNNUM,
 		atoi(get_value_of(conf, "section.cms", 0, "db_max_conn_num")));
 	}
 
 	if (get_value_of(conf, "section.cms", 0, "wait_after_connected"))
 	{
-		jpf_set_sys_parm_int(SYS_PARM_WAIT_AFTER_CONNECTED,
+		nmp_set_sys_parm_int(SYS_PARM_WAIT_AFTER_CONNECTED,
 		atoi(get_value_of(conf, "section.cms", 0, "wait_after_connected")));
 	}
 
-	jpf_set_sys_parm_str(SYS_PARM_DBHOST,
+	nmp_set_sys_parm_str(SYS_PARM_DBHOST,
 		(gchar*)get_value_of(conf, "section.cms", 0, "db_host"));
 
-	jpf_set_sys_parm_str(SYS_PARM_DBNAME,
+	nmp_set_sys_parm_str(SYS_PARM_DBNAME,
 		(gchar*)get_value_of(conf, "section.cms", 0, "db_name"));
 
-	jpf_set_sys_parm_str(SYS_PARM_DBADMINNAME,
+	nmp_set_sys_parm_str(SYS_PARM_DBADMINNAME,
 		(gchar*)get_value_of(conf, "section.cms", 0, "db_user_name"));
 
-	jpf_set_sys_parm_str(SYS_PARM_DBADMINPASSWORD,
+	nmp_set_sys_parm_str(SYS_PARM_DBADMINPASSWORD,
 		(gchar*)get_value_of(conf, "section.cms", 0, "db_user_password"));
 
-	jpf_set_sys_parm_str(SYS_PARM_DBBACKUPPATH,
+	nmp_set_sys_parm_str(SYS_PARM_DBBACKUPPATH,
 		(gchar*)get_value_of(conf, "section.cms", 0, "db_backup_path"));
 
-	jpf_set_sys_parm_str(SYS_PARM_MYCNFPATH,
+	nmp_set_sys_parm_str(SYS_PARM_MYCNFPATH,
 		(gchar*)get_value_of(conf, "section.cms", 0, "my_cnf_path"));
 
-	jpf_set_sys_parm_str(SYS_PARM_SRETYPE,
+	nmp_set_sys_parm_str(SYS_PARM_SRETYPE,
 		(gchar*)get_value_of(conf, "section.global", 0, "sre"));
 }
 
 
 static __inline__ void
-_jpf_sysctl_init(JpfSysCtl *sc, const gchar *env_name)
+_nmp_sysctl_init(NmpSysCtl *sc, const gchar *env_name)
 {
 	gchar *path, file_name[MAX_FILE_PATH];
 	rw_file *rw_f;
@@ -304,8 +304,8 @@ _jpf_sysctl_init(JpfSysCtl *sc, const gchar *env_name)
 	if (strlen(path) + strlen("/") + strlen(SC_CONFIG_FILE_NAME)
 		>= MAX_FILE_PATH)
 	{
-		jpf_warning(
-			"Cms open 'jxj_server.conf' failed, path too long."
+		nmp_warning(
+			"Cms open 'nmp_server.conf' failed, path too long."
 		);
 		return;		/* use default */
 	}
@@ -317,26 +317,26 @@ _jpf_sysctl_init(JpfSysCtl *sc, const gchar *env_name)
 	rw_f = open_rw_file(file_name, 0, &err);
 	if (!rw_f)
 	{
-		jpf_warning(
-			"Cms open 'jxj_server.conf' failed, err: %d.", err
+		nmp_warning(
+			"Cms open 'nmp_server.conf' failed, err: %d.", err
 		);
 		return;		/* use default */
 	}
 
-	__jpf_sysctl_init(rw_f);
+	__nmp_sysctl_init(rw_f);
 	close_rw_file(rw_f);
 }
 
 
 void
-jpf_sysctl_init( void )
+nmp_sysctl_init( void )
 {
-	_jpf_sysctl_init(&nmp_cms_params, SC_CONFIG_ENV_NAME);
+	_nmp_sysctl_init(&nmp_cms_params, SC_CONFIG_ENV_NAME);
 }
 
 
 static __inline__ rw_file *
-_jpf_get_rw_file(const gchar *env_name)
+_nmp_get_rw_file(const gchar *env_name)
 {
 	gchar *path, file_name[MAX_FILE_PATH];
 	rw_file *rw_f;
@@ -349,8 +349,8 @@ _jpf_get_rw_file(const gchar *env_name)
 	if (strlen(path) + strlen("/") + strlen(SC_CONFIG_FILE_NAME)
 		>= MAX_FILE_PATH)
 	{
-		jpf_warning(
-			"Cms open 'jxj_server.conf' failed, path too long."
+		nmp_warning(
+			"Cms open 'nmp_server.conf' failed, path too long."
 		);
 		return NULL;		/* use default */
 	}
@@ -362,8 +362,8 @@ _jpf_get_rw_file(const gchar *env_name)
 	rw_f = open_rw_file(file_name, O_RDONLY, &err);
 	if (!rw_f)
 	{
-		jpf_warning(
-			"Cms open 'jxj_server.conf' failed, err: %d.", err
+		nmp_warning(
+			"Cms open 'nmp_server.conf' failed, err: %d.", err
 		);
 		return NULL;		/* use default */
 	}
@@ -373,7 +373,7 @@ _jpf_get_rw_file(const gchar *env_name)
 
 
 static __inline__ gint
-__jpf_get_script(const gchar *script_name, gchar script_path[])
+__nmp_get_script(const gchar *script_name, gchar script_path[])
 {
 	gchar *path, *tmp_path;
 	gchar file_path[MAX_FILE_PATH], sct_path[MAX_FILE_PATH];
@@ -401,7 +401,7 @@ __jpf_get_script(const gchar *script_name, gchar script_path[])
        err = access(file_path, F_OK|X_OK);
 	if (err)
 	{
-	    jpf_warning(
+	    nmp_warning(
                "access(%s) failed.", file_path
 	    );
 	    return -errno;
@@ -413,14 +413,14 @@ __jpf_get_script(const gchar *script_name, gchar script_path[])
 
 
 gint
-jpf_get_platform_upgrade_script(gchar script_path[])
+nmp_get_platform_upgrade_script(gchar script_path[])
 {
-       return __jpf_get_script(SC_PLATFORM_UPGRADE_SCRIPT, script_path);
+       return __nmp_get_script(SC_PLATFORM_UPGRADE_SCRIPT, script_path);
 }
 
 
 
-static __inline__ void __jpf_get_mds_parm(rw_file *conf, JpfMdsCtl *gc)
+static __inline__ void __nmp_get_mds_parm(rw_file *conf, NmpMdsCtl *gc)
 {
 	gchar ports_range[SC_PORT_LEN] = {0};
 
@@ -434,27 +434,27 @@ static __inline__ void __jpf_get_mds_parm(rw_file *conf, JpfMdsCtl *gc)
 	}
 }
 
-static __inline__ void _jpf_get_mds_parm(JpfMdsCtl *gc)
+static __inline__ void _nmp_get_mds_parm(NmpMdsCtl *gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_get_mds_parm(rw_f, gc);
+	__nmp_get_mds_parm(rw_f, gc);
 	close_rw_file(rw_f);
 }
 
-void jpf_get_mds_parm(JpfMdsCtl *gc)
+void nmp_get_mds_parm(NmpMdsCtl *gc)
 {
-	_jpf_get_mds_parm(gc);
+	_nmp_get_mds_parm(gc);
 }
 
 
-static __inline__ void __jpf_set_mds_parm(rw_file *conf, JpfMdsCtl gc)
+static __inline__ void __nmp_set_mds_parm(rw_file *conf, NmpMdsCtl gc)
 {
 	int ret;
 	gchar ports_range[SC_PORT_LEN] = {0};
@@ -464,37 +464,37 @@ static __inline__ void __jpf_set_mds_parm(rw_file *conf, JpfMdsCtl gc)
 
 	ret = set_value_of(conf, "section.mds", "mds_id", gc.mds_id);
 	if (ret)
-		jpf_warning("set section.mds mds_id failed");
+		nmp_warning("set section.mds mds_id failed");
 
 	snprintf(ports_range, SC_PORT_LEN, "%d, %d", gc.start_port, gc.end_port);
 	//printf("--set mds ports range=%s\n", ports_range);
 	ret = set_value_of(conf, "section.mds", "stream_ports_range", ports_range);
 	if (ret)
-		jpf_warning("set section.mds stream_ports_range failed");
+		nmp_warning("set section.mds stream_ports_range failed");
 }
 
-static __inline__ void _jpf_set_mds_parm(JpfMdsCtl gc)
+static __inline__ void _nmp_set_mds_parm(NmpMdsCtl gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_set_mds_parm(rw_f, gc);
+	__nmp_set_mds_parm(rw_f, gc);
 	flush_rw_file(rw_f);
 	close_rw_file(rw_f);
 }
 
-void jpf_set_mds_parm(JpfMdsCtl gc)
+void nmp_set_mds_parm(NmpMdsCtl gc)
 {
-	_jpf_set_mds_parm(gc);
+	_nmp_set_mds_parm(gc);
 }
 
 
-static __inline__ void __jpf_get_mss_parm(rw_file *conf, JpfMssCtl *gc)
+static __inline__ void __nmp_get_mss_parm(rw_file *conf, NmpMssCtl *gc)
 {
     if (get_value_of(conf, "section.mss", 0, "mss_id"))
         strncpy(gc->mss_id, get_value_of(conf, "section.mss", 0, "mss_id"), MSS_ID_LEN - 1);
@@ -503,27 +503,27 @@ static __inline__ void __jpf_get_mss_parm(rw_file *conf, JpfMssCtl *gc)
         MAX_STOR_TYPE_LEN - 1);
 }
 
-static __inline__ void _jpf_get_mss_parm(JpfMssCtl *gc)
+static __inline__ void _nmp_get_mss_parm(NmpMssCtl *gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_get_mss_parm(rw_f, gc);
+	__nmp_get_mss_parm(rw_f, gc);
 	close_rw_file(rw_f);
 }
 
-void jpf_get_mss_parm(JpfMssCtl *gc)
+void nmp_get_mss_parm(NmpMssCtl *gc)
 {
-     _jpf_get_mss_parm(gc);
+     _nmp_get_mss_parm(gc);
 }
 
 
-static __inline__ void __jpf_set_mss_parm(rw_file *conf, JpfMssCtl gc)
+static __inline__ void __nmp_set_mss_parm(rw_file *conf, NmpMssCtl gc)
 {
     int ret;
 
@@ -532,62 +532,62 @@ static __inline__ void __jpf_set_mss_parm(rw_file *conf, JpfMssCtl gc)
 
     ret = set_value_of(conf, "section.mss", "mss_id", gc.mss_id);
     if (ret)
-	jpf_warning("set section.mss mss_id failed");
+	nmp_warning("set section.mss mss_id failed");
 
     ret = set_value_of(conf, "section.mss", "storage_type", gc.stor_type);
     if (ret)
-	jpf_warning("set section.mss storage_type failed");
+	nmp_warning("set section.mss storage_type failed");
 
 }
 
-static __inline__ void _jpf_set_mss_parm(JpfMssCtl gc)
+static __inline__ void _nmp_set_mss_parm(NmpMssCtl gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_set_mss_parm(rw_f, gc);
+	__nmp_set_mss_parm(rw_f, gc);
 	flush_rw_file(rw_f);
 	close_rw_file(rw_f);
 }
 
-void jpf_set_mss_parm(JpfMssCtl gc)
+void nmp_set_mss_parm(NmpMssCtl gc)
 {
-     _jpf_set_mss_parm(gc);
+     _nmp_set_mss_parm(gc);
 }
 
 
-static __inline__ void __jpf_get_ivs_parm(rw_file *conf, JpfIvsCtl *gc)
+static __inline__ void __nmp_get_ivs_parm(rw_file *conf, NmpIvsCtl *gc)
 {
 	if (get_value_of(conf, "section.ivs", 0, "ivs_id"))
 		strncpy(gc->ivs_id, get_value_of(conf, "section.ivs", 0, "ivs_id"), IVS_ID_LEN - 1);
 }
 
-static __inline__ void _jpf_get_ivs_parm(JpfIvsCtl *gc)
+static __inline__ void _nmp_get_ivs_parm(NmpIvsCtl *gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_get_ivs_parm(rw_f, gc);
+	__nmp_get_ivs_parm(rw_f, gc);
 	close_rw_file(rw_f);
 }
 
-void jpf_get_ivs_parm(JpfIvsCtl *gc)
+void nmp_get_ivs_parm(NmpIvsCtl *gc)
 {
-     _jpf_get_ivs_parm(gc);
+     _nmp_get_ivs_parm(gc);
 }
 
 
-static __inline__ void __jpf_set_ivs_parm(rw_file *conf, JpfIvsCtl gc)
+static __inline__ void __nmp_set_ivs_parm(rw_file *conf, NmpIvsCtl gc)
 {
 	int ret;
 
@@ -595,27 +595,27 @@ static __inline__ void __jpf_set_ivs_parm(rw_file *conf, JpfIvsCtl gc)
 
 	ret = set_value_of(conf, "section.ivs", "ivs_id", gc.ivs_id);
 	if (ret)
-		jpf_warning("set section.ivs ivs_id failed");
+		nmp_warning("set section.ivs ivs_id failed");
 }
 
-static __inline__ void _jpf_set_ivs_parm(JpfIvsCtl gc)
+static __inline__ void _nmp_set_ivs_parm(NmpIvsCtl gc)
 {
 	rw_file *rw_f;
 
-	rw_f = _jpf_get_rw_file(SC_CONFIG_ENV_NAME);
+	rw_f = _nmp_get_rw_file(SC_CONFIG_ENV_NAME);
 	if (!rw_f)
 	{
 		return;		/* use default */
 	}
 
-	__jpf_set_ivs_parm(rw_f, gc);
+	__nmp_set_ivs_parm(rw_f, gc);
 	flush_rw_file(rw_f);
 	close_rw_file(rw_f);
 }
 
-void jpf_set_ivs_parm(JpfIvsCtl gc)
+void nmp_set_ivs_parm(NmpIvsCtl gc)
 {
-     _jpf_set_ivs_parm(gc);
+     _nmp_set_ivs_parm(gc);
 }
 
 

@@ -28,7 +28,7 @@ mb_handle_t*
         if(hdl)free(hdl);
         return NULL;
     }
-    snprintf(hdl->src_id, sizeof(hdl->src_id), "jxj#%s#%02d", mac, rand_ID);
+    snprintf(hdl->src_id, sizeof(hdl->src_id), "nmp#%s#%02d", mac, rand_ID);
     printf("mb_lib src_id :%s\n", hdl->src_id);
 
     //open mb listen

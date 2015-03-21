@@ -8,14 +8,14 @@ typedef enum
 	STAT_ADMIN_REQUEST,
 	STAT_ADMIN_LOGIN,
 	STAT_ADMIN_FAILED
-}JpfAdminState;
+}NmpAdminState;
 
-typedef struct _JpfBss JpfBss;
-struct _JpfBss
+typedef struct _NmpBss NmpBss;
+struct _NmpBss
 {
-	JpfGuestBase	guest_base;
+	NmpGuestBase	guest_base;
 
-	JpfAdminState 	user_state;
+	NmpAdminState 	user_state;
 	gint            ttl;      /*time to live*/
 	gint            hb_freq;  /*keep alive frequency(sec)*/
 };

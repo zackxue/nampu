@@ -7,17 +7,17 @@
 //static guint msg_seq_generator = 0;
 
 gint
-nmp_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
+nmp_mod_cu_get_user_info(NmpModCu *self, NmpUsr *user)
 {
-    JpfMsgUserInfo req_info;
-    JpfMsgUserInfoRes *res_info;
+    NmpMsgUserInfo req_info;
+    NmpMsgUserInfoRes *res_info;
     NmpSysMsg *msg;
     gint ret;
 
     memset(&req_info, 0, sizeof(req_info));
     strncpy(req_info.name, user->user_name, USER_NAME_LEN - 1);
 
-    msg = jpf_sysmsg_new_2(MSG_GET_USER_INFO, &req_info,
+    msg = nmp_sysmsg_new_2(MSG_GET_USER_INFO, &req_info,
     	sizeof(req_info), ++msg_seq_generator);
     if (G_UNLIKELY(!msg))
     	return -E_NOMEM;
@@ -26,17 +26,17 @@ nmp_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
     ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
-        jpf_warning(
-        	"<JpfModCu> request user info failed!"
+        nmp_warning(
+        	"<NmpModCu> request user info failed!"
         );
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
         return ret;
     }
 
     if (G_UNLIKELY(!msg))	/* sent, but no response */
     {
-    	jpf_warning(
-    		"<JpfModCu> request user info timeout!"
+    	nmp_warning(
+    		"<NmpModCu> request user info timeout!"
     	);
     	return -E_TIMEOUT;
     }
@@ -47,32 +47,32 @@ nmp_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
     ret = RES_CODE(res_info);
     if (ret)
     {
-    	jpf_warning(
-    		"<JpfModCu> request user info err:%d!", ret
+    	nmp_warning(
+    		"<NmpModCu> request user info err:%d!", ret
     	);
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
     	return ret;
     }
 
     nmp_mod_cu_add_user_info(user, res_info->passwd,
     	res_info->group_id);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
     return 0;
 }
 
 
 gint
-nmp_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
+nmp_mod_cu_get_group_info(NmpModCu *self, NmpUsrGroup *grp)
 {
-    JpfMsgUserGroupInfo req_info;
-    JpfMsgUserGroupInfoRes *res_info;
+    NmpMsgUserGroupInfo req_info;
+    NmpMsgUserGroupInfoRes *res_info;
     NmpSysMsg *msg;
     gint ret;
 
     memset(&req_info, 0, sizeof(req_info));
     req_info.group_id = grp->id;
 
-    msg = jpf_sysmsg_new_2(MSG_GET_USER_GROUP_INFO, &req_info,
+    msg = nmp_sysmsg_new_2(MSG_GET_USER_GROUP_INFO, &req_info,
     	sizeof(req_info), ++msg_seq_generator);
     if (G_UNLIKELY(!msg))
     	return -E_NOMEM;
@@ -81,18 +81,18 @@ nmp_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
     ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
-        jpf_warning(
-    		"<JpfModCu> request group info failed!"
+        nmp_warning(
+    		"<NmpModCu> request group info failed!"
     	 );
-    	 jpf_sysmsg_destroy(msg);
+    	 nmp_sysmsg_destroy(msg);
 
     	 return ret;
     }
 
     if (G_UNLIKELY(!msg))	/* sent, but no response */
     {
-        jpf_warning(
-        	"<JpfModCu> request group info timeout!"
+        nmp_warning(
+        	"<NmpModCu> request group info timeout!"
         );
 
         return -E_TIMEOUT;
@@ -104,10 +104,10 @@ nmp_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
     ret = RES_CODE(res_info);
     if (ret)
     {
-        jpf_warning(
-        	"<JpfModCu> request group info err:%d!", ret
+        nmp_warning(
+        	"<NmpModCu> request group info err:%d!", ret
         );
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return ret;
     }
@@ -115,19 +115,19 @@ nmp_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
     nmp_mod_cu_add_group_info(grp, res_info->rank,
     	res_info->permission);
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return 0;
 }
 
 gint
-nmp_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
+nmp_mod_cu_get_user_login_info(NmpModCu *self, NmpMsgUserLoginInfoRes *res)
 {
-	JpfMsgUserLoginInfoRes *res_info;
+	NmpMsgUserLoginInfoRes *res_info;
 	NmpSysMsg *msg;
 	gint ret;
 
-	msg = jpf_sysmsg_new_2(MSG_GET_USER_LOGIN_INFO, NULL,
+	msg = nmp_sysmsg_new_2(MSG_GET_USER_LOGIN_INFO, NULL,
 		0, ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
@@ -136,17 +136,17 @@ nmp_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 	ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
 	if (G_UNLIKELY(ret))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModCu> request domain and root area info failed!"
+		nmp_warning(
+			"<NmpModCu> request domain and root area info failed!"
 		);
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 		return ret;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModCu> request domain and root area info timeout!"
+		nmp_warning(
+			"<NmpModCu> request domain and root area info timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -157,15 +157,15 @@ nmp_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 	ret = RES_CODE(res_info);
 	if (ret)
 	{
-		jpf_warning(
-			"<JpfModCu> request domain and root area info err:%d!", ret
+		nmp_warning(
+			"<NmpModCu> request domain and root area info err:%d!", ret
 		);
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 		return ret;
 	}
 
-    memcpy(res, res_info,sizeof(JpfMsgUserLoginInfoRes));
-    jpf_sysmsg_destroy(msg);
+    memcpy(res, res_info,sizeof(NmpMsgUserLoginInfoRes));
+    nmp_sysmsg_destroy(msg);
 
 	return 0;
 }
@@ -173,16 +173,16 @@ nmp_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 
 gint
 nmp_mod_cu_get_mdu_ip(
-    JpfModCu *self, JpfMsgGetMdsIp *req_info,
-    JpfMsgGetMdsIpRes *getMduIpRes
+    NmpModCu *self, NmpMsgGetMdsIp *req_info,
+    NmpMsgGetMdsIpRes *getMduIpRes
 )
 {
-    JpfMsgGetMdsIpRes *res_info;
+    NmpMsgGetMdsIpRes *res_info;
     NmpSysMsg *msg;
     gint ret;
 
-    msg = jpf_sysmsg_new_2(MSG_GET_MDS_IP, req_info,
-    	sizeof(JpfMsgGetMdsIp), ++msg_seq_generator);
+    msg = nmp_sysmsg_new_2(MSG_GET_MDS_IP, req_info,
+    	sizeof(NmpMsgGetMdsIp), ++msg_seq_generator);
     if (G_UNLIKELY(!msg))
     	return -E_NOMEM;
 
@@ -190,17 +190,17 @@ nmp_mod_cu_get_mdu_ip(
     ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
-    	jpf_warning(
-    		"<JpfModCu> request mdu ip failed!"
+    	nmp_warning(
+    		"<NmpModCu> request mdu ip failed!"
     	);
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
     	return ret;
     }
 
     if (G_UNLIKELY(!msg))	/* sent, but no response */
     {
-    	jpf_warning(
-    		"<JpfModCu> request mdu ip timeout!"
+    	nmp_warning(
+    		"<NmpModCu> request mdu ip timeout!"
     	);
     	return -E_TIMEOUT;
     }
@@ -211,15 +211,15 @@ nmp_mod_cu_get_mdu_ip(
     ret = RES_CODE(res_info);
     if (ret)
     {
-    	jpf_warning(
-    		"<JpfModCu> request mdu ip err:%d!", ret
+    	nmp_warning(
+    		"<NmpModCu> request mdu ip err:%d!", ret
     	);
-    	jpf_sysmsg_destroy(msg);
+    	nmp_sysmsg_destroy(msg);
     	return ret;
     }
 
-    memcpy(getMduIpRes, res_info,sizeof(JpfMsgGetMdsIpRes));
-    jpf_sysmsg_destroy(msg);
+    memcpy(getMduIpRes, res_info,sizeof(NmpMsgGetMdsIpRes));
+    nmp_sysmsg_destroy(msg);
 
     return 0;
 }

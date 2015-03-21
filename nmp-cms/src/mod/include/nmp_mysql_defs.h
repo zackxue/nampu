@@ -16,14 +16,14 @@
 #define QUERY_STR_LEN           20480
 #define MAX_STR_LEN           128
 
-typedef MYSQL               JpfMysql;
-typedef MYSQL_FIELD         JpfMysqlField;
-typedef MYSQL_ROW           JpfMysqlRow;
-typedef MYSQL_FIELD_OFFSET  JpfMysqlFieldOffset;
+typedef MYSQL               NmpMysql;
+typedef MYSQL_FIELD         NmpMysqlField;
+typedef MYSQL_ROW           NmpMysqlRow;
+typedef MYSQL_FIELD_OFFSET  NmpMysqlFieldOffset;
 
-typedef struct _JpfMysqlRes JpfMysqlRes;
+typedef struct _NmpMysqlRes NmpMysqlRes;
 //define struct to store the result of query
-struct _JpfMysqlRes
+struct _NmpMysqlRes
 {
 	uint32_t result_code;   //0:success, -1:failure
 	uint32_t is_select;     //0:not select, 1:is select

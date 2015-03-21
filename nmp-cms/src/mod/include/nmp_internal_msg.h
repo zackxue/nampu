@@ -23,7 +23,7 @@ typedef enum
     MSG_WDD_FORBIDDEN = 8,
     MSG_MSS_STATE_CHANGE = 9,
     MSG_WDD_ABNORMAL = 10
-}JpfCuNotifyMsg;
+}NmpCuNotifyMsg;
 
 /*
  * <MSG-001>
@@ -33,16 +33,16 @@ typedef enum
  * <- @user_password, @user_group_id
 */
 #define MSG_GET_USER_INFO			(MSG_INTERNAL_BASE + 1)
-typedef struct _JpfMsgUserInfo JpfMsgUserInfo;
-struct _JpfMsgUserInfo
+typedef struct _NmpMsgUserInfo NmpMsgUserInfo;
+struct _NmpMsgUserInfo
 {
     gchar			name[USER_NAME_LEN];
 };
 
-typedef struct _JpfMsgUserInfoRes JpfMsgUserInfoRes;
-struct _JpfMsgUserInfoRes
+typedef struct _NmpMsgUserInfoRes NmpMsgUserInfoRes;
+struct _NmpMsgUserInfoRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gchar			name[USER_NAME_LEN];
     gchar			passwd[USER_PASSWD_LEN];
     gint			   group_id;
@@ -53,16 +53,16 @@ struct _JpfMsgUserInfoRes
  *
 */
 #define MSG_GET_USER_GROUP_INFO		(MSG_INTERNAL_BASE + 2)
-typedef struct _JpfMsgUserGroupInfo JpfMsgUserGroupInfo;
-struct _JpfMsgUserGroupInfo
+typedef struct _NmpMsgUserGroupInfo NmpMsgUserGroupInfo;
+struct _NmpMsgUserGroupInfo
 {
     gint			group_id;
 };
 
-typedef struct _JpfMsgUserGroupInfoRes JpfMsgUserGroupInfoRes;
-struct _JpfMsgUserGroupInfoRes
+typedef struct _NmpMsgUserGroupInfoRes NmpMsgUserGroupInfoRes;
+struct _NmpMsgUserGroupInfoRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gint			group_id;
     guint		permission;
     gint			rank;
@@ -73,16 +73,16 @@ struct _JpfMsgUserGroupInfoRes
  *
 */
 #define MSG_GET_USER_LOGIN_INFO		(MSG_INTERNAL_BASE + 3)
-typedef struct _JpfMsgUserLoginInfo JpfMsgUserLoginInfo;
-struct _JpfMsgUserLoginInfo
+typedef struct _NmpMsgUserLoginInfo NmpMsgUserLoginInfo;
+struct _NmpMsgUserLoginInfo
 {
 	gint			group_id;
 };
 
-typedef struct _JpfMsgUserLoginInfoRes JpfMsgUserLoginInfoRes;
-struct _JpfMsgUserLoginInfoRes
+typedef struct _NmpMsgUserLoginInfoRes NmpMsgUserLoginInfoRes;
+struct _NmpMsgUserLoginInfoRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gchar			domain_id[DOMAIN_ID_LEN];
     gchar		 	domain_name[DOMAIN_NAME_LEN];
     gint			       root_area_id;
@@ -93,27 +93,27 @@ struct _JpfMsgUserLoginInfoRes
  *
 */
 #define MSG_GET_MDS_IP		(MSG_INTERNAL_BASE + 4)
-typedef struct _JpfMsgGetMdsIp JpfMsgGetMdsIp;
-struct _JpfMsgGetMdsIp
+typedef struct _NmpMsgGetMdsIp NmpMsgGetMdsIp;
+struct _NmpMsgGetMdsIp
 {
     gchar			domain_id[DOMAIN_ID_LEN];
     gchar			puid[MAX_ID_LEN];
     gchar			cms_ip[MAX_IP_LEN];
 };
 
-typedef struct _JpfMsgGetMdsIpRes JpfMsgGetMdsIpRes;
-struct _JpfMsgGetMdsIpRes
+typedef struct _NmpMsgGetMdsIpRes NmpMsgGetMdsIpRes;
+struct _NmpMsgGetMdsIpRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gchar			mds_ip[MAX_IP_LEN];
     gchar                    mds_id[MDS_ID_LEN];
     gshort         rtsp_port;
 };
 
-typedef struct _JpfMsgGetUrl JpfMsgGetUrl;
-struct _JpfMsgGetUrl
+typedef struct _NmpMsgGetUrl NmpMsgGetUrl;
+struct _NmpMsgGetUrl
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gchar                    session[SESSION_ID_LEN];
     gchar			domain_id[DOMAIN_ID_LEN];
     gchar			guid[MAX_ID_LEN];
@@ -131,8 +131,8 @@ struct _JpfMsgGetUrl
  *
 */
 #define MSG_DEL_USER  	(MSG_INTERNAL_BASE + 5)
-typedef struct _JpfMsgDelUser   JpfMsgDelUser;
-struct _JpfMsgDelUser
+typedef struct _NmpMsgDelUser   NmpMsgDelUser;
+struct _NmpMsgDelUser
 {
     gchar			name[MULTI_NAME_LEN];
 };
@@ -141,8 +141,8 @@ struct _JpfMsgDelUser
  *
 */
 #define MSG_MODIFY_USER  	(MSG_INTERNAL_BASE + 6)
-typedef struct _JpfMsgModifyUser   JpfMsgModifyUser;
-struct _JpfMsgModifyUser
+typedef struct _NmpMsgModifyUser   NmpMsgModifyUser;
+struct _NmpMsgModifyUser
 {
     gchar		name[USER_NAME_LEN];
     gint			group_id;
@@ -152,8 +152,8 @@ struct _JpfMsgModifyUser
  *
 */
 #define MSG_DEL_USER_GROUP  	(MSG_INTERNAL_BASE + 7)
-typedef struct _JpfMsgDelUserGroup   JpfMsgDelUserGroup;
-struct _JpfMsgDelUserGroup
+typedef struct _NmpMsgDelUserGroup   NmpMsgDelUserGroup;
+struct _NmpMsgDelUserGroup
 {
     gchar group_ids[MULTI_NAME_LEN];
     gint group_permissions;
@@ -164,8 +164,8 @@ struct _JpfMsgDelUserGroup
  *
 */
 #define MSG_MSS_ONLINE_CHANGE  	(MSG_INTERNAL_BASE + 8)
-typedef struct _JpfMsgMssOnlineChange   JpfMsgMssOnlineChange;
-struct _JpfMsgMssOnlineChange
+typedef struct _NmpMsgMssOnlineChange   NmpMsgMssOnlineChange;
+struct _NmpMsgMssOnlineChange
 {
     gchar         mss_id[MSS_ID_LEN];
     gint           new_status;   //mss online status
@@ -176,8 +176,8 @@ struct _JpfMsgMssOnlineChange
  *
 */
 #define MSG_MDS_ONLINE_CHANGE  	(MSG_INTERNAL_BASE + 9)
-typedef struct _JpfMsgMdsOnlineChange   JpfMsgMdsOnlineChange;
-struct _JpfMsgMdsOnlineChange
+typedef struct _NmpMsgMdsOnlineChange   NmpMsgMdsOnlineChange;
+struct _NmpMsgMdsOnlineChange
 {
     gchar         mds_id[MDS_ID_LEN];
     gint           new_status;   //mds online status
@@ -188,20 +188,20 @@ struct _JpfMsgMdsOnlineChange
 */
 #define MSG_GET_PARENT_DOMAIN		(MSG_INTERNAL_BASE + 10)
 
-typedef struct _JpfMsgParentDomainInfo JpfMsgParentDomainInfo;
-struct _JpfMsgParentDomainInfo
+typedef struct _NmpMsgParentDomainInfo NmpMsgParentDomainInfo;
+struct _NmpMsgParentDomainInfo
 {
     gchar                domain_id[DOMAIN_ID_LEN];
     gchar			domain_ip[MAX_IP_LEN];
     gshort               port;
 };
 
-typedef struct _JpfMsgGetParentDomainRes JpfMsgGetParentDomainRes;
-struct _JpfMsgGetParentDomainRes
+typedef struct _NmpMsgGetParentDomainRes NmpMsgGetParentDomainRes;
+struct _NmpMsgGetParentDomainRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gint total_num;
-    JpfMsgParentDomainInfo domain_info[0];
+    NmpMsgParentDomainInfo domain_info[0];
 };
 
 /* <MSG-0011>
@@ -209,16 +209,16 @@ struct _JpfMsgGetParentDomainRes
 */
 #define MSG_CHECK_SUB_DOMAIN		(MSG_INTERNAL_BASE + 11)
 
-typedef struct _JpfMsgSubDomainInfo JpfMsgSubDomainInfo;
-struct _JpfMsgSubDomainInfo
+typedef struct _NmpMsgSubDomainInfo NmpMsgSubDomainInfo;
+struct _NmpMsgSubDomainInfo
 {
     gchar                domain_id[DOMAIN_ID_LEN];
 };
 
-typedef struct _JpfMsgSubDomainRes JpfMsgSubDomainRes;
-struct _JpfMsgSubDomainRes
+typedef struct _NmpMsgSubDomainRes NmpMsgSubDomainRes;
+struct _NmpMsgSubDomainRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
 };
 
 /* <MSG-0012>
@@ -226,24 +226,24 @@ struct _JpfMsgSubDomainRes
 */
 #define MSG_GET_DEVICE_MANUFACT		(MSG_INTERNAL_BASE + 12)
 
-typedef struct _JpfMsgGetManufact JpfMsgGetManufact;
-struct _JpfMsgGetManufact
+typedef struct _NmpMsgGetManufact NmpMsgGetManufact;
+struct _NmpMsgGetManufact
 {
     gchar                mf_id[MF_ID_LEN];
 };
 
-typedef struct _JpfMsgGetManufactRes JpfMsgGetManufactRes;
-struct _JpfMsgGetManufactRes
+typedef struct _NmpMsgGetManufactRes NmpMsgGetManufactRes;
+struct _NmpMsgGetManufactRes
 {
-    JpfMsgErrCode 	code;
+    NmpMsgErrCode 	code;
     gchar                mf_name[MF_NAME_LEN];
 };
 
 #define MSG_AUTH_EXPIRED (MSG_INTERNAL_BASE + 12)
 
 #define MSG_ALARM_COUNT_OVER (MSG_INTERNAL_BASE + 13)
-typedef struct _JpfAlarmOver JpfAlarmOver;
-struct _JpfAlarmOver
+typedef struct _NmpAlarmOver NmpAlarmOver;
+struct _NmpAlarmOver
 {
     gint	alarm_num;  // 可存储的最大告警数
 };
@@ -252,8 +252,8 @@ struct _JpfAlarmOver
  *
 */
 #define MSG_AMS_ONLINE_CHANGE  	(MSG_INTERNAL_BASE + 14)
-typedef struct _JpfMsgAmsOnlineChange   JpfMsgAmsOnlineChange;
-struct _JpfMsgAmsOnlineChange
+typedef struct _NmpMsgAmsOnlineChange   NmpMsgAmsOnlineChange;
+struct _NmpMsgAmsOnlineChange
 {
     gchar         ams_id[AMS_ID_LEN];
     gint           new_status;   //ams online status
@@ -274,51 +274,51 @@ typedef enum
 	AMS_ACTION_MAP,
 	AMS_ACTION_END,
 	AMS_ACTION_MAX		= MAX_AMS_ACTION_NUM
-} JpfAmsActionType;
+} NmpAmsActionType;
 
 
 /********************** action_record **********************/
 
-typedef struct _JpfMsgActionRecordGu JpfMsgActionRecordGu;
-struct _JpfMsgActionRecordGu
+typedef struct _NmpMsgActionRecordGu NmpMsgActionRecordGu;
+struct _NmpMsgActionRecordGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			level;
 	guint		time_len;
 	guint		alarm_type;	//1,2,4,8...	或关系
 	guint		mss_count;
-	JpfShareMssId		mss_id[AMS_MAX_MSS_COUNT];
+	NmpShareMssId		mss_id[AMS_MAX_MSS_COUNT];
 };
 
-typedef struct _JpfMsgActionRecord JpfMsgActionRecord;
-struct _JpfMsgActionRecord
+typedef struct _NmpMsgActionRecord NmpMsgActionRecord;
+struct _NmpMsgActionRecord
 {
 	guint			action_gu_count;
-	JpfMsgActionRecordGu	action_gu[0];
+	NmpMsgActionRecordGu	action_gu[0];
 };
 
 /********************** action_io **********************/
 
-typedef struct _JpfMsgActionIOGu JpfMsgActionIOGu;
-struct _JpfMsgActionIOGu
+typedef struct _NmpMsgActionIOGu NmpMsgActionIOGu;
+struct _NmpMsgActionIOGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	guint		time_len;
 	guint		alarm_type;	//1,2,4,8...	或关系
 	gchar		io_value[IO_VALUE_LEN];
 };
 
-typedef struct _JpfMsgActionIO JpfMsgActionIO;
-struct _JpfMsgActionIO
+typedef struct _NmpMsgActionIO NmpMsgActionIO;
+struct _NmpMsgActionIO
 {
 	guint			action_gu_count;
-	JpfMsgActionIOGu	action_gu[0];
+	NmpMsgActionIOGu	action_gu[0];
 };
 
 /********************** action_step **********************/
 
-typedef struct _JpfMsgActionStepGu JpfMsgActionStepGu;
-struct _JpfMsgActionStepGu
+typedef struct _NmpMsgActionStepGu NmpMsgActionStepGu;
+struct _NmpMsgActionStepGu
 {
 	guint	alarm_type;	//1,2,4,8...	或关系
 	gint		tw_id;							//电视墙id
@@ -331,57 +331,57 @@ struct _JpfMsgActionStepGu
 	gint		level;
 };
 
-typedef struct _JpfMsgActionStep JpfMsgActionStep;
-struct _JpfMsgActionStep
+typedef struct _NmpMsgActionStep NmpMsgActionStep;
+struct _NmpMsgActionStep
 {
 	guint			action_gu_count;
-	JpfMsgActionStepGu	action_gu[0];
+	NmpMsgActionStepGu	action_gu[0];
 };
 
 /********************** action_preset **********************/
 
-typedef struct _JpfMsgActionPresetGu JpfMsgActionPresetGu;
-struct _JpfMsgActionPresetGu
+typedef struct _NmpMsgActionPresetGu NmpMsgActionPresetGu;
+struct _NmpMsgActionPresetGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			preset_num;
 	guint		alarm_type;	//1,2,4,8...	或关系
 };
 
-typedef struct _JpfMsgActionPreset JpfMsgActionPreset;
-struct _JpfMsgActionPreset
+typedef struct _NmpMsgActionPreset NmpMsgActionPreset;
+struct _NmpMsgActionPreset
 {
 	guint			action_gu_count;
-	JpfMsgActionPresetGu	action_gu[0];
+	NmpMsgActionPresetGu	action_gu[0];
 };
 
 /********************** action_snapshot **********************/
 
-typedef struct _JpfMsgActionSnapshotGu JpfMsgActionSnapshotGu;
-struct _JpfMsgActionSnapshotGu
+typedef struct _NmpMsgActionSnapshotGu NmpMsgActionSnapshotGu;
+struct _NmpMsgActionSnapshotGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gint			level;
 	guint		picture_count;
 	guint		alarm_type;	//1,2,4,8...	或关系
 	guint		mss_count;
-	JpfShareMssId		mss_id[AMS_MAX_MSS_COUNT];
+	NmpShareMssId		mss_id[AMS_MAX_MSS_COUNT];
 };
 
-typedef struct _JpfMsgActionSnapshot JpfMsgActionSnapshot;
-struct _JpfMsgActionSnapshot
+typedef struct _NmpMsgActionSnapshot NmpMsgActionSnapshot;
+struct _NmpMsgActionSnapshot
 {
 	guint			action_gu_count;
-	JpfMsgActionSnapshotGu	action_gu[0];
+	NmpMsgActionSnapshotGu	action_gu[0];
 };
 
 
 /********************** action_map **********************/
 
-typedef struct _JpfMsgActionMapGu JpfMsgActionMapGu;
-struct _JpfMsgActionMapGu
+typedef struct _NmpMsgActionMapGu NmpMsgActionMapGu;
+struct _NmpMsgActionMapGu
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gchar			gu_name[GU_NAME_LEN];
 	guint	alarm_type;	//1,2,4,8...	或关系
 	gint		map_id;						//地图id
@@ -389,33 +389,33 @@ struct _JpfMsgActionMapGu
 	gint		level;
 };
 
-typedef struct _JpfMsgActionMap JpfMsgActionMap;
-struct _JpfMsgActionMap
+typedef struct _NmpMsgActionMap NmpMsgActionMap;
+struct _NmpMsgActionMap
 {
-	JpfShareGuid	action_guid;
+	NmpShareGuid	action_guid;
 	gchar			gu_name[GU_NAME_LEN];
 	gint			defence_id;
 	gchar			defence_name[AREA_NAME_LEN];
 	gint			map_id;
 	gchar 			map_name[MAP_NAME_LEN];
 	guint			action_gu_count;
-	JpfMsgActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
+	NmpMsgActionMapGu	action_gu[AMS_MAX_LINK_MAP_GU];
 	gint				cu_count;
-	JpfAllCuOwnPu		cu_list[0];
+	NmpAllCuOwnPu		cu_list[0];
 };
 
 #define MSG_AMS_GET_ACTION_INFO	(MSG_INTERNAL_BASE + 15)
-typedef struct _JpfMsgAmsGetActionInfo JpfMsgAmsGetActionInfo;
-struct _JpfMsgAmsGetActionInfo
+typedef struct _NmpMsgAmsGetActionInfo NmpMsgAmsGetActionInfo;
+struct _NmpMsgAmsGetActionInfo
 {
-	JpfShareGuid		alarm_guid;
+	NmpShareGuid		alarm_guid;
 };
 
-typedef struct _JpfMsgAmsGetActionInfoRes JpfMsgAmsGetActionInfoRes;
-struct _JpfMsgAmsGetActionInfoRes
+typedef struct _NmpMsgAmsGetActionInfoRes NmpMsgAmsGetActionInfoRes;
+struct _NmpMsgAmsGetActionInfoRes
 {
 	int					result;
-	JpfActionPolicy		action_policy;
+	NmpActionPolicy		action_policy;
 	void					*actions[MAX_AMS_ACTION_NUM];
 };
 
@@ -430,13 +430,13 @@ enum _WddTimeType
 } ;
 
 #define MSG_WDD_DEV_CAP_INFO	(MSG_INTERNAL_BASE + 16)
-typedef struct _JpfMsgWddDevCapInfo JpfMsgWddDevCapInfo;
-struct _JpfMsgWddDevCapInfo
+typedef struct _NmpMsgWddDevCapInfo NmpMsgWddDevCapInfo;
+struct _NmpMsgWddDevCapInfo
 {
 	guint version;
 	guint module_bits;
 	guint modules_data[MODULES_MAX];
-	JpfExpiredTime expired_time;
+	NmpExpiredTime expired_time;
 	guint max_dev;		/* 允许接入的最大设备个数 */
 	guint max_av;		/* 音视频点最大个数, LIMIT_MAX代表无限制 */
 	guint max_ds;		/* 显示通道最大个数 */
@@ -453,8 +453,8 @@ typedef enum
 	WDD_SYS_TIME_ERROR
 } WDD_AUTH_ERROR_TYPE;
 
-typedef struct _JpfMsgWddAuthErrorInfo JpfMsgWddAuthErrorInfo;
-struct _JpfMsgWddAuthErrorInfo
+typedef struct _NmpMsgWddAuthErrorInfo NmpMsgWddAuthErrorInfo;
+struct _NmpMsgWddAuthErrorInfo
 {
 	guint type;	//WDD_AUTH_EXPIRED or WDD_AUTH_INEXISTENT or WDD_SYS_TIME_ERROR
 };
@@ -475,8 +475,8 @@ struct _JpfMsgWddAuthErrorInfo
  *
 */
 #define MSG_IVS_ONLINE_CHANGE  		(MSG_INTERNAL_BASE + 24)
-typedef struct _JpfMsgIvsOnlineChange   JpfMsgIvsOnlineChange;
-struct _JpfMsgIvsOnlineChange
+typedef struct _NmpMsgIvsOnlineChange   NmpMsgIvsOnlineChange;
+struct _NmpMsgIvsOnlineChange
 {
     gchar         ivs_id[IVS_ID_LEN];
     gint           new_status;   //ivs online status

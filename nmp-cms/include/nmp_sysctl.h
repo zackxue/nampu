@@ -35,9 +35,9 @@
 #define SYS_PARM_TIMEZONE					18
 #define SYS_PARM_SRETYPE					19
 
-typedef struct _JpfSysCtl JpfSysCtl;
+typedef struct _NmpSysCtl NmpSysCtl;
 
-struct _JpfSysCtl
+struct _NmpSysCtl
 {
     gint		 base_port;			/* Platform base port */
     gint		 max_log_file_size;	/* Top log file size limit (MB) */
@@ -58,8 +58,8 @@ struct _JpfSysCtl
 };
 
 
-typedef struct _JpfMdsCtl JpfMdsCtl;
-struct _JpfMdsCtl
+typedef struct _NmpMdsCtl NmpMdsCtl;
+struct _NmpMdsCtl
 {
 	gchar	mds_id[MDS_ID_LEN];
 	gint		start_port;
@@ -67,35 +67,35 @@ struct _JpfMdsCtl
 };
 
 
-typedef struct _JpfMssCtl JpfMssCtl;
-struct _JpfMssCtl
+typedef struct _NmpMssCtl NmpMssCtl;
+struct _NmpMssCtl
 {
 	gchar   mss_id[MSS_ID_LEN];
 	gchar   stor_type[MAX_STOR_TYPE_LEN];
 };
 
 
-typedef struct _JpfIvsCtl JpfIvsCtl;
-struct _JpfIvsCtl
+typedef struct _NmpIvsCtl NmpIvsCtl;
+struct _NmpIvsCtl
 {
 	gchar	ivs_id[IVS_ID_LEN];
 };
 
 
-void jpf_set_sys_parm_int(gint id, gint value);
-gint jpf_get_sys_parm_int(gint id);
-void jpf_set_sys_parm_str(gint id, gchar *value);
-gchar* jpf_get_sys_parm_str(gint id);
-void jpf_sysctl_init( void );
-gint jpf_get_platform_upgrade_script(gchar script_path[]);
-extern JpfSysCtl	nmp_cms_params;
+void nmp_set_sys_parm_int(gint id, gint value);
+gint nmp_get_sys_parm_int(gint id);
+void nmp_set_sys_parm_str(gint id, gchar *value);
+gchar* nmp_get_sys_parm_str(gint id);
+void nmp_sysctl_init( void );
+gint nmp_get_platform_upgrade_script(gchar script_path[]);
+extern NmpSysCtl	nmp_cms_params;
 
-void jpf_get_mds_parm(JpfMdsCtl *gc);
-void jpf_set_mds_parm(JpfMdsCtl gc);
-void jpf_get_mss_parm(JpfMssCtl *gc);
-void jpf_set_mss_parm(JpfMssCtl gc);
-void jpf_get_ivs_parm(JpfIvsCtl *gc);
-void jpf_set_ivs_parm(JpfIvsCtl gc);
+void nmp_get_mds_parm(NmpMdsCtl *gc);
+void nmp_set_mds_parm(NmpMdsCtl gc);
+void nmp_get_mss_parm(NmpMssCtl *gc);
+void nmp_set_mss_parm(NmpMssCtl gc);
+void nmp_get_ivs_parm(NmpIvsCtl *gc);
+void nmp_set_ivs_parm(NmpIvsCtl gc);
 
 
 #endif	//__NMP_SYSCTL_H__

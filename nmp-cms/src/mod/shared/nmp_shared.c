@@ -24,7 +24,7 @@ gchar g_domain_id[DOMAIN_ID_LEN] = {0};
 
 
 gint
-jpf_get_puid_from_guid(gchar *guid, gchar *puid)
+nmp_get_puid_from_guid(gchar *guid, gchar *puid)
 {
     G_ASSERT(guid != NULL && puid != NULL);
 
@@ -32,7 +32,7 @@ jpf_get_puid_from_guid(gchar *guid, gchar *puid)
 }
 
 gint
-jpf_get_channel_from_guid(gchar *guid, gint *channel)
+nmp_get_channel_from_guid(gchar *guid, gint *channel)
 {
 	G_ASSERT(guid != NULL);
 
@@ -42,7 +42,7 @@ jpf_get_channel_from_guid(gchar *guid, gint *channel)
 }
 
 gint
-jpf_get_level_from_guid(gchar *guid, gint *level)
+nmp_get_level_from_guid(gchar *guid, gint *level)
 {
 	G_ASSERT(guid != NULL);
 
@@ -54,7 +54,7 @@ jpf_get_level_from_guid(gchar *guid, gint *level)
 
 
 gint
-jpf_set_guid_level(gchar *guid)
+nmp_set_guid_level(gchar *guid)
 {
 	G_ASSERT(guid != NULL);
 
@@ -64,7 +64,7 @@ jpf_set_guid_level(gchar *guid)
 
 
 void
-jpf_get_dev_type_from_puid(gchar *puid, gchar *dev_type)
+nmp_get_dev_type_from_puid(gchar *puid, gchar *dev_type)
 {
     G_ASSERT(puid != NULL && dev_type != NULL);
 
@@ -73,7 +73,7 @@ jpf_get_dev_type_from_puid(gchar *puid, gchar *dev_type)
 
 
 void
-jpf_get_mf_from_guid(char *guid, char *mf)
+nmp_get_mf_from_guid(char *guid, char *mf)
 {
     G_ASSERT(guid != NULL && mf != NULL);
 
@@ -82,7 +82,7 @@ jpf_get_mf_from_guid(char *guid, char *mf)
 
 
 gint
-jpf_get_utc_time(gchar *sys_time)
+nmp_get_utc_time(gchar *sys_time)
 {
     G_ASSERT(sys_time != NULL);
     time_t timep;
@@ -106,7 +106,7 @@ jpf_get_utc_time(gchar *sys_time)
 
 
 gint
-jpf_get_current_zone_time(gchar *sys_time)
+nmp_get_current_zone_time(gchar *sys_time)
 {
     time_t timep;
     struct tm *p, tmp;
@@ -129,7 +129,7 @@ jpf_get_current_zone_time(gchar *sys_time)
 }
 
 
-gint jpf_set_system_time_zone(gchar *zone)
+gint nmp_set_system_time_zone(gchar *zone)
 {
     gint ret = 0;
 
@@ -138,7 +138,7 @@ gint jpf_set_system_time_zone(gchar *zone)
         ret = setenv("TZ", zone, 1);
         if (ret == -1)
         {
-            jpf_warning( "Unable to set Time zone :%s", zone );
+            nmp_warning( "Unable to set Time zone :%s", zone );
             return -errno;
         }
         tzset();
@@ -147,7 +147,7 @@ gint jpf_set_system_time_zone(gchar *zone)
 }
 
 
-gint jpf_set_system_time(gchar *times, gchar *zone)
+gint nmp_set_system_time(gchar *times, gchar *zone)
 {
     G_ASSERT(time != NULL);
     struct tm tm;
@@ -175,22 +175,22 @@ gint jpf_set_system_time(gchar *times, gchar *zone)
     _tm.tm_mon = tm.tm_mon - 1;
     _tm.tm_year = tm.tm_year - 1900;
 
-    jpf_set_system_time_zone(zone);
+    nmp_set_system_time_zone(zone);
     timep = mktime(&_tm);
     if (timep == (time_t)-1)
     {
-        jpf_set_system_time_zone(jpf_get_sys_parm_str(SYS_PARM_TIMEZONE));
+        nmp_set_system_time_zone(nmp_get_sys_parm_str(SYS_PARM_TIMEZONE));
         return -errno;
     }
 
-    jpf_set_system_time_zone(jpf_get_sys_parm_str(SYS_PARM_TIMEZONE));
+    nmp_set_system_time_zone(nmp_get_sys_parm_str(SYS_PARM_TIMEZONE));
 
     tv.tv_sec = timep;
     tv.tv_usec = 0;
     printf("----------set time second=%ld,now time=%ld\n",timep,time(NULL));
     if(settimeofday(&tv, NULL) < 0)
     {
-        jpf_warning("Set system datatime error!");
+        nmp_warning("Set system datatime error!");
 	 perror("settimeofday");
         return -1;
     }
@@ -201,7 +201,7 @@ gint jpf_set_system_time(gchar *times, gchar *zone)
 
 
 gint
-jpf_check_string(gchar *string, gint size)
+nmp_check_string(gchar *string, gint size)
 {
     gchar ex_set[] = {'`','~','@', '#', '$', '%','^','&','*','(',')',' ','+','=','|','\\',',','.','/','<','>','?'};
     gint i, spec_no;
@@ -221,7 +221,7 @@ jpf_check_string(gchar *string, gint size)
 
 
 time_t
-jpf_make_time_t(gchar *str)
+nmp_make_time_t(gchar *str)
 {
 	gint ret;
 	struct tm tm;
@@ -329,12 +329,12 @@ gboolean regex_mached(const gchar *string,const gchar *reg)
 }
 
 
-gchar *jpf_get_local_domain_id()
+gchar *nmp_get_local_domain_id()
 {
 	return g_domain_id;
 }
 
-void jpf_set_domain_id(gchar *value)
+void nmp_set_domain_id(gchar *value)
 {
     g_domain_id[DOMAIN_ID_LEN - 1] = 0;
 	strncpy(g_domain_id, value, DOMAIN_ID_LEN - 1);
@@ -343,7 +343,7 @@ void jpf_set_domain_id(gchar *value)
 
 
 void
-__jpf_get_ip_from_socket(gint sock, gchar *ip, gint size)
+__nmp_get_ip_from_socket(gint sock, gchar *ip, gint size)
 {
     struct sockaddr_in ss;
     int len;
@@ -357,11 +357,11 @@ __jpf_get_ip_from_socket(gint sock, gchar *ip, gint size)
 }
 
 void
-jpf_get_ip_from_socket(JpfNetIO *io, gchar *ip)
+nmp_get_ip_from_socket(NmpNetIO *io, gchar *ip)
 {
     gchar *tmp_ip;
 
-    tmp_ip = jpf_net_get_io_peer_name(io);
+    tmp_ip = nmp_net_get_io_peer_name(io);
     if (G_LIKELY(tmp_ip))
     {
         strncpy(ip, tmp_ip, MAX_IP_LEN - 1);
@@ -373,7 +373,7 @@ jpf_get_ip_from_socket(JpfNetIO *io, gchar *ip)
 
 
 void
-jpf_get_host_ips(JpfHostIps *ips)
+nmp_get_host_ips(NmpHostIps *ips)
 {
     struct ifaddrs *ifaddr = NULL, *ifs = NULL;
     void *addr = NULL;
@@ -404,7 +404,7 @@ jpf_get_host_ips(JpfHostIps *ips)
 }
 
 void
-jpf_check_keepalive_time(gint *keep_alive_time)
+nmp_check_keepalive_time(gint *keep_alive_time)
 {
 	if (*keep_alive_time > MAX_KEEPALIVE_SECS)
 		*keep_alive_time = MAX_KEEPALIVE_SECS;
@@ -415,7 +415,7 @@ jpf_check_keepalive_time(gint *keep_alive_time)
 
 
 void
-jpf_covert_pu_type(gint *new_type, gint *old_type)
+nmp_covert_pu_type(gint *new_type, gint *old_type)
 {
 	switch (*old_type){
 	case TYPE_DVR:
@@ -449,9 +449,9 @@ jpf_covert_pu_type(gint *new_type, gint *old_type)
 
 
 gint
-jpf_compare_manufacturer(guint module_data, gchar *mf)
+nmp_compare_manufacturer(guint module_data, gchar *mf)
 {
-    if (!strcmp(mf, MF_JXJ) || !strcmp(mf, MF_ENC))
+    if (!strcmp(mf, MF_NMP) || !strcmp(mf, MF_ENC))
         return 0;
 
     if (!strcmp(mf, MF_HIK))

@@ -9,44 +9,44 @@
 #include "nmp_internal_msg.h"
 
 
-#define jpf_tw_mh_log(fmt, args ...) do {	\
+#define nmp_tw_mh_log(fmt, args ...) do {	\
 	if (1)	\
-		printf("<jpf_tw_mh_log> %s[%d]:"fmt, __FUNCTION__, __LINE__, ##args);	\
+		printf("<nmp_tw_mh_log> %s[%d]:"fmt, __FUNCTION__, __LINE__, ##args);	\
 } while (0)
 
 
 NmpMsgFunRet
 nmp_mod_tw_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_run_step_request *req_info;
 	tw_run_step_request_with_seq req_with_seq;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_run_step_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
 	req_with_seq.seq = MSG_SEQ(msg);
 	memcpy(&req_with_seq.req, req_info, sizeof(tw_run_step_request));
 
-	ret = jpf_tw_run_step(&req_with_seq);
+	ret = nmp_tw_run_step(&req_with_seq);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_run_step failed, ec_guid:%s",
+		nmp_warning("nmp_tw_run_step failed, ec_guid:%s",
 			req_info->ec_guid);
 	}
 	else
 	{
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 		return MFR_ACCEPTED;
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -57,31 +57,31 @@ nmp_mod_tw_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_run_tour_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_run_tour_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_run_tour(req_info);
+	ret = nmp_tw_run_tour(req_info);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_run_tour failed, tour_id:%d",
+		nmp_warning("nmp_tw_run_tour failed, tour_id:%d",
 			req_info->tour_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_run_tour success, tour_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_run_tour success, tour_id:%d\n",
 			req_info->tour_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -92,31 +92,31 @@ nmp_mod_tw_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_run_group_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_run_group_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_run_group(req_info);
+	ret = nmp_tw_run_group(req_info);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_run_group failed, group_id:%d",
+		nmp_warning("nmp_tw_run_group failed, group_id:%d",
 			req_info->group_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_run_group success, group_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_run_group success, group_id:%d\n",
 			req_info->group_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -127,31 +127,31 @@ nmp_mod_tw_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_stop_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_stop_tour_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_stop_tour_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_stop_tour(req_info);
+	ret = nmp_tw_stop_tour(req_info);
 	if (ret)
 	{
-		jpf_tw_mh_log("jpf_tw_stop_tour failed, tour_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_stop_tour failed, tour_id:%d\n",
 			req_info->tour_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_stop_tour success, tour_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_stop_tour success, tour_id:%d\n",
 			req_info->tour_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -162,31 +162,31 @@ nmp_mod_tw_stop_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_stop_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_stop_group_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_stop_group_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_stop_group(req_info);
+	ret = nmp_tw_stop_group(req_info);
 	if (ret)
 	{
-		jpf_tw_mh_log("jpf_tw_stop_group failed, group_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_stop_group failed, group_id:%d\n",
 			req_info->group_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_stop_group success, group_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_stop_group success, group_id:%d\n",
 			req_info->group_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -197,31 +197,31 @@ nmp_mod_tw_stop_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_if_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_if_run_tour_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_if_run_tour_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_if_run_tour(req_info);
+	ret = nmp_tw_if_run_tour(req_info);
 	if (ret)
 	{
-		jpf_tw_mh_log("jpf_tw_if_run_tour -> no, tour_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_if_run_tour -> no, tour_id:%d\n",
 			req_info->tour_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_stop_tour -> yes, tour_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_stop_tour -> yes, tour_id:%d\n",
 			req_info->tour_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -232,31 +232,31 @@ nmp_mod_tw_if_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_if_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_if_run_group_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_if_run_group_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_if_run_group(req_info);
+	ret = nmp_tw_if_run_group(req_info);
 	if (ret)
 	{
-		jpf_tw_mh_log("jpf_tw_if_run_group -> no, group_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_if_run_group -> no, group_id:%d\n",
 			req_info->group_id);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_if_run_group -> yes, group_id:%d\n",
+		nmp_tw_mh_log("nmp_tw_if_run_group -> yes, group_id:%d\n",
 			req_info->group_id);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -267,33 +267,33 @@ nmp_mod_tw_if_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_stop_gpt_by_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_division_position *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_division_position *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_tw_stop_gpt_by_division(req_info);
+	ret = nmp_tw_stop_gpt_by_division(req_info);
 	if (ret)
 	{
-		jpf_tw_mh_log("jpf_tw_stop_gpt_by_division failed, tw_id:%d, " \
+		nmp_tw_mh_log("nmp_tw_stop_gpt_by_division failed, tw_id:%d, " \
 			"screen_id:%d, division_num:%d\n",
 			req_info->tw_id, req_info->screen_id, req_info->division_num);
 	}
 	else
 	{
-		jpf_tw_mh_log("jpf_tw_stop_gpt_by_division success, tw_id:%d, " \
+		nmp_tw_mh_log("nmp_tw_stop_gpt_by_division success, tw_id:%d, " \
 			"screen_id:%d, division_num:%d\n",
 			req_info->tw_id, req_info->screen_id, req_info->division_num);
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -304,25 +304,25 @@ nmp_mod_tw_stop_gpt_by_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_play_resp_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_decoder_rsp *rsp_info;
 	tw_decoder_rsp_with_seq rsp_with_seq;
 	gint ret;
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	rsp_info = (tw_decoder_rsp *)MSG_GET_DATA(msg);
 	BUG_ON(!rsp_info);
 
 	rsp_with_seq.seq = MSG_SEQ(msg);
 	memcpy(&rsp_with_seq.dec_rsp, rsp_info, sizeof(tw_decoder_rsp));
 
-	ret = jpf_tw_deal_decoder_res(&rsp_with_seq);
+	ret = nmp_tw_deal_decoder_res(&rsp_with_seq);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_deal_decoder_res failed");
+		nmp_warning("nmp_tw_deal_decoder_res failed");
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -346,34 +346,34 @@ nmp_mod_tw_change_direction_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_operate_b(NmpAppObj *app_obj, NmpSysMsg *msg, TW_INFO_TYPE type)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_operate *req_info;
 	tw_operate_with_seq req_with_seq;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_operate *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
 	req_with_seq.seq = MSG_SEQ(msg);
 	memcpy(&req_with_seq.operate, req_info, sizeof(tw_operate));
 
-	ret = jpf_tw_screen_operate(&req_with_seq, type);
+	ret = nmp_tw_screen_operate(&req_with_seq, type);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_screen_operate failed");
+		nmp_warning("nmp_tw_screen_operate failed");
 	}
 	else
 	{
-		jpf_sysmsg_destroy(msg);
+		nmp_sysmsg_destroy(msg);
 		return MFR_ACCEPTED;
 	}
 
 	SET_CODE(&res_info, ret);
 	strncpy(res_info.session, req_info->session_id, SESSION_ID_LEN - 1);
-	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+	nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 
@@ -385,25 +385,25 @@ NmpMsgFunRet
 nmp_mod_tw_operate_resp_b(NmpAppObj *app_obj, NmpSysMsg *msg, TW_INFO_TYPE type)
 {
 
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_operate_decoder_rsp *rsp_info;
 	tw_operate_decoder_rsp_with_seq rsp_with_seq;
 	gint ret;
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	rsp_info = (tw_operate_decoder_rsp *)MSG_GET_DATA(msg);
 	BUG_ON(!rsp_info);
 
 	rsp_with_seq.seq = MSG_SEQ(msg);
 	memcpy(&rsp_with_seq.operate_dec_rsp, rsp_info, sizeof(tw_operate_decoder_rsp));
 
-	ret = jpf_tw_deal_decoder_operate_res(&rsp_with_seq, type);
+	ret = nmp_tw_deal_decoder_operate_res(&rsp_with_seq, type);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_deal_decoder_operate_res failed");
+		nmp_warning("nmp_tw_deal_decoder_operate_res failed");
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -448,65 +448,65 @@ nmp_mod_tw_exit_full_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_tw_update_ec_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_update_url *update_url;
 	gint ret;
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	update_url = (tw_update_url *)MSG_GET_DATA(msg);
 	BUG_ON(!update_url);
 
-	ret = jpf_tw_update_url(update_url);
+	ret = nmp_tw_update_url(update_url);
 	if (ret)
 	{
-		jpf_warning("jpf_tw_update_url failed\n");
+		nmp_warning("nmp_tw_update_url failed\n");
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 /*
-void jpf_step_print_test(tw_run_step_request *req_info)
+void nmp_step_print_test(tw_run_step_request *req_info)
 {
-	jpf_print("<JpfTwMh> req_info->tw_id:%d", req_info->tw_id);
-	jpf_print("<JpfTwMh> req_info->screen_id:%d", req_info->screen_id);
-	jpf_print("<JpfTwMh> req_info->division_id:%d", req_info->division_id);
-	jpf_print("<JpfTwMh> req_info->division_num:%d", req_info->division_num);
-	jpf_print("<JpfTwMh> req_info->ec_name:%s", req_info->ec_name);
-	jpf_print("<JpfTwMh> req_info->ec_domain_id:%s", req_info->ec_domain_id);
-	jpf_print("<JpfTwMh> req_info->ec_guid:%s", req_info->ec_guid);
+	nmp_print("<NmpTwMh> req_info->tw_id:%d", req_info->tw_id);
+	nmp_print("<NmpTwMh> req_info->screen_id:%d", req_info->screen_id);
+	nmp_print("<NmpTwMh> req_info->division_id:%d", req_info->division_id);
+	nmp_print("<NmpTwMh> req_info->division_num:%d", req_info->division_num);
+	nmp_print("<NmpTwMh> req_info->ec_name:%s", req_info->ec_name);
+	nmp_print("<NmpTwMh> req_info->ec_domain_id:%s", req_info->ec_domain_id);
+	nmp_print("<NmpTwMh> req_info->ec_guid:%s", req_info->ec_guid);
 }
 */
 NmpMsgFunRet
 nmp_mod_tw_link_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	tw_run_step_request *req_info;
-	JpfCuExecuteRes res_info;
+	NmpCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
-	jpf_print("<JpfTwMh> nmp_mod_tw_link_run_step_b begin...");
+	nmp_print("<NmpTwMh> nmp_mod_tw_link_run_step_b begin...");
 
-	self = (JpfModTw *)app_obj;
+	self = (NmpModTw *)app_obj;
 	req_info = (tw_run_step_request *)MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	//jpf_step_print_test(req_info);
+	//nmp_step_print_test(req_info);
 
-	ret = jpf_tw_run_action_step(req_info);
+	ret = nmp_tw_run_action_step(req_info);
 	if (ret)
 	{
-		jpf_warning("<JpfTwMh> jpf_tw_run_action_step failed, ec_guid:%s",
+		nmp_warning("<NmpTwMh> nmp_tw_run_action_step failed, ec_guid:%s",
 			req_info->ec_guid);
 	}
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 
 void
-nmp_mod_tw_register_msg_handler(JpfModTw *self)
+nmp_mod_tw_register_msg_handler(NmpModTw *self)
 {
 	NmpAppMod *super_self = (NmpAppMod*)self;
 

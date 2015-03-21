@@ -8,14 +8,14 @@ typedef enum
 	STAT_AMS_REGISTERING,
 	STAT_AMS_ONLINE,
 	STAT_AMS_OFFLINE
-}JpfAmsState;
+}NmpAmsState;
 
-typedef struct _JpfAms JpfAms;
-struct _JpfAms
+typedef struct _NmpAms NmpAms;
+struct _NmpAms
 {
-	JpfGuestBase	guest_base;
+	NmpGuestBase	guest_base;
 
-	JpfAmsState 	ams_state;
+	NmpAmsState 	ams_state;
 	gint            ttl;      /*time to live*/
 	gint            hb_freq;  /*keep alive frequency(sec)*/
 };

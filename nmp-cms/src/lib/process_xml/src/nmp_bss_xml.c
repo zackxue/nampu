@@ -1,5 +1,5 @@
 /********************************************************************
- * jpf_bss.c  - deal xml of bss, parse and create xml
+ * nmp_bss.c  - deal xml of bss, parse and create xml
  * Function£ºparse or create xml relate to bss.
  * Author:yangy
  * Description:users can add parse or create message of bss,define
@@ -27,26 +27,26 @@
 #include "nmp_xml_shared.h"
 
 /**
- * jpf_parse_bss_login: used to parse xml docuemnt
+ * nmp_parse_bss_login: used to parse xml docuemnt
  *
  * @doc:            input, pointer, containing xml document
  * @cur:            input, a pointer to the tree's node
  * @cmd:            input, string, indicate command id
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
 
 #define LOCAL_HOST_IP "127.0.0.1"
-JpfMsgInfo *
-jpf_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfBssLoginInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpBssLoginInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -60,9 +60,9 @@ jpf_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"password")))
-                jpf_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
+                nmp_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -73,30 +73,30 @@ jpf_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 /**
- * jpf_create_bss_login_resp: used to generate xml docuemnt
+ * nmp_create_bss_login_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_login_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_login_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL,node = NULL;
-    JpfBssLoginRes *tmp = NULL;
+    NmpBssLoginRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "admin");
     xmlAddChild(root_node, node);
 
@@ -125,16 +125,16 @@ jpf_create_bss_login_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfBssHeart tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpBssHeart tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -149,7 +149,7 @@ jpf_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -160,25 +160,25 @@ jpf_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_heart_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_heart_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfBssHeartResp *tmp = NULL;
+    NmpBssHeartResp *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -198,16 +198,16 @@ jpf_create_bss_heart_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 
-JpfMsgInfo *
-jpf_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAdminInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAdminInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -222,7 +222,7 @@ jpf_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -233,30 +233,30 @@ jpf_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 /**
- * jpf_create_validate_admin_resp: used to generate xml docuemnt
+ * nmp_create_validate_admin_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_validata_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validata_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "admin");
     xmlAddChild(root_node, node);
@@ -270,16 +270,16 @@ jpf_create_validata_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfValidateUserGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpValidateUserGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/group";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -295,9 +295,9 @@ jpf_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -308,31 +308,31 @@ jpf_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_validata_user_group_resp: used to generate xml docuemnt
+ * nmp_create_validata_user_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_validata_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validata_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "group");
     xmlAddChild(root_node, node);
@@ -346,16 +346,16 @@ jpf_create_validata_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfValidateUser tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpValidateUser tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/user";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -369,7 +369,7 @@ jpf_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -380,23 +380,23 @@ jpf_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
  int
-jpf_create_validata_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validata_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "user");
     xmlAddChild(root_node, node);
@@ -410,16 +410,16 @@ jpf_create_validata_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfValidateArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpValidateArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/area";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -433,7 +433,7 @@ jpf_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.area_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.area_name, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -442,23 +442,23 @@ jpf_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
  int
-jpf_create_validata_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validata_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "area");
     xmlAddChild(root_node, node);
@@ -472,16 +472,16 @@ jpf_create_validata_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfValidatePu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpValidatePu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/pu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -495,7 +495,7 @@ jpf_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"puid")))
-                jpf_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -504,23 +504,23 @@ jpf_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
  int
-jpf_create_validata_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validata_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "pu");
     xmlAddChild(root_node, node);
@@ -533,16 +533,16 @@ jpf_create_validata_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
     return 0;
 }
 
-JpfMsgInfo *
-jpf_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddAdmin tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddAdmin tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -556,9 +556,9 @@ jpf_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"password")))
-                jpf_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
+                nmp_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -567,31 +567,31 @@ jpf_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_admin_resp: used to generate xml docuemnt
+ * nmp_create_add_admin_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "admin");
     xmlAddChild(root_node, node);
@@ -605,16 +605,16 @@ jpf_create_add_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddUserGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddUserGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/group";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -628,11 +628,11 @@ jpf_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"rank")))
-                jpf_deal_value(doc, cur, &tmp.group_rank);
+                nmp_deal_value(doc, cur, &tmp.group_rank);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"permissions")))
-                jpf_deal_value(doc, cur, &tmp.group_permissions);
+                nmp_deal_value(doc, cur, &tmp.group_permissions);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -641,31 +641,31 @@ jpf_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_user_group_resp: used to generate xml docuemnt
+ * nmp_create_add_user_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "group");
     xmlAddChild(root_node, node);
@@ -679,16 +679,16 @@ jpf_create_add_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddUser tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddUser tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/user";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -702,17 +702,17 @@ jpf_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sex")))
-                jpf_deal_value(doc, cur, &tmp.sex);
+                nmp_deal_value(doc, cur, &tmp.sex);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"password")))
-                jpf_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
+                nmp_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"phone")))
-                jpf_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
+                nmp_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"description")))
-                jpf_deal_text(doc, cur, tmp.user_description, DESCRIPTION_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.user_description, DESCRIPTION_INFO_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -721,31 +721,31 @@ jpf_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_user_resp: used to generate xml docuemnt
+ * nmp_create_add_user_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "user");
     xmlAddChild(root_node, node);
@@ -759,16 +759,16 @@ jpf_create_add_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/area";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -782,9 +782,9 @@ jpf_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.area_name, AREA_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.area_name, AREA_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"areaId")))
-                jpf_deal_value(doc, cur, &tmp.area_parent);
+                nmp_deal_value(doc, cur, &tmp.area_parent);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -793,31 +793,31 @@ jpf_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_area_resp: used to generate xml docuemnt
+ * nmp_create_add_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "area");
     xmlAddChild(root_node, node);
@@ -831,17 +831,17 @@ jpf_create_add_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddPu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddPu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/device";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -855,37 +855,37 @@ jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"puid")))
-                jpf_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puName")))
-                jpf_deal_text(doc, cur, tmp.pu_info, PU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.pu_info, PU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_time);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_time);
                 if (tmp.keep_alive_time < 3)
                     tmp.keep_alive_time = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puType")))
-                jpf_deal_value(doc, cur, &tmp.pu_type);
+                nmp_deal_value(doc, cur, &tmp.pu_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puMinorType")))
-                jpf_deal_value(doc, cur, &tmp.pu_minor_type);
+                nmp_deal_value(doc, cur, &tmp.pu_minor_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"manufacturer")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.manufacturer, MF_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.manufacturer, MF_ID_LEN);
 
                     node = node->next;
                 }
@@ -896,7 +896,7 @@ jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
 
                     node = node->next;
                 }
@@ -907,7 +907,7 @@ jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_value(doc, node, &tmp.area_id);
+                        nmp_deal_value(doc, node, &tmp.area_id);
 
                     node = node->next;
                 }
@@ -918,25 +918,25 @@ jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
 
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puCount")))
-                jpf_deal_value(doc, cur, &tmp.pu_count);
+                nmp_deal_value(doc, cur, &tmp.pu_count);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"avCount")))
-                jpf_deal_value(doc, cur, &tmp.av_count);
+                nmp_deal_value(doc, cur, &tmp.av_count);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"aiCount")))
-                jpf_deal_value(doc, cur, &tmp.ai_count);
+                nmp_deal_value(doc, cur, &tmp.ai_count);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"aoCount")))
-                jpf_deal_value(doc, cur, &tmp.ao_count);
+                nmp_deal_value(doc, cur, &tmp.ao_count);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"dsCount")))
-                jpf_deal_value(doc, cur, &tmp.ds_count);
+                nmp_deal_value(doc, cur, &tmp.ds_count);
 		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
 		else if ((!xmlStrcmp(cur->name, (const xmlChar *)"amsId")))
-                jpf_deal_text(doc, cur, tmp.ams_id, AMS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ams_id, AMS_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -947,31 +947,31 @@ jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_pu_resp: used to generate xml docuemnt
+ * nmp_create_add_pu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfAddPuRes *tmp = NULL;
+    NmpAddPuRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "device");
     xmlAddChild(root_node, node);
@@ -989,17 +989,17 @@ jpf_create_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j = 0, enable;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node, node1;
     char *xpath = "/message/gu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1013,14 +1013,14 @@ jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guid")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                 }
@@ -1031,27 +1031,27 @@ jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"puid")))
-                        jpf_deal_text(doc, node, tmp.puid, MAX_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.puid, MAX_ID_LEN);
 
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guName")))
-                jpf_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guHasDome")))
             {
-                jpf_deal_value(doc, cur, &enable);
+                nmp_deal_value(doc, cur, &enable);
                 tmp.gu_attributes = tmp.gu_attributes | (enable&0x1);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guAlarmBypass")))
             {
-                jpf_deal_value(doc, cur, &enable);
+                nmp_deal_value(doc, cur, &enable);
                 tmp.gu_attributes = tmp.gu_attributes | ((enable&0x1)<<1);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guType")))
-                jpf_deal_value(doc, cur, &tmp.gu_type);
+                nmp_deal_value(doc, cur, &tmp.gu_type);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssList")))
             {
                 node = cur->xmlChildrenNode;
@@ -1064,7 +1064,7 @@ jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"id")))
                             {
-                                jpf_deal_text(doc, node1, tmp.mss[j].mss_id, MSS_ID_LEN);
+                                nmp_deal_text(doc, node1, tmp.mss[j].mss_id, MSS_ID_LEN);
                                 j++;
                             }
 
@@ -1084,31 +1084,31 @@ jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_gu_resp: used to generate xml docuemnt
+ * nmp_create_add_gu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "gu");
     xmlAddChild(root_node, node);
@@ -1122,16 +1122,16 @@ jpf_create_add_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddMds tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddMds tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mdu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1145,23 +1145,23 @@ jpf_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.mds_name, MDS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_name, MDS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mduType")))
-                jpf_deal_value(doc, cur, &tmp.mds_type);
+                nmp_deal_value(doc, cur, &tmp.mds_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
                 if (tmp.keep_alive_freq < 3)
                     tmp.keep_alive_freq = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puPort")))
-                jpf_deal_value(doc, cur, &tmp.mds_pu_port);
+                nmp_deal_value(doc, cur, &tmp.mds_pu_port);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"rtspPort")))
-                jpf_deal_value(doc, cur, &tmp.mds_rtsp_port);
+                nmp_deal_value(doc, cur, &tmp.mds_rtsp_port);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"getIpEnable")))
-                jpf_deal_value(doc, cur, &tmp.get_ip_enable);
+                nmp_deal_value(doc, cur, &tmp.get_ip_enable);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -1170,30 +1170,30 @@ jpf_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_mds_resp: used to generate xml docuemnt
+ * nmp_create_add_mds_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "mdu");
     xmlAddChild(root_node, node);
@@ -1207,17 +1207,17 @@ jpf_create_add_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddMdsIp tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddMdsIp tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/dispatchList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1236,7 +1236,7 @@ jpf_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
                     else
                         xml_error("0000not parse the node %s\n",node->name);
 
@@ -1249,9 +1249,9 @@ jpf_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"cmsIp")))
-                        jpf_deal_text(doc, node, tmp.cms_ip, MAX_IP_LEN);
+                        nmp_deal_text(doc, node, tmp.cms_ip, MAX_IP_LEN);
                     else if ((!xmlStrcmp(node->name, (const xmlChar *)"dispatchIp")))
-                        jpf_deal_text(doc, node, tmp.mds_ip, MAX_IP_LEN);
+                        nmp_deal_text(doc, node, tmp.mds_ip, MAX_IP_LEN);
                     else
                         xml_error("1111not parse the node %s\n",node->name);
 
@@ -1266,31 +1266,31 @@ jpf_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_mds_ip_resp: used to generate xml docuemnt
+ * nmp_create_add_mds_ip_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "dispatchList");
     xmlAddChild(root_node, node);
@@ -1304,16 +1304,16 @@ jpf_create_add_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddMss tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddMss tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mss";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1327,22 +1327,22 @@ jpf_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.mss_name, MSS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_name, MSS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
 		  if (tmp.keep_alive_freq < 3)
 			tmp.keep_alive_freq = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"storageType")))
             {
-                jpf_deal_value(doc, cur, &tmp.storage_type);
+                nmp_deal_value(doc, cur, &tmp.storage_type);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mode")))
             {
-                jpf_deal_value(doc, cur, &tmp.mode);
+                nmp_deal_value(doc, cur, &tmp.mode);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -1352,30 +1352,30 @@ jpf_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_mss_resp: used to generate xml docuemnt
+ * nmp_create_add_mss_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "mss");
     xmlAddChild(root_node, node);
@@ -1389,19 +1389,19 @@ jpf_create_add_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddGuToUser user;
-    JpfAddGuToUser *tmp = NULL;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddGuToUser user;
+    NmpAddGuToUser *tmp = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node, node1;
     char *xpath = "/message/guList";
     gint count = 0, size;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1415,15 +1415,15 @@ jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"count")))
             {
-                jpf_deal_value(doc, cur, &count);
+                nmp_deal_value(doc, cur, &count);
                 if (count < 0)
                 {
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
 
-                size = sizeof(JpfAddGuToUser)  + sizeof(JpfGuToUserInfo) * count ;
-                tmp = jpf_mem_kalloc(size);
+                size = sizeof(NmpAddGuToUser)  + sizeof(NmpGuToUserInfo) * count ;
+                tmp = nmp_mem_kalloc(size);
                 if (G_UNLIKELY(!tmp))
                 {
                     xmlXPathFreeObject(app_result);
@@ -1443,7 +1443,7 @@ jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"name")))
-                        jpf_deal_text(doc, node, user.username, USER_NAME_LEN);
+                        nmp_deal_text(doc, node, user.username, USER_NAME_LEN);
 
                     node = node->next;
                 }
@@ -1465,11 +1465,11 @@ jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     memcpy(tmp, &user, sizeof(user));
     if (G_UNLIKELY(count <= 0))
     {
-        sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+        sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
         return sys_msg;
     }
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)"/message/guList/list/gu");
+    app_result =  nmp_get_node(doc, (const xmlChar *)"/message/guList/list/gu");
     if (G_UNLIKELY(!app_result))
         return NULL;
 
@@ -1482,14 +1482,14 @@ jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (node != NULL)
         {
             if ((!xmlStrcmp(node->name, (const xmlChar *)"guid")))
-                jpf_deal_text(doc, node, tmp->gu_to_user_info[i].user_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, node, tmp->gu_to_user_info[i].user_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(node->name, (const xmlChar *)"domain")))
             {
                 node1 = node->xmlChildrenNode;
                 while (node1 != NULL)
                 {
                     if ((!xmlStrcmp(node1->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node1, tmp->gu_to_user_info[i].user_guid_domain, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node1, tmp->gu_to_user_info[i].user_guid_domain, DOMAIN_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node1->name);
                     node1 = node1->next;
@@ -1503,24 +1503,24 @@ jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+    sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_gu_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_gu_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "guList");
     xmlAddChild(root_node, node);
@@ -1534,19 +1534,19 @@ jpf_create_add_gu_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddTwToUser user;
-    JpfAddTwToUser *tmp = NULL;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddTwToUser user;
+    NmpAddTwToUser *tmp = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message";
     gint count = 0, size;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1560,15 +1560,15 @@ jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"count")))
             {
-                jpf_deal_value(doc, cur, &count);
+                nmp_deal_value(doc, cur, &count);
                 if (count < 0)
                 {
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
 
-                size = sizeof(JpfAddTwToUser)  + sizeof(JpfTwToUserInfo) * count ;
-                tmp = jpf_mem_kalloc(size);
+                size = sizeof(NmpAddTwToUser)  + sizeof(NmpTwToUserInfo) * count ;
+                tmp = nmp_mem_kalloc(size);
                 if (G_UNLIKELY(!tmp))
                 {
                     xmlXPathFreeObject(app_result);
@@ -1584,7 +1584,7 @@ jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
-                jpf_deal_text(doc, cur, user.username, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, user.username, USER_NAME_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -1603,11 +1603,11 @@ jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     memcpy(tmp, &user, sizeof(user));
     if (G_UNLIKELY(count <= 0))
     {
-        sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+        sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
         return sys_msg;
     }
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)"/message/list");
+    app_result =  nmp_get_node(doc, (const xmlChar *)"/message/list");
     if (G_UNLIKELY(!app_result))
         return NULL;
 
@@ -1622,7 +1622,7 @@ jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(node->name, (const xmlChar *)"twId")))
             {
-                jpf_deal_value(doc, node, &tmp->tw_to_user_info[j].tw_id);
+                nmp_deal_value(doc, node, &tmp->tw_to_user_info[j].tw_id);
                 j++;
             }
             else
@@ -1633,24 +1633,24 @@ jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+    sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_tw_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_tw_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -1661,19 +1661,19 @@ jpf_create_add_tw_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddTourToUser user;
-    JpfAddTourToUser *tmp = NULL;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddTourToUser user;
+    NmpAddTourToUser *tmp = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message";
     gint count = 0, size;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1687,15 +1687,15 @@ jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"count")))
             {
-                jpf_deal_value(doc, cur, &count);
+                nmp_deal_value(doc, cur, &count);
                 if (count < 0)
                 {
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
 
-                size = sizeof(JpfAddTourToUser)  + sizeof(JpfTourToUserInfo) * count ;
-                tmp = jpf_mem_kalloc(size);
+                size = sizeof(NmpAddTourToUser)  + sizeof(NmpTourToUserInfo) * count ;
+                tmp = nmp_mem_kalloc(size);
                 if (G_UNLIKELY(!tmp))
                 {
                     xmlXPathFreeObject(app_result);
@@ -1711,7 +1711,7 @@ jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
-                jpf_deal_text(doc, cur, user.username, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, user.username, USER_NAME_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -1730,11 +1730,11 @@ jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     memcpy(tmp, &user, sizeof(user));
     if (G_UNLIKELY(count <= 0))
     {
-        sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+        sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
         return sys_msg;
     }
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)"/message/list");
+    app_result =  nmp_get_node(doc, (const xmlChar *)"/message/list");
     if (G_UNLIKELY(!app_result))
         return NULL;
 
@@ -1749,7 +1749,7 @@ jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(node->name, (const xmlChar *)"tourId")))
             {
-                jpf_deal_value(doc, node, &tmp->tour_to_user_info[j].tour_id);
+                nmp_deal_value(doc, node, &tmp->tour_to_user_info[j].tour_id);
 				j++;
             }
             else
@@ -1760,24 +1760,24 @@ jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new_2(cmd, tmp, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+    sys_msg = nmp_msginfo_new_2(cmd, tmp, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_tour_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_tour_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -1788,16 +1788,16 @@ jpf_create_add_tour_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddDefenceArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddDefenceArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1811,11 +1811,11 @@ jpf_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"enable")))
-                jpf_deal_value(doc, cur, &tmp.enable);
+                nmp_deal_value(doc, cur, &tmp.enable);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"policy")))
-                jpf_deal_text(doc, cur, tmp.policy, POLICY_LEN);
+                nmp_deal_text(doc, cur, tmp.policy, POLICY_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -1824,31 +1824,31 @@ jpf_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_defence_area_resp: used to generate xml docuemnt
+ * nmp_create_add_defence_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -1859,16 +1859,16 @@ jpf_create_add_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddDefenceMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddDefenceMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1882,11 +1882,11 @@ jpf_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapName")))
-                jpf_deal_text(doc, cur, tmp.map_name, MAP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.map_name, MAP_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapLocation")))
-                jpf_deal_text(doc, cur, tmp.map_location, MAP_LOCATION_LEN);
+                nmp_deal_text(doc, cur, tmp.map_location, MAP_LOCATION_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -1895,31 +1895,31 @@ jpf_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_defence_map_resp: used to generate xml docuemnt
+ * nmp_create_add_defence_map_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -1930,16 +1930,16 @@ jpf_create_add_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddDefenceGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddDefenceGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -1953,15 +1953,15 @@ jpf_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guDomain")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -1970,31 +1970,31 @@ jpf_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_defence_map_resp: used to generate xml docuemnt
+ * nmp_create_add_defence_map_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2005,16 +2005,16 @@ jpf_create_add_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfSetMapHref tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpSetMapHref tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2028,13 +2028,13 @@ jpf_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"sourceMapId")))
-                jpf_deal_value(doc, cur, &tmp.src_map_id);
+                nmp_deal_value(doc, cur, &tmp.src_map_id);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"destinationMapId")))
-                jpf_deal_value(doc, cur, &tmp.dst_map_id);
+                nmp_deal_value(doc, cur, &tmp.dst_map_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2043,31 +2043,31 @@ jpf_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_defence_map_resp: used to generate xml docuemnt
+ * nmp_create_add_defence_map_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_set_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2079,17 +2079,17 @@ jpf_create_set_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 int
-jpf_create_general_cmd_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_general_cmd_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2100,16 +2100,16 @@ jpf_create_general_cmd_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddTw tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddTw tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2123,7 +2123,7 @@ jpf_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"twName")))
-                jpf_deal_text(doc, cur, tmp.tw_name, TW_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.tw_name, TW_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2132,24 +2132,24 @@ jpf_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2160,16 +2160,16 @@ jpf_create_add_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddScreen tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddScreen tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2183,19 +2183,19 @@ jpf_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayDomain")))
-                jpf_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayGuId")))
-                jpf_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"length")))
-                jpf_deal_float_value(doc, cur, &tmp.length);
+                nmp_deal_float_value(doc, cur, &tmp.length);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"width")))
-                jpf_deal_float_value(doc, cur, &tmp.width);
+                nmp_deal_float_value(doc, cur, &tmp.width);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2204,24 +2204,24 @@ jpf_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2232,16 +2232,16 @@ jpf_create_add_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddTour tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddTour tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2255,9 +2255,9 @@ jpf_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourName")))
-                jpf_deal_text(doc, cur, tmp.tour_name, TOUR_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.tour_name, TOUR_NAME_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"autoJump")))
-                jpf_deal_value(doc, cur, &tmp.auto_jump);
+                nmp_deal_value(doc, cur, &tmp.auto_jump);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2266,24 +2266,24 @@ jpf_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2294,19 +2294,19 @@ jpf_create_add_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddTourStep tmp;
-    JpfAddTourStep *tour_steps = NULL;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddTourStep tmp;
+    NmpAddTourStep *tour_steps = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message";
     gint count = 0, size;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2320,15 +2320,15 @@ jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"count")))
             {
-                jpf_deal_value(doc, cur, &count);
+                nmp_deal_value(doc, cur, &count);
                 if (count < 0)
                 {
                     xmlXPathFreeObject(app_result);
                     return NULL;
                 }
 
-                size = sizeof(JpfAddTourStep)  + sizeof(JpfTourStep) * count ;
-                tour_steps = jpf_mem_kalloc(size);
+                size = sizeof(NmpAddTourStep)  + sizeof(NmpTourStep) * count ;
+                tour_steps = nmp_mem_kalloc(size);
                 if (G_UNLIKELY(!tour_steps))
                 {
                     xmlXPathFreeObject(app_result);
@@ -2339,7 +2339,7 @@ jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourId")))
             {
-                jpf_deal_value(doc, cur, &tmp.tour_id);
+                nmp_deal_value(doc, cur, &tmp.tour_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -2358,11 +2358,11 @@ jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     memcpy(tour_steps, &tmp, sizeof(tmp));
     if (G_UNLIKELY(count <= 0))
     {
-        sys_msg = jpf_msginfo_new_2(cmd, tour_steps, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+        sys_msg = nmp_msginfo_new_2(cmd, tour_steps, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
         return sys_msg;
     }
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)"/message/tourStepList/tourStep");
+    app_result =  nmp_get_node(doc, (const xmlChar *)"/message/tourStepList/tourStep");
     if (G_UNLIKELY(!app_result))
         return NULL;
 
@@ -2375,15 +2375,15 @@ jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (node != NULL)
         {
             if ((!xmlStrcmp(node->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, node, &tour_steps->tour_step[i].step_no);
+                nmp_deal_value(doc, node, &tour_steps->tour_step[i].step_no);
             else if ((!xmlStrcmp(node->name, (const xmlChar *)"interval")))
-                jpf_deal_value(doc, node, &tour_steps->tour_step[i].interval);
+                nmp_deal_value(doc, node, &tour_steps->tour_step[i].interval);
             else if ((!xmlStrcmp(node->name, (const xmlChar *)"encoderGuId")))
-                jpf_deal_text(doc, node, tour_steps->tour_step[i].encoder_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, node, tour_steps->tour_step[i].encoder_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(node->name, (const xmlChar *)"encoderDomain")))
-                jpf_deal_text(doc, node, tour_steps->tour_step[i].encoder_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, node, tour_steps->tour_step[i].encoder_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(node->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, node, &tour_steps->tour_step[i].level);
+                nmp_deal_value(doc, node, &tour_steps->tour_step[i].level);
             else
                 xml_error("not parse the node %s\n",node->name);
 
@@ -2392,24 +2392,24 @@ jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new_2(cmd, tour_steps, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+    sys_msg = nmp_msginfo_new_2(cmd, tour_steps, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_tour_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2420,16 +2420,16 @@ jpf_create_add_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2443,9 +2443,9 @@ jpf_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupName")))
-                jpf_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2454,29 +2454,29 @@ jpf_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddGroupStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddGroupStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2490,11 +2490,11 @@ jpf_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
            else if ((!xmlStrcmp(cur->name, (const xmlChar *)"interval")))
-                jpf_deal_value(doc, cur, &tmp.interval);
+                nmp_deal_value(doc, cur, &tmp.interval);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2503,29 +2503,29 @@ jpf_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_add_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddIvs tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddIvs tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2539,12 +2539,12 @@ jpf_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsName")))
-                jpf_deal_text(doc, cur, tmp.ivs_name, IVS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_name, IVS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
                 if (tmp.keep_alive_freq < 3)
                     tmp.keep_alive_freq = 3;
             }
@@ -2556,23 +2556,23 @@ jpf_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 int
-jpf_create_add_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2583,16 +2583,16 @@ jpf_create_add_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfValidateGuMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpValidateGuMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2605,9 +2605,9 @@ jpf_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2616,32 +2616,32 @@ jpf_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_validate_gu_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_validate_gu_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     xmlNodePtr node, node1;
-    JpfConfigGroupStep tmp;
-    JpfConfigGroupStep *req_info = NULL;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpConfigGroupStep tmp;
+    NmpConfigGroupStep *req_info = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     int i, j = 0, size;
     char *count;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2655,13 +2655,13 @@ jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"scrId")))
-                jpf_deal_value(doc, cur, &tmp.scr_id);
+                nmp_deal_value(doc, cur, &tmp.scr_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divId")))
-                jpf_deal_value(doc, cur, &tmp.div_id);
+                nmp_deal_value(doc, cur, &tmp.div_id);
            else if((!xmlStrcmp(cur->name, (const xmlChar *)"groupStepInfoList")))
            {
                 count = (char *)xmlGetProp(cur, (const xmlChar *)"count");
@@ -2673,8 +2673,8 @@ jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		  else
 		  	tmp.total_num = 0;
 
-                size = sizeof(JpfConfigGroupStep) + tmp.total_num*sizeof(JpfGroupStep);
-                req_info = jpf_mem_kalloc(size);
+                size = sizeof(NmpConfigGroupStep) + tmp.total_num*sizeof(NmpGroupStep);
+                req_info = nmp_mem_kalloc(size);
                 if (!req_info)
                     return NULL;
                 memset(req_info, 0, sizeof(req_info));
@@ -2689,13 +2689,13 @@ jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                         while (node1 != NULL)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"divNo")))
-                                jpf_deal_value(doc, node1, &req_info->group_step[j].div_no);
+                                nmp_deal_value(doc, node1, &req_info->group_step[j].div_no);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"encoderDomain")))
-                                jpf_deal_text(doc, node1, req_info->group_step[j].encoder_domain, DOMAIN_ID_LEN);
+                                nmp_deal_text(doc, node1, req_info->group_step[j].encoder_domain, DOMAIN_ID_LEN);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"encoderGuId")))
-                                jpf_deal_text(doc, node1, req_info->group_step[j].encoder_guid, MAX_ID_LEN);
+                                nmp_deal_text(doc, node1, req_info->group_step[j].encoder_guid, MAX_ID_LEN);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"level")))
-                                jpf_deal_value(doc, node1, &req_info->group_step[j].level);
+                                nmp_deal_value(doc, node1, &req_info->group_step[j].level);
                             else
                                 xml_warning("Warning, not parse the node %s \n", node1->name);
                             node1 = node1->next;
@@ -2721,38 +2721,38 @@ jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         memcpy(req_info, &tmp, sizeof(tmp));
     else
     {
-        size = sizeof(JpfConfigGroupStep);
-        req_info	= jpf_mem_kalloc(size);
+        size = sizeof(NmpConfigGroupStep);
+        req_info	= nmp_mem_kalloc(size);
         if (req_info)
             memcpy(req_info, &tmp, sizeof(tmp));
         else
             return NULL;
     }
 
-    sys_msg = jpf_msginfo_new_2(cmd, req_info, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
-    //sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new_2(cmd, req_info, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
+    //sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_config_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_config_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelAlarmPolicy tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelAlarmPolicy tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2766,11 +2766,11 @@ jpf_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"enable")))
-                jpf_deal_value(doc, cur, &tmp.enable);
+                nmp_deal_value(doc, cur, &tmp.enable);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"maxCapacity")))
-                jpf_deal_value(doc, cur, &tmp.max_capacity);
+                nmp_deal_value(doc, cur, &tmp.max_capacity);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"delAlarmNum")))
-                jpf_deal_value(doc, cur, &tmp.del_alarm_num);
+                nmp_deal_value(doc, cur, &tmp.del_alarm_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -2779,19 +2779,19 @@ jpf_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfLinkTimePolicyConfig tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkTimePolicyConfig tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i = 0;
     xmlXPathObjectPtr app_result;
     xmlNodePtr new_node;
@@ -2799,7 +2799,7 @@ jpf_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     char *xpath = "/message";
     xmlNodeSetPtr nodeset;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -2812,9 +2812,9 @@ jpf_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timePolicy")))
             {
                 new_node = xmlDocCopyNode(cur, doc, 1);
@@ -2839,24 +2839,24 @@ jpf_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-   sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+   sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     printf("-------------&&&cmd=%s, tmp->time_policy=%s\n",cmd, tmp.time_policy);
     return sys_msg;
 }
 
 
 int
-jpf_create_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2867,17 +2867,17 @@ jpf_create_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkRecord tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkRecord tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j = 0;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2891,19 +2891,19 @@ jpf_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeLen")))
-                jpf_deal_value(doc, cur, &tmp.time_len);
+                nmp_deal_value(doc, cur, &tmp.time_len);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mss")))
             {
                 node = cur->xmlChildrenNode;
@@ -2911,7 +2911,7 @@ jpf_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
                     {
-                        jpf_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
                         j++;
                     }
                     node = node->next;
@@ -2927,24 +2927,24 @@ jpf_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -2955,16 +2955,16 @@ jpf_create_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkIO tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkIO tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -2978,19 +2978,19 @@ jpf_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeLen")))
-                jpf_deal_value(doc, cur, &tmp.time_len);
+                nmp_deal_value(doc, cur, &tmp.time_len);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"IOValue")))
-                jpf_deal_text(doc, cur, tmp.io_value, IO_VALUE_LEN);
+                nmp_deal_text(doc, cur, tmp.io_value, IO_VALUE_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3001,24 +3001,24 @@ jpf_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3029,17 +3029,17 @@ jpf_create_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkSnapshot tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkSnapshot tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j = 0;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3053,19 +3053,19 @@ jpf_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"pictureNum")))
-                jpf_deal_value(doc, cur, &tmp.picture_num);
+                nmp_deal_value(doc, cur, &tmp.picture_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mss")))
             {
                 node = cur->xmlChildrenNode;
@@ -3073,7 +3073,7 @@ jpf_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
                     {
-                        jpf_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
                         j++;
                     }
                     node = node->next;
@@ -3089,24 +3089,24 @@ jpf_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3117,16 +3117,16 @@ jpf_create_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkPreset tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkPreset tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3140,17 +3140,17 @@ jpf_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"presetNo")))
-                jpf_deal_value(doc, cur, &tmp.preset_no);
+                nmp_deal_value(doc, cur, &tmp.preset_no);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3161,24 +3161,24 @@ jpf_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3189,16 +3189,16 @@ jpf_create_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkStepConfig tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkStepConfig tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3212,25 +3212,25 @@ jpf_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"encoderGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"encoderDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"screenId")))
-                jpf_deal_value(doc, cur, &tmp.screen_id);
+                nmp_deal_value(doc, cur, &tmp.screen_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionNum")))
-                jpf_deal_value(doc, cur, &tmp.div_num);
+                nmp_deal_value(doc, cur, &tmp.div_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionId")))
-                jpf_deal_value(doc, cur, &tmp.div_id);
+                nmp_deal_value(doc, cur, &tmp.div_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3241,24 +3241,24 @@ jpf_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3269,16 +3269,16 @@ jpf_create_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfLinkMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpLinkMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3292,17 +3292,17 @@ jpf_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3313,24 +3313,24 @@ jpf_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3341,17 +3341,17 @@ jpf_create_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 int
-jpf_create_set_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_del_alarm_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -3361,16 +3361,16 @@ jpf_create_set_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
     return 0;
 }
 
-JpfMsgInfo *
-jpf_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddAdmin tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddAdmin tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3386,9 +3386,9 @@ jpf_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"password")))
-                jpf_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
+                nmp_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3397,32 +3397,32 @@ jpf_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_admin_resp: used to generate xml docuemnt
+ * nmp_create_modify_admin_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "admin");
     xmlAddChild(root_node, node);
@@ -3435,16 +3435,16 @@ jpf_create_modify_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfUserGroupInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpUserGroupInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/group";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3460,13 +3460,13 @@ jpf_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"rank")))
-                jpf_deal_value(doc, cur, &tmp.group_rank);
+                nmp_deal_value(doc, cur, &tmp.group_rank);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"permissions")))
-                jpf_deal_value(doc, cur, &tmp.group_permissions);
+                nmp_deal_value(doc, cur, &tmp.group_permissions);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3475,33 +3475,33 @@ jpf_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_user_group_resp: used to generate xml docuemnt
+ * nmp_create_modify_user_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "group");
     xmlAddChild(root_node, node);
@@ -3514,16 +3514,16 @@ jpf_create_modify_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfUserInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpUserInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/user";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3536,19 +3536,19 @@ jpf_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.username, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"userId")))
-                jpf_deal_value(doc, cur, &tmp.user_id);
+                nmp_deal_value(doc, cur, &tmp.user_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sex")))
-                jpf_deal_value(doc, cur, &tmp.sex);
+                nmp_deal_value(doc, cur, &tmp.sex);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"password")))
-                jpf_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
+                nmp_deal_text(doc, cur, tmp.password, USER_PASSWD_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"phone")))
-                jpf_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
+                nmp_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"description")))
-                jpf_deal_text(doc, cur, tmp.user_description, DESCRIPTION_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.user_description, DESCRIPTION_INFO_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3557,33 +3557,33 @@ jpf_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_user_resp: used to generate xml docuemnt
+ * nmp_create_modify_user_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "user");
     xmlAddChild(root_node, node);
@@ -3596,16 +3596,16 @@ jpf_create_modify_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
- JpfMsgInfo *
-jpf_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+ NmpMsgInfo *
+nmp_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDomainInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDomainInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/domain";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3619,11 +3619,11 @@ jpf_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.domain_name, DOMAIN_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_name, DOMAIN_NAME_LEN);
             //else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainType")))
-              //  jpf_deal_value(doc, cur, &tmp.domain_type);
+              //  nmp_deal_value(doc, cur, &tmp.domain_type);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3632,33 +3632,33 @@ jpf_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_domain_resp: used to generate xml docuemnt
+ * nmp_create_modify_domain_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_domain_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", -RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "domain");
     xmlAddChild(root_node, node);
@@ -3671,16 +3671,16 @@ jpf_create_modify_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
- JpfMsgInfo *
-jpf_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+ NmpMsgInfo *
+nmp_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAreaInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAreaInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/area";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3695,19 +3695,19 @@ jpf_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.area_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.area_name, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_value(doc, cur, &tmp.area_id);
+                nmp_deal_value(doc, cur, &tmp.area_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"parentId")))
-                jpf_deal_value(doc, cur, &tmp.area_parent);
+                nmp_deal_value(doc, cur, &tmp.area_parent);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"userName")))
-                jpf_deal_text(doc, cur, tmp.user_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.user_name, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"userPhone")))
-                jpf_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
+                nmp_deal_text(doc, cur, tmp.user_phone, PHONE_NUM_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"userAddress")))
-                jpf_deal_text(doc, cur, tmp.user_address, DESCRIPTION_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.user_address, DESCRIPTION_INFO_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"description")))
-                jpf_deal_text(doc, cur, tmp.description, DESCRIPTION_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.description, DESCRIPTION_INFO_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -3716,33 +3716,33 @@ jpf_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_area_resp: used to generate xml docuemnt
+ * nmp_create_modify_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_modify_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_modify_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfAddAreaRes *tmp = NULL;
+    NmpAddAreaRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "area");
     xmlAddChild(root_node, node);
@@ -3759,18 +3759,18 @@ jpf_create_add_modify_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfPuInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpPuInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int len;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr  node;
     char *xpath = "/message/device";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3784,18 +3784,18 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"puName")))
-                jpf_deal_text(doc, cur, tmp.pu_info, PU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.pu_info, PU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"amsId")))
-                jpf_deal_text(doc, cur, tmp.ams_id, AMS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ams_id, AMS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puid")))
-                jpf_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                     while ( node && xmlIsBlankNode (node) )
@@ -3809,7 +3809,7 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.mf_id, MF_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mf_id, MF_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
 
@@ -3824,7 +3824,7 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mds_id, MDS_ID_LEN);
 
                     node = node->next;
                     while ( node && xmlIsBlankNode (node) )
@@ -3837,7 +3837,7 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_value(doc, node, &tmp.area_id);
+                        nmp_deal_value(doc, node, &tmp.area_id);
 
                     node = node->next;
                     while ( node && xmlIsBlankNode (node) )
@@ -3846,13 +3846,13 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_time);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_time);
 				  if (tmp.keep_alive_time < 3)
 					  tmp.keep_alive_time = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puMinorType")))
             {
-                jpf_deal_value(doc, cur, &tmp.pu_minor_type);
+                nmp_deal_value(doc, cur, &tmp.pu_minor_type);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -3862,35 +3862,35 @@ jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfPuInfo);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpPuInfo);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_modify_pu_resp: used to generate xml docuemnt
+ * nmp_create_modify_pu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "device");
     xmlAddChild(root_node, node);
@@ -3903,16 +3903,16 @@ jpf_create_modify_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfGuInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGuInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i, j = 0, enable;
     xmlXPathObjectPtr app_result;
     xmlNodePtr  node, node1;
     char *xpath = "/message/gu";
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -3926,18 +3926,18 @@ jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guName")))
-                jpf_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guid")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                     while ( node && xmlIsBlankNode (node) )
@@ -3945,19 +3945,19 @@ jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guName")))
-                jpf_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.gu_name, GU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guHasDome")))
             {
-                jpf_deal_value(doc, cur, &enable);
+                nmp_deal_value(doc, cur, &enable);
                 tmp.gu_attributes = tmp.gu_attributes | (enable&0x1);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guAlarmBypass")))
             {
-                jpf_deal_value(doc, cur, &enable);
+                nmp_deal_value(doc, cur, &enable);
                 tmp.gu_attributes = tmp.gu_attributes | ((enable&0x1)<<1);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guType")))
-                jpf_deal_value(doc, cur, &tmp.gu_type);
+                nmp_deal_value(doc, cur, &tmp.gu_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssList")))
             {
                 node = cur->xmlChildrenNode;
@@ -3971,7 +3971,7 @@ jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                        {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"id")))
                             {
-                                jpf_deal_text(doc, node1, tmp.mss[j].mss_id, MSS_ID_LEN);
+                                nmp_deal_text(doc, node1, tmp.mss[j].mss_id, MSS_ID_LEN);
         							j++;
                             }
 
@@ -3989,34 +3989,34 @@ jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_modify_gu_resp: used to generate xml docuemnt
+ * nmp_create_modify_gu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "gu");
     xmlAddChild(root_node, node);
@@ -4029,16 +4029,16 @@ jpf_create_modify_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMdsInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMdsInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mdu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4051,25 +4051,25 @@ jpf_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.mds_name, MDS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_name, MDS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mduType")))
-                jpf_deal_value(doc, cur, &tmp.mds_type);
+                nmp_deal_value(doc, cur, &tmp.mds_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
 		   if (tmp.keep_alive_freq < 3)
 			tmp.keep_alive_freq = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puPort")))
-                jpf_deal_value(doc, cur, &tmp.mds_pu_port);
+                nmp_deal_value(doc, cur, &tmp.mds_pu_port);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"rtspPort")))
-                jpf_deal_value(doc, cur, &tmp.mds_rtsp_port);
+                nmp_deal_value(doc, cur, &tmp.mds_rtsp_port);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"getIpEnable")))
-                jpf_deal_value(doc, cur, &tmp.get_ip_enable);
+                nmp_deal_value(doc, cur, &tmp.get_ip_enable);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4078,33 +4078,33 @@ jpf_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_mds_resp: used to generate xml docuemnt
+ * nmp_create_modify_mds_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "mdu");
     xmlAddChild(root_node, node);
@@ -4117,16 +4117,16 @@ jpf_create_modify_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMssInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMssInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mss";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4139,22 +4139,22 @@ jpf_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.mss_name, MSS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_name, MSS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
 		  if (tmp.keep_alive_freq < 3)
 			tmp.keep_alive_freq = 3;
 	     }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"storageType")))
             {
-                jpf_deal_value(doc, cur, &tmp.storage_type);
+                nmp_deal_value(doc, cur, &tmp.storage_type);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mode")))
             {
-                jpf_deal_value(doc, cur, &tmp.mode);
+                nmp_deal_value(doc, cur, &tmp.mode);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -4164,33 +4164,33 @@ jpf_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_modify_mss_resp: used to generate xml docuemnt
+ * nmp_create_modify_mss_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_modify_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "mss");
     xmlAddChild(root_node, node);
@@ -4203,18 +4203,18 @@ jpf_create_modify_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
- JpfMsgInfo *
-jpf_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+ NmpMsgInfo *
+nmp_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDefenceAreaInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDefenceAreaInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     xmlNodePtr new_node = NULL;
     xmlBufferPtr buff;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
     int i;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4228,9 +4228,9 @@ jpf_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"enable")))
-                jpf_deal_value(doc, cur, &tmp.defence_enable);
+                nmp_deal_value(doc, cur, &tmp.defence_enable);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"policy")))
             {
                 new_node = xmlDocCopyNode(cur, doc, 1);
@@ -4254,27 +4254,27 @@ jpf_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4286,16 +4286,16 @@ jpf_create_modify_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyDefenceGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyDefenceGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4309,18 +4309,18 @@ jpf_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guDomain")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
             	{
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
 		  printf("-----tmp.coordinate_x=%.4f\n",tmp.coordinate_x);
             	}
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4329,24 +4329,24 @@ jpf_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4357,16 +4357,16 @@ jpf_create_modify_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyMapHref tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyMapHref tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4380,16 +4380,16 @@ jpf_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"sourceMapId")))
-                jpf_deal_value(doc, cur, &tmp.src_map_id);
+                nmp_deal_value(doc, cur, &tmp.src_map_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"destinationMapId")))
-                jpf_deal_value(doc, cur, &tmp.dst_map_id);
+                nmp_deal_value(doc, cur, &tmp.dst_map_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
             {
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
 		  printf("-----tmp.coordinate_x=%.4f\n",tmp.coordinate_x);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4398,24 +4398,24 @@ jpf_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4426,16 +4426,16 @@ jpf_create_modify_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyTw tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyTw tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4449,16 +4449,16 @@ jpf_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twName")))
-                jpf_deal_text(doc, cur, tmp.tw_name, TW_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.tw_name, TW_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"line")))
-                jpf_deal_value(doc, cur, &tmp.line_num);
+                nmp_deal_value(doc, cur, &tmp.line_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"column")))
             	{
-                jpf_deal_value(doc, cur, &tmp.column_num);  printf("--------tmp.column_num=%d\n",tmp.column_num);
+                nmp_deal_value(doc, cur, &tmp.column_num);  printf("--------tmp.column_num=%d\n",tmp.column_num);
             	}
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -4468,24 +4468,24 @@ jpf_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4496,16 +4496,16 @@ jpf_create_modify_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyScreen tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyScreen tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4519,23 +4519,23 @@ jpf_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"screenId")))
-                jpf_deal_value(doc, cur, &tmp.screen_id);
+                nmp_deal_value(doc, cur, &tmp.screen_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateX")))
             {
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_x);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_x);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"coordinateY")))
-                jpf_deal_float_value(doc, cur, &tmp.coordinate_y);
+                nmp_deal_float_value(doc, cur, &tmp.coordinate_y);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"length")))
             {
-                jpf_deal_float_value(doc, cur, &tmp.length);
+                nmp_deal_float_value(doc, cur, &tmp.length);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"width")))
-                jpf_deal_float_value(doc, cur, &tmp.width);
+                nmp_deal_float_value(doc, cur, &tmp.width);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayDomain")))
-                jpf_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayGuId")))
-                jpf_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4544,24 +4544,24 @@ jpf_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4572,16 +4572,16 @@ jpf_create_modify_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyTour tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyTour tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4595,11 +4595,11 @@ jpf_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourId")))
-                jpf_deal_value(doc, cur, &tmp.tour_id);
+                nmp_deal_value(doc, cur, &tmp.tour_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourName")))
-                jpf_deal_text(doc, cur, tmp.tour_name, TOUR_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.tour_name, TOUR_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"autoJump")))
-                jpf_deal_value(doc, cur, &tmp.auto_jump);
+                nmp_deal_value(doc, cur, &tmp.auto_jump);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4608,24 +4608,24 @@ jpf_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -4636,16 +4636,16 @@ jpf_create_modify_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4659,9 +4659,9 @@ jpf_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupName")))
-                jpf_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.group_name, GROUP_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4670,29 +4670,29 @@ jpf_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyGroupStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyGroupStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4706,11 +4706,11 @@ jpf_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"interval")))
-                jpf_deal_value(doc, cur, &tmp.interval);
+                nmp_deal_value(doc, cur, &tmp.interval);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4719,29 +4719,29 @@ jpf_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyGroupStepInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyGroupStepInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4755,15 +4755,15 @@ jpf_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
            else if ((!xmlStrcmp(cur->name, (const xmlChar *)"scrId")))
-                jpf_deal_value(doc, cur, &tmp.scr_id);
+                nmp_deal_value(doc, cur, &tmp.scr_id);
            else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
            else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divNo")))
-                jpf_deal_value(doc, cur, &tmp.div_no);
+                nmp_deal_value(doc, cur, &tmp.div_no);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4772,30 +4772,30 @@ jpf_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
- JpfMsgInfo *
-jpf_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+ NmpMsgInfo *
+nmp_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddModifyManufacturer tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddModifyManufacturer tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int len;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/manufacturer";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4809,11 +4809,11 @@ jpf_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.mf_name, MF_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.mf_name, MF_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mf_id, MF_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mf_id, MF_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -4822,34 +4822,34 @@ jpf_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfAddModifyManufacturer);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpAddModifyManufacturer);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
     printf("&&&&&&&&&&&&&&&tmp.mf_id=%s,tmp.mf_name=%s\n",tmp.mf_id,tmp.mf_name);
     return sys_msg;
 }
 
 /**
- * jpf_create_add_modify_manufacturer_resp: used to generate xml docuemnt
+ * nmp_create_add_modify_manufacturer_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_add_modify_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_modify_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "manufacturer");
     xmlAddChild(root_node, node);
@@ -4862,18 +4862,18 @@ jpf_create_add_modify_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkTimePolicy tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkTimePolicy tmp;
+    NmpMsgInfo *sys_msg = NULL;
     xmlNodePtr new_node;
     xmlBufferPtr buff;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4887,9 +4887,9 @@ jpf_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timePolicy")))
             {
                 new_node = xmlDocCopyNode(cur, doc, 1);
@@ -4912,30 +4912,30 @@ jpf_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkRecord tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkRecord tmp;
+    NmpMsgInfo *sys_msg = NULL;
     xmlNodePtr node = NULL;
     int i, j = 0;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -4949,19 +4949,19 @@ jpf_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeLen")))
-                jpf_deal_value(doc, cur, &tmp.time_len);
+                nmp_deal_value(doc, cur, &tmp.time_len);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mss")))
             {
                 node = cur->xmlChildrenNode;
@@ -4969,7 +4969,7 @@ jpf_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
                     {
-                        jpf_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
                         j++;
                     }
                     node = node->next;
@@ -4983,29 +4983,29 @@ jpf_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkIO tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkIO tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5019,19 +5019,19 @@ jpf_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeLen")))
-                jpf_deal_value(doc, cur, &tmp.time_len);
+                nmp_deal_value(doc, cur, &tmp.time_len);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"IOValue")))
-                jpf_deal_text(doc, cur, tmp.io_value, IO_VALUE_LEN);
+                nmp_deal_text(doc, cur, tmp.io_value, IO_VALUE_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5040,30 +5040,30 @@ jpf_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkSnapshot tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkSnapshot tmp;
+    NmpMsgInfo *sys_msg = NULL;
     xmlNodePtr node = NULL;
     int i, j = 0;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5077,19 +5077,19 @@ jpf_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"pictureNum")))
-                jpf_deal_value(doc, cur, &tmp.picture_num);
+                nmp_deal_value(doc, cur, &tmp.picture_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mss")))
             {
                 node = cur->xmlChildrenNode;
@@ -5097,7 +5097,7 @@ jpf_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
                     {
-                        jpf_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.mss[j].mss_id, MSS_ID_LEN);
                         j++;
                     }
                     node = node->next;
@@ -5111,29 +5111,29 @@ jpf_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkPreset tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkPreset tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5147,17 +5147,17 @@ jpf_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"presetNo")))
-                jpf_deal_value(doc, cur, &tmp.preset_no);
+                nmp_deal_value(doc, cur, &tmp.preset_no);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5166,29 +5166,29 @@ jpf_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5202,25 +5202,25 @@ jpf_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"encoderGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"encoderDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"screenId")))
-                jpf_deal_value(doc, cur, &tmp.screen_id);
+                nmp_deal_value(doc, cur, &tmp.screen_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionNum")))
-                jpf_deal_value(doc, cur, &tmp.div_num);
+                nmp_deal_value(doc, cur, &tmp.div_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionId")))
-                jpf_deal_value(doc, cur, &tmp.div_id);
+                nmp_deal_value(doc, cur, &tmp.div_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5229,29 +5229,29 @@ jpf_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfModifyLinkMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpModifyLinkMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result = jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result = nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5265,17 +5265,17 @@ jpf_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp.level);
+                nmp_deal_value(doc, cur, &tmp.level);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5284,29 +5284,29 @@ jpf_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfIvsInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpIvsInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5319,12 +5319,12 @@ jpf_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsName")))
-                jpf_deal_text(doc, cur, tmp.ivs_name, IVS_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_name, IVS_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-				jpf_deal_value(doc, cur, &tmp.keep_alive_freq);
+				nmp_deal_value(doc, cur, &tmp.keep_alive_freq);
 				if (tmp.keep_alive_freq < 3)
 					tmp.keep_alive_freq = 3;
             }
@@ -5336,27 +5336,27 @@ jpf_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_modify_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -5367,18 +5367,18 @@ jpf_create_modify_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelAdmin tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelAdmin tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gchar del_name[USER_NAME_LEN] = {0};
     gint len;
     gint i, j= 0 ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/adminList/list/admin";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5392,7 +5392,7 @@ jpf_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
             {
-                jpf_deal_text(doc, cur, del_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, del_name, USER_NAME_LEN);
                 if ((strlen(tmp.admin_name) + strlen(del_name) + 3) < MULTI_NAME_LEN)
                 {
                     if (j == 0)
@@ -5416,7 +5416,7 @@ jpf_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     memset(tmp.admin_name, 0 , MULTI_NAME_LEN);
                     strcpy(tmp.admin_name, "StringTooLong");
-                    jpf_warning("del admin name len is too long");
+                    nmp_warning("del admin name len is too long");
                 }
 
            }
@@ -5428,35 +5428,35 @@ jpf_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelAdmin);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelAdmin);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_admin_resp: used to generate xml docuemnt
+ * nmp_create_del_admin_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "adminList");
     xmlAddChild(root_node, node);
 
@@ -5469,18 +5469,18 @@ jpf_create_del_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelUserGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelUserGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gchar del_id[USER_NAME_LEN] = {0};
     gint len;
     gint i, j= 0 ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/groupList/list/group";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5494,7 +5494,7 @@ jpf_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
             {
-                jpf_deal_text(doc, cur, del_id, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, del_id, USER_NAME_LEN);
 
                 if ((strlen(tmp.group_id) + strlen(del_id) + 3) < MULTI_NAME_LEN)
                 {
@@ -5514,7 +5514,7 @@ jpf_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     memset(tmp.group_id, 0 , MULTI_NAME_LEN);
                     strcpy(tmp.group_id, "StringTooLong");
-                    jpf_warning("del admin name len is too long");
+                    nmp_warning("del admin name len is too long");
                 }
            }
             else
@@ -5525,34 +5525,34 @@ jpf_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelUserGroup);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelUserGroup);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_user_group_resp: used to generate xml docuemnt
+ * nmp_create_del_user_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "groupList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -5564,18 +5564,18 @@ jpf_create_del_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelUser tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelUser tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gchar del_id[USER_NAME_LEN] = {0};
     gint len;
     gint i, j= 0 ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/userList/list/user";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5589,7 +5589,7 @@ jpf_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
             {
-                jpf_deal_text(doc, cur, del_id, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, del_id, USER_NAME_LEN);
 
                 if ((strlen(tmp.username) + strlen(del_id) + 3) < MULTI_NAME_LEN)
                 {
@@ -5613,7 +5613,7 @@ jpf_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 {
                     memset(tmp.username, 0 , MULTI_NAME_LEN);
                     strcpy(tmp.username, "StringTooLong");
-                    jpf_warning("del admin name len is too long");
+                    nmp_warning("del admin name len is too long");
                 }
            }
             else
@@ -5624,35 +5624,35 @@ jpf_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelUser);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelUser);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_user_resp: used to generate xml docuemnt
+ * nmp_create_del_user_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "userList");
     xmlAddChild(root_node, node);
 
@@ -5665,17 +5665,17 @@ jpf_create_del_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelMds tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelMds tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint len;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mdu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5688,7 +5688,7 @@ jpf_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5697,35 +5697,35 @@ jpf_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelMds);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelMds);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_mds_resp: used to generate xml docuemnt
+ * nmp_create_del_mds_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "mdu");
     xmlAddChild(root_node, node);
 
@@ -5738,16 +5738,16 @@ jpf_create_del_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelMdsIp tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelMdsIp tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/dispatchList/mdu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5761,7 +5761,7 @@ jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
             {
-                jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -5773,7 +5773,7 @@ jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     xmlXPathFreeObject(app_result);
 
     app_result =
-        jpf_get_node(
+        nmp_get_node(
             doc,
             (const xmlChar *)"/message/dispatchList/list/dispatch"
             );
@@ -5789,7 +5789,7 @@ jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
            if ((!xmlStrcmp(cur->name, (const xmlChar *)"cmsIp")))
            {
-                jpf_deal_text(doc, cur, tmp.cms_ip, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.cms_ip, MAX_IP_LEN);
            }
            else
                 xml_error("not parse the node %s\n",cur->name);
@@ -5799,33 +5799,33 @@ jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_mds_ip_resp: used to generate xml docuemnt
+ * nmp_create_del_mds_ip_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "dispatchList");
     xmlAddChild(root_node, node);
 
@@ -5838,17 +5838,17 @@ jpf_create_del_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelMss tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelMss tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint len;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mss";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5861,7 +5861,7 @@ jpf_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -5870,35 +5870,35 @@ jpf_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelMss);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelMss);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_mss_resp: used to generate xml docuemnt
+ * nmp_create_del_mss_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "mss");
     xmlAddChild(root_node, node);
 
@@ -5911,17 +5911,17 @@ jpf_create_del_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint len;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/area";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -5935,7 +5935,7 @@ jpf_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
             {
-                jpf_deal_value(doc, cur, &tmp.area_id);
+                nmp_deal_value(doc, cur, &tmp.area_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -5945,35 +5945,35 @@ jpf_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelArea);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelArea);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_area_resp: used to generate xml docuemnt
+ * nmp_create_del_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "area");
     xmlAddChild(root_node, node);
 
@@ -5986,12 +5986,12 @@ jpf_create_del_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelPu *req_info;
-    JpfDelPu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelPu *req_info;
+    NmpDelPu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i, j = 0, size;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node, node1, node2;
@@ -5999,7 +5999,7 @@ jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     char *count;
     gint del_count;
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6012,9 +6012,9 @@ jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
              if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                 jpf_deal_value(doc, cur, &tmp.type);
+                 nmp_deal_value(doc, cur, &tmp.type);
              else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"deviceList")))
             {
                 count = (char *)xmlGetProp(cur, (const xmlChar *)"count");
@@ -6026,8 +6026,8 @@ jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		  else
 		  	del_count = 0;
 
-                size = sizeof(JpfDelPu) + del_count*sizeof(JpfPuPoint);
-                req_info = jpf_mem_kalloc(size);
+                size = sizeof(NmpDelPu) + del_count*sizeof(NmpPuPoint);
+                req_info = nmp_mem_kalloc(size);
                 if (!req_info)
                     return NULL;
                 memset(req_info, 0, size);
@@ -6043,14 +6043,14 @@ jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                         while (node1 != NULL)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"puid")))
-                                jpf_deal_text(doc, node1, req_info->pu_list[j].puid, MAX_ID_LEN);
+                                nmp_deal_text(doc, node1, req_info->pu_list[j].puid, MAX_ID_LEN);
                              else if ((!xmlStrcmp(node1->name, (const xmlChar *)"domain")))
                              {
                                  node2 = node1->xmlChildrenNode;
                                  while(node2 != NULL)
                                  {
                                      if ((!xmlStrcmp(node2->name, (const xmlChar *)"id")))
-                                         jpf_deal_text(doc, node2, req_info->pu_list[j].domain_id, DOMAIN_ID_LEN);
+                                         nmp_deal_text(doc, node2, req_info->pu_list[j].domain_id, DOMAIN_ID_LEN);
 
                                      node2 = node2->next;
                                      while ( node2 && xmlIsBlankNode (node2) )
@@ -6081,37 +6081,37 @@ jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     {
         strcpy(req_info->key,tmp.key);
         req_info->type = tmp.type;
-        sys_msg = jpf_msginfo_new_2(cmd, req_info, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+        sys_msg = nmp_msginfo_new_2(cmd, req_info, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
     }
     else
-        sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));;
+        sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));;
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_pu_resp: used to generate xml docuemnt
+ * nmp_create_del_pu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "device");
     xmlAddChild(root_node, node);
 
@@ -6124,17 +6124,17 @@ jpf_create_del_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/gu";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6148,7 +6148,7 @@ jpf_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guid")))
             {
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
@@ -6156,7 +6156,7 @@ jpf_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                     while ( node && xmlIsBlankNode (node) )
@@ -6171,34 +6171,34 @@ jpf_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_gu_resp: used to generate xml docuemnt
+ * nmp_create_del_gu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "gu");
     xmlAddChild(root_node, node);
 
@@ -6211,17 +6211,17 @@ jpf_create_del_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelManufacturer tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelManufacturer tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint len;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/manufacturer";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6235,7 +6235,7 @@ jpf_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"id")))
             {
-                jpf_deal_text(doc, cur, tmp.mf_id, MF_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mf_id, MF_ID_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6245,35 +6245,35 @@ jpf_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelManufacturer);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelManufacturer);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_manufacturer_resp: used to generate xml docuemnt
+ * nmp_create_del_manufacturer_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "manufacturer");
     xmlAddChild(root_node, node);
 
@@ -6286,16 +6286,16 @@ jpf_create_del_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelDefenceArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelDefenceArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6309,7 +6309,7 @@ jpf_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
             {
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6319,34 +6319,34 @@ jpf_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_del_defence_area_resp: used to generate xml docuemnt
+ * nmp_create_del_defence_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_del_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6357,16 +6357,16 @@ jpf_create_del_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelDefenceMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelDefenceMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6380,15 +6380,15 @@ jpf_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
             {
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
             {
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapLocation")))
             {
-                jpf_deal_text(doc, cur, tmp.map_location, MAP_LOCATION_LEN);
+                nmp_deal_text(doc, cur, tmp.map_location, MAP_LOCATION_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6398,28 +6398,28 @@ jpf_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6430,16 +6430,16 @@ jpf_create_del_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelDefenceGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelDefenceGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6453,19 +6453,19 @@ jpf_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
             {
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
             {
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guDomain")))
             {
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
             {
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6475,28 +6475,28 @@ jpf_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6507,16 +6507,16 @@ jpf_create_del_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelMapHref tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelMapHref tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6530,11 +6530,11 @@ jpf_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"sourceMapId")))
             {
-                jpf_deal_value(doc, cur, &tmp.src_map_id);
+                nmp_deal_value(doc, cur, &tmp.src_map_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"destinationMapId")))
             {
-                jpf_deal_value(doc, cur, &tmp.dst_map_id);
+                nmp_deal_value(doc, cur, &tmp.dst_map_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6544,28 +6544,28 @@ jpf_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6576,16 +6576,16 @@ jpf_create_del_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelTw tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelTw tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6599,7 +6599,7 @@ jpf_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
             {
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6609,28 +6609,28 @@ jpf_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6641,16 +6641,16 @@ jpf_create_del_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelScreen tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelScreen tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6664,19 +6664,19 @@ jpf_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
             {
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
             {
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayGuId")))
             {
-                jpf_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_guid, MAX_ID_LEN);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"displayDomain")))
             {
-                jpf_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dis_domain, DOMAIN_ID_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6686,28 +6686,28 @@ jpf_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6718,16 +6718,16 @@ jpf_create_del_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelTour tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelTour tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6741,7 +6741,7 @@ jpf_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourId")))
             {
-                jpf_deal_value(doc, cur, &tmp.tour_id);
+                nmp_deal_value(doc, cur, &tmp.tour_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6751,28 +6751,28 @@ jpf_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -6783,16 +6783,16 @@ jpf_create_del_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6806,7 +6806,7 @@ jpf_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
             {
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6816,29 +6816,29 @@ jpf_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelGroupStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelGroupStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6852,11 +6852,11 @@ jpf_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
             {
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
             {
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6866,29 +6866,29 @@ jpf_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelGroupStepInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelGroupStepInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6902,23 +6902,23 @@ jpf_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
             {
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
             {
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"scrId")))
             {
-                jpf_deal_value(doc, cur, &tmp.scr_id);
+                nmp_deal_value(doc, cur, &tmp.scr_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divNo")))
             {
-                jpf_deal_value(doc, cur, &tmp.div_no);
+                nmp_deal_value(doc, cur, &tmp.div_no);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
             {
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -6928,29 +6928,29 @@ jpf_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelAlarm tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelAlarm tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -6965,18 +6965,18 @@ jpf_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
             {
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             }
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmId")))
-                jpf_deal_text(doc, cur, tmp.alarm_ids, MULTI_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.alarm_ids, MULTI_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmState")))
-                jpf_deal_value(doc, cur, &tmp.alarm_state);
+                nmp_deal_value(doc, cur, &tmp.alarm_state);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmStartTime")))
-                jpf_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmEndTime")))
-                jpf_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -6987,27 +6987,27 @@ jpf_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 int
-jpf_create_del_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_alarm_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgCode *tmp = NULL;
+    NmpMsgCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(&tmp->code));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -7024,16 +7024,16 @@ jpf_create_del_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkTimePolicy tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkTimePolicy tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7046,9 +7046,9 @@ jpf_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7057,29 +7057,29 @@ jpf_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkRecord tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkRecord tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7092,13 +7092,13 @@ jpf_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7107,29 +7107,29 @@ jpf_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkIO tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkIO tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7142,13 +7142,13 @@ jpf_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7157,29 +7157,29 @@ jpf_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkSnapshot tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkSnapshot tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7192,13 +7192,13 @@ jpf_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7207,29 +7207,29 @@ jpf_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkPreset tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkPreset tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7242,13 +7242,13 @@ jpf_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7257,29 +7257,29 @@ jpf_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7292,15 +7292,15 @@ jpf_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"screenId")))
-                jpf_deal_value(doc, cur, &tmp.screen_id);
+                nmp_deal_value(doc, cur, &tmp.screen_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionNum")))
-                jpf_deal_value(doc, cur, &tmp.div_num);
+                nmp_deal_value(doc, cur, &tmp.div_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7309,29 +7309,29 @@ jpf_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelLinkMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelLinkMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i ;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7344,13 +7344,13 @@ jpf_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkGuId")))
-                jpf_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"linkDomainId")))
-                jpf_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.link_domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7359,30 +7359,30 @@ jpf_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    return jpf_create_general_cmd_resp(doc, sys_msg);
+    return nmp_create_general_cmd_resp(doc, sys_msg);
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelIvs tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelIvs tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint len;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -7395,7 +7395,7 @@ jpf_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-                jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7404,29 +7404,29 @@ jpf_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    len = sizeof(JpfDelIvs);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, len);
+    len = sizeof(NmpDelIvs);
+    sys_msg = nmp_msginfo_new(cmd, &tmp, len);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_del_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
             NULL,
@@ -7437,18 +7437,18 @@ jpf_create_del_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryAdmin tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryAdmin tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/adminList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -7461,13 +7461,13 @@ jpf_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else  if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7478,34 +7478,34 @@ jpf_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryAdmin));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryAdmin));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_admin_resp: used to generate xml docuemnt
+ * nmp_create_query_admin_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL;
-    JpfQueryAdminRes *tmp = NULL;
+    NmpQueryAdminRes *tmp = NULL;
     gint count = 0, total_num = 0, i;
     gchar str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "adminList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -7551,18 +7551,18 @@ jpf_create_query_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryUserGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryUserGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/groupList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -7576,13 +7576,13 @@ jpf_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7593,34 +7593,34 @@ jpf_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryAdmin));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryAdmin));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_user_group_resp: used to generate xml docuemnt
+ * nmp_create_query_user_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL;
-    JpfQueryUserGroupRes *tmp = NULL;
+    NmpQueryUserGroupRes *tmp = NULL;
     int count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "groupList");
     xmlAddChild(root_node, node);
 
@@ -7678,18 +7678,18 @@ jpf_create_query_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryUser tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryUser tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/userList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -7702,13 +7702,13 @@ jpf_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else  if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7719,35 +7719,35 @@ jpf_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryUser));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryUser));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_user_resp: used to generate xml docuemnt
+ * nmp_create_query_user_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL, node3 = NULL;
-    JpfQueryUserRes *tmp = NULL;
+    NmpQueryUserRes *tmp = NULL;
     int count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "userList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -7825,18 +7825,18 @@ jpf_create_query_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryDomain tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryDomain tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/domainList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -7849,9 +7849,9 @@ jpf_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7862,36 +7862,36 @@ jpf_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryDomain));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryDomain));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_domain_resp: used to generate xml docuemnt
+ * nmp_create_query_domain_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_domain_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryDomainRes *tmp = NULL;
+    NmpQueryDomainRes *tmp = NULL;
     int count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "domainList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -7954,18 +7954,18 @@ jpf_create_query_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/areaList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -7978,9 +7978,9 @@ jpf_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -7991,35 +7991,35 @@ jpf_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_area_resp: used to generate xml docuemnt
+ * nmp_create_query_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryAreaRes *tmp = NULL;
+    NmpQueryAreaRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "areaList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8090,18 +8090,18 @@ jpf_create_query_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryPu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryPu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/deviceList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8114,15 +8114,15 @@ jpf_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -8133,35 +8133,35 @@ jpf_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryPu));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryPu));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_pu_resp: used to generate xml docuemnt
+ * nmp_create_query_pu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL, node3 = NULL;
-    JpfQueryPuRes *tmp = NULL;
+    NmpQueryPuRes *tmp = NULL;
     int count,req_count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "deviceList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8285,19 +8285,19 @@ jpf_create_query_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/guList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8310,22 +8310,22 @@ jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guid")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
                     node = node->next;
                 }
             }
@@ -8335,7 +8335,7 @@ jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"puid")))
-                        jpf_deal_text(doc, node, tmp.puid, MAX_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.puid, MAX_ID_LEN);
 
                     node = node->next;
                 }
@@ -8346,7 +8346,7 @@ jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.guid, MAX_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.guid, MAX_ID_LEN);
                     node = node->next;
                 }
             }
@@ -8360,36 +8360,36 @@ jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryGu));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryGu));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_gu_resp: used to generate xml docuemnt
+ * nmp_create_query_gu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL, node3 = NULL, node4 = NULL;
-    JpfQueryGuRes *tmp = NULL;
+    NmpQueryGuRes *tmp = NULL;
     int count, req_count, i, j;
     char str[INT_TO_CHAR_LEN] = {0};
     gint gu_attributes;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "guList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8544,18 +8544,18 @@ jpf_create_query_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryMds tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryMds tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mduList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8568,13 +8568,13 @@ jpf_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -8585,35 +8585,35 @@ jpf_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryMds));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryMds));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_mds_resp: used to generate xml docuemnt
+ * nmp_create_query_mds_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL,  node2 = NULL;
-    JpfQueryMdsRes *tmp = NULL;
+    NmpQueryMdsRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "mduList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8693,18 +8693,18 @@ jpf_create_query_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryMdsIp tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryMdsIp tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/dispatchList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8717,9 +8717,9 @@ jpf_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -8730,34 +8730,34 @@ jpf_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_mds_ip_resp: used to generate xml docuemnt
+ * nmp_create_query_mds_ip_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL,  node2 = NULL;
-    JpfQueryMdsIpRes *tmp = NULL;
+    NmpQueryMdsIpRes *tmp = NULL;
     int count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "dispatchList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8803,18 +8803,18 @@ jpf_create_query_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryMss tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryMss tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/mssList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8827,13 +8827,13 @@ jpf_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -8844,35 +8844,35 @@ jpf_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryMss));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryMss));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_mss_resp: used to generate xml docuemnt
+ * nmp_create_query_mss_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL,  node2 = NULL;
-    JpfQueryMssRes *tmp = NULL;
+    NmpQueryMssRes *tmp = NULL;
     int count, total_num, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "mssList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -8942,19 +8942,19 @@ jpf_create_query_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryRecordPolicy tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryRecordPolicy tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node, node1;
     char *xpath = "/message/policy";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -8967,27 +8967,27 @@ jpf_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"gu")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"guid")))
-                        jpf_deal_text(doc, node, tmp.guid, MAX_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.guid, MAX_ID_LEN);
                     else if ((!xmlStrcmp(node->name, (const xmlChar *)"domain")))
                     {
                         node1 = node->xmlChildrenNode;
                         while (node1 != NULL)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"id")))
-                                jpf_deal_text(doc, node1, tmp.domain_id, DOMAIN_ID_LEN);
+                                nmp_deal_text(doc, node1, tmp.domain_id, DOMAIN_ID_LEN);
                             node1 = node1->next;
                         }
                     }
@@ -8997,7 +8997,7 @@ jpf_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                         while (node1 != NULL)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"id")))
-                                jpf_deal_text(doc, node1, tmp.mss_id, MSS_ID_LEN);
+                                nmp_deal_text(doc, node1, tmp.mss_id, MSS_ID_LEN);
                             node1 = node1->next;
                         }
                     }
@@ -9014,30 +9014,30 @@ jpf_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryRecordPolicy));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryRecordPolicy));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_record_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_record_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL,
     		node3 = NULL, new_node= NULL;
     xmlDocPtr doc_str;
-    JpfQueryRecordPolicyRes *tmp = NULL;
+    NmpQueryRecordPolicyRes *tmp = NULL;
     int count, total_num, i, j, xml_len;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "policy");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9161,13 +9161,13 @@ jpf_create_query_record_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfRecordPolicyConfig *tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpRecordPolicyConfig *tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i = 0, j = 0, count, len;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node, node1, node2,new_node;
@@ -9175,7 +9175,7 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     char *count_path = "/message/policy/count";
     char *xpath = "/message/policy";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)count_path);
+    app_result =  nmp_get_node(doc, (const xmlChar *)count_path);
     if (app_result == NULL)
         return NULL;
 
@@ -9185,9 +9185,9 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         cur = nodeset->nodeTab[i];
         if ((!xmlStrcmp(cur->name, (const xmlChar *)"count")))
         {
-            jpf_deal_value(doc, cur, &count);
-            len = sizeof(JpfRecordPolicyConfig) + count * (sizeof(JpfRecordGu));
-            tmp = jpf_mem_kalloc(len);
+            nmp_deal_value(doc, cur, &count);
+            len = sizeof(NmpRecordPolicyConfig) + count * (sizeof(NmpRecordGu));
+            tmp = nmp_mem_kalloc(len);
 	     if (!tmp)
 	         return NULL;
 
@@ -9198,7 +9198,7 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     xmlXPathFreeObject(app_result);
 
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9223,26 +9223,26 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                             if (tmp->gu_count == 0)
                                 break;
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"guid")))
-                                jpf_deal_text(doc, node1, tmp->record_policy[j].guid, MAX_ID_LEN);
+                                nmp_deal_text(doc, node1, tmp->record_policy[j].guid, MAX_ID_LEN);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"domain")))
                             {
                                 node2 = node1->xmlChildrenNode;
                                 while (node2 != NULL)
                                 {
                                     if ((!xmlStrcmp(node2->name, (const xmlChar *)"id")))
-                                    jpf_deal_text(doc, node2, tmp->record_policy[j].domain_id, DOMAIN_ID_LEN);
+                                    nmp_deal_text(doc, node2, tmp->record_policy[j].domain_id, DOMAIN_ID_LEN);
                                     node2 = node2->next;
                                 }
                             }
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"level")))
-                                jpf_deal_value(doc, node1, &tmp->record_policy[j].level);
+                                nmp_deal_value(doc, node1, &tmp->record_policy[j].level);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"mss")))
                             {
                                 node2 = node1->xmlChildrenNode;
                                 while (node2 != NULL)
                                 {
                                     if ((!xmlStrcmp(node2->name, (const xmlChar *)"id")))
-                                    jpf_deal_text(doc, node2, tmp->record_policy[j].mss_id, MSS_ID_LEN);
+                                    nmp_deal_text(doc, node2, tmp->record_policy[j].mss_id, MSS_ID_LEN);
                                     node2 = node2->next;
                                 }
                             }
@@ -9254,11 +9254,11 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp->mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp->mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"level")))
-                jpf_deal_value(doc, cur, &tmp->level);
+                nmp_deal_value(doc, cur, &tmp->level);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp->type);
+                nmp_deal_value(doc, cur, &tmp->type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"timePolicy")))
             {
                 new_node = xmlDocCopyNode(cur, doc, 1);
@@ -9287,7 +9287,7 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                          {
                            if ((!xmlStrcmp(node1->name, (const xmlChar *)"hdGroupId")))
                    	      {
-                               jpf_deal_text(doc, node1, tmp->hd_group[0].hd_group_id, HD_GROUP_ID_LEN);
+                               nmp_deal_text(doc, node1, tmp->hd_group[0].hd_group_id, HD_GROUP_ID_LEN);
                            }
 				   node1 = node1->next;
                         }
@@ -9305,36 +9305,36 @@ jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-//  sys_msg = jpf_msginfo_new(cmd, tmp, len);
-      sys_msg = jpf_msginfo_new_2(cmd, tmp, len, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+//  sys_msg = nmp_msginfo_new(cmd, tmp, len);
+      sys_msg = nmp_msginfo_new_2(cmd, tmp, len, (NmpMsgInfoPrivDes)nmp_mem_kfree);
     printf("-------------&&&cmd=%s, tmp->time_policy=%s\n",cmd, tmp->time_policy);
     return sys_msg;
 }
 
 
 /**
- * jpf_create_record_policy_config_resp: used to generate xml docuemnt
+ * nmp_create_record_policy_config_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_record_policy_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_record_policy_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-	JpfQueryRecordPolicyRes *tmp = NULL;
+	NmpQueryRecordPolicyRes *tmp = NULL;
 
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "policy");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9346,18 +9346,18 @@ jpf_create_record_policy_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryManufacturer tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryManufacturer tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/manufacturerList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9370,9 +9370,9 @@ jpf_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -9383,35 +9383,35 @@ jpf_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_manufacturer_resp: used to generate xml docuemnt
+ * nmp_create_query_manufacturer_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryManufacturerRes *tmp = NULL;
+    NmpQueryManufacturerRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "manufacturerList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9457,19 +9457,19 @@ jpf_create_query_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryUserOwnGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryUserOwnGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/guList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9482,16 +9482,16 @@ jpf_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domain")))
             {
                 node = cur->xmlChildrenNode;
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                        jpf_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
+                        nmp_deal_text(doc, node, tmp.domain_id, DOMAIN_ID_LEN);
 
                     node = node->next;
                 }
@@ -9502,7 +9502,7 @@ jpf_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"name")))
-                        jpf_deal_text(doc, node, tmp.user, USER_NAME_LEN);
+                        nmp_deal_text(doc, node, tmp.user, USER_NAME_LEN);
 
                     node = node->next;
                 }
@@ -9517,36 +9517,36 @@ jpf_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryUserOwnGu));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryUserOwnGu));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_user_own_gu_resp: used to generate xml docuemnt
+ * nmp_create_query_user_own_gu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_user_own_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_user_own_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryUserOwnGuRes *tmp = NULL;
+    NmpQueryUserOwnGuRes *tmp = NULL;
     int count,total_count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "guList");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9605,18 +9605,18 @@ jpf_create_query_user_own_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryUserOwnTw tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryUserOwnTw tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9629,12 +9629,12 @@ jpf_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"username")))
             {
-            	jpf_deal_text(doc, cur, tmp.user, USER_NAME_LEN);
+            	nmp_deal_text(doc, cur, tmp.user, USER_NAME_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -9646,29 +9646,29 @@ jpf_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryUserOwnTw));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryUserOwnTw));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_user_own_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_user_own_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryUserOwnTwRes *tmp = NULL;
+    NmpQueryUserOwnTwRes *tmp = NULL;
     int count,total_count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, node, ATTRIBUTE_TYPE,sys_msg->msg_id);
    // node = xmlNewNode(NULL, BAD_CAST "twList");
    // xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9722,18 +9722,18 @@ jpf_create_query_user_own_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryUserOwnTour tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryUserOwnTour tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9746,12 +9746,12 @@ jpf_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"username")))
             {
-            	jpf_deal_text(doc, cur, tmp.user, USER_NAME_LEN);
+            	nmp_deal_text(doc, cur, tmp.user, USER_NAME_LEN);
             }
             else
                 xml_error("not parse the node %s\n",cur->name);
@@ -9763,29 +9763,29 @@ jpf_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryUserOwnTour));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryUserOwnTour));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_user_own_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_user_own_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL;
-    JpfQueryUserOwnTourRes *tmp = NULL;
+    NmpQueryUserOwnTourRes *tmp = NULL;
     int count,total_count,i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     //node = xmlNewNode(NULL, BAD_CAST "tourList");
    // xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9839,19 +9839,19 @@ jpf_create_query_user_own_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-/*JpfMsgInfo *
-jpf_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+/*NmpMsgInfo *
+nmp_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryServerTime tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryServerTime tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/calendar";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9864,7 +9864,7 @@ jpf_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeZone")))
-                jpf_deal_text(doc, cur, tmp.time_zone, TIME_ZONE_LEN);
+                nmp_deal_text(doc, cur, tmp.time_zone, TIME_ZONE_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -9876,47 +9876,47 @@ jpf_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }*/
 
 
-JpfMsgInfo *
-jpf_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
 
-    sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+    sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_system_time_resp: used to generate xml docuemnt
+ * nmp_create_query_system_time_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_system_time_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfQueryServerTimeRes *tmp = NULL;
+    NmpQueryServerTimeRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "calendar");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -9935,18 +9935,18 @@ jpf_create_query_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkTimePolicy tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkTimePolicy tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -9959,9 +9959,9 @@ jpf_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -9972,29 +9972,29 @@ jpf_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node1 = NULL, new_node= NULL;
     xmlDocPtr doc_str;
-    JpfQueryLinkTimePolicyRes *tmp = NULL;
+    NmpQueryLinkTimePolicyRes *tmp = NULL;
     int xml_len;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -10033,18 +10033,18 @@ jpf_create_query_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkRecord tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkRecord tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10057,15 +10057,15 @@ jpf_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10076,29 +10076,29 @@ jpf_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL, node3 = NULL;
-    JpfQueryLinkRecordRes *tmp = NULL;
+    NmpQueryLinkRecordRes *tmp = NULL;
     int count, req_count, i, j;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10173,18 +10173,18 @@ jpf_create_query_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkIO tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkIO tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10197,15 +10197,15 @@ jpf_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10216,28 +10216,28 @@ jpf_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryLinkIORes *tmp = NULL;
+    NmpQueryLinkIORes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10294,18 +10294,18 @@ jpf_create_query_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkSnapshot tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkSnapshot tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10318,15 +10318,15 @@ jpf_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10337,29 +10337,29 @@ jpf_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
     xmlNodePtr node2 = NULL, node3 = NULL;
-    JpfQueryLinkSnapshotRes *tmp = NULL;
+    NmpQueryLinkSnapshotRes *tmp = NULL;
     int count, req_count, i, j;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10434,18 +10434,18 @@ jpf_create_query_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkPreset tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkPreset tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10458,15 +10458,15 @@ jpf_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10477,28 +10477,28 @@ jpf_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryLinkPresetRes *tmp = NULL;
+    NmpQueryLinkPresetRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10549,18 +10549,18 @@ jpf_create_query_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10573,21 +10573,21 @@ jpf_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"twId")))
-                jpf_deal_value(doc, cur, &tmp.tw_id);
+                nmp_deal_value(doc, cur, &tmp.tw_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"screenId")))
-                jpf_deal_value(doc, cur, &tmp.screen_id);
+                nmp_deal_value(doc, cur, &tmp.screen_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"divisionNum")))
-                jpf_deal_value(doc, cur, &tmp.div_num);
+                nmp_deal_value(doc, cur, &tmp.div_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10598,28 +10598,28 @@ jpf_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryLinkStepRes *tmp = NULL;
+    NmpQueryLinkStepRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10712,18 +10712,18 @@ jpf_create_query_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryLinkMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryLinkMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10736,15 +10736,15 @@ jpf_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain, DOMAIN_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10755,28 +10755,28 @@ jpf_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryLinkMapRes *tmp = NULL;
+    NmpQueryLinkMapRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -10828,18 +10828,18 @@ jpf_create_query_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfSetServerTime tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpSetServerTime tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/calendar";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -10852,9 +10852,9 @@ jpf_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"timeZone")))
-                jpf_deal_text(doc, cur, tmp.time_zone, TIME_ZONE_LEN);
+                nmp_deal_text(doc, cur, tmp.time_zone, TIME_ZONE_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"serverTime")))
-                jpf_deal_text(doc, cur, tmp.system_time, TIME_LEN);
+                nmp_deal_text(doc, cur, tmp.system_time, TIME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10865,34 +10865,34 @@ jpf_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_set_system_time_resp: used to generate xml docuemnt
+ * nmp_create_set_system_time_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_set_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_system_time_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfSetServerTimeRes *tmp = NULL;
+    NmpSetServerTimeRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     node = xmlNewNode(NULL, BAD_CAST "calendar");
     xmlAddChild(root_node, node);
     xmlNewChild(node,
@@ -10905,16 +10905,16 @@ jpf_create_set_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 
-JpfMsgInfo *
-jpf_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDbBackup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDbBackup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/database";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -10929,7 +10929,7 @@ jpf_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"fileName")))
-                jpf_deal_text(doc, cur, tmp.filename, FILENAME_LEN);
+                nmp_deal_text(doc, cur, tmp.filename, FILENAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -10940,23 +10940,23 @@ jpf_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 int
-jpf_create_database_backup_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_database_backup_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "database");
     xmlAddChild(root_node, node);
@@ -10970,16 +10970,16 @@ jpf_create_database_backup_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDbImport tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDbImport tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message/database";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -10994,7 +10994,7 @@ jpf_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"fileName")))
-                jpf_deal_text(doc, cur, tmp.filename, FILENAME_LEN);
+                nmp_deal_text(doc, cur, tmp.filename, FILENAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11005,23 +11005,23 @@ jpf_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 int
-jpf_create_database_import_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_database_import_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfDbImportRes *tmp = NULL;
+    NmpDbImportRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "database");
     xmlAddChild(root_node, node);
@@ -11039,17 +11039,17 @@ jpf_create_database_import_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddHdGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddHdGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroup";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11068,16 +11068,16 @@ jpf_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"hdGroupName")))
-                jpf_deal_text(doc, cur, tmp.hd_group_name, GROUP_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.hd_group_name, GROUP_NAME_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11088,31 +11088,31 @@ jpf_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_hd_group_resp: used to generate xml docuemnt
+ * nmp_create_add_hd_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_add_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_add_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfAddHdGroupRes *tmp = NULL;
+    NmpAddHdGroupRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroup");
     xmlAddChild(root_node, node);
@@ -11132,17 +11132,17 @@ jpf_create_bss_add_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddHdToGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddHdToGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroup";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11160,7 +11160,7 @@ jpf_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
@@ -11172,16 +11172,16 @@ jpf_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"hdId")))
-                         jpf_deal_value(doc, node, &tmp.hd_id);
+                         nmp_deal_value(doc, node, &tmp.hd_id);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"hdGroupId")))
-                jpf_deal_value(doc, cur, &tmp.hd_group_id);
+                nmp_deal_value(doc, cur, &tmp.hd_group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11192,31 +11192,31 @@ jpf_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_add_hd_resp: used to generate xml docuemnt
+ * nmp_create_add_hd_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_add_hd_to_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_add_hd_to_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfAddHdToGroupRes *tmp = NULL;
+    NmpAddHdToGroupRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroup");
     xmlAddChild(root_node, node);
@@ -11231,17 +11231,17 @@ jpf_create_bss_add_hd_to_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 
-JpfMsgInfo *
-jpf_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelHdFromGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelHdFromGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroup";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11260,7 +11260,7 @@ jpf_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
@@ -11272,16 +11272,16 @@ jpf_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"hdId")))
-                         jpf_deal_value(doc, node, &tmp.hd_id);
+                         nmp_deal_value(doc, node, &tmp.hd_id);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"hdGroupId")))
-                jpf_deal_value(doc, cur, &tmp.hd_group_id);
+                nmp_deal_value(doc, cur, &tmp.hd_group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11292,31 +11292,31 @@ jpf_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_bss_del_hd_from_group_resp: used to generate xml docuemnt
+ * nmp_create_bss_del_hd_from_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_del_hd_from_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_del_hd_from_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfDelHdFromGroupRes *tmp = NULL;
+    NmpDelHdFromGroupRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroup");
     xmlAddChild(root_node, node);
@@ -11331,17 +11331,17 @@ jpf_create_bss_del_hd_from_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 int
-jpf_create_bss_reboot_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_reboot_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfRebootMssRes *tmp = NULL;
+    NmpRebootMssRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -11353,16 +11353,16 @@ jpf_create_bss_reboot_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfRebootMss tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpRebootMss tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11375,9 +11375,9 @@ jpf_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11388,23 +11388,23 @@ jpf_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfQueryAllHdGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryAllHdGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroupList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11423,14 +11423,14 @@ jpf_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11441,32 +11441,32 @@ jpf_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_all_hd_group_resp: used to generate xml docuemnt
+ * nmp_create_query_all_hd_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_query_all_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_query_all_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL;
-    JpfQueryAllHdGroupRes *tmp = NULL;
+    NmpQueryAllHdGroupRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int total_num, i;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroupList");
     xmlAddChild(root_node, node);
@@ -11504,17 +11504,17 @@ jpf_create_bss_query_all_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfQueryHdGroupInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryHdGroupInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroupInfo";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11533,16 +11533,16 @@ jpf_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"hdGroupId")))
-                jpf_deal_value(doc, cur, &tmp.hd_group_id);
+                nmp_deal_value(doc, cur, &tmp.hd_group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11553,32 +11553,32 @@ jpf_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_all_hd_group_resp: used to generate xml docuemnt
+ * nmp_create_query_all_hd_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_query_hd_group_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_query_hd_group_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL;
-    JpfQueryHdGroupInfoRes *tmp = NULL;
+    NmpQueryHdGroupInfoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int total_num, i;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroupInfo");
     xmlAddChild(root_node, node);
@@ -11638,17 +11638,17 @@ jpf_create_bss_query_hd_group_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfQueryAllHd tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryAllHd tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hardDiskList";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11667,14 +11667,14 @@ jpf_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11685,32 +11685,32 @@ jpf_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_query_all_hd_group_resp: used to generate xml docuemnt
+ * nmp_create_query_all_hd_group_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_query_all_hd_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_query_all_hd_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL, node2 = NULL;
-    JpfQueryAllHdRes *tmp = NULL;
+    NmpQueryAllHdRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int total_num, i;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hardDiskList");
     xmlAddChild(root_node, node);
@@ -11771,17 +11771,17 @@ jpf_create_bss_query_all_hd_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDelHdGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDelHdGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdGroup";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11800,16 +11800,16 @@ jpf_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"hdGroupId")))
-                jpf_deal_value(doc, cur, &tmp.hd_group_id);
+                nmp_deal_value(doc, cur, &tmp.hd_group_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11820,31 +11820,31 @@ jpf_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_del_hd_resp: used to generate xml docuemnt
+ * nmp_create_del_hd_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_bss_del_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_del_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfDelHdGroupRes *tmp = NULL;
+    NmpDelHdGroupRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdGroup");
     xmlAddChild(root_node, node);
@@ -11858,17 +11858,17 @@ jpf_create_bss_del_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfGetHdFormatProgress  tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGetHdFormatProgress  tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node;
     char *xpath = "/message/hdFormatInfo";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11887,14 +11887,14 @@ jpf_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                 while (node != NULL)
                 {
                     if ((!xmlStrcmp(node->name, (const xmlChar *)"id")))
-                         jpf_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
+                         nmp_deal_text(doc, node, tmp.mss_id, MSS_ID_LEN);
                     else
                         xml_error("not parse the node %s\n",node->name);
                     node = node->next;
                 }
             }
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -11905,24 +11905,24 @@ jpf_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_get_hd_format_progress_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_get_hd_format_progress_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfGetHdFormatProgressRes *tmp = NULL;
+    NmpGetHdFormatProgressRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     node = xmlNewNode(NULL, BAD_CAST "hdFormatInfo");
     xmlAddChild(root_node, node);
@@ -11962,16 +11962,16 @@ jpf_create_bss_get_hd_format_progress_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfQueryGuRecordStatus tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGuRecordStatus tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -11985,13 +11985,13 @@ jpf_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"guId")))
-                jpf_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.guid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
 	      else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12002,25 +12002,25 @@ jpf_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_query_gu_record_status_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_query_gu_record_status_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
 
     xmlNodePtr root_node = NULL;
-    JpfQueryGuRecordStatusRes *tmp = NULL;
+    NmpQueryGuRecordStatusRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -12043,18 +12043,18 @@ jpf_create_bss_query_gu_record_status_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
     return 0;
 }
 
-JpfMsgInfo *
-jpf_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryDefenceArea tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryDefenceArea tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12067,13 +12067,13 @@ jpf_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.key, MAX_ID_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12084,34 +12084,34 @@ jpf_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_area_resp: used to generate xml docuemnt
+ * nmp_create_query_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryDefenceAreaRes *tmp = NULL;
+    NmpQueryDefenceAreaRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12160,18 +12160,18 @@ jpf_create_query_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryDefenceMap tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryDefenceMap tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12184,11 +12184,11 @@ jpf_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"defenceAreaId")))
-                jpf_deal_value(doc, cur, &tmp.defence_area_id);
+                nmp_deal_value(doc, cur, &tmp.defence_area_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12199,34 +12199,34 @@ jpf_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 /**
- * jpf_create_query_area_resp: used to generate xml docuemnt
+ * nmp_create_query_area_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_query_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryDefenceMapRes *tmp = NULL;
+    NmpQueryDefenceMapRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12274,18 +12274,18 @@ jpf_create_query_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryDefenceGu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryDefenceGu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12298,11 +12298,11 @@ jpf_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12313,28 +12313,28 @@ jpf_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryDefenceGuRes *tmp = NULL;
+    NmpQueryDefenceGuRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12397,18 +12397,18 @@ jpf_create_query_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryMapHref tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryMapHref tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12421,11 +12421,11 @@ jpf_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mapId")))
-                jpf_deal_value(doc, cur, &tmp.map_id);
+                nmp_deal_value(doc, cur, &tmp.map_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12436,28 +12436,28 @@ jpf_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryMapHrefRes *tmp = NULL;
+    NmpQueryMapHrefRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12514,18 +12514,18 @@ jpf_create_query_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryTw tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryTw tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12538,13 +12538,13 @@ jpf_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12555,28 +12555,28 @@ jpf_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryTwRes *tmp = NULL;
+    NmpQueryTwRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12635,18 +12635,18 @@ jpf_create_query_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryScreen tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryScreen tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12659,13 +12659,13 @@ jpf_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12676,28 +12676,28 @@ jpf_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryScreenRes *tmp = NULL;
+    NmpQueryScreenRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12795,18 +12795,18 @@ jpf_create_query_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryScrDiv tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryScrDiv tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12819,13 +12819,13 @@ jpf_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12836,28 +12836,28 @@ jpf_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_scr_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_scr_div_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryScrDivRes *tmp = NULL;
+    NmpQueryScrDivRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -12907,18 +12907,18 @@ jpf_create_query_scr_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryTour tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryTour tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -12931,13 +12931,13 @@ jpf_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -12948,28 +12948,28 @@ jpf_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryTourRes *tmp = NULL;
+    NmpQueryTourRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13020,18 +13020,18 @@ jpf_create_query_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryTourStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryTourStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13044,11 +13044,11 @@ jpf_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"tourId")))
-                jpf_deal_value(doc, cur, &tmp.tour_id);
+                nmp_deal_value(doc, cur, &tmp.tour_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13059,28 +13059,28 @@ jpf_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_tour_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryTourStepRes *tmp = NULL;
+    NmpQueryTourStepRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13147,18 +13147,18 @@ jpf_create_query_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryGroup tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGroup tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13171,13 +13171,13 @@ jpf_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13188,28 +13188,28 @@ jpf_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryGroupRes *tmp = NULL;
+    NmpQueryGroupRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13264,18 +13264,18 @@ jpf_create_query_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryGroupStep tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGroupStep tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13288,13 +13288,13 @@ jpf_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13305,28 +13305,28 @@ jpf_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryGroupStepRes *tmp = NULL;
+    NmpQueryGroupStepRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13373,18 +13373,18 @@ jpf_create_query_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryGroupStepInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGroupStepInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13397,17 +13397,17 @@ jpf_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"stepNo")))
-                jpf_deal_value(doc, cur, &tmp.step_no);
+                nmp_deal_value(doc, cur, &tmp.step_no);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"scrId")))
-                jpf_deal_value(doc, cur, &tmp.scr_id);
+                nmp_deal_value(doc, cur, &tmp.scr_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13418,29 +13418,29 @@ jpf_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
 
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryGroupStepInfoRes *tmp = NULL;
+    NmpQueryGroupStepInfoRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13527,18 +13527,18 @@ jpf_create_query_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryGroupStepDiv tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryGroupStepDiv tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13551,9 +13551,9 @@ jpf_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"groupId")))
-                jpf_deal_value(doc, cur, &tmp.group_id);
+                nmp_deal_value(doc, cur, &tmp.group_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"scrId")))
-                jpf_deal_value(doc, cur, &tmp.scr_id);
+                nmp_deal_value(doc, cur, &tmp.scr_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13564,27 +13564,27 @@ jpf_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_group_step_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_group_step_div_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfQueryGroupStepDivRes *tmp = NULL;
+    NmpQueryGroupStepDivRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13602,18 +13602,18 @@ jpf_create_query_group_step_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryAlarm tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryAlarm tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -13626,19 +13626,19 @@ jpf_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"order")))
-                jpf_deal_value(doc, cur, &tmp.order_by);
+                nmp_deal_value(doc, cur, &tmp.order_by);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmType")))
-                jpf_deal_value(doc, cur, &tmp.alarm_type);
+                nmp_deal_value(doc, cur, &tmp.alarm_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmState")))
-                jpf_deal_value(doc, cur, &tmp.alarm_state);
+                nmp_deal_value(doc, cur, &tmp.alarm_state);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmStartTime")))
-                jpf_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"alarmEndTime")))
-                jpf_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
+                nmp_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13649,28 +13649,28 @@ jpf_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_alarm_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryAlarmRes *tmp = NULL;
+    NmpQueryAlarmRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13762,34 +13762,34 @@ jpf_create_query_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
 
-    sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+    sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_del_alarm_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfQueryDelAlarmPolicyRes *tmp = NULL;
+    NmpQueryDelAlarmPolicyRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -13818,16 +13818,16 @@ jpf_create_query_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfPlatformUpgrade tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpPlatformUpgrade tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -13842,7 +13842,7 @@ jpf_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"name")))
-                jpf_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.admin_name, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13853,25 +13853,25 @@ jpf_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_platform_upgrade_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_platform_upgrade_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfPlatformUpgradeResp *tmp = NULL;
+    NmpPlatformUpgradeResp *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -13882,30 +13882,30 @@ jpf_create_bss_platform_upgrade_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_net_interface_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_net_interface_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
 
-    sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+    sys_msg = nmp_msginfo_new(cmd, NULL, 0);
     return sys_msg;
 }
 
 
 int
-jpf_create_get_net_interface_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_net_interface_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfGetNetInterfaceConfigRes *tmp = NULL;
+    NmpGetNetInterfaceConfigRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -13923,16 +13923,16 @@ jpf_create_get_net_interface_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMsgInfo *sys_msg = NULL;
-    JpfGetNetworkConfig tmp;
+    NmpMsgInfo *sys_msg = NULL;
+    NmpGetNetworkConfig tmp;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -13947,7 +13947,7 @@ jpf_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"networkInterface")))
-                jpf_deal_text(doc, cur, tmp.network_interface, NET_INTERFACE_LEN);
+                nmp_deal_text(doc, cur, tmp.network_interface, NET_INTERFACE_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -13958,27 +13958,27 @@ jpf_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
     return sys_msg;
 
 }
 
 
 int
-jpf_create_get_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_network_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-	JpfGetNetworkConfigRes *tmp = NULL;
+	NmpGetNetworkConfigRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 	int count = 0, i = 0;
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE, sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE, sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 	            NULL,
@@ -14024,12 +14024,12 @@ jpf_create_get_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfSetNetworkConfig *res_info = NULL;
-    JpfSetNetworkConfig	tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpSetNetworkConfig *res_info = NULL;
+    NmpSetNetworkConfig	tmp;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     xmlNodePtr node = NULL, node1 = NULL;
@@ -14038,7 +14038,7 @@ jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     int j = 0, size;
 
     memset(&tmp, 0, sizeof(tmp));
-    app_result =  jpf_get_node(doc, (const xmlChar *)path);
+    app_result =  nmp_get_node(doc, (const xmlChar *)path);
     if (app_result == NULL)
         return NULL;
 
@@ -14050,9 +14050,9 @@ jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"networkInterface")))
-                jpf_deal_text(doc, cur, tmp.network_interface, NET_INTERFACE_LEN);
+                nmp_deal_text(doc, cur, tmp.network_interface, NET_INTERFACE_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"dns")))
-                jpf_deal_text(doc, cur, tmp.dns, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.dns, MAX_IP_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ipList")))
             {
                 count = (char *)xmlGetProp(cur, (const xmlChar *)"count");
@@ -14064,8 +14064,8 @@ jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		  else
 		  	tmp.count = 0;
 
-                size = sizeof(JpfSetNetworkConfig) + tmp.count * sizeof(IpInfo);
-                res_info = jpf_mem_kalloc(size);
+                size = sizeof(NmpSetNetworkConfig) + tmp.count * sizeof(IpInfo);
+                res_info = nmp_mem_kalloc(size);
                 if (!res_info)
                     return NULL;
 
@@ -14081,11 +14081,11 @@ jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
                         while (node1 != NULL)
                         {
                             if ((!xmlStrcmp(node1->name, (const xmlChar *)"ip")))
-                                jpf_deal_text(doc, node1, res_info->ip_list[j].ip, MAX_IP_LEN);
+                                nmp_deal_text(doc, node1, res_info->ip_list[j].ip, MAX_IP_LEN);
                             else if ((!xmlStrcmp(node1->name, (const xmlChar *)"netmask")))
-                                jpf_deal_text(doc, node1, res_info->ip_list[j].netmask, MAX_IP_LEN);
+                                nmp_deal_text(doc, node1, res_info->ip_list[j].netmask, MAX_IP_LEN);
 			         else if ((!xmlStrcmp(node1->name, (const xmlChar *)"gateway")))
-                                jpf_deal_text(doc, node1, res_info->ip_list[j].gateway, MAX_IP_LEN);
+                                nmp_deal_text(doc, node1, res_info->ip_list[j].gateway, MAX_IP_LEN);
                             else
                                 xml_warning("Warning, not parse the node %s \n", node1->name);
                             node1 = node1->next;
@@ -14110,32 +14110,32 @@ jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         memcpy(res_info, &tmp, sizeof(tmp));
     else
     {
-        size = sizeof(JpfSetNetworkConfig);
-        res_info	= jpf_mem_kalloc(size);
+        size = sizeof(NmpSetNetworkConfig);
+        res_info	= nmp_mem_kalloc(size);
         if (res_info)
             memcpy(res_info, &tmp, sizeof(tmp));
         else
             return NULL;
     }
-    sys_msg = jpf_msginfo_new_2(cmd, res_info, size, (JpfMsgInfoPrivDes)jpf_mem_kfree);
+    sys_msg = nmp_msginfo_new_2(cmd, res_info, size, (NmpMsgInfoPrivDes)nmp_mem_kfree);
     return sys_msg;
 }
 
 
 int
-jpf_create_set_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_network_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfSetResult *tmp = NULL;
+    NmpSetResult *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14146,38 +14146,38 @@ jpf_create_set_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_server_resource_info(xmlDocPtr doc ,
+NmpMsgInfo *
+nmp_parse_query_server_resource_info(xmlDocPtr doc ,
 	xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
-    JpfQueryServerResourceInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
+    NmpQueryServerResourceInfo tmp;
 
     memset(&tmp, 0, sizeof(tmp));
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_server_resource_info_resp(xmlDocPtr doc,
-	JpfMsgInfo *sys_msg)
+nmp_create_query_server_resource_info_resp(xmlDocPtr doc,
+	NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfQueryServerResourceInfoRes *tmp = NULL;
+    NmpQueryServerResourceInfoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -14274,31 +14274,31 @@ jpf_create_query_server_resource_info_resp(xmlDocPtr doc,
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_cms_all_ips(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_cms_all_ips(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
 
-    sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+    sys_msg = nmp_msginfo_new(cmd, NULL, 0);
     return sys_msg;
 }
 
 
 int
-jpf_create_query_cms_all_ips_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_cms_all_ips_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfQueryCmsAllIpRes *tmp = NULL;
+    NmpQueryCmsAllIpRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int count, i = 0;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14327,30 +14327,30 @@ jpf_create_query_cms_all_ips_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_search_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_search_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
 
-    sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+    sys_msg = nmp_msginfo_new(cmd, NULL, 0);
     return sys_msg;
 }
 
 
 int
-jpf_create_search_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_search_device_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfSearchPuRes *tmp = NULL;
+    NmpSearchPuRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14369,18 +14369,18 @@ jpf_create_search_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfGetSearchedPu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGetSearchedPu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -14393,9 +14393,9 @@ jpf_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -14406,27 +14406,27 @@ jpf_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_get_searched_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_searched_device_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfGetSearchedPuRes *tmp = NULL;
+    NmpGetSearchedPuRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int count, i = 0;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14452,17 +14452,17 @@ jpf_create_get_searched_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
             xmlAddChild(node, node1);
 
             printf("--------dev dst_id=%s\n",tmp->search_pu[i].dst_id);
-            printf("--------dev dst_ip=%s\n",tmp->search_pu[i].jpf_srch.dev_info.dev_ip);
+            printf("--------dev dst_ip=%s\n",tmp->search_pu[i].nmp_srch.dev_info.dev_ip);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "manufacturer",
-                        BAD_CAST tmp->search_pu[i].jpf_srch.dev_info.mnfct);
-            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].jpf_srch.dev_info.pu_type);
+                        BAD_CAST tmp->search_pu[i].nmp_srch.dev_info.mnfct);
+            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].nmp_srch.dev_info.pu_type);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "puType",
                         BAD_CAST str);
-            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].jpf_srch.dev_info.av_mun);
+            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].nmp_srch.dev_info.av_mun);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "avNum",
@@ -14474,30 +14474,30 @@ jpf_create_get_searched_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "devIp",
-                        BAD_CAST tmp->search_pu[i].jpf_srch.dev_info.dev_ip);
+                        BAD_CAST tmp->search_pu[i].nmp_srch.dev_info.dev_ip);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "puId",
-                        BAD_CAST tmp->search_pu[i].jpf_srch.dev_info.pu_id);
+                        BAD_CAST tmp->search_pu[i].nmp_srch.dev_info.pu_id);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "cmsIp",
-                        BAD_CAST tmp->search_pu[i].jpf_srch.jpf_plt.cms_ip);
+                        BAD_CAST tmp->search_pu[i].nmp_srch.nmp_plt.cms_ip);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "mdsIp",
-                        BAD_CAST tmp->search_pu[i].jpf_srch.jpf_plt.mds_ip);
-            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].jpf_srch.jpf_plt.cms_port);
+                        BAD_CAST tmp->search_pu[i].nmp_srch.nmp_plt.mds_ip);
+            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].nmp_srch.nmp_plt.cms_port);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "cmsPort",
                         BAD_CAST str);
-            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].jpf_srch.jpf_plt.mds_port);
+            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].nmp_srch.nmp_plt.mds_port);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "mdsPort",
                         BAD_CAST str);
-            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].jpf_srch.jpf_plt.conn_cms);
+            snprintf(str, INT_TO_CHAR_LEN, "%d", tmp->search_pu[i].nmp_srch.nmp_plt.conn_cms);
             xmlNewChild(node1,
                         NULL,
                         BAD_CAST "connectCmsEnable",
@@ -14510,38 +14510,38 @@ jpf_create_get_searched_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_tw_auth_info(xmlDocPtr doc ,
+NmpMsgInfo *
+nmp_parse_query_tw_auth_info(xmlDocPtr doc ,
 	xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
-    JpfQueryTwAuthInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
+    NmpQueryTwAuthInfo tmp;
 
     memset(&tmp, 0, sizeof(tmp));
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_tw_auth_info_resp(xmlDocPtr doc,
-	JpfMsgInfo *sys_msg)
+nmp_create_query_tw_auth_info_resp(xmlDocPtr doc,
+	NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfQueryTwAuthInfoRes *tmp = NULL;
+    NmpQueryTwAuthInfoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -14559,38 +14559,38 @@ jpf_create_query_tw_auth_info_resp(xmlDocPtr doc,
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_alarm_link_auth_info(xmlDocPtr doc ,
+NmpMsgInfo *
+nmp_parse_query_alarm_link_auth_info(xmlDocPtr doc ,
 	xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
-    JpfQueryAlarmLinkAuthInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
+    NmpQueryAlarmLinkAuthInfo tmp;
 
     memset(&tmp, 0, sizeof(tmp));
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_alarm_link_auth_info_resp(xmlDocPtr doc,
-	JpfMsgInfo *sys_msg)
+nmp_create_query_alarm_link_auth_info_resp(xmlDocPtr doc,
+	NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfQueryAlarmLinkAuthInfoRes *tmp = NULL;
+    NmpQueryAlarmLinkAuthInfoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -14608,18 +14608,18 @@ jpf_create_query_alarm_link_auth_info_resp(xmlDocPtr doc,
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryIvs tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryIvs tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -14632,13 +14632,13 @@ jpf_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-                jpf_deal_value(doc, cur, &tmp.req_num);
+                nmp_deal_value(doc, cur, &tmp.req_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-                jpf_deal_value(doc, cur, &tmp.start_num);
+                nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -14649,28 +14649,28 @@ jpf_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(JpfQueryIvs));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(NmpQueryIvs));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryIvsRes *tmp = NULL;
+    NmpQueryIvsRes *tmp = NULL;
     int count, req_count, i;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14731,16 +14731,16 @@ jpf_create_query_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAutoAddPu tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAutoAddPu tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -14754,37 +14754,37 @@ jpf_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"devId")))
-                jpf_deal_text(doc, cur, tmp.dev_id, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.dev_id, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"domainId")))
-                jpf_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.domain_id, DOMAIN_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"manufacturer")))
-                jpf_deal_text(doc, cur, tmp.manufacturer, MF_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.manufacturer, MF_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puName")))
-                jpf_deal_text(doc, cur, tmp.dev_name, PU_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.dev_name, PU_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puId")))
-                jpf_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.puid, MAX_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"keepAliveTime")))
             {
-                jpf_deal_value(doc, cur, &tmp.keep_alive_time);
+                nmp_deal_value(doc, cur, &tmp.keep_alive_time);
                 if (tmp.keep_alive_time < 3)
                     tmp.keep_alive_time = 3;
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"puType")))
-                jpf_deal_value(doc, cur, &tmp.pu_type);
+                nmp_deal_value(doc, cur, &tmp.pu_type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mduId")))
-                jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"areaId")))
-                jpf_deal_value(doc, cur, &tmp.area_id);
+                nmp_deal_value(doc, cur, &tmp.area_id);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"avNum")))
-                jpf_deal_value(doc, cur, &tmp.av_num);
+                nmp_deal_value(doc, cur, &tmp.av_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"cmsIp")))
-                jpf_deal_text(doc, cur, tmp.cms_ip, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.cms_ip, MAX_IP_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"cmsPort")))
-                jpf_deal_value(doc, cur, &tmp.cms_port);
+                nmp_deal_value(doc, cur, &tmp.cms_port);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"connectCmsEnable")))
-                jpf_deal_value(doc, cur, &tmp.connect_cms_enable);
+                nmp_deal_value(doc, cur, &tmp.connect_cms_enable);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -14795,31 +14795,31 @@ jpf_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_auto_add_pu_resp: used to generate xml docuemnt
+ * nmp_create_auto_add_pu_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_auto_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_auto_add_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMsgErrCode *tmp = NULL;
+    NmpMsgErrCode *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     xmlNewChild(root_node,
                 NULL,
@@ -14830,38 +14830,38 @@ jpf_create_auto_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_next_puno(xmlDocPtr doc ,
+NmpMsgInfo *
+nmp_parse_get_next_puno(xmlDocPtr doc ,
 	xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfMsgInfo *sys_msg = NULL;
-    JpfGetNextPuNo tmp;
+    NmpMsgInfo *sys_msg = NULL;
+    NmpGetNextPuNo tmp;
 
     memset(&tmp, 0, sizeof(tmp));
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_get_next_puno_resp(xmlDocPtr doc,
-	JpfMsgInfo *sys_msg)
+nmp_create_get_next_puno_resp(xmlDocPtr doc,
+	NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfGetNextPuNoRes *tmp = NULL;
+    NmpGetNextPuNoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -14878,16 +14878,16 @@ jpf_create_get_next_puno_resp(xmlDocPtr doc,
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfGetInitName tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGetInitName tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -14901,9 +14901,9 @@ jpf_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -14914,24 +14914,24 @@ jpf_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_get_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_get_initiator_name_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfGetInitNameRes *tmp = NULL;
+    NmpGetInitNameRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -14947,16 +14947,16 @@ jpf_create_bss_get_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfSetInitName tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpSetInitName tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -14970,11 +14970,11 @@ jpf_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"initiatorName")))
-                jpf_deal_text(doc, cur, tmp.init_name, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.init_name, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -14985,24 +14985,24 @@ jpf_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_set_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_set_initiator_name_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfSetInitNameRes *tmp = NULL;
+    NmpSetInitNameRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -15014,16 +15014,16 @@ jpf_create_bss_set_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfGetIpsanInfo tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGetIpsanInfo tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -15037,9 +15037,9 @@ jpf_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -15050,25 +15050,25 @@ jpf_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_get_ipsan_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_get_ipsan_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfGetIpsanInfoRes *tmp = NULL;
+    NmpGetIpsanInfoRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     int count, i = 0;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -15104,16 +15104,16 @@ jpf_create_bss_get_ipsan_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfAddOneIpsan tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpAddOneIpsan tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -15127,13 +15127,13 @@ jpf_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ip")))
-                jpf_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"port")))
-                jpf_deal_value(doc, cur, &tmp.ipsan_info.port);
+                nmp_deal_value(doc, cur, &tmp.ipsan_info.port);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -15144,24 +15144,24 @@ jpf_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_add_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_add_one_ipsan_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfAddOneIpsanRes *tmp = NULL;
+    NmpAddOneIpsanRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -15173,16 +15173,16 @@ jpf_create_bss_add_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfDeleteOneIpsan tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpDeleteOneIpsan tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -15196,13 +15196,13 @@ jpf_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ip")))
-                jpf_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"port")))
-                jpf_deal_value(doc, cur, &tmp.ipsan_info.port);
+                nmp_deal_value(doc, cur, &tmp.ipsan_info.port);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -15213,24 +15213,24 @@ jpf_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_delete_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_delete_one_ipsan_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfDeleteOneIpsanRes *tmp = NULL;
+    NmpDeleteOneIpsanRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -15242,16 +15242,16 @@ jpf_create_bss_delete_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfGetOneIpsanDetail tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpGetOneIpsanDetail tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (!app_result)
         return NULL;
 
@@ -15265,13 +15265,13 @@ jpf_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 	     if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-                jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+                nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 	     else if ((!xmlStrcmp(cur->name, (const xmlChar *)"sessionId")))
-                jpf_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
+                nmp_deal_text(doc, cur, tmp.session, USER_NAME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"ip")))
-                jpf_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
+                nmp_deal_text(doc, cur, tmp.ipsan_info.ip, MAX_IP_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"port")))
-                jpf_deal_value(doc, cur, &tmp.ipsan_info.port);
+                nmp_deal_value(doc, cur, &tmp.ipsan_info.port);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -15282,24 +15282,24 @@ jpf_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_bss_get_one_ipsan_detail_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_bss_get_one_ipsan_detail_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfGetOneIpsanDetailRes *tmp = NULL;
+    NmpGetOneIpsanDetailRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
 
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
     xmlNewChild(root_node,
@@ -15320,18 +15320,18 @@ jpf_create_bss_get_one_ipsan_detail_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-	JpfQueryLog tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpQueryLog tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (app_result == NULL)
 		return NULL;
 
@@ -15344,17 +15344,17 @@ jpf_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"orderBy")))
-				jpf_deal_value(doc, cur, &tmp.order_by);
+				nmp_deal_value(doc, cur, &tmp.order_by);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-				jpf_deal_value(doc, cur, &tmp.req_count);
+				nmp_deal_value(doc, cur, &tmp.req_count);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-				jpf_deal_value(doc, cur, &tmp.start_num);
+				nmp_deal_value(doc, cur, &tmp.start_num);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"logLevel")))
-				jpf_deal_value(doc, cur, &tmp.log_level);
+				nmp_deal_value(doc, cur, &tmp.log_level);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"logStartTime")))
-				jpf_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
+				nmp_deal_text(doc, cur, tmp.start_time, TIME_INFO_LEN);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"logEndTime")))
-				jpf_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
+				nmp_deal_text(doc, cur, tmp.end_time, TIME_INFO_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -15365,27 +15365,27 @@ jpf_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
 	return sys_msg;
 }
 
 
 int
-jpf_create_query_log_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_log_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-	JpfQueryLogRes *tmp = NULL;
+	NmpQueryLogRes *tmp = NULL;
 	int count, req_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	if (!tmp)
 		return -E_NOMEM;
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
 	xmlNewChild(root_node,
@@ -15405,7 +15405,7 @@ jpf_create_query_log_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	i = 0;
 	while (req_count--)
 	{
-		JpfBssLog *log = &tmp->log_list[i];
+		NmpBssLog *log = &tmp->log_list[i];
 		node1 = xmlNewNode(NULL, BAD_CAST "log");
 		xmlAddChild(node, node1);
 
@@ -15467,18 +15467,18 @@ end:
 
 
 #if ONLINE_RATE_FLAG
-JpfMsgInfo *
-jpf_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
     ASSERT(doc != NULL && cur != NULL && cmd != NULL);
 
-    JpfQueryAreaDevRate tmp;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpQueryAreaDevRate tmp;
+    NmpMsgInfo *sys_msg = NULL;
     int i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -15491,15 +15491,15 @@ jpf_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"pageSize")))
-				jpf_deal_value(doc, cur, &tmp.req_num);
+				nmp_deal_value(doc, cur, &tmp.req_num);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"startRow")))
-				jpf_deal_value(doc, cur, &tmp.start_num);
+				nmp_deal_value(doc, cur, &tmp.start_num);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"type")))
-                jpf_deal_value(doc, cur, &tmp.type);
+                nmp_deal_value(doc, cur, &tmp.type);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"key")))
-                jpf_deal_text(doc, cur, tmp.key, TIME_LEN);
+                nmp_deal_text(doc, cur, tmp.key, TIME_LEN);
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"areaId")))
-                jpf_deal_value(doc, cur, &tmp.area_id);
+                nmp_deal_value(doc, cur, &tmp.area_id);
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -15510,27 +15510,27 @@ jpf_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+    sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 
     return sys_msg;
 }
 
 
 int
-jpf_create_query_area_dev_online_rate_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_area_dev_online_rate_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-    JpfQueryAreaDevRateRes *tmp = NULL;
+    NmpQueryAreaDevRateRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 	int count, req_count, i;
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     if (!tmp)
         return -E_NOMEM;//-ENOMEM;
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	snprintf(str, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));
 	xmlNewChild(root_node,
@@ -15555,7 +15555,7 @@ jpf_create_query_area_dev_online_rate_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	i = 0;
 	while (req_count--)
 	{
-		JpfAreaDevRate *area_list = &tmp->area_dev_rate[i];
+		NmpAreaDevRate *area_list = &tmp->area_dev_rate[i];
 		node1 = xmlNewNode(NULL, BAD_CAST "area");
 		xmlAddChild(node, node1);
 
@@ -15594,30 +15594,30 @@ end:
 #endif
 
 
-JpfMsgInfo *
-jpf_parse_get_server_flag(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_server_flag(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_server_flag_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_server_flag_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetServerFlagRes *tmp = NULL;
+	NmpGetServerFlagRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15636,30 +15636,30 @@ jpf_create_get_server_flag_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_mds_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetMdsConfigRes *tmp = NULL;
+	NmpGetMdsConfigRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15689,17 +15689,17 @@ jpf_create_get_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfSetMdsConfig tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpSetMdsConfig tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -15713,11 +15713,11 @@ jpf_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"mdsId")))
-				jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"beginPort")))
-				jpf_deal_value(doc, cur, &tmp.start_port);
+				nmp_deal_value(doc, cur, &tmp.start_port);
 			else if ((!xmlStrcmp(cur->name, (const xmlChar *)"endPort")))
-				jpf_deal_value(doc, cur, &tmp.end_port);
+				nmp_deal_value(doc, cur, &tmp.end_port);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -15728,25 +15728,25 @@ jpf_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_set_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_mds_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfSetResult *tmp = NULL;
+	NmpSetResult *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15757,17 +15757,17 @@ jpf_create_set_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfGetMdsState tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpGetMdsState tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -15781,7 +15781,7 @@ jpf_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"mdsId")))
-				jpf_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.mds_id, MDS_ID_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -15792,25 +15792,25 @@ jpf_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_mds_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_mds_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetMdsStateRes *tmp = NULL;
+	NmpGetMdsStateRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15829,30 +15829,30 @@ jpf_create_get_mds_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_mss_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetMssConfigRes *tmp = NULL;
+	NmpGetMssConfigRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15870,17 +15870,17 @@ jpf_create_get_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfSetMssConfig tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpSetMssConfig tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -15894,7 +15894,7 @@ jpf_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-				jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -15905,25 +15905,25 @@ jpf_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_set_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_mss_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfSetResult *tmp = NULL;
+	NmpSetResult *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -15934,17 +15934,17 @@ jpf_create_set_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfGetMssState tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpGetMssState tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -15958,7 +15958,7 @@ jpf_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"mssId")))
-				jpf_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.mss_id, MSS_ID_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -15969,25 +15969,25 @@ jpf_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_mss_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_mss_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetMssStateRes *tmp = NULL;
+	NmpGetMssStateRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16006,30 +16006,30 @@ jpf_create_get_mss_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_ivs_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetIvsConfigRes *tmp = NULL;
+	NmpGetIvsConfigRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16047,17 +16047,17 @@ jpf_create_get_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfSetIvsConfig tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpSetIvsConfig tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -16071,7 +16071,7 @@ jpf_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-				jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -16082,25 +16082,25 @@ jpf_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_set_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_set_ivs_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfSetResult *tmp = NULL;
+	NmpSetResult *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16111,17 +16111,17 @@ jpf_create_set_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfGetIvsState tmp;
-	JpfMsgInfo *sys_msg = NULL;
+	NmpGetIvsState tmp;
+	NmpMsgInfo *sys_msg = NULL;
 	int i;
 	xmlXPathObjectPtr app_result;
 	char *xpath = "/message";
 	memset(&tmp, 0, sizeof(tmp));
 
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
 	if (!app_result)
 		return NULL;
 
@@ -16135,7 +16135,7 @@ jpf_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 		while (cur != NULL)
 		{
 			if ((!xmlStrcmp(cur->name, (const xmlChar *)"ivsId")))
-				jpf_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
+				nmp_deal_text(doc, cur, tmp.ivs_id, IVS_ID_LEN);
 			else
 				xml_error("not parse the node %s\n",cur->name);
 
@@ -16146,25 +16146,25 @@ jpf_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 	}
 
 	xmlXPathFreeObject(app_result);
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));
 	return sys_msg;
 }
 
 
 int
-jpf_create_get_ivs_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_get_ivs_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfGetIvsStateRes *tmp = NULL;
+	NmpGetIvsStateRes *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16183,30 +16183,30 @@ jpf_create_get_ivs_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_cms_shutdown(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_cms_shutdown(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_cms_shutdown_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_cms_shutdown_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfSetResult *tmp = NULL;
+	NmpSetResult *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16217,30 +16217,30 @@ jpf_create_cms_shutdown_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_cms_reboot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_cms_reboot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfMsgInfo *sys_msg = NULL;
+	NmpMsgInfo *sys_msg = NULL;
 
-	sys_msg = jpf_msginfo_new(cmd, NULL, 0);
+	sys_msg = nmp_msginfo_new(cmd, NULL, 0);
 	return sys_msg;
 }
 
 
 int
-jpf_create_cms_reboot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_cms_reboot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL;
-	JpfSetResult *tmp = NULL;
+	NmpSetResult *tmp = NULL;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	tmp = jpf_get_msginfo_data(sys_msg);
+	tmp = nmp_get_msginfo_data(sys_msg);
 	snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
 
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
 	xmlNewChild(root_node,
 		NULL,
@@ -16252,10 +16252,10 @@ jpf_create_cms_reboot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 
 
 
-JpfMsgInfo *
-jpf_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfAddAms tmp;
+	NmpAddAms tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16268,16 +16268,16 @@ jpf_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_add_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_add_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfModifyAms tmp;
+	NmpModifyAms tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16290,16 +16290,16 @@ jpf_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_modify_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
-JpfMsgInfo *
-jpf_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfDelAms tmp;
+	NmpDelAms tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16310,16 +16310,16 @@ jpf_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_del_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_del_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfQueryAms tmp;
+	NmpQueryAms tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16333,11 +16333,11 @@ jpf_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_query_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-	JpfQueryAmsRes *tmp = NULL;
+	NmpQueryAmsRes *tmp = NULL;
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
@@ -16352,7 +16352,7 @@ jpf_create_query_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	i = 0;
 	while (back_count--)
 	{
-		JpfAmsInfo *ams = &tmp->ams_info[i];
+		NmpAmsInfo *ams = &tmp->ams_info[i];
 		node1 = xmlNewNode(NULL, BAD_CAST "ams");
 		xmlAddChild(node, node1);
 
@@ -16370,10 +16370,10 @@ end:
 }
 
 
-JpfMsgInfo *
-jpf_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfQueryAmsPu tmp;
+	NmpQueryAmsPu tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16386,11 +16386,11 @@ jpf_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_query_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_query_ams_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	ASSERT(sys_msg != NULL);
 	xmlNodePtr root_node = NULL, node = NULL, node1 = NULL;
-	JpfQueryAmsPuRes *tmp = NULL;
+	NmpQueryAmsPuRes *tmp = NULL;
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
@@ -16405,7 +16405,7 @@ jpf_create_query_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	i = 0;
 	while (back_count--)
 	{
-		JpfAmsPuInfo *pu = &tmp->pu_info[i];
+		NmpAmsPuInfo *pu = &tmp->pu_info[i];
 		node1 = xmlNewNode(NULL, BAD_CAST "device");
 		xmlAddChild(node, node1);
 
@@ -16427,10 +16427,10 @@ end:
 }
 
 
-JpfMsgInfo *
-jpf_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-	JpfModifyAmsPu tmp;
+	NmpModifyAmsPu tmp;
 
 	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
@@ -16446,7 +16446,7 @@ jpf_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 
 
 int
-jpf_create_modify_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_modify_ams_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
 	NMP_XML_DEF_CREATE_NMP_RESULT();
 }

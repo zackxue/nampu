@@ -10,51 +10,51 @@
 
 
 void
-jpf_log_dbs_do_query_code(NmpAppObj *app_obj,
+nmp_log_dbs_do_query_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect);
 
 void
-jpf_log_dbs_do_del_code(NmpAppObj *app_obj,
+nmp_log_dbs_do_del_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect);
 
 gint
-jpf_log_get_record_count(NmpAppObj *app_obj, char *query);
+nmp_log_get_record_count(NmpAppObj *app_obj, char *query);
 
-JpfMysqlRes*
-jpf_log_dbs_do_query_res(NmpAppObj *app_obj, char *query);
+NmpMysqlRes*
+nmp_log_dbs_do_query_res(NmpAppObj *app_obj, char *query);
 
-JpfMysqlFieldOffset
-jpf_log_sql_field_seek(JpfMysqlRes *res, JpfMysqlFieldOffset offset);
+NmpMysqlFieldOffset
+nmp_log_sql_field_seek(NmpMysqlRes *res, NmpMysqlFieldOffset offset);
 
-JpfMysqlField*
-jpf_log_sql_fetch_fields(JpfMysqlRes *res);
+NmpMysqlField*
+nmp_log_sql_fetch_fields(NmpMysqlRes *res);
 
 char*
-jpf_log_sql_get_field_name(JpfMysqlField *field, int num);
+nmp_log_sql_get_field_name(NmpMysqlField *field, int num);
 
 char *
-jpf_log_sql_get_field_value(JpfMysqlRow row,int num);
+nmp_log_sql_get_field_value(NmpMysqlRow row,int num);
 
 unsigned long long
-jpf_log_sql_get_num_rows(JpfMysqlRes *res);
+nmp_log_sql_get_num_rows(NmpMysqlRes *res);
 
 void
-jpf_log_sql_put_res(JpfMysqlRes *res, guint size);
+nmp_log_sql_put_res(NmpMysqlRes *res, guint size);
 
 unsigned long long
-jpf_log_sql_get_num_rows(JpfMysqlRes *res);
+nmp_log_sql_get_num_rows(NmpMysqlRes *res);
 
 unsigned int
-jpf_log_sql_get_num_fields(JpfMysqlRes *res);
+nmp_log_sql_get_num_fields(NmpMysqlRes *res);
 
-JpfMysqlRow
-jpf_log_sql_fetch_row(JpfMysqlRes *res);
+NmpMysqlRow
+nmp_log_sql_fetch_row(NmpMysqlRes *res);
 
 
 #endif //__NMP_LOG_MYSQLFUN_H__

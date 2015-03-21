@@ -9,8 +9,8 @@
 #define DEFALUT_CMS_IP  "0.0.0.0"
 #define DECODER_TYPE "DEC"
 #define ZONE_GMT8 "GMT-8"
-#define MANUFACTUR_JXJ	"JXJ"
-#define MANUFACTUR_JXJ_2	"ENC"
+#define MANUFACTUR_NMP	"NMP"
+#define MANUFACTUR_NMP_2	"ENC"
 
 #define TIME_STRING_LEN          32
 #define TIMEOUT_N_PERIODS     3
@@ -42,19 +42,19 @@ typedef enum
 	MEDIA_VIDEO_VOD,
 	MEDIA_VIDEO_DOWN,
 	MEDIA_PIC_BACK
-}JpfMediaType;
+}NmpMediaType;
 
-typedef struct __JpfHostIp JpfHostIp;
-struct __JpfHostIp
+typedef struct __NmpHostIp NmpHostIp;
+struct __NmpHostIp
 {
 	gchar ip[MAX_IP_LEN];
 };
 
-typedef struct __JpfHostIps JpfHostIps;
-struct __JpfHostIps
+typedef struct __NmpHostIps NmpHostIps;
+struct __NmpHostIps
 {
 	gint count;
-	JpfHostIp ips[MAX_HOST_IPS];
+	NmpHostIp ips[MAX_HOST_IPS];
 };
 
 typedef enum
@@ -68,7 +68,7 @@ typedef enum
 	TYPE_NVR,
 	TYPE_HVR,
 	TYPE_OTHER = 255,
-}JpfPuType;
+}NmpPuType;
 
 typedef enum
 {
@@ -79,7 +79,7 @@ typedef enum
 	DBS_TYPE_NVR,
 	DBS_TYPE_DEC,
 	DBS_TYPE_ALM,
-}JpfDbsPuType;
+}NmpDbsPuType;
 
 
 #define NMP_COPY_VAL(dst_p, src_p, dst_len) do {	\
@@ -88,54 +88,54 @@ typedef enum
 } while (0)
 
 
-gint jpf_get_puid_from_guid(gchar *guid, gchar *puid);
+gint nmp_get_puid_from_guid(gchar *guid, gchar *puid);
 
-gint jpf_get_channel_from_guid(gchar *guid, gint *channel);
+gint nmp_get_channel_from_guid(gchar *guid, gint *channel);
 
-void jpf_get_dev_type_from_puid(gchar *puid, gchar *dev_type);
+void nmp_get_dev_type_from_puid(gchar *puid, gchar *dev_type);
 
-void jpf_get_mf_from_guid(char *puid, char *mf);
+void nmp_get_mf_from_guid(char *puid, char *mf);
 
-gint jpf_get_level_from_guid(gchar *guid, gint *level);
+gint nmp_get_level_from_guid(gchar *guid, gint *level);
 
-gint jpf_set_guid_level(gchar *guid);
+gint nmp_set_guid_level(gchar *guid);
 
-gint jpf_set_system_time(gchar *sys_time, gchar *zone);
-
-gint
-jpf_get_utc_time(gchar *sys_time);
+gint nmp_set_system_time(gchar *sys_time, gchar *zone);
 
 gint
-jpf_get_current_zone_time(gchar *sys_time);
+nmp_get_utc_time(gchar *sys_time);
 
-gint jpf_check_string(gchar *string, gint size);
+gint
+nmp_get_current_zone_time(gchar *sys_time);
+
+gint nmp_check_string(gchar *string, gint size);
 
 const gchar *nmp_app_core_get_domain();
 
-gchar *jpf_get_local_domain_id();
+gchar *nmp_get_local_domain_id();
 
-void jpf_set_domain_id(gchar *value);
+void nmp_set_domain_id(gchar *value);
 
-void jpf_check_keepalive_time(gint *keep_alive_time);
+void nmp_check_keepalive_time(gint *keep_alive_time);
 
 void
-jpf_get_ip_from_socket(JpfNetIO *io, gchar *ip);
+nmp_get_ip_from_socket(NmpNetIO *io, gchar *ip);
 
 gboolean regex_mached(const gchar *string,const gchar *reg);
 
 gint get_mached_string(const gchar *string,gchar *get_string,
 	gint size, const gchar *reg);
 
-time_t jpf_make_time_t(gchar *str);
+time_t nmp_make_time_t(gchar *str);
 
-void jpf_get_host_ips(JpfHostIps *ips);
+void nmp_get_host_ips(NmpHostIps *ips);
 
-gint jpf_set_system_time_zone(gchar *zone);
+gint nmp_set_system_time_zone(gchar *zone);
 
 void
-jpf_covert_pu_type(gint *new_type, gint *old_type);
+nmp_covert_pu_type(gint *new_type, gint *old_type);
 
 gint
-jpf_compare_manufacturer(guint module_data, gchar *mf);
+nmp_compare_manufacturer(guint module_data, gchar *mf);
 
 #endif    //__NMP_MOD_SHARED_H__

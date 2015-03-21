@@ -3,14 +3,14 @@
 #include "nmp_appmod.h"
 
 static void 
-nmp_mod_io_islot_interface_init(JpfISlotInterface *islot_iface);
+nmp_mod_io_islot_interface_init(NmpISlotInterface *islot_iface);
 
 G_DEFINE_TYPE_WITH_CODE(NmpModIO, nmp_mod_io, NMP_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(NMP_TYPE_ISLOT, nmp_mod_io_islot_interface_init));
 
 
 static gint
-nmp_mod_io_islot_init(JpfISlot *i_self, GValue *parm)
+nmp_mod_io_islot_init(NmpISlot *i_self, GValue *parm)
 {
     NmpModIO *self;
 
@@ -23,7 +23,7 @@ nmp_mod_io_islot_init(JpfISlot *i_self, GValue *parm)
 
 
 static gint
-nmp_mod_io_islot_send(JpfISlot *i_self, JpfData *data)
+nmp_mod_io_islot_send(NmpISlot *i_self, NmpData *data)
 {
     NmpModIO *self;
 
@@ -37,7 +37,7 @@ nmp_mod_io_islot_send(JpfISlot *i_self, JpfData *data)
 
 
 static gint
-nmp_mod_io_islot_recv(JpfISlot *i_self, JpfData *data)
+nmp_mod_io_islot_recv(NmpISlot *i_self, NmpData *data)
 {
     NmpModIO *self;
 
@@ -51,7 +51,7 @@ nmp_mod_io_islot_recv(JpfISlot *i_self, JpfData *data)
 
 
 static gint
-nmp_mod_io_islot_link(JpfISlot *i_self, JpfISlot *i_peer)
+nmp_mod_io_islot_link(NmpISlot *i_self, NmpISlot *i_peer)
 {
     NmpModIO *self;
 
@@ -66,7 +66,7 @@ nmp_mod_io_islot_link(JpfISlot *i_self, JpfISlot *i_peer)
 
 
 static gint
-nmp_mod_io_islot_unlink(JpfISlot *i_self)
+nmp_mod_io_islot_unlink(NmpISlot *i_self)
 {
     NmpModIO *self;
 
@@ -79,7 +79,7 @@ nmp_mod_io_islot_unlink(JpfISlot *i_self)
 
 
 static gboolean
-nmp_mod_io_islot_ready(JpfISlot *i_self)
+nmp_mod_io_islot_ready(NmpISlot *i_self)
 {
     NmpModIO *self;
 
@@ -113,7 +113,7 @@ nmp_mod_io_mod_snd(NmpModIO *self, NmpSysMsg *msg)
     if (G_UNLIKELY(!self->i_peer))
         return -E_SLOTNCONN;
 
-    return jpf_islot_recv(self->i_peer, NMP_DATA(msg));
+    return nmp_islot_recv(self->i_peer, NMP_DATA(msg));
 }
 
 
@@ -132,12 +132,12 @@ nmp_mod_io_mod_rcv(NmpModIO *self, NmpSysMsg *msg)
 
 
 static gint
-nmp_mod_io_connect(NmpModIO *self, JpfISlot *i_peer)
+nmp_mod_io_connect(NmpModIO *self, NmpISlot *i_peer)
 {
     if (G_UNLIKELY(self->i_peer))
         return -E_SLOTCONND;
 
-    if (G_UNLIKELY(!jpf_islot_ready(i_peer)))
+    if (G_UNLIKELY(!nmp_islot_ready(i_peer)))
         return -E_SLOTNREADY;
 
     self->i_peer = i_peer;
@@ -186,7 +186,7 @@ nmp_mod_io_class_init(NmpModIOClass *c_self)
 
 
 static void 
-nmp_mod_io_islot_interface_init(JpfISlotInterface *islot_iface)
+nmp_mod_io_islot_interface_init(NmpISlotInterface *islot_iface)
 {
     islot_iface->init = nmp_mod_io_islot_init;
     islot_iface->send = nmp_mod_io_islot_send;

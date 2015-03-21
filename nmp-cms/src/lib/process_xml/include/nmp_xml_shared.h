@@ -9,15 +9,15 @@
  * define use take care (zyt)
  *
  * parse function parameters must be: xmlDocPtr doc ,xmlNodePtr cur, char *cmd
- * create function parameters must be: xmlDocPtr doc, JpfMsgInfo *sys_msg
+ * create function parameters must be: xmlDocPtr doc, NmpMsgInfo *sys_msg
  */
 
 #define NMP_XML_DEF_PARSE_BEGIN(tmp)	\
-	JpfMsgInfo *sys_msg = NULL;	\
+	NmpMsgInfo *sys_msg = NULL;	\
 	xmlXPathObjectPtr app_result;	\
 	char *xpath = "/message";	\
 	int i;	\
-	app_result =  jpf_get_node(doc, (const xmlChar *)xpath);	\
+	app_result =  nmp_get_node(doc, (const xmlChar *)xpath);	\
 	if (!app_result)	\
 		return NULL;	\
 	xmlNodeSetPtr nodeset = app_result->nodesetval;	\
@@ -31,12 +31,12 @@
 
 #define NMP_XML_DEF_PARSE_GET_VALUE(dst_p, src_str)	\
 	else if ((!xmlStrcmp(cur->name, (const xmlChar *)src_str)))	\
-				jpf_deal_value(doc, cur, dst_p);
+				nmp_deal_value(doc, cur, dst_p);
 
 
 #define NMP_XML_DEF_PARSE_GET_TEXT(dst_p, src_str, dst_max_len)	\
 	else if ((!xmlStrcmp(cur->name, (const xmlChar *)src_str)))	\
-				jpf_deal_text(doc, cur, dst_p, dst_max_len);
+				nmp_deal_text(doc, cur, dst_p, dst_max_len);
 
 
 #define NMP_XML_DEF_PARSE_END(tmp)	\
@@ -46,17 +46,17 @@
 		}	\
 	}	\
 	xmlXPathFreeObject(app_result);	\
-	sys_msg = jpf_msginfo_new(cmd, &tmp, sizeof(tmp));	\
+	sys_msg = nmp_msginfo_new(cmd, &tmp, sizeof(tmp));	\
 	return sys_msg;
 
 
 
 #define NMP_XML_DEF_CREATE_BEGIN(tmp, str_tmp, root_node, end) do {	\
-	tmp = jpf_get_msginfo_data(sys_msg);	\
+	tmp = nmp_get_msginfo_data(sys_msg);	\
 	if (!tmp)	\
 		return -E_NOMEM;	\
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);	\
-	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);	\
+	nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);	\
 	snprintf(str_tmp, INT_TO_CHAR_LEN,  "%d", RES_CODE(tmp));	\
 	xmlNewChild(root_node, NULL, BAD_CAST "resultCode", BAD_CAST str_tmp);	\
 	if (RES_CODE(tmp))	\
@@ -101,7 +101,7 @@
 
 
 #define NMP_XML_DEF_CREATE_NMP_RESULT() do {	\
-	JpfResult *tmp = NULL;	\
+	NmpResult *tmp = NULL;	\
 	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);	\
 	NMP_XML_DEF_CREATE_END_SINGLE();	\
 } while (0)
@@ -109,22 +109,22 @@
 
 
 void
-jpf_get_weekday(xmlDocPtr doc, char *weekpath,
-    JpfWeekday *weekdays,int *weekday_num);
+nmp_get_weekday(xmlDocPtr doc, char *weekpath,
+    NmpWeekday *weekdays,int *weekday_num);
 
 
 void
-jpf_set_weekday(xmlNodePtr node, JpfWeekday *weekdays, int weekday_num);
+nmp_set_weekday(xmlNodePtr node, NmpWeekday *weekdays, int weekday_num);
 
 void
-jpf_get_rectarea(xmlDocPtr doc, char *rectpath, JpfRectangle *detect_area, int *rect_num);
+nmp_get_rectarea(xmlDocPtr doc, char *rectpath, NmpRectangle *detect_area, int *rect_num);
 
 void
-jpf_set_rectarea(xmlNodePtr node, JpfRectangle *detect_area, int rect_num);
+nmp_set_rectarea(xmlNodePtr node, NmpRectangle *detect_area, int rect_num);
 
-void jpf_create_ptz_para(xmlNodePtr parent_node, JpfPtzPara para);
+void nmp_create_ptz_para(xmlNodePtr parent_node, NmpPtzPara para);
 
-void jpf_parse_ptz_para(xmlDocPtr doc,xmlNodePtr cur, JpfPtzPara *para);
+void nmp_parse_ptz_para(xmlDocPtr doc,xmlNodePtr cur, NmpPtzPara *para);
 
 
 #endif

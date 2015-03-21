@@ -1,5 +1,5 @@
 /*
- * jpf_appmod.c
+ * nmp_appmod.c
  *
  * Copyright(c) by Nampu, 2010~2014
  * Author:
@@ -19,7 +19,7 @@ nmp_app_mod_set_name(NmpAppMod *self, const gchar *name)
 
 	self->name[MAX_MOD_NAME_LEN - 1] = 0;
 	strncpy(self->name, name, MAX_MOD_NAME_LEN - 1);
-	jpf_msg_engine_set_name(self->msg_engine, name);
+	nmp_msg_engine_set_name(self->msg_engine, name);
 }
 
 
@@ -49,39 +49,39 @@ nmp_app_mod_init(NmpAppMod *self)
     self->io_mod = g_object_new(NMP_TYPE_MODIO, NULL);
     if (G_UNLIKELY(!self->io_mod))
     {
-        jpf_error("<NmpAppMod> alloc MOD-I/O object failed!");
+        nmp_error("<NmpAppMod> alloc MOD-I/O object failed!");
         FATAL_ERROR_EXIT;
     }
     
-    self->event_table = jpf_event_table_new(self);
+    self->event_table = nmp_event_table_new(self);
     if (G_UNLIKELY(!self->event_table))
     {
-         jpf_error("<NmpAppMod> alloc etable object failed!");
+         nmp_error("<NmpAppMod> alloc etable object failed!");
         FATAL_ERROR_EXIT;   	
     }
 
     self->msg_engine = g_object_new(NMP_TYPE_MSGENGINE, NULL);
     if (G_UNLIKELY(!self->msg_engine))
     {
-        jpf_error("<NmpAppMod> alloc msg engine failed!");
+        nmp_error("<NmpAppMod> alloc msg engine failed!");
         FATAL_ERROR_EXIT;
     }
 
 #ifdef MOD_HAS_TIMER
-	self->timer_engine = jpf_timer_engine_new();
+	self->timer_engine = nmp_timer_engine_new();
 	if (G_UNLIKELY(!self->timer_engine))
 	{
-		jpf_error("<NmpAppMod> alloc time engine failed!");
+		nmp_error("<NmpAppMod> alloc time engine failed!");
 		FATAL_ERROR_EXIT;
 	}
 #endif
 
 	nmp_app_mod_set_name(self, "mod-x");
 
-    jpf_msg_engine_set_owner(self->msg_engine, (NmpAppObj*)self);
+    nmp_msg_engine_set_owner(self->msg_engine, (NmpAppObj*)self);
 
     v.data[0].v_pointer = self;
-    jpf_islot_init(NMP_ISLOT(self->io_mod), &v);
+    nmp_islot_init(NMP_ISLOT(self->io_mod), &v);
 }
 
 
@@ -98,7 +98,7 @@ nmp_app_mod_dispose(GObject *object)
 
     if (self->event_table)
     {
-    	jpf_event_table_destroy(self->event_table);
+    	nmp_event_table_destroy(self->event_table);
     	self->event_table = NULL;
     }
 
@@ -122,20 +122,20 @@ nmp_app_mod_deliver_out(NmpAppObj *s_self, NmpSysMsg *msg)
 
     if (G_UNLIKELY(!self->io_mod))
     {
-    	jpf_warning("<NmpAppObj> deliver_out() failed, no mod-io!");
+    	nmp_warning("<NmpAppObj> deliver_out() failed, no mod-io!");
     	goto deliver_out_err;
     }
 
-    if (jpf_islot_send(NMP_ISLOT(self->io_mod), NMP_DATA(msg)))
+    if (nmp_islot_send(NMP_ISLOT(self->io_mod), NMP_DATA(msg)))
     {
-    	jpf_warning("<NmpAppObj> deliver_out() failed, can't send to bus!");
+    	nmp_warning("<NmpAppObj> deliver_out() failed, can't send to bus!");
     	goto deliver_out_err;
     }
 
 	return ;
 
 deliver_out_err:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 }
 
 
@@ -146,7 +146,7 @@ nmp_app_mod_hook_from_bus(NmpAppObj *s_self, NmpSysMsg *msg)
 	G_ASSERT(s_self != NULL && msg != NULL);
 	
 	self = (NmpAppMod*)s_self;
-	return jpf_event_response(self->event_table, msg);
+	return nmp_event_response(self->event_table, msg);
 }
 
 
@@ -167,7 +167,7 @@ nmp_app_mod_register_msg(NmpAppMod *self, NmpMsgID msg_id,
 {
 	G_ASSERT(self != NULL);
 	
-	return jpf_msg_engine_register_msg(
+	return nmp_msg_engine_register_msg(
 		self->msg_engine, msg_id, f_fun, b_fun, flags);
 }
 
@@ -175,15 +175,15 @@ nmp_app_mod_register_msg(NmpAppMod *self, NmpMsgID msg_id,
 static void
 nmp_app_mod_consume_msg(NmpAppMod *self, NmpSysMsg *msg)
 {
-	jpf_warning("<NmpAppMod> default consume_msg().");
-	jpf_sysmsg_destroy(msg);
+	nmp_warning("<NmpAppMod> default consume_msg().");
+	nmp_sysmsg_destroy(msg);
 }
 
 
 static gint
 nmp_app_mod_setup_default(NmpAppMod *self)
 {
-	jpf_warning("<NmpAppMod> default setup_mod().");
+	nmp_warning("<NmpAppMod> default setup_mod().");
 	return 0;
 }
 
@@ -235,7 +235,7 @@ nmp_app_mod_rcv_f(NmpAppMod *self, NmpSysMsg *msg)
     if (G_UNLIKELY(!self->msg_engine))
         return -E_NOMSGENG;
 
-    return jpf_msg_engine_push_msg_f(self->msg_engine, msg);
+    return nmp_msg_engine_push_msg_f(self->msg_engine, msg);
 }
 
 
@@ -247,7 +247,7 @@ nmp_app_mod_rcv_b(NmpAppMod *self, NmpSysMsg *msg)
     if (G_UNLIKELY(!self->msg_engine))
         return -E_NOMSGENG;
 
-    return jpf_msg_engine_push_msg_b(self->msg_engine, msg);
+    return nmp_msg_engine_push_msg_b(self->msg_engine, msg);
 }
 
 
@@ -259,7 +259,7 @@ nmp_app_mod_set_timer(NmpAppMod *self, guint interval,
 {
 	G_ASSERT(self != NULL);
 	
-	return jpf_timer_engine_set_timer(self->timer_engine,
+	return nmp_timer_engine_set_timer(self->timer_engine,
 		interval, fun, data);
 }
 
@@ -269,7 +269,7 @@ nmp_app_mod_del_timer(NmpAppMod *self, gint id)
 {
 	G_ASSERT(self != NULL);
 	
-	jpf_timer_engine_del_timer(self->timer_engine, id);
+	nmp_timer_engine_del_timer(self->timer_engine, id);
 }
 
 #endif	//MOD_HAS_TIMER
@@ -280,7 +280,7 @@ nmp_app_mod_sync_request(NmpAppMod *self, NmpSysMsg **msg)
 {
 	G_ASSERT(self != NULL);
 
-	return jpf_event_request(self->event_table, msg);
+	return nmp_event_request(self->event_table, msg);
 }
 
 

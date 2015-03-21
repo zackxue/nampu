@@ -1,5 +1,5 @@
 /*
- * jpf_netbuf.h
+ * nmp_netbuf.h
  *
  * This file describes net ring buffer.
  *
@@ -18,19 +18,19 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfNetBuf JpfNetBuf;
+typedef struct _NmpNetBuf NmpNetBuf;
 
-typedef gint (*JpfNetBufFlush)(
+typedef gint (*NmpNetBufFlush)(
 	gchar *buf, gsize count, gpointer user_data);
 
-JpfNetBuf *jpf_net_buf_alloc(gint n_blocks, gint block_size,
-	JpfNetBufFlush flush);
-void jpf_net_buf_free(JpfNetBuf *buff);
+NmpNetBuf *nmp_net_buf_alloc(gint n_blocks, gint block_size,
+	NmpNetBufFlush flush);
+void nmp_net_buf_free(NmpNetBuf *buff);
 
-gint jpf_net_buf_write(JpfNetBuf *buff, gchar *buf, gsize count,
+gint nmp_net_buf_write(NmpNetBuf *buff, gchar *buf, gsize count,
 	gpointer user_data, gint *pending);
 
-gint jpf_net_buf_flush(JpfNetBuf *buff, gpointer user_data);
+gint nmp_net_buf_flush(NmpNetBuf *buff, gpointer user_data);
 
 
 G_END_DECLS

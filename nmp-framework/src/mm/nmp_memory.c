@@ -11,7 +11,7 @@ struct __alloc_head
 
 
 gpointer
-jpf_mem_kalloc(guint size)
+nmp_mem_kalloc(guint size)
 {
 	if (size > MAX_MEM_SIZE)
 		BUG();
@@ -20,11 +20,11 @@ jpf_mem_kalloc(guint size)
 
 
 gpointer
-jpf_mem_kalloc0(guint size)
+nmp_mem_kalloc0(guint size)
 {
 	gpointer p;
 
-	p = jpf_mem_kalloc(size);
+	p = nmp_mem_kalloc(size);
 	if (p)
 	{
 		memset(p, 0, size);
@@ -34,19 +34,19 @@ jpf_mem_kalloc0(guint size)
 
 
 void
-jpf_mem_kfree(gpointer p, guint size)
+nmp_mem_kfree(gpointer p, guint size)
 {
 	g_free(p);
 }
 
 
 gpointer
-jpf_mem_alloc(guint size)
+nmp_mem_alloc(guint size)
 {
 	alloc_head *p_mem;
 	guint real_size = size + sizeof(alloc_head);
 
-	p_mem = (alloc_head*)jpf_mem_kalloc(real_size);
+	p_mem = (alloc_head*)nmp_mem_kalloc(real_size);
 	if (p_mem)
 	{
 		p_mem->size = real_size;
@@ -57,11 +57,11 @@ jpf_mem_alloc(guint size)
 
 
 gpointer
-jpf_mem_alloc0(guint size)
+nmp_mem_alloc0(guint size)
 {
 	gpointer p;
 
-	p = jpf_mem_alloc(size);
+	p = nmp_mem_alloc(size);
 	if (p)
 	{
 		memset(p, 0, size);
@@ -71,13 +71,13 @@ jpf_mem_alloc0(guint size)
 
 
 void
-jpf_mem_free(gpointer p)
+nmp_mem_free(gpointer p)
 {
 	alloc_head *p_mem = (alloc_head*)p;
 	if (p_mem)
 	{
 		--p_mem;
-		jpf_mem_kfree(p_mem, p_mem->size);
+		nmp_mem_kfree(p_mem, p_mem->size);
 	}
 }
 

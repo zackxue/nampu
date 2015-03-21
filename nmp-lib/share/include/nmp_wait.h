@@ -12,9 +12,9 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfWait JpfWait;
+typedef struct _NmpWait NmpWait;
 
-struct _JpfWait
+struct _NmpWait
 {
     gboolean        waited;		/* condition */
     GMutex          *lock;
@@ -22,10 +22,10 @@ struct _JpfWait
 };
 
 
-static __inline__ JpfWait *
-jpf_wait_new( void )
+static __inline__ NmpWait *
+nmp_wait_new( void )
 {//TODO: ERR
-    JpfWait *w = g_new0(JpfWait, 1);
+    NmpWait *w = g_new0(NmpWait, 1);
     if (G_UNLIKELY(!w))		/* glib, unlikely */
         return NULL;
 
@@ -38,7 +38,7 @@ jpf_wait_new( void )
 
 
 static __inline__ void
-jpf_wait_free(JpfWait *w)
+nmp_wait_free(NmpWait *w)
 {
     if (G_UNLIKELY(!w))
         return;
@@ -50,63 +50,63 @@ jpf_wait_free(JpfWait *w)
 
 
 static __inline__ void
-jpf_wait_begin(JpfWait *w)
+nmp_wait_begin(NmpWait *w)
 {
     g_mutex_lock(w->lock);
 }
 
 
 static __inline__ void
-jpf_wait_waiting(JpfWait *w)
+nmp_wait_waiting(NmpWait *w)
 {
     g_cond_wait(w->cond, w->lock);  
 }
 
 
 static __inline__ void
-jpf_wait_timed_waiting(JpfWait *w, GTimeVal *abs_time)
+nmp_wait_timed_waiting(NmpWait *w, GTimeVal *abs_time)
 {
     g_cond_timed_wait(w->cond, w->lock, abs_time);  
 }
 
 
 static __inline__ void
-jpf_wait_end(JpfWait *w)
+nmp_wait_end(NmpWait *w)
 {
     g_mutex_unlock(w->lock);
 }
 
 
 static __inline__ void
-jpf_wait_set_cond_true(JpfWait *w)
+nmp_wait_set_cond_true(NmpWait *w)
 {
     w->waited = TRUE;
 }
 
 
 static __inline__ void
-jpf_wait_set_cond_false(JpfWait *w)
+nmp_wait_set_cond_false(NmpWait *w)
 {
     w->waited = FALSE;
 }
 
 
 static __inline__ gboolean
-jpf_wait_is_cond_true(JpfWait *w)
+nmp_wait_is_cond_true(NmpWait *w)
 {
     return w->waited;
 }
 
 
 static __inline__ void
-jpf_wait_wakeup(JpfWait *w)
+nmp_wait_wakeup(NmpWait *w)
 {
     g_cond_signal(w->cond);
 }
 
 
 static __inline__ void
-jpf_wait_wakeup_all(JpfWait *w)
+nmp_wait_wakeup_all(NmpWait *w)
 {
     g_cond_broadcast(w->cond);
 }

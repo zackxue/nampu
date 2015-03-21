@@ -31,7 +31,7 @@
 
 #if defined HM_DEBUG && !defined G_OS_WIN32
 /* snprintf() has different behavior on windows */
-#define jpf_print(...)   \
+#define nmp_print(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -43,7 +43,7 @@ G_STMT_START {\
 } G_STMT_END
 
 
-#define jpf_warning(...)   \
+#define nmp_warning(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -55,7 +55,7 @@ G_STMT_START {\
 } G_STMT_END
 
 
-#define jpf_error(...)   \
+#define nmp_error(...)   \
 G_STMT_START {\
     gchar ________msg[MAX_MSG_SIZE];    \
     snprintf(________msg , MAX_MSG_SIZE, __VA_ARGS__);   \
@@ -69,19 +69,19 @@ G_STMT_START {\
 
 #else
 
-#define jpf_print(...)   \
+#define nmp_print(...)   \
     g_log (G_LOG_DOMAIN,         \
         G_LOG_LEVEL_MESSAGE,  \
         __VA_ARGS__)
 
 
-#define jpf_warning(...)   \
+#define nmp_warning(...)   \
     g_log (G_LOG_DOMAIN,         \
         G_LOG_LEVEL_WARNING,  \
         __VA_ARGS__)
 
 
-#define jpf_error(...)  \
+#define nmp_error(...)  \
     G_STMT_START {                 \
         g_log (G_LOG_DOMAIN,         \
             G_LOG_LEVEL_ERROR,    \
@@ -91,7 +91,7 @@ G_STMT_START {\
 
 #endif  /* HM_DEBUG & G_OS_WIN32 */
 
-#define jpf_debug jpf_print
+#define nmp_debug nmp_print
 
 #define bug_print(...)   \
     g_log (G_LOG_DOMAIN,         \
@@ -145,10 +145,10 @@ G_STMT_START {\
 } G_STMT_END
 
 
-gint jpf_debug_log_facility_init(const gchar *folder_path,
+gint nmp_debug_log_facility_init(const gchar *folder_path,
     const gchar *name);
 
-void jpf_debug_set_log_size(gint size);
+void nmp_debug_set_log_size(gint size);
 
 
 #endif  //__NMP_DEBUG_H__

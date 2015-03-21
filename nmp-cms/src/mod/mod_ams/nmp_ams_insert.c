@@ -10,12 +10,12 @@ nmp_cms_ams_insert( void )
 	mod = g_object_new(NMP_TYPE_MODAMS, NULL);
 	if (G_UNLIKELY(!mod))
 	{
-		jpf_error("<JpfModAlms> alloc mod ams failed!");
+		nmp_error("<NmpModAlms> alloc mod ams failed!");
 		FATAL_ERROR_EXIT;
 	}
 
 	nmp_app_mod_setup((NmpAppMod*)mod);
-	jpf_afx_mod_insert(BUSSLOT_POS_AMS, mod);
+	nmp_afx_mod_insert(BUSSLOT_POS_AMS, mod);
 }
 
 

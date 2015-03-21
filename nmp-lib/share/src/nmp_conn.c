@@ -23,7 +23,7 @@ struct _HmConnection
 
 
 static __inline__ gint
-__jpf_connection_set_flags(HmConnection *conn, gint flgs)
+__nmp_connection_set_flags(HmConnection *conn, gint flgs)
 {
     gint old_flgs;
 
@@ -41,7 +41,7 @@ __jpf_connection_set_flags(HmConnection *conn, gint flgs)
 
 
 __export HmConnection *
-jpf_connection_new(struct sockaddr *sa, guint flags, gint *errp)
+nmp_connection_new(struct sockaddr *sa, guint flags, gint *errp)
 {
 	HmConnection *conn;
 	guint mask = CF_TYPE_TCP | CF_TYPE_UDP;
@@ -95,7 +95,7 @@ jpf_connection_new(struct sockaddr *sa, guint flags, gint *errp)
 
 	if (flags & CF_FLGS_NONBLOCK)
 	{
-		err = __jpf_connection_set_flags(conn, O_NONBLOCK);
+		err = __nmp_connection_set_flags(conn, O_NONBLOCK);
 		if (err)
 			goto new_conn_failed;
 	}
@@ -115,7 +115,7 @@ new_conn_failed:
 
 
 __export gint
-jpf_connection_listen(HmConnection *conn)
+nmp_connection_listen(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -129,7 +129,7 @@ jpf_connection_listen(HmConnection *conn)
 
 
 __export gint
-jpf_connection_connect(HmConnection *conn, struct sockaddr *sa)
+nmp_connection_connect(HmConnection *conn, struct sockaddr *sa)
 {
 	gint err;
 	G_ASSERT(conn != NULL);
@@ -145,7 +145,7 @@ jpf_connection_connect(HmConnection *conn, struct sockaddr *sa)
 }
 
 __export gint
-jpf_connection_get_fd(HmConnection *conn)
+nmp_connection_get_fd(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -154,14 +154,14 @@ jpf_connection_get_fd(HmConnection *conn)
 
 
 __export gint
-jpf_connection_set_flags(HmConnection *conn, guint flgs)
+nmp_connection_set_flags(HmConnection *conn, guint flgs)
 {
 	gint ret;
 	G_ASSERT(conn != NULL);
 
 	if (flgs & CF_FLGS_NONBLOCK)
 	{
-		ret =  __jpf_connection_set_flags(conn, O_NONBLOCK);
+		ret =  __nmp_connection_set_flags(conn, O_NONBLOCK);
 		if (!ret)
 			conn->flags |= CF_FLGS_NONBLOCK;
 		return 0;
@@ -172,7 +172,7 @@ jpf_connection_set_flags(HmConnection *conn, guint flgs)
 
 
 __export gint
-jpf_connection_is_blocked(HmConnection *conn)
+nmp_connection_is_blocked(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -181,7 +181,7 @@ jpf_connection_is_blocked(HmConnection *conn)
 
 
 __export HmConnection *
-jpf_connection_accept(HmConnection *listen, gint *errp)
+nmp_connection_accept(HmConnection *listen, gint *errp)
 {
 	HmConnection *conn;
 	gint ret;
@@ -204,7 +204,7 @@ jpf_connection_accept(HmConnection *listen, gint *errp)
 
 	if (listen->flags & CF_FLGS_NONBLOCK)
 	{
-		ret = __jpf_connection_set_flags(conn, O_NONBLOCK);
+		ret = __nmp_connection_set_flags(conn, O_NONBLOCK);
 		if (ret < 0)
 		{
 			*errp = ret;
@@ -222,7 +222,7 @@ jpf_connection_accept(HmConnection *listen, gint *errp)
 
 
 __export gint
-jpf_connection_is_ingrogress(HmConnection *conn, int clear)
+nmp_connection_is_ingrogress(HmConnection *conn, int clear)
 {
 	G_ASSERT(conn != NULL);
 
@@ -238,7 +238,7 @@ jpf_connection_is_ingrogress(HmConnection *conn, int clear)
 
 
 __export gint
-jpf_connection_read(HmConnection *conn, gchar buf[], gsize size)
+nmp_connection_read(HmConnection *conn, gchar buf[], gsize size)
 {
 	gint ret;
 
@@ -262,7 +262,7 @@ jpf_connection_read(HmConnection *conn, gchar buf[], gsize size)
 
 
 __export gint
-jpf_connection_write(HmConnection *conn, gchar *buf, gsize size)
+nmp_connection_write(HmConnection *conn, gchar *buf, gsize size)
 {
 	gsize left = size;
 	gint ret;
@@ -291,7 +291,7 @@ jpf_connection_write(HmConnection *conn, gchar *buf, gsize size)
 
 
 __export gint
-jpf_resolve_host(struct sockaddr_in *sin, gchar *host, gint port)
+nmp_resolve_host(struct sockaddr_in *sin, gchar *host, gint port)
 {
 	gchar dns_buf[DNS_BUFFER_LEN];
 	struct hostent ht, *ret = NULL;
@@ -320,7 +320,7 @@ jpf_resolve_host(struct sockaddr_in *sin, gchar *host, gint port)
 
 
 __export void
-jpf_connection_set_buffer_size(HmConnection *conn, gint size)
+nmp_connection_set_buffer_size(HmConnection *conn, gint size)
 {
 	G_ASSERT(conn != NULL);
 	conn->buffer_size = size;
@@ -328,7 +328,7 @@ jpf_connection_set_buffer_size(HmConnection *conn, gint size)
 
 
 __export gint
-jpf_connection_get_buffer_size(HmConnection *conn)
+nmp_connection_get_buffer_size(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 	return conn->buffer_size;
@@ -336,7 +336,7 @@ jpf_connection_get_buffer_size(HmConnection *conn)
 
 
 __export void
-jpf_connection_set_heavy(HmConnection *conn)
+nmp_connection_set_heavy(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -345,7 +345,7 @@ jpf_connection_set_heavy(HmConnection *conn)
 
 
 __export gint
-jpf_connection_is_heavy(HmConnection *conn)
+nmp_connection_is_heavy(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -354,7 +354,7 @@ jpf_connection_is_heavy(HmConnection *conn)
 
 
 __export gint
-jpf_connection_get_timeout(HmConnection *conn)
+nmp_connection_get_timeout(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -363,7 +363,7 @@ jpf_connection_get_timeout(HmConnection *conn)
 
 
 __export void
-jpf_connection_set_timeout(HmConnection *conn, gint millisec)
+nmp_connection_set_timeout(HmConnection *conn, gint millisec)
 {
 	gint max_timeout;
 	G_ASSERT(conn != NULL);
@@ -380,7 +380,7 @@ jpf_connection_set_timeout(HmConnection *conn, gint millisec)
 
 
 __export void
-jpf_connection_close(HmConnection *conn)
+nmp_connection_close(HmConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -392,7 +392,7 @@ jpf_connection_close(HmConnection *conn)
 
 
 __export gchar *
-jpf_connection_get_peer(HmConnection *conn)
+nmp_connection_get_peer(HmConnection *conn)
 {
 	struct sockaddr_in addr;
 	socklen_t len;

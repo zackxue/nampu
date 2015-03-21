@@ -13,13 +13,13 @@
 
 #define NMP_DEAL_LOG_RESULT(ret) do {	\
 	if (ret) {	\
-		jpf_warning("<JpfLogMh> jpf_log failed, ret = %d.", ret);	\
+		nmp_warning("<NmpLogMh> nmp_log failed, ret = %d.", ret);	\
 	}	\
 } while (0)
 
 #define NMP_CHECK_MSS_MSG_RES(msg) do { \
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_BSS) { \
-		jpf_sysmsg_destroy(msg); \
+		nmp_sysmsg_destroy(msg); \
 		return MFR_ACCEPTED; \
 	} \
 } while (0)
@@ -29,7 +29,7 @@
 #define NMP_LOG_TIME_LEN		32
 
 
-static void jpf_get_time_str(time_t time_uint, gchar *time_str)
+static void nmp_get_time_str(time_t time_uint, gchar *time_str)
 {
 	struct tm t_tm;
 	localtime_r(&time_uint, &t_tm);
@@ -40,7 +40,7 @@ static void jpf_get_time_str(time_t time_uint, gchar *time_str)
 }
 
 #if 0
-static time_t jpf_get_time_uint(gint year, gint mon, gint day,
+static time_t nmp_get_time_uint(gint year, gint mon, gint day,
 	gint hour, gint min, gint sec)
 {
 	time_t time_uint;
@@ -63,7 +63,7 @@ nmp_mod_log_del_redundant_log(NmpAppObj *self)
 {
 	char query_buf[QUERY_STR_LEN] = {0};
 	NmpModLog *mod_log;
-	JpfMsgErrCode result;
+	NmpMsgErrCode result;
 	glong affect_num = 0;
 	gint total_num;
 
@@ -76,7 +76,7 @@ nmp_mod_log_del_redundant_log(NmpAppObj *self)
 		"select count(*) as count from %s", LOG_TABLE
 	);
 
-	total_num =  jpf_log_get_record_count(self, query_buf);
+	total_num =  nmp_log_get_record_count(self, query_buf);
 	if (total_num < LOG_MAX_LOG_NUM)
 		return;
 
@@ -85,17 +85,17 @@ nmp_mod_log_del_redundant_log(NmpAppObj *self)
 		LOG_TABLE, LOG_DEL_LOG_NUM_PERTIME
 	);
 
-	jpf_log_dbs_do_del_code(self, NULL, query_buf, &result, &affect_num);
+	nmp_log_dbs_do_del_code(self, NULL, query_buf, &result, &affect_num);
 }
 
 
-static gint jpf_log(NmpAppObj *app_obj, NmpSysMsg *msg, guint operate_id,
+static gint nmp_log(NmpAppObj *app_obj, NmpSysMsg *msg, guint operate_id,
 	LOG_LEVEL log_level, gchar *user_name, gint result_code,
 	gchar *child_type_1, gchar *child_type_2, gchar *child_type_3)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL && user_name != NULL);
 	gchar query_buf[QUERY_STR_LEN];
-	JpfMsgErrCode result;
+	NmpMsgErrCode result;
 	glong affect_num = 0;
 	time_t cur_time;
 	gchar cur_time_str[NMP_LOG_TIME_LEN] = {0};
@@ -106,7 +106,7 @@ static gint jpf_log(NmpAppObj *app_obj, NmpSysMsg *msg, guint operate_id,
 		result_code = -result_code;
 
 	cur_time = time(NULL);
-	jpf_get_time_str(cur_time, cur_time_str);
+	nmp_get_time_str(cur_time, cur_time_str);
 
 	if (child_type_1 == NULL)
 	{
@@ -135,7 +135,7 @@ static gint jpf_log(NmpAppObj *app_obj, NmpSysMsg *msg, guint operate_id,
 		result_code, child_str
 	);
 
-	jpf_log_dbs_do_query_code(app_obj, msg, query_buf, &result, &affect_num);
+	nmp_log_dbs_do_query_code(app_obj, msg, query_buf, &result, &affect_num);
 	nmp_mod_log_del_redundant_log(app_obj);
 
 	return result.err_no;
@@ -143,68 +143,68 @@ static gint jpf_log(NmpAppObj *app_obj, NmpSysMsg *msg, guint operate_id,
 
 
 static void
-jpf_log_modify_sysmsg(NmpSysMsg *sys_msg, gpointer priv_data, gsize size,
-	JpfBusSlotPos src_pos, JpfBusSlotPos dst_pos, JpfMsgPrivDes msg_priv_destroy)
+nmp_log_modify_sysmsg(NmpSysMsg *sys_msg, gpointer priv_data, gsize size,
+	NmpBusSlotPos src_pos, NmpBusSlotPos dst_pos, NmpMsgPrivDes msg_priv_destroy)
 {
-	jpf_sysmsg_set_private(sys_msg, priv_data, size, msg_priv_destroy);
+	nmp_sysmsg_set_private(sys_msg, priv_data, size, msg_priv_destroy);
 	MSG_SET_DSTPOS(sys_msg, dst_pos);
 	MSG_SET_RESPONSE(sys_msg);
 }
 
 
 static __inline__ void
-jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
+nmp_query_log_info(NmpMysqlRes *result, NmpQueryLogRes *query_res)
 {
 	G_ASSERT(query_res != NULL);
 
 	gint info_no = 0, field_no = 0;
-	JpfMysqlRow mysql_row;
-	JpfMysqlField* mysql_fields;
+	NmpMysqlRow mysql_row;
+	NmpMysqlField* mysql_fields;
 	gchar *name;
 	gchar *value;
 	unsigned int row_num;
 	unsigned int field_num;
 
-	row_num = jpf_log_sql_get_num_rows(result);
-	field_num = jpf_log_sql_get_num_fields(result);
+	row_num = nmp_log_sql_get_num_rows(result);
+	field_num = nmp_log_sql_get_num_fields(result);
 
-	while ((mysql_row = jpf_log_sql_fetch_row(result)))
+	while ((mysql_row = nmp_log_sql_fetch_row(result)))
 	{
-		jpf_log_sql_field_seek(result, 0);
-		mysql_fields = jpf_log_sql_fetch_fields(result);
-		JpfBssLog *log = &query_res->log_list[info_no];
+		nmp_log_sql_field_seek(result, 0);
+		mysql_fields = nmp_log_sql_fetch_fields(result);
+		NmpBssLog *log = &query_res->log_list[info_no];
 
 		for(field_no = 0; field_no < field_num; field_no++)
 		{
-			name = jpf_log_sql_get_field_name(mysql_fields, field_no);
+			name = nmp_log_sql_get_field_name(mysql_fields, field_no);
 
 			if (!strcmp(name, "order_num"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 					log->order_num = atoi(value);
 			}
 			else if (!strcmp(name, "log_level"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 					log->log_level = atoi(value);
 			}
 			else if (!strcmp(name, "operate_id"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 					log->log_id = atoi(value);
 			}
 			else if (!strcmp(name, "result_code"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 					log->result_code = atoi(value);
 			}
 			else if (!strcmp(name, "log_time_str"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 				{
 					log->log_time[TIME_INFO_LEN - 1] = '\0';
@@ -213,7 +213,7 @@ jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
 			}
 			else if (!strcmp(name, "user_name"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 				{
 					log->user_name[USER_NAME_LEN - 1] = '\0';
@@ -222,7 +222,7 @@ jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
 			}
 			else if (!strcmp(name, "child_type1"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 				{
 					log->child_data1[LOG_CHILD_DATA_LEN - 1] = '\0';
@@ -231,7 +231,7 @@ jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
 			}
 			else if (!strcmp(name, "child_type2"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 				{
 					log->child_data2[LOG_CHILD_DATA_LEN - 1] = '\0';
@@ -240,7 +240,7 @@ jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
 			}
 			else if (!strcmp(name, "child_type3"))
 			{
-				value = jpf_log_sql_get_field_value(mysql_row, field_no);
+				value = nmp_log_sql_get_field_value(mysql_row, field_no);
 				if(value)
 				{
 					log->child_data3[LOG_CHILD_DATA_LEN - 1] = '\0';
@@ -258,17 +258,17 @@ jpf_query_log_info(JpfMysqlRes *result, JpfQueryLogRes *query_res)
 }
 
 
-static __inline__ JpfQueryLogRes *
-jpf_log_query_log(JpfMysqlRes *mysql_res, gint *size)
+static __inline__ NmpQueryLogRes *
+nmp_log_query_log(NmpMysqlRes *mysql_res, gint *size)
 {
 	gint row_num, len;
-	JpfQueryLogRes *query_res;
+	NmpQueryLogRes *query_res;
 
-	row_num = jpf_log_sql_get_num_rows(mysql_res);
+	row_num = nmp_log_sql_get_num_rows(mysql_res);
 	if (row_num == 0)
 	{
-		len = sizeof(JpfQueryLogRes);
-		query_res = jpf_mem_kalloc(len);
+		len = sizeof(NmpQueryLogRes);
+		query_res = nmp_mem_kalloc(len);
 		if (G_UNLIKELY(!query_res))
 			return NULL;
 
@@ -276,19 +276,19 @@ jpf_log_query_log(JpfMysqlRes *mysql_res, gint *size)
 		SET_CODE(query_res, E_NODBENT);
 		query_res->total_num = 0;
 		query_res->req_total = 0;
-		jpf_warning("<JpfLogMh> log info has been delete?");
+		nmp_warning("<NmpLogMh> log info has been delete?");
 	}
 	else
 	{
-		len = sizeof(JpfQueryLogRes) + row_num * sizeof(JpfBssLog);
-		query_res = jpf_mem_kalloc(len);
+		len = sizeof(NmpQueryLogRes) + row_num * sizeof(NmpBssLog);
+		query_res = nmp_mem_kalloc(len);
 		if (G_UNLIKELY(!query_res))
 			return NULL;
 
 		memset(query_res, 0, len);
 		query_res->req_total = row_num;
 		SET_CODE(query_res, 0);
-		jpf_query_log_info(mysql_res, query_res);
+		nmp_query_log_info(mysql_res, query_res);
 	}
 	*size = len;
 
@@ -296,26 +296,26 @@ jpf_log_query_log(JpfMysqlRes *mysql_res, gint *size)
 }
 
 #if 0
-void query_log_print(JpfQueryLogRes *res)
+void query_log_print(NmpQueryLogRes *res)
 {
 	gint i, count;
 	count = res->req_total;
 
-	jpf_warning("<log> res->code=%d", res->code);
-	jpf_warning("<log> res->bss_usr:%s", res->bss_usr);
-	jpf_warning("<log> res->total_num=%d", res->total_num);
-	jpf_warning("<log> res->req_total=%d-----------------------", res->req_total);
+	nmp_warning("<log> res->code=%d", res->code);
+	nmp_warning("<log> res->bss_usr:%s", res->bss_usr);
+	nmp_warning("<log> res->total_num=%d", res->total_num);
+	nmp_warning("<log> res->req_total=%d-----------------------", res->req_total);
 
 	for (i = 0; i < count; i++)
 	{
-		jpf_warning("<log> log_level=%d", res->log_list[i].log_level);
-		jpf_warning("<log> log_id=%d", res->log_list[i].log_id);
-		jpf_warning("<log> result_code=%d", res->log_list[i].result_code);
-		jpf_warning("<log> log_time:%s", res->log_list[i].log_time);
-		jpf_warning("<log> user_name:%s", res->log_list[i].user_name);
-		jpf_warning("<log> child_data1:%s", res->log_list[i].child_data1);
-		jpf_warning("<log> child_data2:%s", res->log_list[i].child_data2);
-		jpf_warning("<log> child_data3:%s", res->log_list[i].child_data3);
+		nmp_warning("<log> log_level=%d", res->log_list[i].log_level);
+		nmp_warning("<log> log_id=%d", res->log_list[i].log_id);
+		nmp_warning("<log> result_code=%d", res->log_list[i].result_code);
+		nmp_warning("<log> log_time:%s", res->log_list[i].log_time);
+		nmp_warning("<log> user_name:%s", res->log_list[i].user_name);
+		nmp_warning("<log> child_data1:%s", res->log_list[i].child_data1);
+		nmp_warning("<log> child_data2:%s", res->log_list[i].child_data2);
+		nmp_warning("<log> child_data3:%s", res->log_list[i].child_data3);
 	}
 }
 #endif
@@ -325,9 +325,9 @@ nmp_mod_log_query_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
-	JpfQueryLog *req_info;
-	JpfQueryLogRes *query_res = NULL;
-	JpfMysqlRes *result = NULL;
+	NmpQueryLog *req_info;
+	NmpQueryLogRes *query_res = NULL;
+	NmpMysqlRes *result = NULL;
 	gchar query_buf[QUERY_STR_LEN] = {0};
 	gchar order_tmp[LOG_TMP_STR_LEN] = {0};
 	gint size, ret = 0;
@@ -342,7 +342,7 @@ nmp_mod_log_query_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		LOG_TABLE, req_info->log_level, req_info->start_time, req_info->end_time
 	);
 
-	total_num =  jpf_log_get_record_count(app_obj, query_buf);
+	total_num =  nmp_log_get_record_count(app_obj, query_buf);
 	if (total_num == 0)
 	{
 		ret = 0;
@@ -360,16 +360,16 @@ nmp_mod_log_query_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		order_tmp, req_info->start_num, req_info->req_count
 	);
 
-	result = jpf_log_dbs_do_query_res(app_obj, query_buf);
+	result = nmp_log_dbs_do_query_res(app_obj, query_buf);
 	BUG_ON(!result);
 
 	if (G_LIKELY(!MYSQL_RESULT_CODE(result)))  //success:0 fail:!0
 	{
-		query_res = jpf_log_query_log(result, &size);
+		query_res = nmp_log_query_log(result, &size);
 		if (G_UNLIKELY(!query_res))
 		{
-			jpf_warning("<JpfLogMh> alloc error");
-			jpf_sysmsg_destroy(msg);
+			nmp_warning("<NmpLogMh> alloc error");
+			nmp_sysmsg_destroy(msg);
 			return MFR_ACCEPTED;
 		}
 		if (total_num <= query_res->req_total)
@@ -385,16 +385,16 @@ nmp_mod_log_query_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 query_log_end:
 	if(result)
-		jpf_log_sql_put_res(result, sizeof(JpfMysqlRes));
+		nmp_log_sql_put_res(result, sizeof(NmpMysqlRes));
 
 	if (query_res == NULL)
 	{
-		size = sizeof(JpfQueryLogRes);
-		query_res = jpf_mem_kalloc(size);
+		size = sizeof(NmpQueryLogRes);
+		query_res = nmp_mem_kalloc(size);
 		if (!query_res)
 		{
-			jpf_warning("<JpfLogMh> alloc error");
-			jpf_sysmsg_destroy(msg);
+			nmp_warning("<NmpLogMh> alloc error");
+			nmp_sysmsg_destroy(msg);
 			return MFR_ACCEPTED;
 		}
 
@@ -407,8 +407,8 @@ query_log_end:
 	query_res->bss_usr[USER_NAME_LEN - 1] = '\0';
 	strncpy(query_res->bss_usr, req_info->bss_usr, USER_NAME_LEN - 1);
 	//query_log_print(query_res);
-	jpf_log_modify_sysmsg(msg, query_res, size, BUSSLOT_POS_DBS,
-		BUSSLOT_POS_BSS, jpf_mem_kfree);
+	nmp_log_modify_sysmsg(msg, query_res, size, BUSSLOT_POS_DBS,
+		BUSSLOT_POS_BSS, nmp_mem_kfree);
 
 	return MFR_DELIVER_BACK;
 }
@@ -419,18 +419,18 @@ NmpMsgFunRet
 nmp_mod_log_bss_login_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssLoginRes *res_info;
+	NmpBssLoginRes *res_info;
 	gint ret;
-	//jpf_warning("<JpfLogMh> nmp_mod_log_bss_login_b begin......");
+	//nmp_warning("<NmpLogMh> nmp_mod_log_bss_login_b begin......");
 
-	res_info = (JpfBssLoginRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssLoginRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_BSS_LOGIN, LOG_LEVEL_0,
+	ret = nmp_log(app_obj, msg, LOG_BSS_LOGIN, LOG_LEVEL_0,
 		res_info->admin_name, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -439,17 +439,17 @@ NmpMsgFunRet
 nmp_mod_log_add_admin_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_ADMIN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_ADMIN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -458,17 +458,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_admin_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_ADMIN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_ADMIN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -477,17 +477,17 @@ NmpMsgFunRet
 nmp_mod_log_del_admin_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_ADMIN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_ADMIN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -496,17 +496,17 @@ NmpMsgFunRet
 nmp_mod_log_add_user_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_USER_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_USER_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -515,17 +515,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_user_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_USER_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_USER_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -534,17 +534,17 @@ NmpMsgFunRet
 nmp_mod_log_del_user_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_USER_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_USER_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -553,17 +553,17 @@ NmpMsgFunRet
 nmp_mod_log_add_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -572,17 +572,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -591,17 +591,17 @@ NmpMsgFunRet
 nmp_mod_log_del_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -610,17 +610,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_domain_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_DOMAIN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_DOMAIN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -629,17 +629,17 @@ NmpMsgFunRet
 nmp_mod_log_add_modify_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfAddAreaRes *res_info;
+	NmpAddAreaRes *res_info;
 	gint ret;
 
-	res_info = (JpfAddAreaRes *)MSG_GET_DATA(msg);
+	res_info = (NmpAddAreaRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_MODIFY_AREA, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_MODIFY_AREA, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -648,17 +648,17 @@ NmpMsgFunRet
 nmp_mod_log_del_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_AREA, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_AREA, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -667,17 +667,17 @@ NmpMsgFunRet
 nmp_mod_log_add_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfAddPuRes *res_info;
+	NmpAddPuRes *res_info;
 	gint ret;
 
-	res_info = (JpfAddPuRes *)MSG_GET_DATA(msg);
+	res_info = (NmpAddPuRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_PU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_PU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -686,17 +686,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_PU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_PU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -705,17 +705,17 @@ NmpMsgFunRet
 nmp_mod_log_del_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_PU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_PU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -724,17 +724,17 @@ NmpMsgFunRet
 nmp_mod_log_add_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -743,17 +743,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -762,17 +762,17 @@ NmpMsgFunRet
 nmp_mod_log_del_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -781,17 +781,17 @@ NmpMsgFunRet
 nmp_mod_log_add_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_MDS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_MDS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -800,17 +800,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_MDS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_MDS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -819,17 +819,17 @@ NmpMsgFunRet
 nmp_mod_log_del_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_MDS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_MDS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -838,17 +838,17 @@ NmpMsgFunRet
 nmp_mod_log_add_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_MDS_IP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_MDS_IP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -857,17 +857,17 @@ NmpMsgFunRet
 nmp_mod_log_del_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_MDS_IP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_MDS_IP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -876,17 +876,17 @@ NmpMsgFunRet
 nmp_mod_log_add_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_MSS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_MSS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -895,17 +895,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_MSS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_MSS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -914,17 +914,17 @@ NmpMsgFunRet
 nmp_mod_log_del_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_MSS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_MSS, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -933,17 +933,17 @@ NmpMsgFunRet
 nmp_mod_log_record_policy_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_RECORD_POLICY_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_RECORD_POLICY_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -952,17 +952,17 @@ NmpMsgFunRet
 nmp_mod_log_add_modify_manufacturer_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_MODIFY_MANUFACTURER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_MODIFY_MANUFACTURER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -971,17 +971,17 @@ NmpMsgFunRet
 nmp_mod_log_del_manufacturer_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-/*	JpfBssRes *res_info;
+/*	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_MANUFACTURER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_MANUFACTURER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 */
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -990,17 +990,17 @@ NmpMsgFunRet
 nmp_mod_log_add_gu_to_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_GU_TO_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_GU_TO_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1009,18 +1009,18 @@ NmpMsgFunRet
 nmp_mod_log_set_system_time_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfSetServerTimeRes *res_info;
+	NmpSetServerTimeRes *res_info;
 	gint ret;
 
-	res_info = (JpfSetServerTimeRes *)MSG_GET_DATA(msg);
+	res_info = (NmpSetServerTimeRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_SET_TIME, LOG_LEVEL_2,
+	ret = nmp_log(app_obj, msg, LOG_SET_TIME, LOG_LEVEL_2,
 		res_info->bss_usr, RES_CODE(res_info), res_info->time_zone,
 		res_info->system_time, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1029,17 +1029,17 @@ NmpMsgFunRet
 nmp_mod_log_database_backup_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DATABASE_BACKUP, LOG_LEVEL_0,
+	ret = nmp_log(app_obj, msg, LOG_DATABASE_BACKUP, LOG_LEVEL_0,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1048,17 +1048,17 @@ NmpMsgFunRet
 nmp_mod_log_database_import_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfDbImportRes *res_info;
+	NmpDbImportRes *res_info;
 	gint ret;
 
-	res_info = (JpfDbImportRes *)MSG_GET_DATA(msg);
+	res_info = (NmpDbImportRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DATABASE_IMPORT, LOG_LEVEL_2,
+	ret = nmp_log(app_obj, msg, LOG_DATABASE_IMPORT, LOG_LEVEL_2,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1067,17 +1067,17 @@ NmpMsgFunRet
 nmp_mod_log_set_network_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfSetResult *res_info;
+	NmpSetResult *res_info;
 	gint ret;
 
-	res_info = (JpfSetResult *)MSG_GET_DATA(msg);
+	res_info = (NmpSetResult *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_SET_NETWORK_CONFIG, LOG_LEVEL_2,
+	ret = nmp_log(app_obj, msg, LOG_SET_NETWORK_CONFIG, LOG_LEVEL_2,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1086,19 +1086,19 @@ NmpMsgFunRet
 nmp_mod_log_add_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfAddHdGroupRes *res_info;
+	NmpAddHdGroupRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfAddHdGroupRes *)MSG_GET_DATA(msg);
+	res_info = (NmpAddHdGroupRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_HD_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_HD_GROUP, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1107,19 +1107,19 @@ NmpMsgFunRet
 nmp_mod_log_add_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfAddHdToGroupRes *res_info;
+	NmpAddHdToGroupRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfAddHdToGroupRes *)MSG_GET_DATA(msg);
+	res_info = (NmpAddHdToGroupRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_HD, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_HD, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1128,19 +1128,19 @@ NmpMsgFunRet
 nmp_mod_log_del_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfDelHdFromGroupRes *res_info;
+	NmpDelHdFromGroupRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfDelHdFromGroupRes *)MSG_GET_DATA(msg);
+	res_info = (NmpDelHdFromGroupRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_HD, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_HD, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1149,19 +1149,19 @@ NmpMsgFunRet
 nmp_mod_log_reboot_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfRebootMssRes *res_info;
+	NmpRebootMssRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfRebootMssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpRebootMssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_REBOOT_MSS, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_REBOOT_MSS, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1170,19 +1170,19 @@ NmpMsgFunRet
 nmp_mod_log_del_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfDelHdGroupRes *res_info;
+	NmpDelHdGroupRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfDelHdGroupRes *)MSG_GET_DATA(msg);
+	res_info = (NmpDelHdGroupRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_HD_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_HD_GROUP, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1191,17 +1191,17 @@ NmpMsgFunRet
 nmp_mod_log_add_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_DEFENCE_AREA, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_DEFENCE_AREA, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1210,17 +1210,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-/*	JpfBssRes *res_info;
+/*	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_DEFENCE_AREA, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_DEFENCE_AREA, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 */
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1229,17 +1229,17 @@ NmpMsgFunRet
 nmp_mod_log_del_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_DEFENCE_AREA, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_DEFENCE_AREA, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1248,17 +1248,17 @@ NmpMsgFunRet
 nmp_mod_log_add_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_DEFENCE_MAP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_DEFENCE_MAP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1267,17 +1267,17 @@ NmpMsgFunRet
 nmp_mod_log_del_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_DEFENCE_MAP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_DEFENCE_MAP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1286,17 +1286,17 @@ NmpMsgFunRet
 nmp_mod_log_add_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_DEFENCE_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_DEFENCE_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1305,17 +1305,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_DEFENCE_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_DEFENCE_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1324,17 +1324,17 @@ NmpMsgFunRet
 nmp_mod_log_del_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_DEFENCE_GU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_DEFENCE_GU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1343,17 +1343,17 @@ NmpMsgFunRet
 nmp_mod_log_set_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_SET_MAP_HREF, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_SET_MAP_HREF, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1362,17 +1362,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_MAP_HREF, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_MAP_HREF, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1381,17 +1381,17 @@ NmpMsgFunRet
 nmp_mod_log_del_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_MAP_HREF, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_MAP_HREF, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1400,17 +1400,17 @@ NmpMsgFunRet
 nmp_mod_log_platform_upgrade_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfPlatformUpgradeResp *res_info;
+	NmpPlatformUpgradeResp *res_info;
 	gint ret;
 
-	res_info = (JpfPlatformUpgradeResp *)MSG_GET_DATA(msg);
+	res_info = (NmpPlatformUpgradeResp *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_PLATFORM_UPGRADE, LOG_LEVEL_2,
+	ret = nmp_log(app_obj, msg, LOG_PLATFORM_UPGRADE, LOG_LEVEL_2,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1419,17 +1419,17 @@ NmpMsgFunRet
 nmp_mod_log_del_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfMsgCode *res_info;
+	NmpMsgCode *res_info;
 	gint ret;
 
-	res_info = (JpfMsgCode *)MSG_GET_DATA(msg);
+	res_info = (NmpMsgCode *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_ALARM, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_ALARM, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1438,17 +1438,17 @@ NmpMsgFunRet
 nmp_mod_log_set_del_alarm_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_SET_DEL_ALARM_POLICY, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_SET_DEL_ALARM_POLICY, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1457,17 +1457,17 @@ NmpMsgFunRet
 nmp_mod_log_add_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_TW, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_TW, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1476,17 +1476,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODITY_TW, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODITY_TW, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1495,17 +1495,17 @@ NmpMsgFunRet
 nmp_mod_log_del_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_TW, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_TW, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1514,17 +1514,17 @@ NmpMsgFunRet
 nmp_mod_log_add_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_SCREEN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_SCREEN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1533,17 +1533,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_SCREEN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_SCREEN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1552,17 +1552,17 @@ NmpMsgFunRet
 nmp_mod_log_del_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_SCREEN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_SCREEN, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1571,17 +1571,17 @@ NmpMsgFunRet
 nmp_mod_log_add_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_TOUR, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_TOUR, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1590,17 +1590,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_TOUR, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_TOUR, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1609,17 +1609,17 @@ NmpMsgFunRet
 nmp_mod_log_del_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_TOUR, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_TOUR, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1628,17 +1628,17 @@ NmpMsgFunRet
 nmp_mod_log_add_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_TOUR_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_TOUR_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1647,17 +1647,17 @@ NmpMsgFunRet
 nmp_mod_log_add_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1666,17 +1666,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1685,17 +1685,17 @@ NmpMsgFunRet
 nmp_mod_log_del_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_GROUP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_GROUP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1704,17 +1704,17 @@ NmpMsgFunRet
 nmp_mod_log_add_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_GROUP_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_GROUP_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1723,17 +1723,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_GROUP_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_GROUP_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1742,17 +1742,17 @@ NmpMsgFunRet
 nmp_mod_log_del_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_GROUP_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_GROUP_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1761,17 +1761,17 @@ NmpMsgFunRet
 nmp_mod_log_config_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_CONFIG_GROUP_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_CONFIG_GROUP_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1780,17 +1780,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_group_step_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_GROUP_STEP_INFO, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_GROUP_STEP_INFO, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1799,17 +1799,17 @@ NmpMsgFunRet
 nmp_mod_log_del_group_step_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_GROUP_STEP_INFO, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_GROUP_STEP_INFO, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1818,17 +1818,17 @@ NmpMsgFunRet
 nmp_mod_log_link_time_policy_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_TIME_POLICY_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_TIME_POLICY_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1837,17 +1837,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_TIME_POLICY, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_TIME_POLICY, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1856,17 +1856,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_TIME_POLICY, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_TIME_POLICY, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1875,17 +1875,17 @@ NmpMsgFunRet
 nmp_mod_log_link_record_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_RECORD_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_RECORD_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1894,17 +1894,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_record_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_RECORD, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_RECORD, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1913,17 +1913,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_record_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_RECORD, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_RECORD, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1932,17 +1932,17 @@ NmpMsgFunRet
 nmp_mod_log_link_io_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_IO_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_IO_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1951,17 +1951,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_io_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_IO, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_IO, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1970,17 +1970,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_io_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_IO, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_IO, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -1989,17 +1989,17 @@ NmpMsgFunRet
 nmp_mod_log_link_snapshot_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_SNAPSHOT_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_SNAPSHOT_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2008,17 +2008,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_snapshot_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_SNAPSHOT, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_SNAPSHOT, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2027,17 +2027,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_snapshot_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_SNAPSHOT, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_SNAPSHOT, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2046,17 +2046,17 @@ NmpMsgFunRet
 nmp_mod_log_link_preset_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_PRESET_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_PRESET_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2065,17 +2065,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_preset_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_PRESET, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_PRESET, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2084,17 +2084,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_preset_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_PRESET, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_PRESET, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2103,17 +2103,17 @@ NmpMsgFunRet
 nmp_mod_log_link_step_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_STEP_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_STEP_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2122,17 +2122,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2141,17 +2141,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_STEP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_STEP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2160,17 +2160,17 @@ NmpMsgFunRet
 nmp_mod_log_auto_add_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_AUTO_ADD_PU, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_AUTO_ADD_PU, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2179,19 +2179,19 @@ NmpMsgFunRet
 nmp_mod_log_set_initiator_name_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfSetInitNameRes *res_info;
+	NmpSetInitNameRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfSetInitNameRes *)MSG_GET_DATA(msg);
+	res_info = (NmpSetInitNameRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_SET_INITIATOR_NAME, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_SET_INITIATOR_NAME, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2200,19 +2200,19 @@ NmpMsgFunRet
 nmp_mod_log_add_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfAddOneIpsanRes *res_info;
+	NmpAddOneIpsanRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfAddOneIpsanRes *)MSG_GET_DATA(msg);
+	res_info = (NmpAddOneIpsanRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_ONE_IPSAN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_ONE_IPSAN, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2221,19 +2221,19 @@ NmpMsgFunRet
 nmp_mod_log_del_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfDeleteOneIpsanRes *res_info;
+	NmpDeleteOneIpsanRes *res_info;
 	gint ret;
 
 	NMP_CHECK_MSS_MSG_RES(msg);
 
-	res_info = (JpfDeleteOneIpsanRes *)MSG_GET_DATA(msg);
+	res_info = (NmpDeleteOneIpsanRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_ONE_IPSAN, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_ONE_IPSAN, LOG_LEVEL_1,
 		res_info->session, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2242,17 +2242,17 @@ NmpMsgFunRet
 nmp_mod_log_link_map_config_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_LINK_MAP_CONFIG, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_LINK_MAP_CONFIG, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2261,17 +2261,17 @@ NmpMsgFunRet
 nmp_mod_log_modify_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_MODIFY_LINK_MAP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_MODIFY_LINK_MAP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2280,17 +2280,17 @@ NmpMsgFunRet
 nmp_mod_log_del_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_DEL_LINK_MAP, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_DEL_LINK_MAP, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2299,17 +2299,17 @@ NmpMsgFunRet
 nmp_mod_log_add_tw_to_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_TW_TO_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_TW_TO_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
@@ -2318,17 +2318,17 @@ NmpMsgFunRet
 nmp_mod_log_add_tour_to_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
-	JpfBssRes *res_info;
+	NmpBssRes *res_info;
 	gint ret;
 
-	res_info = (JpfBssRes *)MSG_GET_DATA(msg);
+	res_info = (NmpBssRes *)MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
-	ret = jpf_log(app_obj, msg, LOG_ADD_TOUR_TO_USER, LOG_LEVEL_1,
+	ret = nmp_log(app_obj, msg, LOG_ADD_TOUR_TO_USER, LOG_LEVEL_1,
 		res_info->bss_usr, RES_CODE(res_info), NULL, NULL, NULL);
 	NMP_DEAL_LOG_RESULT(ret);
 
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 

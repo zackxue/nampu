@@ -41,7 +41,7 @@ struct _HmWatch
 
     GMutex              *lock;
 
-    JpfNetBuf           *buffer;
+    NmpNetBuf           *buffer;
     HmConnection       *conn;
     HmWatchFuncs       *funcs;
 
@@ -62,28 +62,28 @@ struct _HmWatch
 };
 
 
-HmWatch *jpf_watch_create(HmConnection *conn,
+HmWatch *nmp_watch_create(HmConnection *conn,
     HmWatchFuncs *funcs, gint size);
 
-HmWatch *jpf_listen_watch_create(HmConnection *conn,
+HmWatch *nmp_listen_watch_create(HmConnection *conn,
     HmWatchFuncs *funcs, gint size);
 
-void jpf_watch_attach(HmWatch *watch, GMainContext *context);
+void nmp_watch_attach(HmWatch *watch, GMainContext *context);
 
-gint jpf_watch_recv_message(HmWatch *watch, gpointer msg);
-gint jpf_watch_write_message(HmWatch *watch, gpointer msg);
+gint nmp_watch_recv_message(HmWatch *watch, gpointer msg);
+gint nmp_watch_write_message(HmWatch *watch, gpointer msg);
 
-void jpf_watch_kill(HmWatch *watch);
+void nmp_watch_kill(HmWatch *watch);
 
-void jpf_watch_ref(HmWatch *watch);
-void jpf_watch_unref(HmWatch *watch);
+void nmp_watch_ref(HmWatch *watch);
+void nmp_watch_unref(HmWatch *watch);
 
-void jpf_watch_set_private(HmWatch *watch, gpointer priv_data);
-gboolean jpf_watch_set_conn_ttd(HmWatch *watch, gint milli_sec);
+void nmp_watch_set_private(HmWatch *watch, gpointer priv_data);
+gboolean nmp_watch_set_conn_ttd(HmWatch *watch, gint milli_sec);
 
-gchar *jpf_watch_get_peer(HmWatch *watch);
-void jpf_watch_set_heavy_load(HmWatch *watch);
-void jpf_watch_set_block_size(HmWatch *watch, gint block_size);
+gchar *nmp_watch_get_peer(HmWatch *watch);
+void nmp_watch_set_heavy_load(HmWatch *watch);
+void nmp_watch_set_block_size(HmWatch *watch, gint block_size);
 
 G_END_DECLS
 

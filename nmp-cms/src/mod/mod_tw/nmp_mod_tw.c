@@ -16,17 +16,17 @@
 
 pthread_t tw_tid;
 #define TW_WORK_TIME	(200)	//200 ms
-static JpfModTw *g_nmp_mod_tw;
+static NmpModTw *g_nmp_mod_tw;
 //static guint msg_seq_generator = 0;
 
 
-G_DEFINE_TYPE(JpfModTw, nmp_mod_tw, NMP_TYPE_APPMOD);
+G_DEFINE_TYPE(NmpModTw, nmp_mod_tw, NMP_TYPE_APPMOD);
 
 void
-nmp_mod_tw_register_msg_handler(JpfModTw *self);
+nmp_mod_tw_register_msg_handler(NmpModTw *self);
 
 
-JpfModTw *jpf_get_mod_tw()
+NmpModTw *nmp_get_mod_tw()
 {
 	return g_nmp_mod_tw;
 }
@@ -36,10 +36,10 @@ void *nmp_mod_tw_work(void *arg)
 {
 	while (1)
 	{
-		jpf_tw_tvwall_work();
+		nmp_tw_tvwall_work();
 		usleep(TW_WORK_TIME * 1000);
 	}
-//	jpf_tw_tvwall_clear();
+//	nmp_tw_tvwall_clear();
 //	pthread_detach(pthread_self());
 	return ((void *)1);
 }
@@ -48,10 +48,10 @@ void *nmp_mod_tw_work(void *arg)
 gint
 nmp_mod_tw_setup(NmpAppMod *am_self)
 {
-	JpfModTw *self;
+	NmpModTw *self;
 	G_ASSERT(am_self != NULL);
 
-	self = (JpfModTw*)am_self;
+	self = (NmpModTw*)am_self;
 
 	nmp_app_mod_set_name(am_self, "MOD-TW");
 	nmp_mod_tw_register_msg_handler(self);
@@ -60,21 +60,21 @@ nmp_mod_tw_setup(NmpAppMod *am_self)
 
 
 static void
-nmp_mod_tw_init(JpfModTw *self)
+nmp_mod_tw_init(NmpModTw *self)
 {
 	nmp_mod_tw_func_begin("\n");
 	int ret;
 
 	g_nmp_mod_tw = self;
-	jpf_tw_set_event_handler(nmp_mod_tw_event_handler);
+	nmp_tw_set_event_handler(nmp_mod_tw_event_handler);
 	ret = pthread_create(&tw_tid, NULL, nmp_mod_tw_work, NULL);
 	if (ret != 0)
-		jpf_warning("pthread_create failed\n");
+		nmp_warning("pthread_create failed\n");
 }
 
 
 static void
-nmp_mod_tw_class_init(JpfModTwClass *k_class)
+nmp_mod_tw_class_init(NmpModTwClass *k_class)
 {
 	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
@@ -92,25 +92,25 @@ static gint nmp_mod_tw_get_tour(tw_tour_msg_request *in_parm,
 	tw_tour_msg_response *res_info;
 	G_ASSERT(out_parm);
 
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_GET_TOUR, in_parm,
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_GET_TOUR, in_parm,
 		sizeof(tw_tour_msg_request), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw tour info failed!"
+		nmp_warning(
+			"<NmpModTw> request tw tour info failed!"
 		);
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw tour info timeout!"
+		nmp_warning(
+			"<NmpModTw> request tw tour info timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -125,13 +125,13 @@ static gint nmp_mod_tw_get_tour(tw_tour_msg_request *in_parm,
 
 	memcpy(out_parm, res_info, sizeof(tw_tour_msg_response));
 	out_parm->steps =
-		(tw_tour_step_response *)jpf_mem_kalloc(sizeof(tw_tour_step_response) *
+		(tw_tour_step_response *)nmp_mem_kalloc(sizeof(tw_tour_step_response) *
 		out_parm->step_count);
 	memcpy(out_parm->steps, res_info->steps, sizeof(tw_tour_step_response) *
 		out_parm->step_count);
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return err;
 }
 
@@ -146,25 +146,25 @@ static gint nmp_mod_tw_get_group(tw_group_msg_request *in_parm,
 	tw_group_msg_response *res_info;
 	G_ASSERT(out_parm);
 
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_GET_GROUP, in_parm,
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_GET_GROUP, in_parm,
 		sizeof(tw_group_msg_request), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw group info failed!"
+		nmp_warning(
+			"<NmpModTw> request tw group info failed!"
 		);
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw group info timeout!"
+		nmp_warning(
+			"<NmpModTw> request tw group info timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -179,7 +179,7 @@ static gint nmp_mod_tw_get_group(tw_group_msg_request *in_parm,
 	memcpy(out_parm, res_info, sizeof(tw_group_msg_response));
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return err;
 }
 
@@ -194,25 +194,25 @@ static gint nmp_mod_tw_get_group_step_n(tw_group_step_n_request *in_parm,
 	tw_group_step_n_response *res_info;
 	G_ASSERT(out_parm);
 
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_GET_GROUP_STEP_N, in_parm,
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_GET_GROUP_STEP_N, in_parm,
 		sizeof(tw_group_step_n_request), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw group step info failed!"
+		nmp_warning(
+			"<NmpModTw> request tw group step info failed!"
 		);
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModTw> request tw group step info timeout!"
+		nmp_warning(
+			"<NmpModTw> request tw group step info timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -227,14 +227,14 @@ static gint nmp_mod_tw_get_group_step_n(tw_group_step_n_request *in_parm,
 
 	memcpy(out_parm, res_info, sizeof(tw_group_step_n_response));
 	out_parm->screens =
-		(tw_group_screen_response *)jpf_mem_kalloc(sizeof(tw_group_screen_response) *
+		(tw_group_screen_response *)nmp_mem_kalloc(sizeof(tw_group_screen_response) *
 		out_parm->screen_sum);
 	if (res_info->screen_sum != 0)
 		memcpy(out_parm->screens, res_info->screens,
 		sizeof(tw_group_screen_response) * out_parm->screen_sum);
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return err;
 }
 
@@ -249,25 +249,25 @@ static gint nmp_mod_tw_get_dis_guid(tw_dis_guid_request *in_parm,
 	tw_dis_guid_response *res_info;
 	G_ASSERT(out_parm);
 
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_GET_DIS_GUID, in_parm,
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_GET_DIS_GUID, in_parm,
 		sizeof(tw_dis_guid_request), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModTw> request display guid failed!"
+		nmp_warning(
+			"<NmpModTw> request display guid failed!"
 		);
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModTw> request display guid timeout!"
+		nmp_warning(
+			"<NmpModTw> request display guid timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -283,7 +283,7 @@ static gint nmp_mod_tw_get_dis_guid(tw_dis_guid_request *in_parm,
 	memcpy(out_parm, res_info, sizeof(tw_dis_guid_response));
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return err;
 }
 
@@ -298,25 +298,25 @@ static gint nmp_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
 	tw_ec_url_response *res_info;
 	G_ASSERT(out_parm);
 
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_GET_EC_URL, in_parm,
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_GET_EC_URL, in_parm,
 		sizeof(tw_ec_url_request), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)nmp_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
-		jpf_warning(
-			"<JpfModTw> request encoder URL failed!"
+		nmp_warning(
+			"<NmpModTw> request encoder URL failed!"
 		);
 		goto end;
 	}
 
 	if (G_UNLIKELY(!msg))	/* sent, but no response */
 	{
-		jpf_warning(
-			"<JpfModTw> request encoder URL timeout!"
+		nmp_warning(
+			"<NmpModTw> request encoder URL timeout!"
 		);
 		return -E_TIMEOUT;
 	}
@@ -333,7 +333,7 @@ static gint nmp_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
 	memcpy(out_parm, res_info, sizeof(tw_ec_url_response));
 
 end:
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return err;
 }
 
@@ -341,14 +341,14 @@ end:
 static gint nmp_mod_tw_query_if_update_ec_url(tw_update_url *in_parm)
 {
 	NmpSysMsg *msg;
-	JpfModTw *self;
+	NmpModTw *self;
 
-	self = jpf_get_mod_tw();
-	msg = jpf_sysmsg_new_2(MSG_TW_INFO_CHECK_EC_URL_UPDATE, in_parm,
+	self = nmp_get_mod_tw();
+	msg = nmp_sysmsg_new_2(MSG_TW_INFO_CHECK_EC_URL_UPDATE, in_parm,
 		sizeof(tw_update_url), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 	{
-		jpf_warning("jpf_sysmsg_new_2 failed, no memory\n");
+		nmp_warning("nmp_sysmsg_new_2 failed, no memory\n");
 		return -1;
 	}
 
@@ -367,15 +367,15 @@ static gint nmp_mod_tw_send_screen_to_dec(tw_screen_to_decoder_with_seq *in_parm
 	nmp_mod_tw_func_begin("\n");
 
 	NmpSysMsg *msg;
-	JpfModTw *self;
+	NmpModTw *self;
 
-	self = jpf_get_mod_tw();
-	msg = jpf_sysmsg_new(MESSAGE_TW_PLAY, &in_parm->screen_to_dec,
+	self = nmp_get_mod_tw();
+	msg = nmp_sysmsg_new(MESSAGE_TW_PLAY, &in_parm->screen_to_dec,
 		sizeof(tw_screen_to_decoder), in_parm->seq,
-		(JpfMsgPrivDes)jpf_tw_destroy_screen_to_dec);	//注意，传递销毁函数指针
+		(NmpMsgPrivDes)nmp_tw_destroy_screen_to_dec);	//注意，传递销毁函数指针
 	if (G_UNLIKELY(!msg))
 	{
-		jpf_warning("jpf_sysmsg_new failed, no memory\n");
+		nmp_warning("nmp_sysmsg_new failed, no memory\n");
 		return -1;
 	}
 
@@ -391,11 +391,11 @@ static gint nmp_mod_tw_send_screen_to_cu(tw_screen_to_cu *in_parm)
 	nmp_mod_tw_func_begin("\n");
 
 	NmpSysMsg *msg;
-	JpfModTw *self;
+	NmpModTw *self;
 
-	self = jpf_get_mod_tw();
+	self = nmp_get_mod_tw();
 
-	msg = jpf_sysmsg_new_2(MESSAGE_TW_PLAY_NOTIFY, in_parm,
+	msg = nmp_sysmsg_new_2(MESSAGE_TW_PLAY_NOTIFY, in_parm,
 		sizeof(tw_screen_to_cu), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
@@ -412,10 +412,10 @@ static gint nmp_mod_tw_run_res_to_cu(tw_run_res *in_parm)
 	nmp_mod_tw_func_begin("\n");
 
 	NmpSysMsg *msg = NULL;
-	JpfModTw *self;
-	JpfCuExecuteRes res_info;
+	NmpModTw *self;
+	NmpCuExecuteRes res_info;
 
-	self = jpf_get_mod_tw();
+	self = nmp_get_mod_tw();
 
  	memset(&res_info, 0, sizeof(res_info));
  	SET_CODE(&res_info, in_parm->result);
@@ -425,10 +425,10 @@ static gint nmp_mod_tw_run_res_to_cu(tw_run_res *in_parm)
 	{
 		if (in_parm->cu_seq == TW_ILLEGAL_SEQ_NUM)
 		{
-			jpf_print("<JpfModTw> link step return, result = %d.", in_parm->result);
+			nmp_print("<NmpModTw> link step return, result = %d.", in_parm->result);
 			return 0;
 		}
-		msg = jpf_sysmsg_new_2(MESSAGE_TW_RUN_STEP, &res_info,
+		msg = nmp_sysmsg_new_2(MESSAGE_TW_RUN_STEP, &res_info,
 			sizeof(res_info), in_parm->cu_seq);
 	}
 	else
@@ -450,11 +450,11 @@ static gint nmp_mod_tw_operate_to_dec(tw_operate_to_decoder_with_seq *in_parm,
 	nmp_mod_tw_func_begin("\n");
 
 	NmpSysMsg *msg;
-	JpfModTw *self;
+	NmpModTw *self;
 
-	self = jpf_get_mod_tw();
+	self = nmp_get_mod_tw();
 
-	msg = jpf_sysmsg_new_2(operate_type, &in_parm->operate_to_dec,
+	msg = nmp_sysmsg_new_2(operate_type, &in_parm->operate_to_dec,
 		sizeof(tw_operate_to_decoder), in_parm->seq);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
@@ -473,16 +473,16 @@ static gint nmp_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in
 
 	NmpSysMsg *msg;
 	NmpSysMsg *res_msg;
-	JpfModTw *self;
-	JpfCuExecuteRes res;
+	NmpModTw *self;
+	NmpCuExecuteRes res;
 
-	self = jpf_get_mod_tw();
+	self = nmp_get_mod_tw();
 
 	//operate result
 	memset(&res, 0, sizeof(res));
 	SET_CODE(&res, in_parm->to_cu.result);
 	strncpy(res.session, in_parm->to_cu.session_id, SESSION_ID_LEN - 1);
-	res_msg = jpf_sysmsg_new_2(operate_type, &res, sizeof(res), in_parm->seq);
+	res_msg = nmp_sysmsg_new_2(operate_type, &res, sizeof(res), in_parm->seq);
 	if (G_UNLIKELY(!res_msg))
 		return -E_NOMEM;
 
@@ -493,12 +493,12 @@ static gint nmp_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in
 
 	if (in_parm->to_cu.result != 0)
 	{
-		jpf_warning("<JpfModTw> operate result=%d, not to notify.",
+		nmp_warning("<NmpModTw> operate result=%d, not to notify.",
 			in_parm->to_cu.result);
 		return 0;
 	}
 	//通告
-	msg = jpf_sysmsg_new_2(MESSAGE_TW_OPERATE_NOTIFY, &in_parm->to_cu,
+	msg = nmp_sysmsg_new_2(MESSAGE_TW_OPERATE_NOTIFY, &in_parm->to_cu,
 		sizeof(tw_operate_result_to_cu), ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -E_NOMEM;
@@ -513,7 +513,7 @@ static gint nmp_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in
 gint nmp_mod_tw_event_handler(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
 {
 	gint err = -1;
-	G_ASSERT(jpf_get_mod_tw() != NULL);
+	G_ASSERT(nmp_get_mod_tw() != NULL);
 	G_ASSERT(in_parm);
 
 	switch (cmd)

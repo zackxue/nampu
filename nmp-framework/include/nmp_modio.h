@@ -30,21 +30,21 @@ typedef struct _NmpModIOClass NmpModIOClass;
 
 struct _NmpModIO
 {
-    JpfObject parent_object;
+    NmpObject parent_object;
 
     gpointer owner;     /* parent mod */
-    JpfISlot *i_peer;	/* always bus slot */
+    NmpISlot *i_peer;	/* always bus slot */
 };
 
 
 struct _NmpModIOClass	/* help to implement iSlot interface */
 {
-    JpfObjectClass parent_class;
+    NmpObjectClass parent_class;
 
     gint (*slot_init)(NmpModIO *self, GValue *parm);
     gint (*mod_snd)(NmpModIO *self, NmpSysMsg *msg);
     gint (*mod_rcv)(NmpModIO *self, NmpSysMsg *msg);
-    gint (*connect)(NmpModIO *self, JpfISlot *i_peer);
+    gint (*connect)(NmpModIO *self, NmpISlot *i_peer);
     gint (*disconnect)(NmpModIO *self);
     gint (*slot_ok)(NmpModIO *self);    
 };

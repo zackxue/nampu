@@ -33,7 +33,7 @@ typedef struct device_info
     char res[32];
 }device_info_t;
 
-typedef struct jpf_platform
+typedef struct nmp_platform
 {
     char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
     char mds_ip[NMP_SEARCH_IP_LEN];     //平台mds ip
@@ -41,18 +41,18 @@ typedef struct jpf_platform
     int mds_port;                       //平台mds端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
     char res[32];
-}jpf_platform_t;
+}nmp_platform_t;
 
-typedef struct jpf_search
+typedef struct nmp_search
 {
     device_info_t  dev_info;
-    jpf_platform_t jpf_plt;
-}jpf_search_t;
+    nmp_platform_t nmp_plt;
+}nmp_search_t;
 
 typedef struct search_result
 {
     char dst_id[NMP_SEARCH_ID_LEN];
-    jpf_search_t jpf_srch;
+    nmp_search_t nmp_srch;
 }search_result_t;
 
 typedef struct search_array
@@ -78,11 +78,11 @@ typedef struct redirect
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
 }redirect_t;
 
-typedef struct jpf_redirect
+typedef struct nmp_redirect
 {
     user_info_t user_info;
     redirect_t redirect;
-}jpf_redirect_t;
+}nmp_redirect_t;
 
 
 #ifdef __cplusplus
@@ -95,7 +95,7 @@ extern "C" {
     search_array_t *search_device();
     void destory_search_result(search_array_t *array);
 
-    int set_platform_info(char *dst_id, jpf_redirect_t *jpf_red);
+    int set_platform_info(char *dst_id, nmp_redirect_t *nmp_red);
 
 
 

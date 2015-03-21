@@ -8,14 +8,14 @@ typedef enum
 	STAT_IVS_REGISTERING,
 	STAT_IVS_ONLINE,
 	STAT_IVS_OFFLINE
-}JpfIvsState;
+}NmpIvsState;
 
-typedef struct _JpfIvs JpfIvs;
-struct _JpfIvs
+typedef struct _NmpIvs NmpIvs;
+struct _NmpIvs
 {
-	JpfGuestBase	guest_base;
+	NmpGuestBase	guest_base;
 
-	JpfIvsState 	ivs_state;
+	NmpIvsState 	ivs_state;
 	gint            ttl;      /*time to live*/
 	gint            hb_freq;  /*keep alive frequency(sec)*/
 };

@@ -8,16 +8,16 @@
  *
 */
 
-G_DEFINE_INTERFACE(JpfISlot, jpf_islot, G_TYPE_OBJECT);
+G_DEFINE_INTERFACE(NmpISlot, nmp_islot, G_TYPE_OBJECT);
 
 static void
-jpf_islot_default_init(JpfISlotInterface *islot_iface)
+nmp_islot_default_init(NmpISlotInterface *islot_iface)
 {//{Empty}
 }
 
 
 gint
-jpf_islot_init(JpfISlot *self, GValue *parm)
+nmp_islot_init(NmpISlot *self, GValue *parm)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), -E_INVAL);
 
@@ -26,7 +26,7 @@ jpf_islot_init(JpfISlot *self, GValue *parm)
 
 
 gint
-jpf_islot_send(JpfISlot *self, JpfData *data)
+nmp_islot_send(NmpISlot *self, NmpData *data)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), -E_INVAL);
 
@@ -35,7 +35,7 @@ jpf_islot_send(JpfISlot *self, JpfData *data)
 
 
 gint
-jpf_islot_recv(JpfISlot *self, JpfData *data)
+nmp_islot_recv(NmpISlot *self, NmpData *data)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), -E_INVAL);
 
@@ -44,7 +44,7 @@ jpf_islot_recv(JpfISlot *self, JpfData *data)
 
 
 gint
-jpf_islot_link(JpfISlot *self, JpfISlot *peer)
+nmp_islot_link(NmpISlot *self, NmpISlot *peer)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), -E_INVAL);
 	g_return_val_if_fail(NMP_IS_ISLOT(peer), -E_INVAL);
@@ -54,7 +54,7 @@ jpf_islot_link(JpfISlot *self, JpfISlot *peer)
 
 
 gint
-jpf_islot_unlink(JpfISlot *self)
+nmp_islot_unlink(NmpISlot *self)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), -E_INVAL);
 
@@ -63,7 +63,7 @@ jpf_islot_unlink(JpfISlot *self)
 
 
 gboolean
-jpf_islot_ready(JpfISlot *self)
+nmp_islot_ready(NmpISlot *self)
 {
 	g_return_val_if_fail(NMP_IS_ISLOT(self), FALSE);
 

@@ -20,14 +20,14 @@ typedef struct _NmpAppObjClass NmpAppObjClass;
 
 struct _NmpAppObj
 {
-	JpfObject parent_object;
+	NmpObject parent_object;
 
 };
 
 
 struct _NmpAppObjClass
 {
-	JpfObjectClass parent_class;
+	NmpObjectClass parent_class;
 
 	void (*deliver_in)(NmpAppObj *self, NmpSysMsg *msg);
 	void (*deliver_out)(NmpAppObj *self, NmpSysMsg *msg);

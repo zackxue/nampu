@@ -16,28 +16,28 @@ USING_MSG_ID_MAP(cms);
 #define FTP_PORT   2121
 
 extern void
-nmp_mod_cu_update_usr_group_permissions(JpfModCu *self,
+nmp_mod_cu_update_usr_group_permissions(NmpModCu *self,
     gint group_id, gint permission, gint rank);
 
 
 gint
-nmp_mod_cu_check_permissions(JpfModCu *self, JpfNetIO *io,
-    JpfUsrGrpPermissions perm, gint *p_rank)
+nmp_mod_cu_check_permissions(NmpModCu *self, NmpNetIO *io,
+    NmpUsrGrpPermissions perm, gint *p_rank)
 {
-    JpfGuestBase *cu_base;
+    NmpGuestBase *cu_base;
     gint permissions, right_flag, rank ;
 
-    cu_base = jpf_mods_container_get_guest(self->container, io);
+    cu_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
         return -E_NOSUCHGUEST;
 
-    JpfCu *cu;
-    cu = (JpfCu*)cu_base;
+    NmpCu *cu;
+    cu = (NmpCu*)cu_base;
 
-    permissions = jpf_get_usr_permissions(cu);
+    permissions = nmp_get_usr_permissions(cu);
     right_flag = NMP_USR_GRP_PERMISSION(permissions, perm);
-    rank = jpf_get_usr_rank(cu);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    rank = nmp_get_usr_rank(cu);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     if (G_LIKELY(right_flag == perm))
     {
@@ -46,16 +46,16 @@ nmp_mod_cu_check_permissions(JpfModCu *self, JpfNetIO *io,
         return 0;
     }
 
-    jpf_warning("<JpfModCu> check cu permission err:%d, username:%s.",
-    	-E_NOPERMISSION, jpf_get_usr_name(cu)
+    nmp_warning("<NmpModCu> check cu permission err:%d, username:%s.",
+    	-E_NOPERMISSION, nmp_get_usr_name(cu)
     );
     return -E_NOPERMISSION;
 }
 
 static __inline__ void
-nmp_mod_cu_check_rank(JpfModCu *self, NmpSysMsg *msg, JpfUsrGrpPermissions perm, gint rank)
+nmp_mod_cu_check_rank(NmpModCu *self, NmpSysMsg *msg, NmpUsrGrpPermissions perm, gint rank)
 {
-    JpfControlPtz *req_info;
+    NmpControlPtz *req_info;
 
     if (perm&USR_GRP_PTZ_CONTROL)
     {
@@ -66,11 +66,11 @@ nmp_mod_cu_check_rank(JpfModCu *self, NmpSysMsg *msg, JpfUsrGrpPermissions perm,
 }
 
 NmpMsgFunRet
-nmp_mod_cu_forward(JpfModCu *self, NmpSysMsg *msg,
-    JpfUsrGrpPermissions perm,JpfBusSlotPos dst_pos)
+nmp_mod_cu_forward(NmpModCu *self, NmpSysMsg *msg,
+    NmpUsrGrpPermissions perm,NmpBusSlotPos dst_pos)
 {
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, rank, ret;
 
     io = MSG_IO(msg);
@@ -86,29 +86,29 @@ nmp_mod_cu_forward(JpfModCu *self, NmpSysMsg *msg,
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
             MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
 
 
 NmpMsgFunRet
-nmp_mod_cu_backward(JpfModCu *self, NmpSysMsg *msg, const gchar *id_str)
+nmp_mod_cu_backward(NmpModCu *self, NmpSysMsg *msg, const gchar *id_str)
 {
-    JpfGuestBase *cu_base;
-    JpfNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    cu_base = jpf_mods_container_get_guest_2(self->container, id_str);
+    cu_base = nmp_mods_container_get_guest_2(self->container, id_str);
     if (G_UNLIKELY(!cu_base))
     {
-        jpf_warning("<JpfModCu> deliver msg '%s' failed, session:%s no such cu.",
+        nmp_warning("<NmpModCu> deliver msg '%s' failed, session:%s no such cu.",
             MESSAGE_ID_TO_STR(cms, msg_id), id_str);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -116,18 +116,18 @@ nmp_mod_cu_backward(JpfModCu *self, NmpSysMsg *msg, const gchar *id_str)
     io = IO_OF_GUEST(cu_base);
     BUG_ON(!io);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
 
 
 NmpMsgFunRet
-nmp_mod_cu_forward_2(JpfModCu *self, NmpSysMsg *msg,
-    JpfUsrGrpPermissions perm, gpointer pri_data, gint size)
+nmp_mod_cu_forward_2(NmpModCu *self, NmpSysMsg *msg,
+    NmpUsrGrpPermissions perm, gpointer pri_data, gint size)
 {
-    JpfNetIO *io;
+    NmpNetIO *io;
     gint msg_id, rank, ret;
 
     io = MSG_IO(msg);
@@ -143,10 +143,10 @@ nmp_mod_cu_forward_2(JpfModCu *self, NmpSysMsg *msg,
 
     msg_id = MSG_GETID(msg);
     SET_CODE(pri_data, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
             MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, pri_data, size);
+    nmp_sysmsg_set_private_2(msg, pri_data, size);
 
     return MFR_DELIVER_BACK;
 }
@@ -155,10 +155,10 @@ nmp_mod_cu_forward_2(JpfModCu *self, NmpSysMsg *msg,
 NmpMsgFunRet
 nmp_mod_cu_get_device_info(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -169,10 +169,10 @@ nmp_mod_cu_get_device_info(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_device_channel_para(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceChannelInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceChannelInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -183,10 +183,10 @@ nmp_mod_cu_get_device_channel_para(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_device_para_res(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDeviceParaRes	 *res_info;
+    NmpModCu *self;
+    NmpSetDeviceParaRes	 *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -197,16 +197,16 @@ nmp_mod_cu_set_device_para_res(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_online_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfCuLoginInfo *req_info;
-    JpfCuLoginResp res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpCuLoginInfo *req_info;
+    NmpCuLoginResp res_info;
     gint ret;
     gchar session[SESSION_ID_LEN];
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -233,12 +233,12 @@ nmp_mod_cu_online_f(NmpAppObj *app_obj, NmpSysMsg *msg)
         req_info->password, session, SESSION_ID_LEN);
     if (ret)
     {
-        jpf_warning("<JpfModCu> user:%s login failed,err=%d", req_info->username, ret);
+        nmp_warning("<NmpModCu> user:%s login failed,err=%d", req_info->username, ret);
         goto err_login;
     }
 
-    jpf_warning("<JpfModCu> user:%s login ok", req_info->username);
-    JpfMsgUserLoginInfoRes LoginInfoRes;
+    nmp_warning("<NmpModCu> user:%s login ok", req_info->username);
+    NmpMsgUserLoginInfoRes LoginInfoRes;
     memset(&LoginInfoRes, 0, sizeof(LoginInfoRes));
     ret = nmp_mod_cu_get_user_login_info(self, &LoginInfoRes);
     if (ret)
@@ -254,36 +254,36 @@ nmp_mod_cu_online_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     SET_CODE(&res_info, RES_CODE(&LoginInfoRes));
     strcpy(res_info.session, session);
-    cu_base = jpf_mods_container_get_guest_2(self->container, session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, session);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
         SET_CODE(&res_info, -ret);
-        jpf_warning("<JpfModCu> session:%s No such guest.", session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", session);
     }
     else
     {
-        JpfCu *cu;
-        cu = (JpfCu*)cu_base;
-        res_info.usr_permissions = jpf_get_usr_permissions(cu);
-        jpf_mods_container_put_guest(self->container, cu_base);
+        NmpCu *cu;
+        cu = (NmpCu*)cu_base;
+        res_info.usr_permissions = nmp_get_usr_permissions(cu);
+        nmp_mods_container_put_guest(self->container, cu_base);
     }
     memset(&res_cap, 0, sizeof(res_cap));
     nmp_mod_get_resource_cap(&res_cap);
     res_info.module_sets = res_cap.module_bits;
-    jpf_net_io_set_ttd(io, CU_TIMEOUT);
+    nmp_net_io_set_ttd(io, CU_TIMEOUT);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 err_login:
-    jpf_print("<JpfModCu> user:%s login failed, err:%d", req_info->username, ret);
+    nmp_print("<NmpModCu> user:%s login failed, err:%d", req_info->username, ret);
     SET_CODE(&res_info, -ret);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
-    nmp_mod_acc_release_io((JpfModAccess*)self, io);
+    nmp_mod_acc_release_io((NmpModAccess*)self, io);
     nmp_mod_container_del_io(self->container, io);
 
     return MFR_ACCEPTED;
@@ -293,9 +293,9 @@ err_login:
 NmpMsgFunRet
 nmp_mod_cu_user_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfMsgDelUser *res_info = NULL;
-    JpfModCu *self;
-    JpfForceUsrOffline notify_info;
+    NmpMsgDelUser *res_info = NULL;
+    NmpModCu *self;
+    NmpForceUsrOffline notify_info;
     NmpSysMsg *msg_notify;
     gchar *username;
     gchar *name;
@@ -311,11 +311,11 @@ nmp_mod_cu_user_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     else
         notify_info.reason = 1;  //user info has been modified
 
-    msg_notify = jpf_sysmsg_new_2(MESSAGE_FORCE_USR_OFFLINE,
+    msg_notify = nmp_sysmsg_new_2(MESSAGE_FORCE_USR_OFFLINE,
         &notify_info, sizeof(notify_info), ++msg_seq_generator);
     if (G_UNLIKELY(!msg_notify))
     {
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -331,8 +331,8 @@ nmp_mod_cu_user_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
         nmp_mod_cu_force_usr_offline(self, offline_name, msg_notify);
     }
 
-    jpf_sysmsg_destroy(msg_notify);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg_notify);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -342,9 +342,9 @@ nmp_mod_cu_user_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_group_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfMsgDelUserGroup *res_info = NULL;
-    JpfModCu *self;
-    JpfForceUsrOffline notify_info;
+    NmpMsgDelUserGroup *res_info = NULL;
+    NmpModCu *self;
+    NmpForceUsrOffline notify_info;
     NmpSysMsg *msg_notify;
     gint group_id;
     gchar *del_group;
@@ -365,11 +365,11 @@ nmp_mod_cu_group_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     }
     else
         notify_info.reason = 2;//group of user has been deleted
-    msg_notify = jpf_sysmsg_new_2(MESSAGE_FORCE_USR_OFFLINE,
+    msg_notify = nmp_sysmsg_new_2(MESSAGE_FORCE_USR_OFFLINE,
         &notify_info, sizeof(notify_info), ++msg_seq_generator);
     if (G_UNLIKELY(!msg_notify))
     {
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
         return MFR_ACCEPTED;
     }
 
@@ -380,8 +380,8 @@ nmp_mod_cu_group_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
         nmp_mod_cu_force_usr_offline_by_group(self, group_id, msg_notify);
     }
 
-    jpf_sysmsg_destroy(msg_notify);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg_notify);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -390,8 +390,8 @@ nmp_mod_cu_group_force_usr_offline_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_change_pu_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfPuOwnToAllCu *res_info = NULL;
-    JpfModCu *self;
+    NmpPuOwnToAllCu *res_info = NULL;
+    NmpModCu *self;
     gint i;
 
     self = NMP_MODCU(app_obj);
@@ -400,7 +400,7 @@ nmp_mod_cu_change_pu_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     for(i = 0; i < res_info->total_num; i++)
         nmp_mod_cu_deliver_msg(self, res_info->cu_list[i].username, msg);
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -410,8 +410,8 @@ nmp_mod_cu_change_pu_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_broadcast_generic_msg_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfAuthorizationExpired *auth_exp;
+    NmpModCu *self;
+    NmpAuthorizationExpired *auth_exp;
     gchar param1[GENERAL_MSG_PARM_LEN], param2[GENERAL_MSG_PARM_LEN];
 
     self = NMP_MODCU(app_obj);
@@ -419,7 +419,7 @@ nmp_mod_cu_broadcast_generic_msg_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     snprintf(param1, GENERAL_MSG_PARM_LEN - 1, "%d", auth_exp->type);
     strncpy(param2, auth_exp->expired_time, TIME_LEN - 1);
     nmp_mod_cu_broadcast_generic_msg(self, MSG_AUTHORIZATION_EXPIRED, param1, param2, NULL, NULL);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }*/
@@ -427,11 +427,11 @@ nmp_mod_cu_broadcast_generic_msg_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_broadcast_generic_msg_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
 
     self = NMP_MODCU(app_obj);
     nmp_mod_cu_broadcast_to_all_user(self, msg);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -439,12 +439,12 @@ nmp_mod_cu_broadcast_generic_msg_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_notify_modify_domain_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
 
     self = NMP_MODCU(app_obj);
 
     nmp_mod_cu_deliver_msg_2(self, msg);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -453,15 +453,15 @@ nmp_mod_cu_notify_modify_domain_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfCuHeart *req_info;
-    JpfCuHeartResp res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpCuHeart *req_info;
+    NmpCuHeartResp res_info;
     NmpMsgID msg_id;
     gint ret = 0;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -470,21 +470,21 @@ nmp_mod_cu_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base = jpf_mods_container_get_guest(self->container, io);
+    cu_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
     }
     else
     {
-        jpf_get_utc_time(res_info.server_time);
-        jpf_mods_container_put_guest(self->container, cu_base);
+        nmp_get_utc_time(res_info.server_time);
+        nmp_mods_container_put_guest(self->container, cu_base);
      }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -493,8 +493,8 @@ nmp_mod_cu_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_submit_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfSubmitAlarmRes *res_info = NULL;
-    JpfModCu *self;
+    NmpSubmitAlarmRes *res_info = NULL;
+    NmpModCu *self;
     gint i;
 
     self = NMP_MODCU(app_obj);
@@ -503,7 +503,7 @@ nmp_mod_cu_submit_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     for(i = 0; i < res_info->total_num; i++)
         nmp_mod_cu_deliver_msg(self, res_info->cu_list[i].username, msg);
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -512,15 +512,15 @@ nmp_mod_cu_submit_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_all_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetArea *req_info;
-    JpfGetAreaRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetArea *req_info;
+    NmpGetAreaRes res_info;
     NmpMsgID msg_id;
     gint ret;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -529,21 +529,21 @@ nmp_mod_cu_get_all_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         memset(&res_info, 0, sizeof(res_info));
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -552,10 +552,10 @@ nmp_mod_cu_get_all_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_all_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAreaRes *res_info;
+    NmpModCu *self;
+    NmpGetAreaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -566,17 +566,17 @@ nmp_mod_cu_get_all_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_area_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetAreaInfo *req_info;
-    JpfGetAreaInfoRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetAreaInfo *req_info;
+    NmpGetAreaInfoRes res_info;
     NmpMsgID msg_id;
     gint ret;
-    JpfCu *cu;
+    NmpCu *cu;
     gint permissions, right_flag;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -585,35 +585,35 @@ nmp_mod_cu_get_area_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         memset(&res_info, 0, sizeof(res_info));
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
-    permissions = jpf_get_usr_permissions(cu);
+    cu = (NmpCu*)cu_base;
+    permissions = nmp_get_usr_permissions(cu);
     right_flag = NMP_USR_GRP_PERMISSION(permissions, USR_GRP_BROWSE_DEV_STATUS);
     if (G_LIKELY(right_flag != USR_GRP_BROWSE_DEV_STATUS))
     {
         ret = -E_NOPERMISSION;;
-        jpf_warning("<JpfModCu> user:%s No such permissiont.", cu->user->user_name);
+        nmp_warning("<NmpModCu> user:%s No such permissiont.", cu->user->user_name);
         MSG_SET_RESPONSE(msg);
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -622,10 +622,10 @@ nmp_mod_cu_get_area_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_area_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAreaInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetAreaInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -636,16 +636,16 @@ nmp_mod_cu_get_area_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_device_list_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetDevice *req_info;
-    JpfMsgErrCode res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetDevice *req_info;
+    NmpMsgErrCode res_info;
     NmpMsgID msg_id;
-    JpfCu *cu;
+    NmpCu *cu;
     gint ret;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -654,24 +654,24 @@ nmp_mod_cu_get_device_list_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base = jpf_mods_container_get_guest_2(self->container, req_info->session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, req_info->session);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
+    cu = (NmpCu*)cu_base;
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1)	;
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    jpf_sysmsg_set_private_2(msg, req_info, sizeof(JpfGetDevice));
+    nmp_sysmsg_set_private_2(msg, req_info, sizeof(NmpGetDevice));
 
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -680,9 +680,9 @@ nmp_mod_cu_get_device_list_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_device_list_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceRes *res_info;
-    self = (JpfModCu*)app_obj;
+    NmpModCu *self;
+    NmpGetDeviceRes *res_info;
+    self = (NmpModCu*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -694,17 +694,17 @@ nmp_mod_cu_get_device_list_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_area_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetAreaDevice *req_info;
-    JpfGetAreaInfoRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetAreaDevice *req_info;
+    NmpGetAreaInfoRes res_info;
     NmpMsgID msg_id;
-    JpfCu *cu;
+    NmpCu *cu;
     gint ret;
     gint permissions, right_flag;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -713,34 +713,34 @@ nmp_mod_cu_get_area_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base = jpf_mods_container_get_guest_2(self->container, req_info->session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, req_info->session);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
-    permissions = jpf_get_usr_permissions(cu);
+    cu = (NmpCu*)cu_base;
+    permissions = nmp_get_usr_permissions(cu);
     right_flag = NMP_USR_GRP_PERMISSION(permissions, USR_GRP_BROWSE_DEV_STATUS);
     if (G_LIKELY(right_flag != USR_GRP_BROWSE_DEV_STATUS))
     {
         ret = -E_NOPERMISSION;;
-        jpf_warning("<JpfModCu> user:%s No such permissiont.", cu->user->user_name);
+        nmp_warning("<NmpModCu> user:%s No such permissiont.", cu->user->user_name);
         MSG_SET_RESPONSE(msg);
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -749,9 +749,9 @@ nmp_mod_cu_get_area_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_area_device_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAreaDeviceRes *res_info;
-    self = (JpfModCu*)app_obj;
+    NmpModCu *self;
+    NmpGetAreaDeviceRes *res_info;
+    self = (NmpModCu*)app_obj;
 
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
@@ -762,17 +762,17 @@ nmp_mod_cu_get_area_device_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_media_url_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetMediaUrl *req_info;
-    JpfGetMediaUrlRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetMediaUrl *req_info;
+    NmpGetMediaUrlRes res_info;
     NmpMsgID msg_id;
     gint permissions, right_flag, right_type = 0;
     gint ret;
     gchar *cu_ip;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -781,19 +781,19 @@ nmp_mod_cu_get_media_url_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base = jpf_mods_container_get_guest_2(self->container, req_info->session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, req_info->session);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         SET_CODE(&res_info, -ret);
     }
     else
     {
-        JpfCu *cu;
-        cu = (JpfCu*)cu_base;
+        NmpCu *cu;
+        cu = (NmpCu*)cu_base;
         strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
-        permissions = jpf_get_usr_permissions(cu);
+        permissions = nmp_get_usr_permissions(cu);
         switch (req_info->media)
         {
         case 0:
@@ -816,11 +816,11 @@ nmp_mod_cu_get_media_url_f(NmpAppObj *app_obj, NmpSysMsg *msg)
         }
 
         right_flag = NMP_USR_GRP_PERMISSION(permissions, right_type);
-        jpf_mods_container_put_guest(self->container, cu_base);
+        nmp_mods_container_put_guest(self->container, cu_base);
         printf("=============user permissions =%d, right=%d\n",permissions, right_flag);
         if (G_UNLIKELY(right_flag > 0))
         {
-            cu_ip = jpf_net_get_io_peer_name(io);
+            cu_ip = nmp_net_get_io_peer_name(io);
             if (G_LIKELY(cu_ip))
             {
                 strncpy(req_info->cu_ip, cu_ip, MAX_IP_LEN - 1);
@@ -843,7 +843,7 @@ nmp_mod_cu_get_media_url_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     }
 
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 }
 
@@ -851,29 +851,29 @@ nmp_mod_cu_get_media_url_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_media_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetMediaUrlRes *res_info;
+    NmpModCu *self;
+    NmpGetMediaUrlRes *res_info;
     gchar manufactur[MF_ID_LEN] = {0};
     gchar path[FILE_PATH_LEN] = {0};
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
     if (!RES_CODE(res_info))
     {
-        strncpy(res_info->decode_path, jpf_get_sys_parm_str(SYS_PARM_DECODERPATH),
+        strncpy(res_info->decode_path, nmp_get_sys_parm_str(SYS_PARM_DECODERPATH),
         FILE_PATH_LEN - 1);
 
         strncpy(manufactur, res_info->guid, MF_ID_LEN - 1);
-	if (!strcmp(manufactur, MANUFACTUR_JXJ_2))
-		strcpy(manufactur, MANUFACTUR_JXJ);
+	if (!strcmp(manufactur, MANUFACTUR_NMP_2))
+		strcpy(manufactur, MANUFACTUR_NMP);
 
         res_info->decode_name[DECODE_NAME_LEN - 1] = 0;
         sprintf(res_info->decode_name, "%s%s", DECODE_NAME, manufactur);
         if ((strlen(res_info->decode_path) + strlen(res_info->decode_name) + 1) >= FILE_PATH_LEN)
         {
-            jpf_warning("decoder path is too longth:%s.",res_info->decode_path);
+            nmp_warning("decoder path is too longth:%s.",res_info->decode_path);
         }
         else
         {
@@ -898,10 +898,10 @@ nmp_mod_cu_get_platform_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_platform_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetPlatformInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetPlatformInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -912,10 +912,10 @@ nmp_mod_cu_get_platform_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_platform_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetPlatformInfo *req_info;
+    NmpModCu *self;
+    NmpSetPlatformInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -940,10 +940,10 @@ nmp_mod_cu_get_device_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetDeviceInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -954,10 +954,10 @@ nmp_mod_cu_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_network_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -968,10 +968,10 @@ nmp_mod_cu_get_network_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_network_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetNetworkInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetNetworkInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -982,10 +982,10 @@ nmp_mod_cu_get_network_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_network_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetNetworkInfo *req_info;
+    NmpModCu *self;
+    NmpSetNetworkInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1010,10 +1010,10 @@ nmp_mod_cu_get_pppoe_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_pppoe_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetPppoeInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetPppoeInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1024,10 +1024,10 @@ nmp_mod_cu_get_pppoe_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_pppoe_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetPppoeInfo *req_info;
+    NmpModCu *self;
+    NmpSetPppoeInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1045,10 +1045,10 @@ nmp_mod_cu_set_pppoe_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_encode_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceChannelInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceChannelInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1059,10 +1059,10 @@ nmp_mod_cu_get_encode_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_encode_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetEncodeParaRes *res_info;
+    NmpModCu *self;
+    NmpGetEncodeParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1073,10 +1073,10 @@ nmp_mod_cu_get_encode_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_encode_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetEncodePara *req_info;
+    NmpModCu *self;
+    NmpSetEncodePara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1101,10 +1101,10 @@ nmp_mod_cu_get_display_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_display_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDisplayParaRes *res_info;
+    NmpModCu *self;
+    NmpGetDisplayParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1116,10 +1116,10 @@ nmp_mod_cu_get_display_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_display_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDisplayPara *req_info;
+    NmpModCu *self;
+    NmpSetDisplayPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1145,10 +1145,10 @@ nmp_mod_cu_get_OSD_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_OSD_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetOSDParaRes *res_info;
+    NmpModCu *self;
+    NmpGetOSDParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1159,10 +1159,10 @@ nmp_mod_cu_get_OSD_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_OSD_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetOSDPara *req_info;
+    NmpModCu *self;
+    NmpSetOSDPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1187,10 +1187,10 @@ nmp_mod_cu_get_record_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_record_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetRecordParaRes *res_info;
+    NmpModCu *self;
+    NmpGetRecordParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1201,10 +1201,10 @@ nmp_mod_cu_get_record_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_record_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetRecordPara *req_info;
+    NmpModCu *self;
+    NmpSetRecordPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1229,10 +1229,10 @@ nmp_mod_cu_get_hide_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_hide_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetHideParaRes *res_info;
+    NmpModCu *self;
+    NmpGetHideParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1243,10 +1243,10 @@ nmp_mod_cu_get_hide_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_hide_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetHidePara *req_info;
+    NmpModCu *self;
+    NmpSetHidePara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1264,10 +1264,10 @@ nmp_mod_cu_set_hide_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_serial_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetSerialPara  *req_info;
+    NmpModCu *self;
+    NmpGetSerialPara  *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1278,10 +1278,10 @@ nmp_mod_cu_get_serial_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_serial_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetSerialParaRes *res_info;
+    NmpModCu *self;
+    NmpGetSerialParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1292,10 +1292,10 @@ nmp_mod_cu_get_serial_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_serial_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetSerialPara *req_info;
+    NmpModCu *self;
+    NmpSetSerialPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1320,10 +1320,10 @@ nmp_mod_cu_get_move_detection_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_move_detection_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetMoveAlarmParaRes *res_info;
+    NmpModCu *self;
+    NmpGetMoveAlarmParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1334,10 +1334,10 @@ nmp_mod_cu_get_move_detection_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_move_detection_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetMoveAlarmPara *req_info;
+    NmpModCu *self;
+    NmpSetMoveAlarmPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1362,10 +1362,10 @@ nmp_mod_cu_get_video_lost_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_video_lost_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetVideoLostParaRes *res_info;
+    NmpModCu *self;
+    NmpGetVideoLostParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1376,10 +1376,10 @@ nmp_mod_cu_get_video_lost_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_video_lost_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetVideoLostPara *req_info;
+    NmpModCu *self;
+    NmpSetVideoLostPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1404,10 +1404,10 @@ nmp_mod_cu_get_hide_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_hide_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetHideAlarmParaRes *res_info;
+    NmpModCu *self;
+    NmpGetHideAlarmParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1418,10 +1418,10 @@ nmp_mod_cu_get_hide_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_hide_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetHideAlarmPara *req_info;
+    NmpModCu *self;
+    NmpSetHideAlarmPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1447,10 +1447,10 @@ nmp_mod_cu_get_io_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_io_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetIOAlarmParaRes *res_info;
+    NmpModCu *self;
+    NmpGetIOAlarmParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1461,10 +1461,10 @@ nmp_mod_cu_get_io_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_io_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetIOAlarmPara *req_info;
+    NmpModCu *self;
+    NmpSetIOAlarmPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1482,10 +1482,10 @@ nmp_mod_cu_set_io_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_link_io_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfAmsActionIO *req_info;
+    NmpModCu *self;
+    NmpAmsActionIO *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1502,10 +1502,10 @@ nmp_mod_cu_link_io_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_joint_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetJointPara *req_info;
+    NmpModCu *self;
+    NmpGetJointPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1516,10 +1516,10 @@ nmp_mod_cu_get_joint_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_joint_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetJointParaRes *res_info;
+    NmpModCu *self;
+    NmpGetJointParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1530,10 +1530,10 @@ nmp_mod_cu_get_joint_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_joint_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetJointPara *req_info;
+    NmpModCu *self;
+    NmpSetJointPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1558,10 +1558,10 @@ nmp_mod_cu_get_PTZ_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_PTZ_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetPtzParaRes *res_info;
+    NmpModCu *self;
+    NmpGetPtzParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1572,10 +1572,10 @@ nmp_mod_cu_get_PTZ_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_PTZ_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetPtzPara *req_info;
+    NmpModCu *self;
+    NmpSetPtzPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1593,10 +1593,10 @@ nmp_mod_cu_set_PTZ_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_control_PTZ_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfControlPtz *req_info;
+    NmpModCu *self;
+    NmpControlPtz *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1608,10 +1608,10 @@ nmp_mod_cu_control_PTZ_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_control_PTZ_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDeviceParaRes *res_info;
+    NmpModCu *self;
+    NmpSetDeviceParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1622,10 +1622,10 @@ nmp_mod_cu_control_PTZ_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_preset_point_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceChannelInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceChannelInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1636,10 +1636,10 @@ nmp_mod_cu_get_preset_point_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_preset_point_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetPresetPointRes *res_info;
+    NmpModCu *self;
+    NmpGetPresetPointRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1650,10 +1650,10 @@ nmp_mod_cu_get_preset_point_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_preset_point_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetPresetPoint *req_info;
+    NmpModCu *self;
+    NmpSetPresetPoint *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1671,10 +1671,10 @@ nmp_mod_cu_set_preset_point_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_cruise_way_set_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceChannelInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceChannelInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1685,10 +1685,10 @@ nmp_mod_cu_get_cruise_way_set_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_cruise_way_set_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetCruiseWaySetRes *res_info;
+    NmpModCu *self;
+    NmpGetCruiseWaySetRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1699,10 +1699,10 @@ nmp_mod_cu_get_cruise_way_set_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_cruise_way_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceChannelInfo *req_info;
+    NmpModCu *self;
+    NmpGetDeviceChannelInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1713,10 +1713,10 @@ nmp_mod_cu_get_cruise_way_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_cruise_way_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetCruiseWayRes *res_info;
+    NmpModCu *self;
+    NmpGetCruiseWayRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1727,10 +1727,10 @@ nmp_mod_cu_get_cruise_way_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_add_cruise_way_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfAddCruiseWay *req_info;
+    NmpModCu *self;
+    NmpAddCruiseWay *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1748,10 +1748,10 @@ nmp_mod_cu_add_cruise_way_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_modify_cruise_way_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfModifyCruiseWay *req_info;
+    NmpModCu *self;
+    NmpModifyCruiseWay *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1768,10 +1768,10 @@ nmp_mod_cu_modify_cruise_way_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_cruise_way_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetPresetPoint *req_info;
+    NmpModCu *self;
+    NmpSetPresetPoint *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1789,10 +1789,10 @@ nmp_mod_cu_set_cruise_way_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_3D_control_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    Jpf3DControl *req_info;
+    NmpModCu *self;
+    Nmp3DControl *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1831,10 +1831,10 @@ nmp_mod_cu_get_device_time_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_device_time_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDeviceTimeRes *res_info;
+    NmpModCu *self;
+    NmpGetDeviceTimeRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1845,10 +1845,10 @@ nmp_mod_cu_get_device_time_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_device_time_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDeviceTime *req_info;
+    NmpModCu *self;
+    NmpSetDeviceTime *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1873,10 +1873,10 @@ nmp_mod_cu_get_ntp_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_ntp_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetNTPInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetNTPInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1887,10 +1887,10 @@ nmp_mod_cu_get_ntp_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_ntp_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetNTPInfo *req_info;
+    NmpModCu *self;
+    NmpSetNTPInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1915,10 +1915,10 @@ nmp_mod_cu_get_ftp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_ftp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetFtpParaRes *res_info;
+    NmpModCu *self;
+    NmpGetFtpParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1929,10 +1929,10 @@ nmp_mod_cu_get_ftp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_ftp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetFtpPara *req_info;
+    NmpModCu *self;
+    NmpSetFtpPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1957,10 +1957,10 @@ nmp_mod_cu_get_smtp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_smtp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetSmtpParaRes *res_info;
+    NmpModCu *self;
+    NmpGetSmtpParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -1971,10 +1971,10 @@ nmp_mod_cu_get_smtp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_smtp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetSmtpPara *req_info;
+    NmpModCu *self;
+    NmpSetSmtpPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -1999,10 +1999,10 @@ nmp_mod_cu_get_upnp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_upnp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetUpnpParaRes *res_info;
+    NmpModCu *self;
+    NmpGetUpnpParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2013,10 +2013,10 @@ nmp_mod_cu_get_upnp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_upnp_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetUpnpPara *req_info;
+    NmpModCu *self;
+    NmpSetUpnpPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2034,10 +2034,10 @@ nmp_mod_cu_set_upnp_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_transparent_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTransparentPara *req_info;
+    NmpModCu *self;
+    NmpGetTransparentPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2048,10 +2048,10 @@ nmp_mod_cu_get_transparent_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_transparent_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTransparentParaRes *res_info;
+    NmpModCu *self;
+    NmpGetTransparentParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2062,10 +2062,10 @@ nmp_mod_cu_get_transparent_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_transparent_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetTransparentPara *req_info;
+    NmpModCu *self;
+    NmpSetTransparentPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2090,10 +2090,10 @@ nmp_mod_cu_get_ddns_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_ddns_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDdnsParaRes *res_info;
+    NmpModCu *self;
+    NmpGetDdnsParaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2104,10 +2104,10 @@ nmp_mod_cu_get_ddns_para_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_ddns_para_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDdnsPara *req_info;
+    NmpModCu *self;
+    NmpSetDdnsPara *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2131,10 +2131,10 @@ nmp_mod_cu_get_disk_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_disk_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDiskInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetDiskInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2152,10 +2152,10 @@ nmp_mod_cu_get_resolution_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_resolution_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetResolutionInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetResolutionInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2167,10 +2167,10 @@ nmp_mod_cu_get_resolution_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_resolution_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetResolutionInfo *req_info;
+    NmpModCu *self;
+    NmpSetResolutionInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2196,10 +2196,10 @@ nmp_mod_cu_get_ircut_control_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_ircut_control_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetIrcutControlInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetIrcutControlInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2211,10 +2211,10 @@ nmp_mod_cu_get_ircut_control_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_ircut_control_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetIrcutControlInfo *req_info;
+    NmpModCu *self;
+    NmpSetIrcutControlInfo *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2233,10 +2233,10 @@ nmp_mod_cu_set_ircut_control_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_format_disk_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfFormatDisk *req_info;
+    NmpModCu *self;
+    NmpFormatDisk *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2254,8 +2254,8 @@ nmp_mod_cu_format_disk_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_submit_format_pro_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfSubmitFormatPosRes *res_info = NULL;
-    JpfModCu *self;
+    NmpSubmitFormatPosRes *res_info = NULL;
+    NmpModCu *self;
     gint i;
 
     self = NMP_MODCU(app_obj);
@@ -2264,7 +2264,7 @@ nmp_mod_cu_submit_format_pro_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     for(i = 0; i < res_info->total_num; i++)
         nmp_mod_cu_deliver_msg(self, res_info->cu_list[i].username, msg);
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -2273,14 +2273,14 @@ nmp_mod_cu_submit_format_pro_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAlarm *req_info;
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpModCu *self;
+    NmpGetAlarm *req_info;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret = 0;
-    JpfGuestBase *cu_base;
+    NmpGuestBase *cu_base;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     io = MSG_IO(msg);
@@ -2289,25 +2289,25 @@ nmp_mod_cu_get_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     ret = nmp_mod_cu_check_permissions(self, io, USR_GRP_DEAL_ALARM, NULL);
     if (G_LIKELY(!ret))
     {
-        cu_base = jpf_mods_container_get_guest(self->container, io);
+        cu_base = nmp_mods_container_get_guest(self->container, io);
         if (G_UNLIKELY(!cu_base))
             return -E_NOSUCHGUEST;
 
-        JpfCu *cu;
-        cu = (JpfCu*)cu_base;
+        NmpCu *cu;
+        cu = (NmpCu*)cu_base;
 
-        jpf_mods_container_put_guest(self->container, cu_base);
-	 strncpy(req_info->username, jpf_get_usr_name(cu), USER_NAME_LEN - 1);
+        nmp_mods_container_put_guest(self->container, cu_base);
+	 strncpy(req_info->username, nmp_get_usr_name(cu), USER_NAME_LEN - 1);
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
         return MFR_DELIVER_AHEAD;
     }
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
     MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2316,10 +2316,10 @@ nmp_mod_cu_get_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAlarmRes *res_info;
+    NmpModCu *self;
+    NmpGetAlarmRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2330,13 +2330,13 @@ nmp_mod_cu_get_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_alarm_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAlarmState *req_info;
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpModCu *self;
+    NmpGetAlarmState *req_info;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     io = MSG_IO(msg);
@@ -2351,10 +2351,10 @@ nmp_mod_cu_get_alarm_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
         MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2363,10 +2363,10 @@ nmp_mod_cu_get_alarm_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_alarm_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetAlarmStateRes *res_info;
+    NmpModCu *self;
+    NmpGetAlarmStateRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2377,14 +2377,14 @@ nmp_mod_cu_get_alarm_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_deal_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfDealAlarm *req_info;
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpModCu *self;
+    NmpDealAlarm *req_info;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret;
-    JpfGuestBase *cu_base;
+    NmpGuestBase *cu_base;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     io = MSG_IO(msg);
@@ -2393,25 +2393,25 @@ nmp_mod_cu_deal_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     ret = nmp_mod_cu_check_permissions(self, io, USR_GRP_DEAL_ALARM, NULL);
     if (G_LIKELY(!ret))
     {
-        cu_base = jpf_mods_container_get_guest(self->container, io);
+        cu_base = nmp_mods_container_get_guest(self->container, io);
         if (G_UNLIKELY(!cu_base))
             return -E_NOSUCHGUEST;
 
-        JpfCu *cu;
-        cu = (JpfCu*)cu_base;
+        NmpCu *cu;
+        cu = (NmpCu*)cu_base;
 
-        jpf_mods_container_put_guest(self->container, cu_base);
-	 strncpy(req_info->operator, jpf_get_usr_name(cu), USER_NAME_LEN - 1);
+        nmp_mods_container_put_guest(self->container, cu_base);
+	 strncpy(req_info->operator, nmp_get_usr_name(cu), USER_NAME_LEN - 1);
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
         return MFR_DELIVER_AHEAD;
     }
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
         MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2420,10 +2420,10 @@ nmp_mod_cu_deal_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_deal_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfDealAlarmRes *res_info;
+    NmpModCu *self;
+    NmpDealAlarmRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2433,15 +2433,15 @@ nmp_mod_cu_deal_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetStoreLog *req_info;
+    NmpModCu *self;
+    NmpGetStoreLog *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret;
 
     io = MSG_IO(msg);
@@ -2460,10 +2460,10 @@ nmp_mod_cu_get_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
     MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2472,10 +2472,10 @@ nmp_mod_cu_get_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetStoreLogRes *res_info;
+    NmpModCu *self;
+    NmpGetStoreLogRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2486,15 +2486,15 @@ nmp_mod_cu_get_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_mss_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetMssStoreLog *req_info;
+    NmpModCu *self;
+    NmpGetMssStoreLog *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret;
 
     io = MSG_IO(msg);
@@ -2510,10 +2510,10 @@ nmp_mod_cu_get_mss_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
     MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2522,10 +2522,10 @@ nmp_mod_cu_get_mss_store_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_mss_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetStoreLogRes *res_info;
+    NmpModCu *self;
+    NmpGetStoreLogRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2536,10 +2536,10 @@ nmp_mod_cu_get_mss_store_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_firmware_upgrade_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfPuUpgrade *req_info;
+    NmpModCu *self;
+    NmpPuUpgrade *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2557,10 +2557,10 @@ nmp_mod_cu_firmware_upgrade_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_control_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfControlDevice *req_info;
+    NmpModCu *self;
+    NmpControlDevice *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
@@ -2572,10 +2572,10 @@ nmp_mod_cu_control_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_control_device_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfSetDeviceInfoRes *res_info;
+    NmpModCu *self;
+    NmpSetDeviceInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2586,15 +2586,15 @@ nmp_mod_cu_control_device_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_gu_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetGuMss *req_info;
+    NmpModCu *self;
+    NmpGetGuMss *req_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    JpfNetIO *io;
-    JpfMsgErrCode	code;
+    NmpNetIO *io;
+    NmpMsgErrCode	code;
     gint msg_id, ret;
 
     io = MSG_IO(msg);
@@ -2610,10 +2610,10 @@ nmp_mod_cu_get_gu_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&code, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
         MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &code, sizeof(code));
+    nmp_sysmsg_set_private_2(msg, &code, sizeof(code));
 
     return MFR_DELIVER_BACK;
 }
@@ -2622,10 +2622,10 @@ nmp_mod_cu_get_gu_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_gu_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetGuMssRes *res_info;
+    NmpModCu *self;
+    NmpGetGuMssRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2636,14 +2636,14 @@ nmp_mod_cu_get_gu_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDefenceArea *req_info;
-    JpfGetDefenceAreaRes res_info;
+    NmpModCu *self;
+    NmpGetDefenceArea *req_info;
+    NmpGetDefenceAreaRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_ELECTRONIC_MAP, &res_info, sizeof(res_info));
 }
 
@@ -2651,10 +2651,10 @@ nmp_mod_cu_get_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDefenceAreaRes *res_info;
+    NmpModCu *self;
+    NmpGetDefenceAreaRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2665,14 +2665,14 @@ nmp_mod_cu_get_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDefenceMap *req_info;
-    JpfGetDefenceMapRes res_info;
+    NmpModCu *self;
+    NmpGetDefenceMap *req_info;
+    NmpGetDefenceMapRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_ELECTRONIC_MAP, &res_info, sizeof(res_info));
 }
 
@@ -2680,10 +2680,10 @@ nmp_mod_cu_get_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDefenceMapRes *res_info;
+    NmpModCu *self;
+    NmpGetDefenceMapRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2694,15 +2694,15 @@ nmp_mod_cu_get_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetDefenceGu *req_info;
-    JpfGetDefenceGuRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetDefenceGu *req_info;
+    NmpGetDefenceGuRes res_info;
     NmpMsgID msg_id;
     gint ret;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -2711,25 +2711,25 @@ nmp_mod_cu_get_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         memset(&res_info, 0, sizeof(res_info));
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    JpfCu *cu;
-    cu = (JpfCu*)cu_base;
-    strncpy(req_info->username, jpf_get_usr_name(cu), USER_NAME_LEN - 1);
+    NmpCu *cu;
+    cu = (NmpCu*)cu_base;
+    strncpy(req_info->username, nmp_get_usr_name(cu), USER_NAME_LEN - 1);
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -2738,10 +2738,10 @@ nmp_mod_cu_get_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDefenceGuRes *res_info;
+    NmpModCu *self;
+    NmpGetDefenceGuRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2752,14 +2752,14 @@ nmp_mod_cu_get_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetMapHref *req_info;
-    JpfGetMapHrefRes res_info;
+    NmpModCu *self;
+    NmpGetMapHref *req_info;
+    NmpGetMapHrefRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_ELECTRONIC_MAP, &res_info, sizeof(res_info));
 }
 
@@ -2767,10 +2767,10 @@ nmp_mod_cu_get_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetMapHrefRes *res_info;
+    NmpModCu *self;
+    NmpGetMapHrefRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2781,14 +2781,14 @@ nmp_mod_cu_get_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_gu_map_location_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetGuMapLocation *req_info;
-    JpfGetGuMapLocationRes res_info;
+    NmpModCu *self;
+    NmpGetGuMapLocation *req_info;
+    NmpGetGuMapLocationRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_ELECTRONIC_MAP, &res_info, sizeof(res_info));
 }
 
@@ -2796,10 +2796,10 @@ nmp_mod_cu_get_gu_map_location_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_gu_map_location_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetGuMapLocationRes *res_info;
+    NmpModCu *self;
+    NmpGetGuMapLocationRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2810,37 +2810,37 @@ nmp_mod_cu_get_gu_map_location_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTw *req_info;
-    JpfGetTwRes res_info;
-    JpfGuestBase *cu_base;
+    NmpModCu *self;
+    NmpGetTw *req_info;
+    NmpGetTwRes res_info;
+    NmpGuestBase *cu_base;
     gint ret;
-    JpfCu *cu;
-    JpfNetIO *io;
+    NmpCu *cu;
+    NmpNetIO *io;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         memset(&res_info, 0, sizeof(res_info));
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
+    cu = (NmpCu*)cu_base;
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL, &res_info, sizeof(res_info));
 }
 
@@ -2848,10 +2848,10 @@ nmp_mod_cu_get_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTwRes *res_info;
+    NmpModCu *self;
+    NmpGetTwRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2862,37 +2862,37 @@ nmp_mod_cu_get_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfGetScreen *req_info;
-	JpfGetScreenRes res_info;
-	JpfGuestBase *cu_base;
-	JpfCu *cu;
-	JpfNetIO *io;
+	NmpModCu *self;
+	NmpGetScreen *req_info;
+	NmpGetScreenRes res_info;
+	NmpGuestBase *cu_base;
+	NmpCu *cu;
+	NmpNetIO *io;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	io = MSG_IO(msg);
 	BUG_ON(!io);
 
-	cu_base = jpf_mods_container_get_guest(self->container, io);
+	cu_base = nmp_mods_container_get_guest(self->container, io);
 	if (G_UNLIKELY(!cu_base))
 	{
 		ret = -E_NOSUCHGUEST;
-		jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+		nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
 		MSG_SET_RESPONSE(msg);
 		memset(&res_info, 0, sizeof(res_info));
 		SET_CODE(&res_info, -ret);
-		jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+		nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 		return MFR_DELIVER_BACK;
 	}
 
-	cu = (JpfCu*)cu_base;
+	cu = (NmpCu*)cu_base;
 	NMP_COPY_VAL(req_info->user, cu->user->user_name, USER_NAME_LEN);
-	jpf_mods_container_put_guest(self->container, cu_base);
+	nmp_mods_container_put_guest(self->container, cu_base);
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL, &res_info, sizeof(res_info));
 }
@@ -2901,10 +2901,10 @@ nmp_mod_cu_get_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetScreenRes *res_info;
+    NmpModCu *self;
+    NmpGetScreenRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2915,14 +2915,14 @@ nmp_mod_cu_get_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_scr_div_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDivMode *req_info;
-    JpfGetDivModeRes res_info;
+    NmpModCu *self;
+    NmpGetDivMode *req_info;
+    NmpGetDivModeRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL, &res_info, sizeof(res_info));
 }
 
@@ -2930,10 +2930,10 @@ nmp_mod_cu_get_scr_div_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_scr_div_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetDivModeRes *res_info;
+    NmpModCu *self;
+    NmpGetDivModeRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -2944,14 +2944,14 @@ nmp_mod_cu_get_scr_div_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_scr_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetScrState *req_info;
-    JpfGetScrStateRes res_info;
+    NmpModCu *self;
+    NmpGetScrState *req_info;
+    NmpGetScrStateRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL, &res_info, sizeof(res_info));
 }
 
@@ -2959,24 +2959,24 @@ nmp_mod_cu_get_scr_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_scr_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetScrStateRes *res_info;
+    NmpModCu *self;
+    NmpGetScrStateRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
-    JpfGuestBase *cu_base;
-    JpfNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    cu_base = jpf_mods_container_get_guest_2(self->container, res_info->session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, res_info->session);
     if (G_UNLIKELY(!cu_base))
     {
-        jpf_warning("<JpfModCu> deliver msg '%s' failed, session:%s no such cu.",
+        nmp_warning("<NmpModCu> deliver msg '%s' failed, session:%s no such cu.",
             MESSAGE_ID_TO_STR(cms, msg_id), res_info->session);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -2984,8 +2984,8 @@ nmp_mod_cu_get_scr_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     io = IO_OF_GUEST(cu_base);
     BUG_ON(!io);
 
-    jpf_sysmsg_attach_io(msg, io);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_sysmsg_attach_io(msg, io);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -2994,14 +2994,14 @@ nmp_mod_cu_get_scr_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_change_div_mode_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfChangeDivMode *req_info;
-    JpfCuExecuteRes res_info;
+    NmpModCu *self;
+    NmpChangeDivMode *req_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL, BUSSLOT_POS_TW);
 }
 
@@ -3009,10 +3009,10 @@ nmp_mod_cu_change_div_mode_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_change_div_mode_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3023,17 +3023,17 @@ nmp_mod_cu_change_div_mode_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_run_step_request *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
   //  return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL, &res_info, sizeof(res_info));
 
-    JpfNetIO *io;
+    NmpNetIO *io;
     gint msg_id, rank, ret;
 
     io = MSG_IO(msg);
@@ -3049,10 +3049,10 @@ nmp_mod_cu_run_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 
     msg_id = MSG_GETID(msg);
     SET_CODE(&res_info, -ret);
-    jpf_warning("<JpfModCu> deliver msg '%s' failed, user no such permission.",
+    nmp_warning("<NmpModCu> deliver msg '%s' failed, user no such permission.",
             MESSAGE_ID_TO_STR(cms, msg_id));
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 
@@ -3062,10 +3062,10 @@ nmp_mod_cu_run_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3076,15 +3076,15 @@ nmp_mod_cu_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_play_notify_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_screen_to_cu *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
     nmp_mod_cu_broadcast_to_all_user(self, msg);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -3093,13 +3093,13 @@ nmp_mod_cu_play_notify_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_full_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_operate *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL, BUSSLOT_POS_TW);
 }
 
@@ -3107,10 +3107,10 @@ nmp_mod_cu_full_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3121,14 +3121,14 @@ nmp_mod_cu_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_exit_full_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_operate *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL, BUSSLOT_POS_TW);
 }
 
@@ -3136,10 +3136,10 @@ nmp_mod_cu_exit_full_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_exit_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3150,13 +3150,13 @@ nmp_mod_cu_exit_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_clear_division_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_operate *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL, BUSSLOT_POS_TW);
 }
 
@@ -3164,10 +3164,10 @@ nmp_mod_cu_clear_division_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_clear_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3178,11 +3178,11 @@ nmp_mod_cu_clear_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_tw_operate_notify_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    self = (JpfModCu*)app_obj;
+    NmpModCu *self;
+    self = (NmpModCu*)app_obj;
 
     nmp_mod_cu_broadcast_to_all_user(self, msg);
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -3191,37 +3191,37 @@ nmp_mod_cu_tw_operate_notify_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTour *req_info;
-    JpfGetTourRes res_info;
-    JpfGuestBase *cu_base;
+    NmpModCu *self;
+    NmpGetTour *req_info;
+    NmpGetTourRes res_info;
+    NmpGuestBase *cu_base;
     gint ret;
-    JpfCu *cu;
-    JpfNetIO *io;
+    NmpCu *cu;
+    NmpNetIO *io;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         memset(&res_info, 0, sizeof(res_info));
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
+    cu = (NmpCu*)cu_base;
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL,
         &res_info, sizeof(res_info));
@@ -3231,10 +3231,10 @@ nmp_mod_cu_get_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTourRes *res_info;
+    NmpModCu *self;
+    NmpGetTourRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3245,14 +3245,14 @@ nmp_mod_cu_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tour_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTourStep *req_info;
-    JpfGetTourStepRes res_info;
+    NmpModCu *self;
+    NmpGetTourStep *req_info;
+    NmpGetTourStepRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL,
         &res_info, sizeof(res_info));
 }
@@ -3261,10 +3261,10 @@ nmp_mod_cu_get_tour_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetTourStepRes *res_info;
+    NmpModCu *self;
+    NmpGetTourStepRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3275,14 +3275,14 @@ nmp_mod_cu_get_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_run_tour_request *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
    return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL,BUSSLOT_POS_TW);
 }
 
@@ -3290,10 +3290,10 @@ nmp_mod_cu_run_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3304,14 +3304,14 @@ nmp_mod_cu_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_stop_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_stop_tour_request *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
    return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL,BUSSLOT_POS_TW);
 }
 
@@ -3319,10 +3319,10 @@ nmp_mod_cu_stop_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_stop_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3333,37 +3333,37 @@ nmp_mod_cu_stop_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfGetGroup *req_info;
-	JpfGetGroupRes res_info;
-	JpfGuestBase *cu_base;
-	JpfCu *cu;
-	JpfNetIO *io;
+	NmpModCu *self;
+	NmpGetGroup *req_info;
+	NmpGetGroupRes res_info;
+	NmpGuestBase *cu_base;
+	NmpCu *cu;
+	NmpNetIO *io;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	io = MSG_IO(msg);
 	BUG_ON(!io);
 
-	cu_base = jpf_mods_container_get_guest(self->container, io);
+	cu_base = nmp_mods_container_get_guest(self->container, io);
 	if (G_UNLIKELY(!cu_base))
 	{
 		ret = -E_NOSUCHGUEST;
-		jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+		nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
 		MSG_SET_RESPONSE(msg);
 		memset(&res_info, 0, sizeof(res_info));
 		SET_CODE(&res_info, -ret);
-		jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+		nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
 		return MFR_DELIVER_BACK;
 	}
 
-	cu = (JpfCu*)cu_base;
+	cu = (NmpCu*)cu_base;
 	NMP_COPY_VAL(req_info->user, cu->user->user_name, USER_NAME_LEN);
-	jpf_mods_container_put_guest(self->container, cu_base);
+	nmp_mods_container_put_guest(self->container, cu_base);
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_WALL_CONTROL,
 		&res_info, sizeof(res_info));
@@ -3373,10 +3373,10 @@ nmp_mod_cu_get_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetGroupRes *res_info;
+    NmpModCu *self;
+    NmpGetGroupRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3387,14 +3387,14 @@ nmp_mod_cu_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_run_group_request *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
    return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL,BUSSLOT_POS_TW);
 }
 
@@ -3402,10 +3402,10 @@ nmp_mod_cu_run_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3416,14 +3416,14 @@ nmp_mod_cu_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_stop_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
+    NmpModCu *self;
     tw_stop_group_request *req_info;
-    JpfCuExecuteRes res_info;
+    NmpCuExecuteRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
    return nmp_mod_cu_forward(self, msg, USR_GRP_WALL_CONTROL,BUSSLOT_POS_TW);
 }
 
@@ -3431,10 +3431,10 @@ nmp_mod_cu_stop_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_stop_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuExecuteRes *res_info;
+    NmpModCu *self;
+    NmpCuExecuteRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3445,14 +3445,14 @@ nmp_mod_cu_stop_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_license_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetLicenseInfo *req_info;
-    JpfGetLicenseInfoRes res_info;
+    NmpModCu *self;
+    NmpGetLicenseInfo *req_info;
+    NmpGetLicenseInfoRes res_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
    return nmp_mod_cu_forward(self, msg, USR_GRP_PARAMETER_SET,BUSSLOT_POS_WDD);
 }
 
@@ -3460,10 +3460,10 @@ nmp_mod_cu_get_license_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_license_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfGetLicenseInfoRes *res_info;
+    NmpModCu *self;
+    NmpGetLicenseInfoRes *res_info;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
@@ -3474,16 +3474,16 @@ nmp_mod_cu_get_license_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_get_tw_license_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfNetIO *io;
-    JpfGuestBase *cu_base;
-    JpfGetTwLicenseInfo *req_info;
-    JpfGetTwLicenseInfoRes res_info;
+    NmpModCu *self;
+    NmpNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpGetTwLicenseInfo *req_info;
+    NmpGetTwLicenseInfoRes res_info;
     NmpMsgID msg_id;
     gint ret = 0;
-    JpfResourcesCap res_cap;
+    NmpResourcesCap res_cap;
 
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
@@ -3492,23 +3492,23 @@ nmp_mod_cu_get_tw_license_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    cu_base = jpf_mods_container_get_guest(self->container, io);
+    cu_base = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
     }
     else
     {
         memset(&res_cap, 0, sizeof(res_cap));
         nmp_mod_get_resource_cap(&res_cap);
         res_info.tw_auth_type = res_cap.modules_data[SYS_MODULE_TW];
-        jpf_mods_container_put_guest(self->container, cu_base);
+        nmp_mods_container_put_guest(self->container, cu_base);
      }
 
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
-    jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+    nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
     return MFR_DELIVER_BACK;
 }
@@ -3517,8 +3517,8 @@ nmp_mod_cu_get_tw_license_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_alarm_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfAmsActionMap *res_info = NULL;
-    JpfModCu *self;
+    NmpAmsActionMap *res_info = NULL;
+    NmpModCu *self;
     gint i;
 
     self = NMP_MODCU(app_obj);
@@ -3527,7 +3527,7 @@ nmp_mod_cu_alarm_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     for(i = 0; i < res_info->cu_count; i++)
         nmp_mod_cu_deliver_msg(self, res_info->cu_list[i].username, msg);
 
-    jpf_sysmsg_destroy(msg);
+    nmp_sysmsg_destroy(msg);
 
     return MFR_ACCEPTED;
 }
@@ -3536,36 +3536,36 @@ nmp_mod_cu_alarm_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_modify_user_pwd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuModifyUserPwd *req_info;
-    JpfCuModifyUserPwdRes res_info;
-    JpfGuestBase *cu_base;
+    NmpModCu *self;
+    NmpCuModifyUserPwd *req_info;
+    NmpCuModifyUserPwdRes res_info;
+    NmpGuestBase *cu_base;
     gint ret;
-    JpfCu *cu;
-    JpfNetIO *io;
+    NmpCu *cu;
+    NmpNetIO *io;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
     memset(&res_info, 0, sizeof(res_info));
-    self = (JpfModCu*)app_obj;
+    self = (NmpModCu*)app_obj;
     io = MSG_IO(msg);
     BUG_ON(!io);
 
-    cu_base  = jpf_mods_container_get_guest(self->container, io);
+    cu_base  = nmp_mods_container_get_guest(self->container, io);
     if (G_UNLIKELY(!cu_base))
     {
         ret = -E_NOSUCHGUEST;
-        jpf_warning("<JpfModCu> session:%s No such guest.", req_info->session);
+        nmp_warning("<NmpModCu> session:%s No such guest.", req_info->session);
         MSG_SET_RESPONSE(msg);
         SET_CODE(&res_info, -ret);
-        jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
+        nmp_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
         return MFR_DELIVER_BACK;
     }
 
-    cu = (JpfCu*)cu_base;
+    cu = (NmpCu*)cu_base;
     strncpy(req_info->username, cu->user->user_name, USER_NAME_LEN - 1);
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
     return nmp_mod_cu_forward_2(self, msg, USR_GRP_PARAMETER_SET, &res_info, sizeof(res_info));
 }
 
@@ -3573,25 +3573,25 @@ nmp_mod_cu_modify_user_pwd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_modify_user_pwd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-    JpfModCu *self;
-    JpfCuModifyUserPwdRes *res_info;
-	JpfCu *cu;
-    self = (JpfModCu*)app_obj;
+    NmpModCu *self;
+    NmpCuModifyUserPwdRes *res_info;
+	NmpCu *cu;
+    self = (NmpModCu*)app_obj;
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
 
-    JpfGuestBase *cu_base;
-    JpfNetIO *io;
+    NmpGuestBase *cu_base;
+    NmpNetIO *io;
     gint msg_id;
 
     msg_id = MSG_GETID(msg);
-    cu_base = jpf_mods_container_get_guest_2(self->container, res_info->session);
+    cu_base = nmp_mods_container_get_guest_2(self->container, res_info->session);
     if (G_UNLIKELY(!cu_base))
     {
-        jpf_warning("<JpfModCu> deliver msg '%s' failed, session:%s no such cu.",
+        nmp_warning("<NmpModCu> deliver msg '%s' failed, session:%s no such cu.",
             MESSAGE_ID_TO_STR(cms, msg_id), res_info->session);
-        jpf_sysmsg_destroy(msg);
+        nmp_sysmsg_destroy(msg);
 
         return MFR_ACCEPTED;
     }
@@ -3599,13 +3599,13 @@ nmp_mod_cu_modify_user_pwd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
     io = IO_OF_GUEST(cu_base);
     BUG_ON(!io);
     MSG_SET_RESPONSE(msg);
-    jpf_sysmsg_attach_io(msg, io);
+    nmp_sysmsg_attach_io(msg, io);
     if (!RES_CODE(res_info))
     {
-		cu = (JpfCu*)cu_base;
+		cu = (NmpCu*)cu_base;
 		strncpy(cu->user->user_passwd, res_info->new_password, MAX_PASSWD_LEN - 1);
     }
-    jpf_mods_container_put_guest(self->container, cu_base);
+    nmp_mods_container_put_guest(self->container, cu_base);
 
     return MFR_DELIVER_AHEAD;
 }
@@ -3614,14 +3614,14 @@ nmp_mod_cu_modify_user_pwd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_guid_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryGuid *req_info;
-	JpfCuQueryGuidRes res_info;
+	NmpModCu *self;
+	NmpCuQueryGuid *req_info;
+	NmpCuQueryGuidRes res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3630,10 +3630,10 @@ nmp_mod_cu_query_guid_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryGuidRes *res_info;
+	NmpModCu *self;
+	NmpCuQueryGuidRes *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3644,14 +3644,14 @@ nmp_mod_cu_query_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_screen_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryScreenID *req_info;
-	JpfCuQueryScreenIDRes res_info;
+	NmpModCu *self;
+	NmpCuQueryScreenID *req_info;
+	NmpCuQueryScreenIDRes res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3660,10 +3660,10 @@ nmp_mod_cu_query_screen_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_screen_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryScreenIDRes *res_info;
+	NmpModCu *self;
+	NmpCuQueryScreenIDRes *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3674,14 +3674,14 @@ nmp_mod_cu_query_screen_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_user_guids_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryUserGuids *req_info;
-	JpfCuQueryUserGuidsRes res_info;
+	NmpModCu *self;
+	NmpCuQueryUserGuids *req_info;
+	NmpCuQueryUserGuidsRes res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3690,10 +3690,10 @@ nmp_mod_cu_query_user_guids_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryUserGuidsRes *res_info;
+	NmpModCu *self;
+	NmpCuQueryUserGuidsRes *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3704,14 +3704,14 @@ nmp_mod_cu_query_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_user_guids_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuSetUserGuids *req_info;
-	JpfResult res_info;
+	NmpModCu *self;
+	NmpCuSetUserGuids *req_info;
+	NmpResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3720,10 +3720,10 @@ nmp_mod_cu_set_user_guids_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfResult *res_info;
+	NmpModCu *self;
+	NmpResult *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3734,14 +3734,14 @@ nmp_mod_cu_set_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_screen_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuSetScreenNum *req_info;
-	JpfResult res_info;
+	NmpModCu *self;
+	NmpCuSetScreenNum *req_info;
+	NmpResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3750,10 +3750,10 @@ nmp_mod_cu_set_screen_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_screen_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfResult *res_info;
+	NmpModCu *self;
+	NmpResult *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3764,14 +3764,14 @@ nmp_mod_cu_set_screen_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_tour_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryTourID *req_info;
-	JpfCuQueryTourIDRes res_info;
+	NmpModCu *self;
+	NmpCuQueryTourID *req_info;
+	NmpCuQueryTourIDRes res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3780,10 +3780,10 @@ nmp_mod_cu_query_tour_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_tour_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryTourIDRes *res_info;
+	NmpModCu *self;
+	NmpCuQueryTourIDRes *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3794,14 +3794,14 @@ nmp_mod_cu_query_tour_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_tour_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuSetTourNum *req_info;
-	JpfResult res_info;
+	NmpModCu *self;
+	NmpCuSetTourNum *req_info;
+	NmpResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3810,10 +3810,10 @@ nmp_mod_cu_set_tour_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_tour_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfResult *res_info;
+	NmpModCu *self;
+	NmpResult *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3824,14 +3824,14 @@ nmp_mod_cu_set_tour_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_group_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryGroupID *req_info;
-	JpfCuQueryGroupIDRes res_info;
+	NmpModCu *self;
+	NmpCuQueryGroupID *req_info;
+	NmpCuQueryGroupIDRes res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3840,10 +3840,10 @@ nmp_mod_cu_query_group_id_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_query_group_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuQueryGroupIDRes *res_info;
+	NmpModCu *self;
+	NmpCuQueryGroupIDRes *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3854,14 +3854,14 @@ nmp_mod_cu_query_group_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_group_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfCuSetGroupNum *req_info;
-	JpfResult res_info;
+	NmpModCu *self;
+	NmpCuSetGroupNum *req_info;
+	NmpResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 
 	return nmp_mod_cu_forward_2(self, msg, USR_GRP_NONE_PERMISSION, &res_info, sizeof(res_info));
 }
@@ -3870,10 +3870,10 @@ nmp_mod_cu_set_group_num_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 NmpMsgFunRet
 nmp_mod_cu_set_group_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
-	JpfModCu *self;
-	JpfResult *res_info;
+	NmpModCu *self;
+	NmpResult *res_info;
 
-	self = (JpfModCu*)app_obj;
+	self = (NmpModCu*)app_obj;
 	res_info = MSG_GET_DATA(msg);
 	BUG_ON(!res_info);
 
@@ -3883,7 +3883,7 @@ nmp_mod_cu_set_group_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 
 
 void
-nmp_mod_cu_register_msg_handler(JpfModCu *self)
+nmp_mod_cu_register_msg_handler(NmpModCu *self)
 {
     NmpAppMod *super_self = (NmpAppMod*)self;
 

@@ -1,5 +1,5 @@
 /********************************************************************
- * jpf_stream_xml.c  - deal xml of stream, parse and create xml
+ * nmp_stream_xml.c  - deal xml of stream, parse and create xml
  * Function£ºparse or create xml relate to stream.
  * Author:yangy
  * Description:users can add parse or create message of stream,define
@@ -24,24 +24,24 @@
 
 
 /**
- * jpf_parse_mds_register: used to parse xml docuemnt
+ * nmp_parse_mds_register: used to parse xml docuemnt
  *
  * @doc:            input, pointer, containing xml document
  * @cur:            input, a pointer to the tree's node
  * @cmd:            input, string, indicate command id
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo *
-jpf_parse_mds_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_mds_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
 {
-    JpfMdsRegister req_info;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMdsRegister req_info;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -54,9 +54,9 @@ jpf_parse_mds_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
         while (cur != NULL)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"mdsId")))
-                jpf_deal_text(doc, cur, req_info.mds_id, MDS_ID_LEN );
+                nmp_deal_text(doc, cur, req_info.mds_id, MDS_ID_LEN );
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"cmsIp")))
-                jpf_deal_text(doc, cur, req_info.cms_ip, MAX_IP_LEN );
+                nmp_deal_text(doc, cur, req_info.cms_ip, MAX_IP_LEN );
             else
                 xml_warning("Warning, not parse the node %s \n", cur->name);
 
@@ -65,27 +65,27 @@ jpf_parse_mds_register(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
     }
 
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &req_info, sizeof(req_info));
+    sys_msg = nmp_msginfo_new(cmd, &req_info, sizeof(req_info));
 
     return sys_msg;
 }
 
 
 /**
- * jpf_create_mds_register_resp: used to generate xml docuemnt
+ * nmp_create_mds_register_resp: used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  * @return:         succeed 0, else -1
  */
 int
-jpf_create_mds_register_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_mds_register_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     xmlNodePtr root_node = NULL, node = NULL;
-    JpfMdsRegisterRes *res_info;
+    NmpMdsRegisterRes *res_info;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    res_info = jpf_get_msginfo_data(sys_msg);
+    res_info = nmp_get_msginfo_data(sys_msg);
     if(!res_info)
         return -E_NOMSGINFO;
 
@@ -94,7 +94,7 @@ jpf_create_mds_register_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
     if(!root_node)
         return -E_NEWNODE;
 
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
     xmlNewChild(root_node,
                 NULL,
                 BAD_CAST "resultCode",
@@ -130,16 +130,16 @@ jpf_create_mds_register_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo *
-jpf_parse_mds_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
+NmpMsgInfo *
+nmp_parse_mds_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMdsHeart req_info;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMdsHeart req_info;
+    NmpMsgInfo *sys_msg = NULL;
     gint i;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
 
-    app_result =  jpf_get_node(doc, (const xmlChar *)xpath);
+    app_result =  nmp_get_node(doc, (const xmlChar *)xpath);
     if (app_result == NULL)
         return NULL;
 
@@ -153,11 +153,11 @@ jpf_parse_mds_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         {
             if ((!xmlStrcmp(cur->name, (const xmlChar *)"mdsId")))
             {
-                jpf_deal_text(doc, cur, req_info.mds_id, MDS_ID_LEN);
+                nmp_deal_text(doc, cur, req_info.mds_id, MDS_ID_LEN);
                 xml_error("cu_heart.session=%s\n",req_info.mds_id);
             }
             else if ((!xmlStrcmp(cur->name, (const xmlChar *)"cmsIp")))
-                jpf_deal_text(doc, cur, req_info.cms_ip, MAX_IP_LEN );
+                nmp_deal_text(doc, cur, req_info.cms_ip, MAX_IP_LEN );
             else
                 xml_error("not parse the node %s\n",cur->name);
 
@@ -165,22 +165,22 @@ jpf_parse_mds_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
         }
     }
     xmlXPathFreeObject(app_result);
-    sys_msg = jpf_msginfo_new(cmd, &req_info, sizeof(req_info));
+    sys_msg = nmp_msginfo_new(cmd, &req_info, sizeof(req_info));
 
     return sys_msg;
 }
 
 int
-jpf_create_mds_heart_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_mds_heart_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL;
-    JpfMdsHeartRes *tmp = NULL;
+    NmpMdsHeartRes *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
 
-    tmp = jpf_get_msginfo_data(sys_msg);
+    tmp = nmp_get_msginfo_data(sys_msg);
     root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
-    jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
+    nmp_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
     snprintf(str, INT_TO_CHAR_LEN, "%d", RES_CODE(tmp));
     xmlNewChild(root_node,

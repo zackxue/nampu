@@ -4,7 +4,7 @@
 #include <glib.h>
 
 
-gint jpf_get_string_time_range(const gchar *str, time_t *start,
+gint nmp_get_string_time_range(const gchar *str, time_t *start,
 	time_t *end);
 
 

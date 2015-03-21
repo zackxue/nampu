@@ -1,5 +1,5 @@
 /*
- * jpf_signal.c
+ * nmp_signal.c
  *
  * This file contains functions which set handlers of signals that we care.
  *
@@ -54,7 +54,7 @@ struct _HmStackFrame	/* for walking stack frames */
 
 
 static __inline__ void
-jpf_dump_registers_to_file(FILE *file, ucontext_t *context)
+nmp_dump_registers_to_file(FILE *file, ucontext_t *context)
 {
 #define __dump(...) fprintf(file, __VA_ARGS__)
 #define __regs context->uc_mcontext.gregs
@@ -99,7 +99,7 @@ jpf_dump_registers_to_file(FILE *file, ucontext_t *context)
 
 
 static __inline__ void
-jpf_dump_stack_to_file(FILE *file, ucontext_t *context)
+nmp_dump_stack_to_file(FILE *file, ucontext_t *context)
 {
     int max_f = MAX_FRAME, f = 0; /* frame no */
     Dl_info dlinfo;
@@ -149,7 +149,7 @@ jpf_dump_stack_to_file(FILE *file, ucontext_t *context)
 
 
 static __inline__ void
-jpf_dump_stack_to_file(FILE *file)
+nmp_dump_stack_to_file(FILE *file)
 {
 	void *bt[MAX_FRAME];
     char **strings;
@@ -179,7 +179,7 @@ jpf_dump_stack_to_file(FILE *file)
 
 #endif	/* ARCH_X86_WITH_CONTEXT */
 
-extern FILE *jpf_debug_get_log_file( void );
+extern FILE *nmp_debug_get_log_file( void );
 
 /*
  * Dump stack and registers when SIGSEGV catched. The following values can 
@@ -191,12 +191,12 @@ extern FILE *jpf_debug_get_log_file( void );
  *  is __SI_FAULT|2. In user space, __SI_FAULT is 0.
  */
 static void
-jpf_sig_sigsegv_handler(int signum, siginfo_t *info, void *ptr)
+nmp_sig_sigsegv_handler(int signum, siginfo_t *info, void *ptr)
 {
     static const char *si_codes[3] = {"", "SEGV_MAPERR", "SEGV_ACCERR"};
     FILE *file;
 
-    file = jpf_debug_get_log_file();
+    file = nmp_debug_get_log_file();
 
 #define __dump(...) fprintf(file, __VA_ARGS__)
     __dump("Segmentation Fault.\n");
@@ -207,10 +207,10 @@ jpf_sig_sigsegv_handler(int signum, siginfo_t *info, void *ptr)
 
 #if defined ARCH_X86_WITH_CONTEXT
     ucontext_t *ucontext = (ucontext_t*)ptr;
-	jpf_dump_registers_to_file(file, ucontext);
-	jpf_dump_stack_to_file(file, ucontext);
+	nmp_dump_registers_to_file(file, ucontext);
+	nmp_dump_stack_to_file(file, ucontext);
 #else
-	jpf_dump_stack_to_file(file);
+	nmp_dump_stack_to_file(file);
 #endif
 
     fflush(file);
@@ -224,11 +224,11 @@ jpf_sig_sigsegv_handler(int signum, siginfo_t *info, void *ptr)
  * assert() failed, or abort invoked.
 */
 static void
-jpf_sig_sigabrt_handler(int signum, siginfo_t *info, void *ptr)
+nmp_sig_sigabrt_handler(int signum, siginfo_t *info, void *ptr)
 {
     FILE *file;
 
-    file = jpf_debug_get_log_file();
+    file = nmp_debug_get_log_file();
 
 #define __dump(...) fprintf(file, __VA_ARGS__)
     __dump("Aborted.\n");
@@ -239,10 +239,10 @@ jpf_sig_sigabrt_handler(int signum, siginfo_t *info, void *ptr)
 
 #if defined ARCH_X86_WITH_CONTEXT
     ucontext_t *ucontext = (ucontext_t*)ptr;
-	jpf_dump_registers_to_file(file, ucontext);
-	jpf_dump_stack_to_file(file, ucontext);
+	nmp_dump_registers_to_file(file, ucontext);
+	nmp_dump_stack_to_file(file, ucontext);
 #else
-	jpf_dump_stack_to_file(file);
+	nmp_dump_stack_to_file(file);
 #endif
 
     fflush(file);
@@ -252,54 +252,54 @@ jpf_sig_sigabrt_handler(int signum, siginfo_t *info, void *ptr)
 
 
 static __inline__ void
-jpf_sig_setup_sigsegv( void )
+nmp_sig_setup_sigsegv( void )
 {
     struct sigaction action;
 
     memset(&action, 0, sizeof(action));
-    action.sa_sigaction = jpf_sig_sigsegv_handler;
+    action.sa_sigaction = nmp_sig_sigsegv_handler;
     action.sa_flags = SA_SIGINFO | SA_RESETHAND;
 
     if (sigaction(SIGSEGV, &action, NULL))
-        jpf_warning("<signal> SIGSEGV handler wasn't set!");
+        nmp_warning("<signal> SIGSEGV handler wasn't set!");
 }
 
 
 static __inline__ void
-jpf_sig_setup_sigint( void )
+nmp_sig_setup_sigint( void )
 {
 	
 }
 
 
 static __inline__ void
-jpf_sig_setup_sigpipe( void )
+nmp_sig_setup_sigpipe( void )
 {
 	signal(SIGPIPE, SIG_IGN);
 }
 
 
 static __inline__ void
-jpf_sig_setup_sigabrt( void )
+nmp_sig_setup_sigabrt( void )
 {
     struct sigaction action;
 
     memset(&action, 0, sizeof(action));
-    action.sa_sigaction = jpf_sig_sigabrt_handler;
+    action.sa_sigaction = nmp_sig_sigabrt_handler;
     action.sa_flags = SA_SIGINFO | SA_RESETHAND;
 
     if (sigaction(SIGABRT, &action, NULL))
-        jpf_warning("<signal> SIGABRT handler wasn't set!");	
+        nmp_warning("<signal> SIGABRT handler wasn't set!");	
 }
 
 
 void
-jpf_sig_setup_signals( void )
+nmp_sig_setup_signals( void )
 {
-    jpf_sig_setup_sigsegv();
-    jpf_sig_setup_sigint();
-    jpf_sig_setup_sigpipe();
-    jpf_sig_setup_sigabrt();
+    nmp_sig_setup_sigsegv();
+    nmp_sig_setup_sigint();
+    nmp_sig_setup_sigpipe();
+    nmp_sig_setup_sigabrt();
 }
 
 

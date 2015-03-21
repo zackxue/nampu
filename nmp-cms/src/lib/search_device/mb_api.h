@@ -5,9 +5,9 @@
 
 /*
  *  注释:
- *  1, 简介: 增加新的 J_MB_ParmId_E 及对应结构体,不需要重新编译本模块;
+ *  1, 简介: 增加新的 N_MB_ParmId_E 及对应结构体,不需要重新编译本模块;
  *  2, dst_id参数: general_dst, 表示向所有设备发送请求;
- *  3, msg_id参数: J_MB_ParmId_E 定义;
+ *  3, msg_id参数: N_MB_ParmId_E 定义;
  *  4, cu 接口   : 使用mb_cu_notify_t返回操作果, 支持同步、异步;
  *  5, pu 接口   : 使用pu_process_cb_t回调操作设备;
  *
@@ -17,37 +17,37 @@
 #ifndef __mb_api__
 #define __mb_api__
 
-#define J_SDK_MAX_ID_LEN					32
-#define J_SDK_MAX_IP_LEN					64
+#define N_SDK_MAX_ID_LEN					32
+#define N_SDK_MAX_IP_LEN					64
 
-#define J_SDK_MAX_NETMASK_LEN				32
-#define J_SDK_MAX_GATEWAY_LEN				32
-#define J_SDK_MAX_MAC_LEN					32
-#define J_SDK_MAX_DNS_LEN					32
+#define N_SDK_MAX_NETMASK_LEN				32
+#define N_SDK_MAX_GATEWAY_LEN				32
+#define N_SDK_MAX_MAC_LEN					32
+#define N_SDK_MAX_DNS_LEN					32
 
 typedef enum __NetworkType
 {
-    J_SDK_ETH0=0,
-    J_SDK_WIFI,
-    J_SDK_3G,
-    J_SDK_MAX_NETWORK_TYPE
+    N_SDK_ETH0=0,
+    N_SDK_WIFI,
+    N_SDK_3G,
+    N_SDK_MAX_NETWORK_TYPE
 }JNetworkType;
 
 typedef struct __Network
 {
     int type;								//网络接口类型，详情见JNetworkType
     int dhcp_enable;						//是否启用DHCP
-    char mac[J_SDK_MAX_MAC_LEN];			//MAC地址
-    char ip[J_SDK_MAX_IP_LEN];				//设备ip
-    char netmask[J_SDK_MAX_NETMASK_LEN];	//子网掩码
-    char gateway[J_SDK_MAX_GATEWAY_LEN];	//网关
+    char mac[N_SDK_MAX_MAC_LEN];			//MAC地址
+    char ip[N_SDK_MAX_IP_LEN];				//设备ip
+    char netmask[N_SDK_MAX_NETMASK_LEN];	//子网掩码
+    char gateway[N_SDK_MAX_GATEWAY_LEN];	//网关
 }JNetwork;
 
 typedef struct __NetworkInfo
 {
-    JNetwork network[J_SDK_MAX_NETWORK_TYPE];//网络接口信息
-    char main_dns[J_SDK_MAX_DNS_LEN];		//主DNS服务器地址
-    char backup_dns[J_SDK_MAX_DNS_LEN];		//备用DNS服务器地址
+    JNetwork network[N_SDK_MAX_NETWORK_TYPE];//网络接口信息
+    char main_dns[N_SDK_MAX_DNS_LEN];		//主DNS服务器地址
+    char backup_dns[N_SDK_MAX_DNS_LEN];		//备用DNS服务器地址
     int auto_dns_enable;					//是否启用自动获取dns
     int cur_network;						//eth0/wifi/3G
     int cmd_port;							//设备信令端口
@@ -71,90 +71,90 @@ extern "C" {
 /*
  * 设备类型定义
  */
-typedef enum _J_DevType {
+typedef enum _N_DevType {
     /* --------- IPC ---------- */
-      J_DEV_IPC_6001        = 0x0001   //3516 普通枪机
-    , J_DEV_IPC_6002        = 0x0002   //3516 红外护罩
-    , J_DEV_IPC_6003        = 0x0003   //3516 红外大炮
-    , J_DEV_IPC_6004        = 0x0004   //3516 红外中炮
-    , J_DEV_IPC_6005        = 0x0005   //3516 半球
+      N_DEV_IPC_6001        = 0x0001   //3516 普通枪机
+    , N_DEV_IPC_6002        = 0x0002   //3516 红外护罩
+    , N_DEV_IPC_6003        = 0x0003   //3516 红外大炮
+    , N_DEV_IPC_6004        = 0x0004   //3516 红外中炮
+    , N_DEV_IPC_6005        = 0x0005   //3516 半球
 
-	, J_DEV_IPC_8001        = 0x0101   //3518A 普通枪机
-	, J_DEV_IPC_8002        = 0x0102   //3518A 红外护罩
-	, J_DEV_IPC_8003        = 0x0103   //3518A 红外大炮
-	, J_DEV_IPC_8004        = 0x0104   //3518A 红外中炮
-	, J_DEV_IPC_8005        = 0x0105   //3518A 半球
-	, J_DEV_IPC_8101        = 0x0201   //3518C 普通枪机
-	, J_DEV_IPC_8102        = 0x0202   //3518C 红外护罩
-	, J_DEV_IPC_8103        = 0x0203   //3518C 红外大炮
-	, J_DEV_IPC_8104        = 0x0204   //3518C 红外中炮
-	, J_DEV_IPC_8105        = 0x0205   //3518C 半球
+	, N_DEV_IPC_8001        = 0x0101   //3518A 普通枪机
+	, N_DEV_IPC_8002        = 0x0102   //3518A 红外护罩
+	, N_DEV_IPC_8003        = 0x0103   //3518A 红外大炮
+	, N_DEV_IPC_8004        = 0x0104   //3518A 红外中炮
+	, N_DEV_IPC_8005        = 0x0105   //3518A 半球
+	, N_DEV_IPC_8101        = 0x0201   //3518C 普通枪机
+	, N_DEV_IPC_8102        = 0x0202   //3518C 红外护罩
+	, N_DEV_IPC_8103        = 0x0203   //3518C 红外大炮
+	, N_DEV_IPC_8104        = 0x0204   //3518C 红外中炮
+	, N_DEV_IPC_8105        = 0x0205   //3518C 半球
     /* --------- IPNC ---------- */
-    , J_Dev_IPNC_           = 0x2000
+    , N_Dev_IPNC_           = 0x2000
     /* --------- DVR ---------- */
-    , J_Dev_DVR_2_3520      = 0x4000    //DVR 3520 16-D1
-    , J_Dev_DVR_16_3531     = 0x4001    //DVR 3531 16-D1(960)
-    , J_Dev_DVR_4_3531      = 0x4002    //DVR 3531 04-HD-SDI
-    , J_Dev_DVR_8_3531      = 0x4003    //DVR 3531 08-HD-SDI
+    , N_Dev_DVR_2_3520      = 0x4000    //DVR 3520 16-D1
+    , N_Dev_DVR_16_3531     = 0x4001    //DVR 3531 16-D1(960)
+    , N_Dev_DVR_4_3531      = 0x4002    //DVR 3531 04-HD-SDI
+    , N_Dev_DVR_8_3531      = 0x4003    //DVR 3531 08-HD-SDI
     /* --------- NVR 1 ethx ---------- */
-    , J_Dev_NVR_1_3520      = 0x5000    //NVR 3520 08-720P
-    , J_Dev_NVR_16_3531     = 0x5001    //NVR 3531 16-720P
-    , J_Dev_NVR_9_3531      = 0x5002    //NVR 3531 09-1080P
-    , J_Dev_NVR_25_3531     = 0x5003    //NVR 3531 25-720P
-    , J_Dev_NVR_32_3531     = 0x5004    //NVR 3531 32-720P
+    , N_Dev_NVR_1_3520      = 0x5000    //NVR 3520 08-720P
+    , N_Dev_NVR_16_3531     = 0x5001    //NVR 3531 16-720P
+    , N_Dev_NVR_9_3531      = 0x5002    //NVR 3531 09-1080P
+    , N_Dev_NVR_25_3531     = 0x5003    //NVR 3531 25-720P
+    , N_Dev_NVR_32_3531     = 0x5004    //NVR 3531 32-720P
 
     /* --------- NVR 2 ethx ---------- */
-    , J_Dev_NVR_16_3531_e2  = 0x5011    //NVR 3531 16-720P  2 ethx
-    , J_Dev_NVR_9_3531_e2   = 0x5012    //NVR 3531 09-1080P 2 ethx
-    , J_Dev_NVR_25_3531_e2  = 0x5013    //NVR 3531 25-720P  2 ethx
-    , J_Dev_NVR_32_3531_e2  = 0x5014    //NVR 3531 32-720P  2 ethx
+    , N_Dev_NVR_16_3531_e2  = 0x5011    //NVR 3531 16-720P  2 ethx
+    , N_Dev_NVR_9_3531_e2   = 0x5012    //NVR 3531 09-1080P 2 ethx
+    , N_Dev_NVR_25_3531_e2  = 0x5013    //NVR 3531 25-720P  2 ethx
+    , N_Dev_NVR_32_3531_e2  = 0x5014    //NVR 3531 32-720P  2 ethx
 
     /* --------- NVR for 3521 ---------- */
-    , J_Dev_NVR_4_3521      = 0x5020    //NVR 3521 04-1080P
-    , J_Dev_NVR_9_3521      = 0x5021    //NVR 3521 09-720P
-    , J_Dev_NVR_16_3521     = 0x5022    //NVR 3521 16-720P
+    , N_Dev_NVR_4_3521      = 0x5020    //NVR 3521 04-1080P
+    , N_Dev_NVR_9_3521      = 0x5021    //NVR 3521 09-720P
+    , N_Dev_NVR_16_3521     = 0x5022    //NVR 3521 16-720P
 
     /* --------- DEC ---------- */
-    , J_Dev_DECC_10_3531    = 0x6000    //DEC CARD 720P 10in, 2out;
-    , J_Dev_DECB_13_3531    = 0x6001    //DEC BOX  720P 13in, 2out;
+    , N_Dev_DECC_10_3531    = 0x6000    //DEC CARD 720P 10in, 2out;
+    , N_Dev_DECB_13_3531    = 0x6001    //DEC BOX  720P 13in, 2out;
 
-}J_DevType_E;
+}N_DevType_E;
 /*-----------------------------------*/
 
 /*
  * 组播配置参数ID定义
  */
-typedef enum _J_MB_ParmId {
-      J_MB_Device_Id     = 0x0001       /*  设备 搜索&配置  J_Device_T    */
-    , J_MB_SysCfg_Id                    /*  设备系统配置    J_SysCfg_T    */
-    , J_MB_NetCfg_Id                    /*  设备网络配置    JNetworkInfo  */
-    , J_MB_DvrCommCfg_Id                /*  DVR通用配置     J_DvrCommCfg_T*/
-    , J_MB_ManufCfg_Id                  /*  设备生产配置    J_ManufCfg_T  */
-    , J_MB_DHCPCtl_Id                   /*  设备DHCP控制    J_DhcpCtl_T   */
-    , J_MB_SysStatus_Id                 /*  设备运行状态     J_SysStatus_T */
-    , J_MB_Decoder_Id    = 0x0008       /*  解码器设备信息	J_Decoder_Info */
-    , J_MB_Dec_Test_Id                  /*  解码器 测试输出   J_Decoder_Test */
+typedef enum _N_MB_ParmId {
+      N_MB_Device_Id     = 0x0001       /*  设备 搜索&配置  N_Device_T    */
+    , N_MB_SysCfg_Id                    /*  设备系统配置    N_SysCfg_T    */
+    , N_MB_NetCfg_Id                    /*  设备网络配置    JNetworkInfo  */
+    , N_MB_DvrCommCfg_Id                /*  DVR通用配置     N_DvrCommCfg_T*/
+    , N_MB_ManufCfg_Id                  /*  设备生产配置    N_ManufCfg_T  */
+    , N_MB_DHCPCtl_Id                   /*  设备DHCP控制    N_DhcpCtl_T   */
+    , N_MB_SysStatus_Id                 /*  设备运行状态     N_SysStatus_T */
+    , N_MB_Decoder_Id    = 0x0008       /*  解码器设备信息	N_Decoder_Info */
+    , N_MB_Dec_Test_Id                  /*  解码器 测试输出   N_Decoder_Test */
 
-    , J_MB_Jpf_Search_Id = 0x0020       /*  平台搜索Jpf_Search*/
-    , J_MB_Jpf_Redirect_Id              /*  重定向设备登陆平台 Jpf_Redirect*/
-}J_MB_ParmId_E;
-
-
-#define J_VER_STR_LEN       32          //版本信息长度
-#define J_SERIAL_NO_LEN     32          //序列号长度
-#define J_DVR_NAME_LEN      32          //设备名称长度
+    , N_MB_Nmp_Search_Id = 0x0020       /*  平台搜索Nmp_Search*/
+    , N_MB_Nmp_Redirect_Id              /*  重定向设备登陆平台 Nmp_Redirect*/
+}N_MB_ParmId_E;
 
 
-typedef struct J_SysCfg_S {
+#define N_VER_STR_LEN       32          //版本信息长度
+#define N_SERIAL_NO_LEN     32          //序列号长度
+#define N_DVR_NAME_LEN      32          //设备名称长度
 
-    unsigned char serial_no[J_SERIAL_NO_LEN];       //序列号
-    unsigned char device_type[J_VER_STR_LEN];       //设备型号
-    unsigned char software_ver[J_VER_STR_LEN];      //软件版本号
-    unsigned char software_date[J_VER_STR_LEN];     //软件生成日期
-    unsigned char panel_ver[J_VER_STR_LEN];         //前面板版本
-    unsigned char hardware_ver[J_VER_STR_LEN];      //硬件版本
 
-    unsigned int  dev_type;                         //设备类型  J_DevType_E
+typedef struct N_SysCfg_S {
+
+    unsigned char serial_no[N_SERIAL_NO_LEN];       //序列号
+    unsigned char device_type[N_VER_STR_LEN];       //设备型号
+    unsigned char software_ver[N_VER_STR_LEN];      //软件版本号
+    unsigned char software_date[N_VER_STR_LEN];     //软件生成日期
+    unsigned char panel_ver[N_VER_STR_LEN];         //前面板版本
+    unsigned char hardware_ver[N_VER_STR_LEN];      //硬件版本
+
+    unsigned int  dev_type;                         //设备类型  N_DevType_E
 
     unsigned char ana_chan_num;                     //模拟通道个数
     unsigned char ip_chan_num;                      //数字通道数
@@ -190,14 +190,14 @@ typedef struct J_SysCfg_S {
     unsigned int   ipc_bit:31;                      //IPC 保留
     unsigned char  ipc_sensor_type;                 //IPC 图像传感器类型
     unsigned char  ipc_byte[3];                     //IPC 保留
-}J_SysCfg_T;
+}N_SysCfg_T;
 
 /*
  * DVR常规配置参数
  */
-typedef struct J_DvrCommCfg_S
+typedef struct N_DvrCommCfg_S
 {
-    unsigned char 	dvr_name[J_DVR_NAME_LEN];   //DVR 名字
+    unsigned char 	dvr_name[N_DVR_NAME_LEN];   //DVR 名字
     unsigned int 	dvr_id;                     //DVR ID,(遥控器)
     unsigned int 	recycle_record;             //是否循环录像,0:不是; 1:是
     unsigned char 	language;                   //语言0: 中文  1 :英语
@@ -208,64 +208,64 @@ typedef struct J_DvrCommCfg_S
     unsigned char  	boot_guide;                 //开机向导 0 : 不启动向导  1 : 启动向导
     unsigned char  	resolution2; 				//(副屏)分辨率0 :1024 * 768    1 : 1280 * 720   2: 1280*1024  3: 1920*1080
     unsigned char  	reserve[1];
-} J_DvrCommCfg_T;
+} N_DvrCommCfg_T;
 
 
-#define J_MAC_ADDR_LEN        20      //MAC地址长度
+#define N_MAC_ADDR_LEN        20      //MAC地址长度
 
 /*
  * 用于生产配置
  */
-typedef struct J_ManufCfg_S
+typedef struct N_ManufCfg_S
 {
-	unsigned char serial_no[J_SERIAL_NO_LEN];       //序列号
-	unsigned char device_type[J_VER_STR_LEN];       //设备型号
-	unsigned int  dev_type;                         //设备类型  J_DevType_E
+	unsigned char serial_no[N_SERIAL_NO_LEN];       //序列号
+	unsigned char device_type[N_VER_STR_LEN];       //设备型号
+	unsigned int  dev_type;                         //设备类型  N_DevType_E
 
 	unsigned char ana_chan_num;                     //模拟通道个数
 	unsigned char ip_chan_num;                      //数字通道数
 	unsigned char dec_chan_num;                     //解码路数
 	unsigned char stream_num;                       //通道支持的码流个数
 
-	unsigned char mac[J_MAC_ADDR_LEN];              //MAC地址(字符串,00:0c:29:00:37:6b)
+	unsigned char mac[N_MAC_ADDR_LEN];              //MAC地址(字符串,00:0c:29:00:37:6b)
 	unsigned int  platform_type;                    //平台类型，参见 j_sdk.h => JPlatformType
 	unsigned int  ivs_type;                    		//3516IPC设备支持的智能分析类型，仅设备端使用
 	unsigned int  net_protocol;                    //网络协议，见j_sdk.h => JNetProtocolType
-	unsigned char mac2[J_MAC_ADDR_LEN];            // 设备支持双网口时,配置MAC地址2
+	unsigned char mac2[N_MAC_ADDR_LEN];            // 设备支持双网口时,配置MAC地址2
 	unsigned char netport_num;						// 网络口个数
     unsigned char res2[3+128];
-}J_ManufCfg_T;
+}N_ManufCfg_T;
 
 /*
  * 设备DHCP控制(重启后无效)
  */
-typedef struct J_DhcpCtl_S
+typedef struct N_DhcpCtl_S
 {
     unsigned short if_type; /* JNetworkType */
     unsigned short dhcp_en; /* 开启&关闭DHCP服务， 0：关闭， 1：开启 */
-}J_DhcpCtl_T;
+}N_DhcpCtl_T;
 
 
 /*
  * 设备运行状态
  */
-typedef struct J_SysStatus_S
+typedef struct N_SysStatus_S
 {
     unsigned long run_time; //单位s
     unsigned char res[60];
-}J_SysStatus_T;
+}N_SysStatus_T;
 /*
  * 设备信息定义
  */
-typedef struct J_Device_S {
+typedef struct N_Device_S {
     unsigned int    SysSize;
-    J_SysCfg_T      SysCfg;
+    N_SysCfg_T      SysCfg;
     unsigned int    NetSize;
     JNetworkInfo    NetworkInfo;
-}J_Device_T;
-typedef J_Device_T j_Device_T;
+}N_Device_T;
+typedef N_Device_T n_Device_T;
 
-typedef struct J_Decoder_Info
+typedef struct N_Decoder_Info
 {
 	unsigned long		dwDecoderId;
 	unsigned int		nType;
@@ -277,13 +277,13 @@ typedef struct J_Decoder_Info
 	/* ------- 硬解器码配置 -------- */
 	JNetwork			NetCfg;		/*网络配置*/
 	unsigned int		dec_no;	/*解码器编号配置*/
-}J_Decoder_Info;
+}N_Decoder_Info;
 
 
-typedef struct J_Decoder_Test
+typedef struct N_Decoder_Test
 {
 	unsigned int out_en;	/* 0: 关闭输出测试 1: 打开输出测试 */
-}J_Decoder_Test;
+}N_Decoder_Test;
 
 
 #define NMP_SEARCH_ID_LEN               32
@@ -299,7 +299,7 @@ typedef struct Device_Info
     char dev_ip[NMP_SEARCH_IP_LEN];     //设备ip
     char res[32];                       //保留
 }Device_Info;
-typedef struct Jpf_Platform
+typedef struct Nmp_Platform
 {
     char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
     char mds_ip[NMP_SEARCH_IP_LEN];     //平台mds ip
@@ -307,21 +307,21 @@ typedef struct Jpf_Platform
     int mds_port;                       //平台mds端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
     char res[32];                       //保留
-}Jpf_Platform;
-typedef struct Jpf_Search
+}Nmp_Platform;
+typedef struct Nmp_Search
 {
     Device_Info  dev_info;
-    Jpf_Platform jpf_plt;
-}Jpf_Search;
+    Nmp_Platform nmp_plt;
+}Nmp_Search;
 
 
-typedef struct Jpf_Redirect
+typedef struct Nmp_Redirect
 {
     char pu_id[NMP_SEARCH_ID_LEN];      //设备标识
     char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
     int cms_port;                       //平台cms端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
-}Jpf_Redirect;
+}Nmp_Redirect;
 
 
 /*-----------------------------------*/

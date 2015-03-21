@@ -1,38 +1,38 @@
 /**********************************************************
- * @file     jpf_mysql_fun.c
+ * @file     nmp_mysql_fun.c
  * @author   Yang Ying
  * @section  LICENSE
  *
- * Copyright by Shenzhen JXJ Electronic Co.Ltd, 2011.
- * Website: www.szjxj.com
+ * Copyright by Shenzhen NMP Electronic Co.Ltd, 2011.
+ * Website: www.sznmp.com
  *
  * @section  DESCRIPTION
  *
- * 1. jpf_mysql_do_query
+ * 1. nmp_mysql_do_query
  *    deal with query operation ,for example select,insert,delete
- * 2. jpf_sql_get_num_rows
+ * 2. nmp_sql_get_num_rows
  *    get number of rows
- * 3. jpf_sql_get_num_fields
+ * 3. nmp_sql_get_num_fields
  *    get number of fields
- * 4. jpf_sql_get_res
+ * 4. nmp_sql_get_res
  *    get results of query
- * 5. jpf_sql_fetch_row
+ * 5. nmp_sql_fetch_row
  *    fetch a row of mysql
- * 6. jpf_sql_fetch_field
+ * 6. nmp_sql_fetch_field
  *    fetch a field of mysql
- * 7. jpf_sql_fetch_fields
+ * 7. nmp_sql_fetch_fields
  *    fetch fields of mysql
- * 8. jpf_sql_get_field_name
+ * 8. nmp_sql_get_field_name
  *    get field name
- * 9. jpf_sql_get_field_type
+ * 9. nmp_sql_get_field_type
  *    get field type
- * 10. jpf_sql_get_field_value
+ * 10. nmp_sql_get_field_value
  *    fetch field value
- * 11. jpf_sql_fetch_lengths
+ * 11. nmp_sql_fetch_lengths
  *    fetch field lengths
- * 12. jpf_sql_field_seek
+ * 12. nmp_sql_field_seek
  *    set field seek
- * 13. jpf_sql_put_res
+ * 13. nmp_sql_put_res
  *    free result of mysql
  * History:
  * 2011.6.23 - Yang Ying, initiate to create;
@@ -61,7 +61,7 @@
 #define DB_SERVER_GONE_ERROR 2006
 
 int
-jpf_mysql_do_query(JpfMysql *db, const char *query)
+nmp_mysql_do_query(NmpMysql *db, const char *query)
 {
 	ASSERT(db != NULL && query != NULL);
 	int ret,error_code;
@@ -70,8 +70,8 @@ jpf_mysql_do_query(JpfMysql *db, const char *query)
 	if (ret)  //mysql_query()成功返回0，失败返回非0
 	{
 		error_code =  mysql_errno(db);
-		jpf_warning(
-			"<JpfModDbs> exec SQL command \"%s\" failed, err:%d.",
+		nmp_warning(
+			"<NmpModDbs> exec SQL command \"%s\" failed, err:%d.",
 			query, error_code
 		);
 
@@ -83,7 +83,7 @@ jpf_mysql_do_query(JpfMysql *db, const char *query)
 
 
 void
-jpf_sql_clean_left_result(JpfMysql *db)         // 清除剩余的结果集
+nmp_sql_clean_left_result(NmpMysql *db)         // 清除剩余的结果集
 {
 	ASSERT(db != NULL);
 	MYSQL_RES *result = NULL;
@@ -99,19 +99,19 @@ jpf_sql_clean_left_result(JpfMysql *db)         // 清除剩余的结果集
 }
 
 
-JpfMysqlRes*
-jpf_process_query_res(JpfMysql *mysql, const char *query_buf)
+NmpMysqlRes*
+nmp_process_query_res(NmpMysql *mysql, const char *query_buf)
 {
     int ret;
     gint num;
-    JpfMysqlRes     *mysql_result;
+    NmpMysqlRes     *mysql_result;
     G_ASSERT(mysql != NULL && query_buf != NULL);
 
-    ret = jpf_mysql_do_query(mysql, query_buf);
+    ret = nmp_mysql_do_query(mysql, query_buf);
     if (ret)  // query error
     {
    		printf("----query: %s\n",query_buf);
-        mysql_result = (JpfMysqlRes*)mysql_malloc(sizeof(JpfMysqlRes));
+        mysql_result = (NmpMysqlRes*)mysql_malloc(sizeof(NmpMysqlRes));
         if (G_UNLIKELY(!mysql_result))
         	return NULL;
 
@@ -120,26 +120,26 @@ jpf_process_query_res(JpfMysql *mysql, const char *query_buf)
         goto query_end;
     }
 
-    mysql_result = jpf_sql_get_res(mysql);
+    mysql_result = nmp_sql_get_res(mysql);
     if ((MYSQL_RESULT_CODE(mysql_result) == 0)&&(MYSQL_RESULT(mysql_result)))
-       num = jpf_sql_get_num_rows(mysql_result);
+       num = nmp_sql_get_num_rows(mysql_result);
     else
 	num = 0;
     printf("----------num=%d\n",num);
 query_end:
-	jpf_sql_clean_left_result(mysql);
+	nmp_sql_clean_left_result(mysql);
     return mysql_result;
 }
 
 
 int
-jpf_process_query_procedure(JpfMysql *mysql, const char *query_buf)
+nmp_process_query_procedure(NmpMysql *mysql, const char *query_buf)
 {
     int ret;
     G_ASSERT(mysql != NULL && query_buf != NULL);
 
-    ret = jpf_mysql_do_query(mysql, query_buf);
-    jpf_sql_clean_left_result(mysql);
+    ret = nmp_mysql_do_query(mysql, query_buf);
+    nmp_sql_clean_left_result(mysql);
 
     return ret;
 }
@@ -147,16 +147,16 @@ jpf_process_query_procedure(JpfMysql *mysql, const char *query_buf)
 
 /* 处理操作结果码，不处理结果集 */
 void
-jpf_dbs_do_query_code(NmpAppObj *app_obj,
+nmp_dbs_do_query_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect)
 {
    // G_ASSERT(sys_msg != NULL && result != NULL);
 
     db_conn_status *conn = NULL;
-    JpfModDbs *dbs_obj;
+    NmpModDbs *dbs_obj;
     gint size;
     gint code;
     glong affect_num = 0;
@@ -170,20 +170,20 @@ redo:
     conn = get_db_connection(dbs_obj->pool_info, dbs_obj->pool_conf);
     if (G_UNLIKELY(!conn))
     {
-        jpf_warning("<JpfModDbs> get db connection error,query=%s.",query);
+        nmp_warning("<NmpModDbs> get db connection error,query=%s.",query);
         code = -E_GETDBCONN;
         goto END_DBS_QUERY;
     }
 
     if (G_UNLIKELY(!conn->mysql))
     {
-    	 jpf_warning("<JpfModDbs> get db connection error,query=%s.",query);
+    	 nmp_warning("<NmpModDbs> get db connection error,query=%s.",query);
         put_db_connection(dbs_obj->pool_info, conn);
         code = -E_GETDBCONN;
         goto END_DBS_QUERY;
     }
 
-    code = jpf_mysql_do_query(conn->mysql, query);
+    code = nmp_mysql_do_query(conn->mysql, query);
     if (code == -DB_SERVER_GONE_ERROR)
     {
         kill_db_connection(dbs_obj->pool_info, conn);
@@ -196,31 +196,31 @@ redo:
 END_DBS_QUERY:
     if (affect)
         *affect = affect_num;
-    size = sizeof(JpfMsgErrCode);
+    size = sizeof(NmpMsgErrCode);
     SET_CODE(result, code);
 }
 
 
 void
-jpf_dbs_do_del_code(NmpAppObj *app_obj,
+nmp_dbs_do_del_code(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query,
-                      JpfMsgErrCode *result,
+                      NmpMsgErrCode *result,
                       glong *affect)
 {
-    jpf_dbs_do_query_code(app_obj, sys_msg, query, result, affect);
+    nmp_dbs_do_query_code(app_obj, sys_msg, query, result, affect);
     if (*affect == 0)
         SET_CODE(result, -E_NODBENT);
 }
 
 
 /* 处理结果集    */
-JpfMysqlRes*
-jpf_dbs_do_query_res(NmpAppObj *app_obj, char *query)
+NmpMysqlRes*
+nmp_dbs_do_query_res(NmpAppObj *app_obj, char *query)
 {
     db_conn_status  *conn = NULL;
-    JpfModDbs        *dbs_obj;
-    JpfMysqlRes      *result = NULL;
+    NmpModDbs        *dbs_obj;
+    NmpMysqlRes      *result = NULL;
 
     dbs_obj = NMP_MODDBS(app_obj);
 redo:
@@ -234,7 +234,7 @@ redo:
         goto END_QUERY_RESULT;
     }
 
-    result = jpf_process_query_res(conn->mysql, query);
+    result = nmp_process_query_res(conn->mysql, query);
     if (result->result_code == -DB_SERVER_GONE_ERROR)
     {
         kill_db_connection(dbs_obj->pool_info, conn);
@@ -246,8 +246,8 @@ redo:
 END_QUERY_RESULT:
     if (G_UNLIKELY(!result))
     {
-        jpf_warning("<JpfModDbs> get db connection error,query=%s.",query);
-        result = mysql_malloc(sizeof(JpfMysqlRes));
+        nmp_warning("<NmpModDbs> get db connection error,query=%s.",query);
+        result = mysql_malloc(sizeof(NmpMysqlRes));
         if (G_UNLIKELY(!result))
             return NULL;
         result->result_code = -E_GETDBCONN;
@@ -258,30 +258,30 @@ END_QUERY_RESULT:
 }
 
 gint
-jpf_get_count_value(JpfMysqlRes *result)
+nmp_get_count_value(NmpMysqlRes *result)
 {
     unsigned int row_num;
     unsigned int field_num;
-    JpfMysqlRow mysql_row;
-    JpfMysqlField* mysql_fields;
+    NmpMysqlRow mysql_row;
+    NmpMysqlField* mysql_fields;
     gchar *name;
     gchar *value;
     gint count = 0;
     gint field_no =0;
 
-    row_num = jpf_sql_get_num_rows(result);
-    field_num = jpf_sql_get_num_fields(result);
+    row_num = nmp_sql_get_num_rows(result);
+    field_num = nmp_sql_get_num_fields(result);
 
-    while ((mysql_row = jpf_sql_fetch_row(result)))
+    while ((mysql_row = nmp_sql_fetch_row(result)))
     {
-        jpf_sql_field_seek(result, 0);
-        mysql_fields = jpf_sql_fetch_fields(result);
+        nmp_sql_field_seek(result, 0);
+        mysql_fields = nmp_sql_fetch_fields(result);
         for(field_no = 0; field_no < field_num; field_no++)
         {
-            name = jpf_sql_get_field_name(mysql_fields, field_no);
+            name = nmp_sql_get_field_name(mysql_fields, field_no);
             if (!strcmp(name, "@count"))
             {
-                value = jpf_sql_get_field_value(mysql_row, field_no);
+                value = nmp_sql_get_field_value(mysql_row, field_no);
                 if(value)
                 {
                     count = atoi(value);
@@ -290,7 +290,7 @@ jpf_get_count_value(JpfMysqlRes *result)
             }
 	     else if (!strcmp(name, "count"))
             {
-                value = jpf_sql_get_field_value(mysql_row, field_no);
+                value = nmp_sql_get_field_value(mysql_row, field_no);
                 if(value)
                 {
                     count = atoi(value);
@@ -307,11 +307,11 @@ jpf_get_count_value(JpfMysqlRes *result)
 }
 
 gint
-jpf_get_record_count(NmpAppObj *app_obj, char *query)
+nmp_get_record_count(NmpAppObj *app_obj, char *query)
 {
 	db_conn_status *conn = NULL;
-	JpfModDbs *dbs_obj;
-	JpfMysqlRes *result = NULL;
+	NmpModDbs *dbs_obj;
+	NmpMysqlRes *result = NULL;
 	gint count = 0;
 
 	dbs_obj = NMP_MODDBS(app_obj);
@@ -327,7 +327,7 @@ redo:
 		return -E_GETDBCONN;
 	}
 
-	result = jpf_process_query_res(conn->mysql, query);
+	result = nmp_process_query_res(conn->mysql, query);
 	if (result->result_code == -DB_SERVER_GONE_ERROR)
 	{
 		kill_db_connection(dbs_obj->pool_info, conn);
@@ -337,16 +337,16 @@ redo:
 	put_db_connection(dbs_obj->pool_info, conn);
 	if (result && result->sql_res)
 	{
-		count = jpf_get_count_value(result);
+		count = nmp_get_count_value(result);
 	}
 
-	jpf_sql_put_res(result, sizeof(JpfMysqlRes));
+	nmp_sql_put_res(result, sizeof(NmpMysqlRes));
 	return count;
 }
 
 
 unsigned long long
-jpf_sql_get_num_rows(JpfMysqlRes *res)   //获取结果集中的行数
+nmp_sql_get_num_rows(NmpMysqlRes *res)   //获取结果集中的行数
 {
 	ASSERT(res != NULL && MYSQL_RESULT(res));
 
@@ -357,7 +357,7 @@ jpf_sql_get_num_rows(JpfMysqlRes *res)   //获取结果集中的行数
 
 
 unsigned int
-jpf_sql_get_num_fields(JpfMysqlRes *res) //获取结果集中的列数
+nmp_sql_get_num_fields(NmpMysqlRes *res) //获取结果集中的列数
 {
 	ASSERT(res != NULL && MYSQL_RESULT(res));
 
@@ -367,14 +367,14 @@ jpf_sql_get_num_fields(JpfMysqlRes *res) //获取结果集中的列数
 }
 
 
-JpfMysqlRes*
-jpf_sql_get_res(JpfMysql *db)         // 获取结果集
+NmpMysqlRes*
+nmp_sql_get_res(NmpMysql *db)         // 获取结果集
 {
 	ASSERT(db != NULL);
 	MYSQL_RES *result = NULL;
-	JpfMysqlRes *mysql_res;
+	NmpMysqlRes *mysql_res;
 
-	mysql_res = mysql_malloc(sizeof(JpfMysqlRes));
+	mysql_res = mysql_malloc(sizeof(NmpMysqlRes));
 	if (G_UNLIKELY(!mysql_res))
 		return NULL;
 
@@ -410,46 +410,46 @@ jpf_sql_get_res(JpfMysql *db)         // 获取结果集
 }
 
 
-gint jpf_dbs_get_row_num(NmpAppObj *app_obj,
+gint nmp_dbs_get_row_num(NmpAppObj *app_obj,
                       NmpSysMsg *sys_msg,
                       char *query)
 {
-	 JpfMysqlRes *result;
+	 NmpMysqlRes *result;
 	 gint row_num;
         gint ret;
 
-	 result = jpf_dbs_do_query_res(app_obj, query);
+	 result = nmp_dbs_do_query_res(app_obj, query);
 
     if (G_UNLIKELY(!result))
    	{
-		jpf_error("<JpfModDbs> alloc error");
+		nmp_error("<NmpModDbs> alloc error");
 		ret = -ENOMEM;
 		return ret;
 	}
 
     if (G_UNLIKELY(!MYSQL_RESULT_CODE(result)))  //success:0 fail:!0
     {
-        row_num = jpf_sql_get_num_rows(result);
+        row_num = nmp_sql_get_num_rows(result);
         printf("get row num (%d)\n",row_num);
         if(row_num == 0)
         {
-        	jpf_sql_put_res(result,sizeof(JpfMysqlRes));
+        	nmp_sql_put_res(result,sizeof(NmpMysqlRes));
         	return row_num;
         }
     }
     else
     {
     	ret = MYSQL_RESULT_CODE(result);
-    	jpf_sql_put_res(result,sizeof(JpfMysqlRes));
+    	nmp_sql_put_res(result,sizeof(NmpMysqlRes));
     	return ret;
     }
-    jpf_sql_put_res(result,sizeof(JpfMysqlRes));
+    nmp_sql_put_res(result,sizeof(NmpMysqlRes));
     return row_num;
 }
 
 
-JpfMysqlRow
-jpf_sql_fetch_row(JpfMysqlRes *res)
+NmpMysqlRow
+nmp_sql_fetch_row(NmpMysqlRes *res)
 {
 	ASSERT(res != NULL);
 	if(res->sql_res)
@@ -458,8 +458,8 @@ jpf_sql_fetch_row(JpfMysqlRes *res)
 }
 
 
-JpfMysqlField*
-jpf_sql_fetch_field(JpfMysqlRes *res) //返回下一个表字段的类型。
+NmpMysqlField*
+nmp_sql_fetch_field(NmpMysqlRes *res) //返回下一个表字段的类型。
 {
 	ASSERT(res != NULL);
 
@@ -469,8 +469,8 @@ jpf_sql_fetch_field(JpfMysqlRes *res) //返回下一个表字段的类型。
 }
 
 
-JpfMysqlField*
-jpf_sql_fetch_fields(JpfMysqlRes *res)  //返回所有字段结构的数组。
+NmpMysqlField*
+nmp_sql_fetch_fields(NmpMysqlRes *res)  //返回所有字段结构的数组。
 {
 	ASSERT(res != NULL);
 
@@ -482,7 +482,7 @@ jpf_sql_fetch_fields(JpfMysqlRes *res)  //返回所有字段结构的数组。
 
 
 char*
-jpf_sql_get_field_name(JpfMysqlField *field, int num) //返回下一个表字段的名字。
+nmp_sql_get_field_name(NmpMysqlField *field, int num) //返回下一个表字段的名字。
 {
 	ASSERT(field != NULL);
 
@@ -493,7 +493,7 @@ jpf_sql_get_field_name(JpfMysqlField *field, int num) //返回下一个表字段的名字。
 
 
 int32_t
-jpf_sql_get_field_type(JpfMysqlField *field, int num) //返回下一个表字段的类型。
+nmp_sql_get_field_type(NmpMysqlField *field, int num) //返回下一个表字段的类型。
 {
 	ASSERT(field != NULL);
 
@@ -505,7 +505,7 @@ jpf_sql_get_field_type(JpfMysqlField *field, int num) //返回下一个表字段的类型。
 
 
 char *
-jpf_sql_get_field_value(JpfMysqlRow row,int num) //返回下一个表字段的值
+nmp_sql_get_field_value(NmpMysqlRow row,int num) //返回下一个表字段的值
 {
 	ASSERT(row != NULL);
 
@@ -516,7 +516,7 @@ jpf_sql_get_field_value(JpfMysqlRow row,int num) //返回下一个表字段的值
 
 
 unsigned long *
-jpf_sql_fetch_lengths(JpfMysqlRes *res)  // 返回当前行中所有列的长度
+nmp_sql_fetch_lengths(NmpMysqlRes *res)  // 返回当前行中所有列的长度
 {
 	ASSERT(res != NULL);
 	if (res->sql_res)
@@ -525,8 +525,8 @@ jpf_sql_fetch_lengths(JpfMysqlRes *res)  // 返回当前行中所有列的长度
 }
 
 
-JpfMysqlFieldOffset
-jpf_sql_field_seek(JpfMysqlRes *res, JpfMysqlFieldOffset offset)
+NmpMysqlFieldOffset
+nmp_sql_field_seek(NmpMysqlRes *res, NmpMysqlFieldOffset offset)
 {
 	ASSERT(res != NULL);
 	if (res->sql_res)
@@ -536,7 +536,7 @@ jpf_sql_field_seek(JpfMysqlRes *res, JpfMysqlFieldOffset offset)
 
 /*
 void
-jpf_sql_put_res(JpfMysqlRes *res)   // 释放结果集使用的内存
+nmp_sql_put_res(NmpMysqlRes *res)   // 释放结果集使用的内存
 {
 	ASSERT(res != NULL);
 
@@ -549,7 +549,7 @@ jpf_sql_put_res(JpfMysqlRes *res)   // 释放结果集使用的内存
 }*/
 
 void
-jpf_sql_put_res(JpfMysqlRes *res, guint size)   // 释放结果集使用的内存
+nmp_sql_put_res(NmpMysqlRes *res, guint size)   // 释放结果集使用的内存
 {
 	ASSERT(res != NULL);
 
@@ -557,6 +557,6 @@ jpf_sql_put_res(JpfMysqlRes *res, guint size)   // 释放结果集使用的内存
 		mysql_free_result(res->sql_res);
 
 	if(res)
-		jpf_mem_kfree(res,size);
+		nmp_mem_kfree(res,size);
 }
 

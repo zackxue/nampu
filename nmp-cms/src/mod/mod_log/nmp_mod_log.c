@@ -22,7 +22,7 @@ nmp_mod_log_register_msg_handler(NmpModLog *self);
 #define CHECK_LOG_TIME		(1000 * 60)	//60 s
 
 
-gint jpf_log_check_hook(NmpSysMsg *msg)
+gint nmp_log_check_hook(NmpSysMsg *msg)
 {
 	NmpMsgID msg_id = MSG_GETID(msg);
 	guint flag;
@@ -43,7 +43,7 @@ gint jpf_log_check_hook(NmpSysMsg *msg)
 
 
 static db_conn_pool_conf *
-jpf_log_init_mysql_conf()
+nmp_log_init_mysql_conf()
 {
 	db_conn_pool_conf *pool_conf;
 
@@ -51,14 +51,14 @@ jpf_log_init_mysql_conf()
 	if (G_UNLIKELY(!pool_conf))
 		return pool_conf;
 
-	SET_DB_CONN_MIN_NUM(pool_conf,  jpf_get_sys_parm_int(SYS_PARM_DBMINCONNNUM));
-	SET_DB_CONN_MAX_NUM(pool_conf,  jpf_get_sys_parm_int(SYS_PARM_DBMAXCONNNUM));
-	strncpy(pool_conf->host, jpf_get_sys_parm_str(SYS_PARM_DBHOST), HOST_NAME_LEN - 1);
-	strncpy(pool_conf->db_name, jpf_get_sys_parm_str(SYS_PARM_DBNAME), DB_NAME_LEN - 1);
-	//printf("---------db name :%s--%s\n",pool_conf->db_name, jpf_get_sys_parm_str(SYS_PARM_DBNAME));
-	strncpy(pool_conf->user_name, jpf_get_sys_parm_str(SYS_PARM_DBADMINNAME), ADMIN_NAME_LEN - 1);
-	strncpy(pool_conf->user_password, jpf_get_sys_parm_str(SYS_PARM_DBADMINPASSWORD), PASSWD_LEN - 1);
-	strncpy(pool_conf->my_cnf_path, jpf_get_sys_parm_str(SYS_PARM_MYCNFPATH), FILENAME_LEN- 1);
+	SET_DB_CONN_MIN_NUM(pool_conf,  nmp_get_sys_parm_int(SYS_PARM_DBMINCONNNUM));
+	SET_DB_CONN_MAX_NUM(pool_conf,  nmp_get_sys_parm_int(SYS_PARM_DBMAXCONNNUM));
+	strncpy(pool_conf->host, nmp_get_sys_parm_str(SYS_PARM_DBHOST), HOST_NAME_LEN - 1);
+	strncpy(pool_conf->db_name, nmp_get_sys_parm_str(SYS_PARM_DBNAME), DB_NAME_LEN - 1);
+	//printf("---------db name :%s--%s\n",pool_conf->db_name, nmp_get_sys_parm_str(SYS_PARM_DBNAME));
+	strncpy(pool_conf->user_name, nmp_get_sys_parm_str(SYS_PARM_DBADMINNAME), ADMIN_NAME_LEN - 1);
+	strncpy(pool_conf->user_password, nmp_get_sys_parm_str(SYS_PARM_DBADMINPASSWORD), PASSWD_LEN - 1);
+	strncpy(pool_conf->my_cnf_path, nmp_get_sys_parm_str(SYS_PARM_MYCNFPATH), FILENAME_LEN- 1);
 
 	return pool_conf;
 }
@@ -74,7 +74,7 @@ nmp_mod_log_setup(NmpAppMod *am_self)
 
 	nmp_app_mod_set_name(am_self, "MOD-LOG");
 	nmp_mod_log_register_msg_handler(self);
-	jpf_msg_bus_add_msg_hook(BUSSLOT_POS_LOG, jpf_log_check_hook);
+	nmp_msg_bus_add_msg_hook(BUSSLOT_POS_LOG, nmp_log_check_hook);
 	return 0;
 }
 
@@ -95,17 +95,17 @@ nmp_mod_log_init(NmpModLog *self)
 {
 	g_nmp_mod_log = self;
 
-	self->pool_conf = jpf_log_init_mysql_conf();
+	self->pool_conf = nmp_log_init_mysql_conf();
 	if (G_UNLIKELY(!self->pool_conf))
-		jpf_error("out of memory");
+		nmp_error("out of memory");
 
 	self->pool_info = g_new0(db_conn_pool_info, 1);
 	if (G_UNLIKELY(!self->pool_info))
-		jpf_error("out of memory");
+		nmp_error("out of memory");
 
 	self->del_log_flag = 0;
 	init_db_conn_pool(self->pool_info, self->pool_conf);
-	jpf_set_timer(CHECK_LOG_TIME, nmp_mod_log_del_log_timer, self);
+	nmp_set_timer(CHECK_LOG_TIME, nmp_mod_log_del_log_timer, self);
 }
 
 

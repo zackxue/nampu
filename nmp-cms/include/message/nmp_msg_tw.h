@@ -9,46 +9,46 @@
 #include "nmp_tw_interface.h"
 
 
-typedef struct _JpfTwRegInfo JpfTwRegInfo;
-struct _JpfTwRegInfo
+typedef struct _NmpTwRegInfo NmpTwRegInfo;
+struct _NmpTwRegInfo
 {
 	gchar	puid[MAX_ID_LEN];
 	gint		decode_type;
 };
 
-typedef struct _JpfTwRegRes JpfTwRegRes;
-struct _JpfTwRegRes
+typedef struct _NmpTwRegRes NmpTwRegRes;
+struct _NmpTwRegRes
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			puid[MAX_ID_LEN];
 	gint				keep_alive_time;
 };
 
 
-typedef struct _JpfTwHeart JpfTwHeart;
-struct _JpfTwHeart
+typedef struct _NmpTwHeart NmpTwHeart;
+struct _NmpTwHeart
 {
 	gchar	puid[MAX_ID_LEN];
 };
 
-typedef struct _JpfTwHeartResp JpfTwHeartResp;
-struct _JpfTwHeartResp
+typedef struct _NmpTwHeartResp NmpTwHeartResp;
+struct _NmpTwHeartResp
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	gchar			server_time[TIME_INFO_LEN];
 };
 
 
-typedef struct _JpfTwCmdResp JpfTwCmdResp;
-struct _JpfTwCmdResp
+typedef struct _NmpTwCmdResp NmpTwCmdResp;
+struct _NmpTwCmdResp
 {
-	JpfMsgErrCode	code;
+	NmpMsgErrCode	code;
 	char		session_id[TW_ID_LEN];			//cu»á»°id
 };
 
 
-typedef struct _JpfTwOnlineStatusChange JpfTwOnlineStatusChange;
-struct _JpfTwOnlineStatusChange
+typedef struct _NmpTwOnlineStatusChange NmpTwOnlineStatusChange;
+struct _NmpTwOnlineStatusChange
 {
 	gchar	domain_id[DOMAIN_ID_LEN];
 	gchar	puid[MAX_ID_LEN];

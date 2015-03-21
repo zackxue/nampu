@@ -92,7 +92,7 @@ typedef struct
  *				电视墙操作通信协议 对应 数据结构
  *============================================================*/
 
-//单步执行数据结构			<jpf_tw_run_step>
+//单步执行数据结构			<nmp_tw_run_step>
 
 typedef struct
 {
@@ -113,7 +113,7 @@ typedef struct
 } tw_run_step_request_with_seq;
 
 
-//巡回执行数据结构			<jpf_tw_run_tour>
+//巡回执行数据结构			<nmp_tw_run_tour>
 
 typedef struct
 {
@@ -126,7 +126,7 @@ typedef struct
 } tw_run_tour_request;
 
 
-//群组执行数据结构			<jpf_tw_run_group>
+//群组执行数据结构			<nmp_tw_run_group>
 
 typedef struct
 {
@@ -135,7 +135,7 @@ typedef struct
 } tw_run_group_request;
 
 
-//巡回停止命令			<jpf_tw_stop_tour>
+//巡回停止命令			<nmp_tw_stop_tour>
 
 typedef struct
 {
@@ -144,20 +144,20 @@ typedef struct
 } tw_stop_tour_request;
 
 
-//群组停止命令			<jpf_tw_stop_group>
+//群组停止命令			<nmp_tw_stop_group>
 
 typedef tw_run_group_request tw_stop_group_request;
 
-//查询巡回是否运行			<jpf_tw_if_run_tour>
+//查询巡回是否运行			<nmp_tw_if_run_tour>
 
 typedef tw_stop_tour_request tw_if_run_tour_request;
 
-//查询群组是否运行			<jpf_tw_if_run_group>
+//查询群组是否运行			<nmp_tw_if_run_group>
 
 typedef tw_run_group_request tw_if_run_group_request;
 
 
-//停止分割运行数据结构		<jpf_tw_stop_gpt_by_division>
+//停止分割运行数据结构		<nmp_tw_stop_gpt_by_division>
 
 typedef struct
 {
@@ -343,7 +343,7 @@ typedef struct
  *				屏幕切换结果反馈 对应 数据结构
  *============================================================*/
 
-//	<jpf_tw_deal_decoder_res>
+//	<nmp_tw_deal_decoder_res>
 
 typedef struct
 {
@@ -496,52 +496,52 @@ typedef struct
 
 
 
-void jpf_tw_init_log_path(const char *folder_path, const char *name);
+void nmp_tw_init_log_path(const char *folder_path, const char *name);
 
-void jpf_tw_init_tvwall_module();
+void nmp_tw_init_tvwall_module();
 
-int jpf_tw_tvwall_work();
+int nmp_tw_tvwall_work();
 
-int jpf_tw_tvwall_clear();		//测试时使用
+int nmp_tw_tvwall_clear();		//测试时使用
 
 
-int jpf_tw_run_step(tw_run_step_request_with_seq *msg_with_seq);
+int nmp_tw_run_step(tw_run_step_request_with_seq *msg_with_seq);
 
-int jpf_tw_run_tour(tw_run_tour_request *msg);
+int nmp_tw_run_tour(tw_run_tour_request *msg);
 
-int jpf_tw_run_group(tw_run_group_request *msg);
+int nmp_tw_run_group(tw_run_group_request *msg);
 
-int jpf_tw_run_action_step(tw_run_step_request *msg);
+int nmp_tw_run_action_step(tw_run_step_request *msg);
 
-int jpf_tw_stop_tour(tw_stop_tour_request *msg);
+int nmp_tw_stop_tour(tw_stop_tour_request *msg);
 
-int jpf_tw_stop_group(tw_stop_group_request *msg);
+int nmp_tw_stop_group(tw_stop_group_request *msg);
 
-int jpf_tw_if_run_tour(tw_if_run_tour_request *msg);
+int nmp_tw_if_run_tour(tw_if_run_tour_request *msg);
 
-int jpf_tw_if_run_group(tw_if_run_group_request *msg);
+int nmp_tw_if_run_group(tw_if_run_group_request *msg);
 
-int jpf_tw_stop_gpt_by_division(tw_division_position *msg);
+int nmp_tw_stop_gpt_by_division(tw_division_position *msg);
 
-int jpf_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type);
+int nmp_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type);
 
 
 typedef int (*event_handler_t)(TW_INFO_TYPE cmd, void *in_parm, void *out_parm);
 
-void jpf_tw_set_event_handler(event_handler_t hook);
+void nmp_tw_set_event_handler(event_handler_t hook);
 
 
-int jpf_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq);
+int nmp_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq);
 
-int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_with_seq,
+int nmp_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_with_seq,
 	TW_INFO_TYPE type);
 
 
-int jpf_tw_destroy_screen_to_dec(tw_screen_to_decoder_with_seq *to_dec_with_seq,
+int nmp_tw_destroy_screen_to_dec(tw_screen_to_decoder_with_seq *to_dec_with_seq,
 	int size);
 
 
-int jpf_tw_update_url(tw_update_url *update_url);
+int nmp_tw_update_url(tw_update_url *update_url);
 
 
 #endif

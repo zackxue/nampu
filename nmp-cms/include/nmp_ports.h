@@ -4,7 +4,7 @@
 #include "nmp_sysctl.h"
 
 /* CMS Macros Internal */
-#define __BASE_PORT				(jpf_get_sys_parm_int(SYS_PARM_BASEPORT))
+#define __BASE_PORT				(nmp_get_sys_parm_int(SYS_PARM_BASEPORT))
 #define __CU_TO_CMS_OFFSET		0
 #define __PU_TO_CMS_OFFSET		1
 #define __MDU_TO_CMS_OFFSET		2

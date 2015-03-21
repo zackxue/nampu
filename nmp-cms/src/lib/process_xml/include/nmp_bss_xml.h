@@ -1,5 +1,5 @@
 /********************************************************************
- * jpf_bss.h  - deal xml of bss, parse and create xml
+ * nmp_bss.h  - deal xml of bss, parse and create xml
  * Function£ºparse or create xml relate to bss.
  * Author:yangy
  * Description:users can add parse or create message of bss,define
@@ -408,1130 +408,1130 @@
 #define MODIFY_AMS_PU_RES				"ModifyAmsPuResponse"
 
 
-JpfMsgInfo *
-jpf_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_login(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_login_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-JpfMsgInfo *
-jpf_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+nmp_create_bss_login_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+NmpMsgInfo *
+nmp_parse_bss_heart(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_heart_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_heart_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_add_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-int
-jpf_create_del_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo * jpf_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+int
+nmp_create_del_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-int jpf_create_validata_admin_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-
-JpfMsgInfo *
-jpf_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo * nmp_parse_validata_admin(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
-int
-jpf_create_validata_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+int nmp_create_validata_admin_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
-int
-jpf_create_query_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_del_user_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_validata_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_validata_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_validata_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_modify_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_user_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_user_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
- JpfMsgInfo *
-jpf_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_add_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_validata_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_validata_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_query_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_query_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_modify_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_modify_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_del_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_del_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_query_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_query_domain_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+ NmpMsgInfo *
+nmp_parse_modify_domain(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
  int
-jpf_create_modify_domain_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_domain_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_validata_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_validata_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_validata_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_modify_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_modify_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_modify_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_validata_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_validata_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_validata_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_move_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_move_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_move_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_move_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_mds(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_mds_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_mds_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_mds_ip(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_mds_ip_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_mds_ip_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_record_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_record_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_record_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_record_policy_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_record_policy_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_record_policy_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_modify_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_modify_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_modify_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_manufacturer(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_manufacturer_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_manufacturer_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_user_own_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_user_own_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_user_own_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_gu_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_gu_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_gu_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_user_own_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_user_own_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_user_own_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_tw_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_tw_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_tw_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_user_own_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_user_own_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_user_own_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_tour_to_user(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_tour_to_user_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_tour_to_user_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_system_time_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_set_system_time(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_set_system_time_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_set_system_time_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_database_backup(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_database_backup_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_database_backup_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_database_import(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_database_import_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_database_import_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_add_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_add_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_add_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_add_hd_to_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_add_hd_to_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_add_hd_to_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_del_hd_from_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_del_hd_from_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_del_hd_from_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_query_all_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_query_all_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_query_all_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_query_hd_group_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_query_hd_group_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_query_hd_group_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_query_all_hd(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_query_all_hd_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_query_all_hd_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_del_hd_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_del_hd_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_del_hd_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_reboot_mss(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_reboot_mss_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_reboot_mss_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_get_hd_format_progress(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_get_hd_format_progress_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_get_hd_format_progress_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_query_gu_record_status(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_query_gu_record_status_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_query_gu_record_status_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_defence_area(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_defence_area_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_defence_area_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_defence_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_defence_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_defence_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_defence_gu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_defence_gu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_defence_gu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_set_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_set_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_set_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_set_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_set_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_set_del_alarm_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_map_href(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_map_href_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_map_href_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_tw(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_tw_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_tw_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_screen(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_screen_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_screen_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_scr_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_scr_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_scr_div_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_tour(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_tour_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_tour_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_tour_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_tour_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_tour_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_tour_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_group(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_group_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_group_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_add_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_config_group_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_config_group_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_config_group_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_group_step_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_group_step_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_group_step_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_group_step_div(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_group_step_div_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_group_step_div_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_alarm_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_alarm(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_alarm_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_alarm_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_del_alarm_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_del_alarm_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_del_alarm_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_platform_upgrade(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_platform_upgrade_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_platform_upgrade_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_net_interface_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_get_net_interface_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_net_interface_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_get_net_interface_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_get_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_get_network_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_set_network_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_set_network_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_set_network_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_time_policy(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_time_policy_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_time_policy_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_record(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_record_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_record_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_io(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_io_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_io_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_snapshot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_snapshot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_snapshot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_preset(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_preset_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_preset_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_step(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_step_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_step_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_del_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_del_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_link_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_link_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_link_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *jpf_parse_query_server_resource_info(xmlDocPtr doc ,
+NmpMsgInfo *nmp_parse_query_server_resource_info(xmlDocPtr doc ,
 	xmlNodePtr cur, char *cmd);
 
-int jpf_create_query_server_resource_info_resp(xmlDocPtr doc,
-	JpfMsgInfo *sys_msg);
+int nmp_create_query_server_resource_info_resp(xmlDocPtr doc,
+	NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_cms_all_ips(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_query_cms_all_ips_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_search_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_cms_all_ips(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_search_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_cms_all_ips_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_get_searched_device_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_tw_auth_info(xmlDocPtr doc , xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_search_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_tw_auth_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_search_device_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_alarm_link_auth_info(xmlDocPtr doc , xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_query_alarm_link_auth_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_get_searched_device(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_auto_add_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_get_searched_device_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_next_puno(xmlDocPtr doc, xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_get_next_puno_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_tw_auth_info(xmlDocPtr doc , xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_get_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_tw_auth_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_bss_set_initiator_name_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_alarm_link_auth_info(xmlDocPtr doc , xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_get_ipsan_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_alarm_link_auth_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_bss_add_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_auto_add_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_bss_delete_one_ipsan_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_auto_add_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_bss_get_one_ipsan_detail_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_get_next_puno(xmlDocPtr doc, xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_log_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_get_next_puno_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_query_area_dev_online_rate_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_get_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_validate_gu_map_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_get_initiator_name_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_add_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_set_initiator_name(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_set_initiator_name_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_modify_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_get_ipsan_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_del_ivs_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_get_ipsan_info_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_server_flag(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_get_server_flag_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_get_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_add_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_add_one_ipsan_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_set_mds_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_delete_one_ipsan(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_mds_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_delete_one_ipsan_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_get_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_bss_get_one_ipsan_detail(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_set_mss_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_bss_get_one_ipsan_detail_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_get_mss_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_get_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_log(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_log_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_set_ivs_config_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_area_dev_online_rate(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_get_ivs_state_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_area_dev_online_rate_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_cms_shutdown(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_cms_shutdown_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_cms_reboot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_validate_gu_map(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_cms_reboot_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_validate_gu_map_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_add_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_add_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_add_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_del_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_query_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_query_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_query_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo *
-jpf_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
-
-int
-jpf_create_query_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
-
-JpfMsgInfo *
-jpf_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+NmpMsgInfo *
+nmp_parse_modify_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int
-jpf_create_modify_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_modify_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_del_ivs(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_del_ivs_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_server_flag(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_server_flag_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_mds_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_set_mds_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_set_mds_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_mds_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_mds_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_mss_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_set_mss_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_set_mss_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_mss_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_mss_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_ivs_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_set_ivs_config(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_set_ivs_config_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_get_ivs_state(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_get_ivs_state_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_cms_shutdown(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_cms_shutdown_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_cms_reboot(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_cms_reboot_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_add_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_modify_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_del_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_query_ams_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_query_ams_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
+
+NmpMsgInfo *
+nmp_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
+
+int
+nmp_create_modify_ams_pu_resp(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
 
 #endif

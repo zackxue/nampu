@@ -41,7 +41,7 @@ typedef enum
 #define MF_HNW   "HNW"
 #define MF_XMT    "XMT"
 #define MF_TPS    "TPS"
-#define MF_JXJ     "JXJ"
+#define MF_NMP     "NMP"
 #define MF_ENC    "ENC"
 
 #define 	CMS_MF_HIK       0            /* º£¿µÍþÊÓ */
@@ -89,28 +89,28 @@ typedef enum
 #define ACTION_EMAP_BIT	(1<<ACTION_EMAP)
 
 
-typedef struct __JpfResource JpfResource;
-struct __JpfResource
+typedef struct __NmpResource NmpResource;
+struct __NmpResource
 {
 	gint weight;	//last weight of operator, 0 means no
 	gint64 last_ts;
 };
 
 
-typedef struct __JpfResourcesCtl JpfResourcesCtl;
-struct __JpfResourcesCtl
+typedef struct __NmpResourcesCtl NmpResourcesCtl;
+struct __NmpResourcesCtl
 {
-	JpfResource res[RESOURCE_MAX];
+	NmpResource res[RESOURCE_MAX];
 };
 
 
-typedef struct __JpfResourcesCap JpfResourcesCap;
-struct __JpfResourcesCap
+typedef struct __NmpResourcesCap NmpResourcesCap;
+struct __NmpResourcesCap
 {
 	guint system_version;
 	guint module_bits;
 	guint modules_data[MODULES_MAX];
-	JpfExpiredTime expired_time;
+	NmpExpiredTime expired_time;
 	gint dev_count;
 	gint av_count;
 	gint ds_count;
@@ -118,14 +118,14 @@ struct __JpfResourcesCap
 	gint ao_count;
 };
 
-void nmp_mod_init_resource(JpfResourcesCtl *res);
-gint  nmp_mod_ctl_resource(JpfResourcesCtl *res, gint type, gint weight);
+void nmp_mod_init_resource(NmpResourcesCtl *res);
+gint  nmp_mod_ctl_resource(NmpResourcesCtl *res, gint type, gint weight);
 void nmp_mod_init_resource_cap();
 gint nmp_mod_get_capability_av();
 gint nmp_mod_get_capability_ds();
 gint nmp_mod_get_capability_ai();
 gint nmp_mod_get_capability_ao();
-void nmp_mod_set_resource_cap(JpfResourcesCap *res_cap);
-void nmp_mod_get_resource_cap(JpfResourcesCap *req_cap);
+void nmp_mod_set_resource_cap(NmpResourcesCap *res_cap);
+void nmp_mod_get_resource_cap(NmpResourcesCap *req_cap);
 
 #endif

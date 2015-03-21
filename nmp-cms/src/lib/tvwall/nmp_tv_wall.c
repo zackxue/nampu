@@ -33,14 +33,14 @@ static unsigned int g_tw_dec_operate_seq = 2;
 #define TW_TEST2
 
 
-static int jpf_tw_get_dis_guid(int *tw_id, int *screen_id,
+static int nmp_tw_get_dis_guid(int *tw_id, int *screen_id,
 	tw_general_guid *dis_guid);
-static int jpf_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
+static int nmp_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
 	char ec_guid[], char ec_domain_id[], char ec_url[], char ec_dec_plug[]);
-static void jpf_tw_init_tw_operate_info();
-static int jpf_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq);
+static void nmp_tw_init_tw_operate_info();
+static int nmp_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq);
 static void
-jpf_tw_set_action_sign_no_lock(group_vec_t *p_gv, char *dis_guid,
+nmp_tw_set_action_sign_no_lock(group_vec_t *p_gv, char *dis_guid,
 	int enable_action, int division_id, int division_num, int *keep_other);
 
 
@@ -86,7 +86,7 @@ static TvWallActionPool g_tw_action_pool;
 
 
 
-void jpf_tw_init_log_path(const char *folder_path, const char *name)
+void nmp_tw_init_log_path(const char *folder_path, const char *name)
 {
 	snprintf(g_tw_log_path, sizeof(g_tw_log_path), "%s/%s", folder_path, name);
 }
@@ -156,7 +156,7 @@ static char *str_dup(const char *str)
 }
 
 
-int jpf_tw_get_channel_from_guid(char *guid, int *channel)
+int nmp_tw_get_channel_from_guid(char *guid, int *channel)
 {
 	assert(guid != NULL);
 
@@ -232,7 +232,7 @@ static void print_operate_info_no_lock()
 
 
 static void
-__jpf_tw_action_pool_add_info(TvWallActionPool *action_pool, int seq,
+__nmp_tw_action_pool_add_info(TvWallActionPool *action_pool, int seq,
 	int tw_id, int screen_id, int keep_other)
 {
 	TvWallActionInfo *action_info;
@@ -265,17 +265,17 @@ __jpf_tw_action_pool_add_info(TvWallActionPool *action_pool, int seq,
 }
 
 static void
-jpf_tw_action_pool_add_info(int seq, int tw_id, int screen_id, int keep_other)
+nmp_tw_action_pool_add_info(int seq, int tw_id, int screen_id, int keep_other)
 {
 	pthread_mutex_lock(&g_tw_action_pool.mutex);
-	__jpf_tw_action_pool_add_info(&g_tw_action_pool, seq, tw_id, screen_id,
+	__nmp_tw_action_pool_add_info(&g_tw_action_pool, seq, tw_id, screen_id,
 		keep_other);
 	pthread_mutex_unlock(&g_tw_action_pool.mutex);
 }
 
 
 static int
-__jpf_tw_action_pool_get_info(TvWallActionPool *action_pool, int seq,
+__nmp_tw_action_pool_get_info(TvWallActionPool *action_pool, int seq,
 	int *tw_id, int *screen_id, int *keep_other)
 {
 	TvWallActionInfo *action_info;
@@ -299,12 +299,12 @@ __jpf_tw_action_pool_get_info(TvWallActionPool *action_pool, int seq,
 }
 
 static int
-jpf_tw_action_pool_get_info(int seq, int *tw_id, int *screen_id, int *keep_other)
+nmp_tw_action_pool_get_info(int seq, int *tw_id, int *screen_id, int *keep_other)
 {
 	int ret;
 
 	pthread_mutex_lock(&g_tw_action_pool.mutex);
-	ret = __jpf_tw_action_pool_get_info(&g_tw_action_pool, seq, tw_id, screen_id,
+	ret = __nmp_tw_action_pool_get_info(&g_tw_action_pool, seq, tw_id, screen_id,
 		keep_other);
 	pthread_mutex_unlock(&g_tw_action_pool.mutex);
 
@@ -327,7 +327,7 @@ static inline void save_dec_operate_unit(tw_operate_unit *unit,
 	unit->division_num = msg->division_num;
 }
 
-static void jpf_tw_save_dec_operate_info(tw_operate_with_seq *msg_with_seq,
+static void nmp_tw_save_dec_operate_info(tw_operate_with_seq *msg_with_seq,
 	unsigned int seq)
 {
 	int i;
@@ -336,7 +336,7 @@ static void jpf_tw_save_dec_operate_info(tw_operate_with_seq *msg_with_seq,
 
 	if (!if_init_operate_info)
 	{
-		jpf_tw_init_tw_operate_info();
+		nmp_tw_init_tw_operate_info();
 		if_init_operate_info = 1;
 	}
 
@@ -377,7 +377,7 @@ static inline void get_operate_info_from_unit(tw_operate_result_to_cu_with_seq *
 	to_cu_with_seq->seq = unit->cu_seq;
 }
 
-static int jpf_tw_get_operate_info(tw_operate_result_to_cu_with_seq *to_cu_with_seq,
+static int nmp_tw_get_operate_info(tw_operate_result_to_cu_with_seq *to_cu_with_seq,
 	unsigned int seq)
 {
 	int i, found = 0;
@@ -411,7 +411,7 @@ static int get_operate_info_to_dec(tw_operate_to_decoder *dst, tw_operate *src)
 	dst->division_num = src->division_num;
 	tw_general_guid dis_guid;
 
-	if (jpf_tw_get_dis_guid(&src->tw_id, &src->screen_id, &dis_guid) < 0)
+	if (nmp_tw_get_dis_guid(&src->tw_id, &src->screen_id, &dis_guid) < 0)
 		return -1;
 
 	dst->dis_guid[TW_ID_LEN - 1] = '\0';
@@ -421,7 +421,7 @@ static int get_operate_info_to_dec(tw_operate_to_decoder *dst, tw_operate *src)
 }
 
 
-int jpf_tw_init_group_vec(group_vec_t *p_gv)
+int nmp_tw_init_group_vec(group_vec_t *p_gv)
 {
 	assert(p_gv != NULL);
 
@@ -433,7 +433,7 @@ int jpf_tw_init_group_vec(group_vec_t *p_gv)
 	return 0;
 }
 
-void jpf_tw_destroy_group_vec(group_vec_t *p_gv)
+void nmp_tw_destroy_group_vec(group_vec_t *p_gv)
 {
 	if (p_gv)
 	{
@@ -443,19 +443,19 @@ void jpf_tw_destroy_group_vec(group_vec_t *p_gv)
 	}
 }
 
-int jpf_tw_init_tvwall(tv_wall_t *p_tw)
+int nmp_tw_init_tvwall(tv_wall_t *p_tw)
 {
 	assert(p_tw != NULL);
 
-	if (jpf_tw_init_group_vec(&p_tw->tw_group_vec_ok) < 0)
+	if (nmp_tw_init_group_vec(&p_tw->tw_group_vec_ok) < 0)
 	{
 		error_msg("init tv wall group vec\n");
 		return -1;
 	}
 
-	if (jpf_tw_init_group_vec(&p_tw->tw_group_vec_wait) < 0)
+	if (nmp_tw_init_group_vec(&p_tw->tw_group_vec_wait) < 0)
 	{
-		jpf_tw_destroy_group_vec(&p_tw->tw_group_vec_ok);
+		nmp_tw_destroy_group_vec(&p_tw->tw_group_vec_ok);
 		error_msg("init tv wall wait group vec\n");
 		return -1;
 	}
@@ -464,7 +464,7 @@ int jpf_tw_init_tvwall(tv_wall_t *p_tw)
 }
 
 
-int jpf_tw_init_action_pool(TvWallActionPool *action_pool)
+int nmp_tw_init_action_pool(TvWallActionPool *action_pool)
 {
 	assert(action_pool != NULL);
 	memset(action_pool, 0, sizeof(TvWallActionPool));
@@ -476,22 +476,22 @@ int jpf_tw_init_action_pool(TvWallActionPool *action_pool)
 }
 
 
-void jpf_tw_init_tvwall_module()
+void nmp_tw_init_tvwall_module()
 {
-	if (jpf_tw_init_tvwall(&g_tv_wall_object) < 0)
+	if (nmp_tw_init_tvwall(&g_tv_wall_object) < 0)
 	{
 		error_msg("init tv wall\n");
 		exit(1);
 	}
 
-	if (jpf_tw_init_action_pool(&g_tw_action_pool) < 0)
+	if (nmp_tw_init_action_pool(&g_tw_action_pool) < 0)
 	{
 		error_msg("init g_tw_action_pool failed\n");
 		exit(1);
 	}
 }
 
-static void jpf_tw_init_tw_operate_info()
+static void nmp_tw_init_tw_operate_info()
 {
 	memset(&g_tw_operate_info, 0, sizeof(g_tw_operate_info));
 	if (pthread_mutex_init(&g_tw_operate_info.operate_mutex, NULL))
@@ -501,23 +501,23 @@ static void jpf_tw_init_tw_operate_info()
 	}
 }
 
-tv_wall_t *jpf_tw_get_tv_wall_p()
+tv_wall_t *nmp_tw_get_tv_wall_p()
 {
 	if (!if_init_tv_wall_object)
 	{
-		jpf_tw_init_tvwall_module();
+		nmp_tw_init_tvwall_module();
 		if_init_tv_wall_object = 1;
 	}
 	return (&g_tv_wall_object);
 }
 
 
-void jpf_tw_set_event_handler(event_handler_t hook)
+void nmp_tw_set_event_handler(event_handler_t hook)
 {
 	tw_info_hook = hook;
 }
 
-int jpf_tw_info_handle(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
+int nmp_tw_info_handle(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
 {
 	if (!tw_info_hook)
 	{
@@ -529,28 +529,28 @@ int jpf_tw_info_handle(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
 }
 
 
-void jpf_tw_set_group_tw_id(group_t *p_gp, int tw_id)
+void nmp_tw_set_group_tw_id(group_t *p_gp, int tw_id)
 {
 	assert(p_gp);
 
 	p_gp->gp_tw_id = tw_id;
 }
 
-void jpf_tw_set_group_num(group_t *p_gp, int num)
+void nmp_tw_set_group_num(group_t *p_gp, int num)
 {
 	assert(p_gp);
 
 	p_gp->gp_num = num;
 }
 
-void jpf_tw_set_auto_jump(group_t *p_gp, int auto_jump)
+void nmp_tw_set_auto_jump(group_t *p_gp, int auto_jump)
 {
 	assert(p_gp);
 
 	p_gp->gp_auto_jump = auto_jump;
 }
 
-void jpf_tw_set_group_name(group_t *p_gp, char *p_name)
+void nmp_tw_set_group_name(group_t *p_gp, char *p_name)
 {
 	assert(p_gp && p_name);
 
@@ -558,14 +558,14 @@ void jpf_tw_set_group_name(group_t *p_gp, char *p_name)
 	strncpy(p_gp->gp_name, p_name, TW_MAX_VALUE_LEN - 1);
 }
 
-void jpf_tw_set_step_div_id(step_t *p_step, int div_id)	//div_id为0时代表空屏
+void nmp_tw_set_step_div_id(step_t *p_step, int div_id)	//div_id为0时代表空屏
 {
 	assert(p_step);
 
 	p_step->division_mode.division_id = div_id;
 }
 
-step_t *jpf_tw_set_screen_step(dec_screen_t *p_dis_screen, int step,
+step_t *nmp_tw_set_screen_step(dec_screen_t *p_dis_screen, int step,
 	int intr)
 {
 	assert(p_dis_screen && step > 0);
@@ -620,7 +620,7 @@ step_t *jpf_tw_set_screen_step(dec_screen_t *p_dis_screen, int step,
 }
 
 
-int jpf_tw_set_focus_screen_div(dec_screen_t *p_screen,
+int nmp_tw_set_focus_screen_div(dec_screen_t *p_screen,
 	int div_id, int div_num)
 {
 	assert(p_screen);
@@ -635,18 +635,18 @@ int jpf_tw_set_focus_screen_div(dec_screen_t *p_screen,
 }
 
 
-int jpf_tw_set_step_encoder(step_t *p_step, int div_num, encoder_t *p_encoder)
+int nmp_tw_set_step_encoder(step_t *p_step, int div_num, encoder_t *p_encoder)
 {
 	assert(p_step && p_encoder);
 
 	if (div_num < 0 || div_num > TW_MAX_DIVISIONS)
 	{
-		jpf_tw_log_msg("bad division num:%d\n", div_num);
+		nmp_tw_log_msg("bad division num:%d\n", div_num);
 		return -1;
 	}
 	if (p_step->division_mode.divisions[div_num])
 	{
-		jpf_tw_log_msg("dup division num:%d\n", div_num);
+		nmp_tw_log_msg("dup division num:%d\n", div_num);
 		return -1;
 	}
 
@@ -666,7 +666,7 @@ int jpf_tw_set_step_encoder(step_t *p_step, int div_num, encoder_t *p_encoder)
 }
 
 
-void jpf_tw_destroy_step(step_t *p_step)
+void nmp_tw_destroy_step(step_t *p_step)
 {
 	assert(p_step);
 
@@ -676,7 +676,7 @@ void jpf_tw_destroy_step(step_t *p_step)
 			st_free(p_step->division_mode.divisions[div_i]);
 }
 
-void jpf_tw_init_dis_screen(dec_screen_t *p_dis_screen, group_t *p_gp)
+void nmp_tw_init_dis_screen(dec_screen_t *p_dis_screen, group_t *p_gp)
 {
 	assert(p_dis_screen && p_gp);
 
@@ -686,19 +686,19 @@ void jpf_tw_init_dis_screen(dec_screen_t *p_dis_screen, group_t *p_gp)
 	p_dis_screen->dis_group = p_gp;
 }
 
-void jpf_tw_destroy_dis_screen(dec_screen_t *p_dis_screen)
+void nmp_tw_destroy_dis_screen(dec_screen_t *p_dis_screen)
 {
 	assert(p_dis_screen != NULL);
 
 	int step_i = p_dis_screen->dis_steps;
 	for (; step_i > 0; --step_i)
-		jpf_tw_destroy_step(&p_dis_screen->dis_pstep[step_i - 1]);
+		nmp_tw_destroy_step(&p_dis_screen->dis_pstep[step_i - 1]);
 	if (p_dis_screen->dis_pstep != p_dis_screen->steps_init)
 		st_free(p_dis_screen->dis_pstep);
 }
 
 
-void jpf_tw_init_group(group_t *p_group, int gp_id, TW_GPT_TYPE gp_type,
+void nmp_tw_init_group(group_t *p_group, int gp_id, TW_GPT_TYPE gp_type,
 	char *session_id, unsigned int cu_seq)
 {
 	assert(p_group != NULL);
@@ -716,43 +716,43 @@ void jpf_tw_init_group(group_t *p_group, int gp_id, TW_GPT_TYPE gp_type,
 	p_group->gp_cu_seq = cu_seq;
 
 	for (; screen_i < p_group->gp_screens_capacity; ++screen_i)
-		jpf_tw_init_dis_screen(&p_group->dis_screen_init[screen_i], p_group);
+		nmp_tw_init_dis_screen(&p_group->dis_screen_init[screen_i], p_group);
 }
 
 
-void jpf_tw_destroy_group(group_t *p_group)
+void nmp_tw_destroy_group(group_t *p_group)
 {
 	assert(p_group != NULL);
 
 	int screen_i;
 	for (screen_i = p_group->gp_screens_capacity - 1; screen_i >= 0; --screen_i)
-		jpf_tw_destroy_dis_screen(&p_group->gp_dis_screens[screen_i]);
+		nmp_tw_destroy_dis_screen(&p_group->gp_dis_screens[screen_i]);
 	if (p_group->gp_dis_screens != p_group->dis_screen_init)
 		st_free(p_group->gp_dis_screens);
 }
 
-group_t *jpf_tw_new_group(int gp_id, TW_GPT_TYPE gp_type, char *session_id,
+group_t *nmp_tw_new_group(int gp_id, TW_GPT_TYPE gp_type, char *session_id,
 	unsigned int cu_seq)
 {
 	group_t *p_gp = (group_t *)st_malloc(sizeof(group_t));
 	if (p_gp)
-		jpf_tw_init_group(p_gp, gp_id, gp_type, session_id, cu_seq);
+		nmp_tw_init_group(p_gp, gp_id, gp_type, session_id, cu_seq);
 	return p_gp;
 }
 
-void jpf_tw_delete_group(group_t *p_gp)
+void nmp_tw_delete_group(group_t *p_gp)
 {
 	func_begin("\n");
 	if (p_gp)
 	{
-		jpf_tw_destroy_group(p_gp);
+		nmp_tw_destroy_group(p_gp);
 		st_free(p_gp);
 		printf("a group destroyed!!!\n");
 	}
 }
 
 
-dec_screen_t *jpf_tw_add_dis_screen(group_t *p_group, char *dis_guid,
+dec_screen_t *nmp_tw_add_dis_screen(group_t *p_group, char *dis_guid,
 	char *dis_domain_id, int screen_id)
 {
 	assert(p_group && dis_guid && dis_domain_id);
@@ -791,14 +791,14 @@ dec_screen_t *jpf_tw_add_dis_screen(group_t *p_group, char *dis_guid,
 }
 
 
-dec_screen_t *jpf_tw_get_tour_dis_screen(group_t *p_group)
+dec_screen_t *nmp_tw_get_tour_dis_screen(group_t *p_group)
 {
 	assert(p_group);
 
 	dec_screen_t *p_screen = &p_group->gp_dis_screens[0];
 	if (!p_screen)	//注意判断!!!
 	{
-		jpf_tw_log_msg("get tour dis screen error, screen[0] not set\n");
+		nmp_tw_log_msg("get tour dis screen error, screen[0] not set\n");
 		return NULL;
 	}
 
@@ -821,7 +821,7 @@ static int get_empty_screen_division_id(dec_screen_t *p_dis_screen)
 	return 1;
 }
 
-int jpf_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
+int nmp_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
 {
 	assert(p_dis_screen);
 
@@ -841,16 +841,16 @@ int jpf_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
 		/* 空屏情况处理 */
 		if (p_dis_screen->dis_pstep[step_i].step_num == 0)	//zyt此屏步未设置
 		{
-			step_t *p_step = jpf_tw_set_screen_step(p_dis_screen,
+			step_t *p_step = nmp_tw_set_screen_step(p_dis_screen,
 				step_i + 1, -1);	//步长-1，标识为非合法值
 			if (!p_step)
 			{
-				jpf_tw_log_msg("verify screen:%s, add step:%d error\n",
+				nmp_tw_log_msg("verify screen:%s, add step:%d error\n",
 					p_dis_screen->dis_guid, step_i + 1);
 				return 0;
 			}
 
-			jpf_tw_set_step_div_id(p_step,
+			nmp_tw_set_step_div_id(p_step,
 				get_empty_screen_division_id(p_dis_screen));
 			continue;
 		}
@@ -858,7 +858,7 @@ int jpf_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
 		if (p_dis_screen->dis_pstep[step_i].step_num &&
 			p_dis_screen->dis_pstep[step_i].step_num != step_i + 1)
 		{
-			jpf_tw_log_msg("verify screen, bad step position\n");
+			nmp_tw_log_msg("verify screen, bad step position\n");
 			return 0;
 		}
 
@@ -886,7 +886,7 @@ int jpf_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
 		}
 	}
 
-	jpf_tw_log_msg("group %d screen %s is %sreg-mode\n",
+	nmp_tw_log_msg("group %d screen %s is %sreg-mode\n",
 		p_dis_screen->dis_group->gp_id, p_dis_screen->dis_guid,
 		reg_mode ? "" : "not ");
 
@@ -910,7 +910,7 @@ int jpf_tw_verify_dis_screen(dec_screen_t *p_dis_screen)
 }
 
 
-int jpf_tw_verify_group(group_t *p_group)	//检查group_t的正确性
+int nmp_tw_verify_group(group_t *p_group)	//检查group_t的正确性
 {
 	assert(p_group);
 	func_begin("\n");
@@ -921,9 +921,9 @@ int jpf_tw_verify_group(group_t *p_group)	//检查group_t的正确性
 
 	for (; screen_i < p_group->gp_screens; ++screen_i)
 	{
-		if (!jpf_tw_verify_dis_screen(&p_group->gp_dis_screens[screen_i]))
+		if (!nmp_tw_verify_dis_screen(&p_group->gp_dis_screens[screen_i]))
 		{
-			jpf_tw_log_msg("verify gp %d screen %s error\n",
+			nmp_tw_log_msg("verify gp %d screen %s error\n",
 				p_group->gp_id, p_group->gp_dis_screens[screen_i].dis_guid);
 			return 0;
 		}
@@ -935,7 +935,7 @@ int jpf_tw_verify_group(group_t *p_group)	//检查group_t的正确性
 /*
  *	判断是否为同一个巡回且在同一个分割中显示
  */
-int jpf_tw_check_unique_tour(group_t *p_gp_1, group_t *p_gp_2)
+int nmp_tw_check_unique_tour(group_t *p_gp_1, group_t *p_gp_2)
 {
 	assert(p_gp_1 && p_gp_2);
 
@@ -965,7 +965,7 @@ int jpf_tw_check_unique_tour(group_t *p_gp_1, group_t *p_gp_2)
 }
 
 
-int jpf_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
+int nmp_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
 	int gp_id, TW_GPT_TYPE type, int flags)
 {
 	assert(p_gv);
@@ -975,7 +975,7 @@ int jpf_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
 
 	if ((flags & LOOKUP_UNQ) && !p_group)
 	{
-		jpf_tw_log_msg("invalid lookup() args\n");
+		nmp_tw_log_msg("invalid lookup() args\n");
 		return -1;
 	}
 
@@ -991,10 +991,10 @@ int jpf_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
 					p_gv->gv_parr[group_i] = NULL;
 					--p_gv->gv_size;
 
-					jpf_tw_log_msg("%s %d stopped.\n",
+					nmp_tw_log_msg("%s %d stopped.\n",
 						p_gp->gp_type == GPT_TOUR ? "tour" : "group",
 						p_gp->gp_id);
-					jpf_tw_delete_group(p_gp);
+					nmp_tw_delete_group(p_gp);
 					++rc;
 					continue;
 				}
@@ -1003,7 +1003,7 @@ int jpf_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
 				{
 					if (flags & LOOKUP_UNQ)
 					{
-						if (jpf_tw_check_unique_tour(p_gp, p_group))
+						if (nmp_tw_check_unique_tour(p_gp, p_group))
 						{
 							++rc;
 							break;
@@ -1029,7 +1029,7 @@ int jpf_tw_group_lookup(group_vec_t *p_gv, group_t *p_group,
 /*
  *	检查两个屏是否冲突，冲突将替换成新屏数据
  */
-void jpf_tw_check_dc_conflict(dec_screen_t *p_screen,
+void nmp_tw_check_dc_conflict(dec_screen_t *p_screen,
 	dec_screen_t *p_screen_new)
 {
 	assert(p_screen && p_screen_new);
@@ -1044,7 +1044,7 @@ void jpf_tw_check_dc_conflict(dec_screen_t *p_screen,
 	{
 		p_screen->dis_flags |= DIS_SCREEN_STOP;
 
-		jpf_tw_log_msg("screen:%d-%s interrupted by gp %d\n",
+		nmp_tw_log_msg("screen:%d-%s interrupted by gp %d\n",
 			p_screen->dis_group->gp_id, p_screen->dis_guid,
 			p_screen->dis_group->gp_id);
 		return ;
@@ -1055,7 +1055,7 @@ void jpf_tw_check_dc_conflict(dec_screen_t *p_screen,
 		p_screen_new->dis_division_mode.division_id)
 	{
 		p_screen->dis_flags |= DIS_SCREEN_STOP;
-		jpf_tw_log_msg("screen:%d-%s interrupted by gp %d, div_id:%d, " \
+		nmp_tw_log_msg("screen:%d-%s interrupted by gp %d, div_id:%d, " \
 			"new div_id:%d\n",
 			p_screen->dis_group->gp_id, p_screen->dis_guid,
 			p_screen_new->dis_group->gp_id,
@@ -1073,7 +1073,7 @@ void jpf_tw_check_dc_conflict(dec_screen_t *p_screen,
 		{
 			p_screen->dis_division_mode.divisions[div_i] = NULL;	//标记上一屏的分割停止，只是指针，其指向内容不由自己维护
 
-			jpf_tw_log_msg("screen:%d-%s division %d interrupted by gp %d\n",
+			nmp_tw_log_msg("screen:%d-%s division %d interrupted by gp %d\n",
 				p_screen->dis_group->gp_id, p_screen->dis_guid, div_i + 1,
 				p_screen_new->dis_group->gp_id);
 		}
@@ -1083,7 +1083,7 @@ void jpf_tw_check_dc_conflict(dec_screen_t *p_screen,
 /*
  *	检查两个group冲突情况并处理
  */
-void jpf_tw_check_gp_conflict(group_t *p_gp, group_t *p_gp_new)
+void nmp_tw_check_gp_conflict(group_t *p_gp, group_t *p_gp_new)
 {
 	assert(p_gp && p_gp_new);
 
@@ -1095,41 +1095,41 @@ void jpf_tw_check_gp_conflict(group_t *p_gp, group_t *p_gp_new)
 	{
 		for (screen_j = 0; screen_j < p_gp->gp_screens; ++screen_j)
 		{
-			jpf_tw_check_dc_conflict(&p_gp->gp_dis_screens[screen_j],
+			nmp_tw_check_dc_conflict(&p_gp->gp_dis_screens[screen_j],
 				&p_gp_new->gp_dis_screens[screen_i]);
 		}
 	}
 }
 
-int jpf_tw_check_conflict(group_vec_t *p_gv, group_t *p_group)
+int nmp_tw_check_conflict(group_vec_t *p_gv, group_t *p_group)
 {
 	assert(p_gv && p_group);
 	func_begin("\n");
 
 	int group_i = 0;
 /*
-	cfl = jpf_tw_group_lookup(p_gv, p_group, p_group->gp_id,
+	cfl = nmp_tw_group_lookup(p_gv, p_group, p_group->gp_id,
 		p_group->gp_type, LOOKUP_UNQ);
 	if (cfl > 0)
 	{
 		const char *p_type = p_group->gp_type == GPT_TOUR ?
 			"tour" : "group";
-		jpf_tw_log_msg("%s %d run again\n", p_type, p_group->gp_id);
-		jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("%s %d run again\n", p_type, p_group->gp_id);
+		nmp_tw_delete_group(p_group);
 		return 1;
 	}
 */
 	for (group_i = 0; group_i < p_gv->gv_capacity; ++group_i)
 	{
 		if (p_gv->gv_parr[group_i])
-			jpf_tw_check_gp_conflict(p_gv->gv_parr[group_i], p_group);
+			nmp_tw_check_gp_conflict(p_gv->gv_parr[group_i], p_group);
 	}
 
 	return 0;
 }
 
 
-int jpf_tw_is_invalid_screen(dec_screen_t *p_dis_screen)
+int nmp_tw_is_invalid_screen(dec_screen_t *p_dis_screen)
 {
 	int div_i = 0, flags = p_dis_screen->dis_flags;
 
@@ -1149,7 +1149,7 @@ int jpf_tw_is_invalid_screen(dec_screen_t *p_dis_screen)
 }
 
 
-int jpf_tw_is_invalid_group(group_t *p_group)
+int nmp_tw_is_invalid_group(group_t *p_group)
 {
 	assert(p_group);
 
@@ -1159,7 +1159,7 @@ int jpf_tw_is_invalid_group(group_t *p_group)
 
 	for (; screen_i < p_group->gp_screens; ++screen_i)
 	{
-		if (!jpf_tw_is_invalid_screen(&p_group->gp_dis_screens[screen_i]))
+		if (!nmp_tw_is_invalid_screen(&p_group->gp_dis_screens[screen_i]))
 			return 0;	//只要有一个屏为真，则group_t则有效
 	}
 	if (p_group->gp_flags & GPF_WAITING)
@@ -1169,7 +1169,7 @@ int jpf_tw_is_invalid_group(group_t *p_group)
 }
 
 
-void jpf_tw_del_invalid_group(group_vec_t *p_gv)
+void nmp_tw_del_invalid_group(group_vec_t *p_gv)
 {
 	assert(p_gv);
 	func_begin("\n");
@@ -1180,29 +1180,29 @@ void jpf_tw_del_invalid_group(group_vec_t *p_gv)
 		group_t *p_gp = p_gv->gv_parr[group_i];
 		if (p_gp)
 		{
-			if (jpf_tw_is_invalid_group(p_gp))
+			if (nmp_tw_is_invalid_group(p_gp))
 			{
 				p_gv->gv_parr[group_i] = NULL;
 				--p_gv->gv_size;
-				jpf_tw_delete_group(p_gp);
+				nmp_tw_delete_group(p_gp);
 			}
 		}
 	}
 }
 
-int jpf_tw_add_group_no_lock(group_vec_t *p_gv, group_t *p_group)
+int nmp_tw_add_group_no_lock(group_vec_t *p_gv, group_t *p_group)
 {
 	assert(p_gv && p_group);
 
 	int group_i = 0;
-	if (!jpf_tw_verify_group(p_group))
+	if (!nmp_tw_verify_group(p_group))
 	{
-		jpf_tw_log_msg("new group verify failed\n");
-		jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("new group verify failed\n");
+		nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
-	if (jpf_tw_check_conflict(p_gv, p_group))	//zyt?如果此处加入的是单步，不特殊处理?
+	if (nmp_tw_check_conflict(p_gv, p_group))	//zyt?如果此处加入的是单步，不特殊处理?
 		return 0;
 
 	for (; group_i < p_gv->gv_capacity; ++group_i)
@@ -1233,23 +1233,23 @@ int jpf_tw_add_group_no_lock(group_vec_t *p_gv, group_t *p_group)
 		return 0;
 	}
 
-	jpf_tw_delete_group(p_group);
+	nmp_tw_delete_group(p_group);
 	return -1;
 }
 
-int jpf_tw_add_group(group_vec_t *p_gv, group_t *p_group)	//调用此函数后，p_group指向结构由此函数维护
+int nmp_tw_add_group(group_vec_t *p_gv, group_t *p_group)	//调用此函数后，p_group指向结构由此函数维护
 {
 	func_begin("\n");
 	int ret;
 	pthread_mutex_lock(&p_gv->gv_mutex);
-	jpf_tw_del_invalid_group(p_gv);	//每次add group前会删除 invalid的group(不错的设计)
-	ret = jpf_tw_add_group_no_lock(p_gv, p_group);
+	nmp_tw_del_invalid_group(p_gv);	//每次add group前会删除 invalid的group(不错的设计)
+	ret = nmp_tw_add_group_no_lock(p_gv, p_group);
 	pthread_mutex_unlock(&p_gv->gv_mutex);
 	return ret;
 }
 
 
-int jpf_tw_send_cmd_res(char session_id[], unsigned int cu_seq,
+int nmp_tw_send_cmd_res(char session_id[], unsigned int cu_seq,
 	TW_CMD_TYPE type, int result)
 {
 	tw_run_res res;	//注意初始化
@@ -1260,18 +1260,18 @@ int jpf_tw_send_cmd_res(char session_id[], unsigned int cu_seq,
 	res.tw_cmd_type = type;
 	res.result = result;
 
-	if (jpf_tw_info_handle(TW_INFO_SEND_CMD_RES_TO_CU, &res, NULL) < 0)
+	if (nmp_tw_info_handle(TW_INFO_SEND_CMD_RES_TO_CU, &res, NULL) < 0)
 	{
 		error_msg("send cmd res to cu failed\n");
 		return -1;
 	}
-	jpf_tw_log_msg("send cmd res to cu success\n");
+	nmp_tw_log_msg("send cmd res to cu success\n");
 
 	return 0;
 }
 
 
-int jpf_tw_get_tw_info(tw_screen_to_cu *to_cu, unsigned int *cu_seq,
+int nmp_tw_get_tw_info(tw_screen_to_cu *to_cu, unsigned int *cu_seq,
 	int *tour_auto_jump, group_vec_t *p_gv, unsigned int seq)
 {
 	assert(p_gv && to_cu);
@@ -1326,7 +1326,7 @@ int jpf_tw_get_tw_info(tw_screen_to_cu *to_cu, unsigned int *cu_seq,
 }
 
 
-int jpf_tw_stop_group_by_div(group_t *p_gp, division_pos_t *div_pos,
+int nmp_tw_stop_group_by_div(group_t *p_gp, division_pos_t *div_pos,
 	TW_STOP_TYPE stop_type)
 {
 	assert(p_gp && div_pos);
@@ -1384,32 +1384,32 @@ int jpf_tw_stop_group_by_div(group_t *p_gp, division_pos_t *div_pos,
 	return 0;
 }
 
-int jpf_tw_stop_run(group_vec_t *p_gv, TW_GPT_TYPE type, int id)
+int nmp_tw_stop_run(group_vec_t *p_gv, TW_GPT_TYPE type, int id)
 {
 	assert(p_gv);
 
 	int rc;
 	pthread_mutex_lock(&p_gv->gv_mutex);
-	rc = jpf_tw_group_lookup(p_gv, NULL, id, type, LOOKUP_DEL);
+	rc = nmp_tw_group_lookup(p_gv, NULL, id, type, LOOKUP_DEL);
 	pthread_mutex_unlock(&p_gv->gv_mutex);
 
 	return TW_RES_OK;
 }
 
-int jpf_tw_query_state(group_vec_t *p_gv, TW_GPT_TYPE type, int id)
+int nmp_tw_query_state(group_vec_t *p_gv, TW_GPT_TYPE type, int id)
 {
 	assert(p_gv);
 
 	int rc;
 	pthread_mutex_lock(&p_gv->gv_mutex);
-	jpf_tw_del_invalid_group(p_gv);
-	rc = jpf_tw_group_lookup(p_gv, NULL, id, type, 0);
+	nmp_tw_del_invalid_group(p_gv);
+	rc = nmp_tw_group_lookup(p_gv, NULL, id, type, 0);
 	pthread_mutex_unlock(&p_gv->gv_mutex);
 
 	return (rc > 0) ? TW_RES_OK : TW_RES_ERROR;
 }
 
-int jpf_tw_stop_run_by_div(group_vec_t *p_gv, division_pos_t *div_pos,
+int nmp_tw_stop_run_by_div(group_vec_t *p_gv, division_pos_t *div_pos,
 	TW_STOP_TYPE stop_type)
 {
 	int group_i = 0, found = 0;
@@ -1418,13 +1418,13 @@ int jpf_tw_stop_run_by_div(group_vec_t *p_gv, division_pos_t *div_pos,
 	for (; group_i < p_gv->gv_capacity; ++group_i)
 	{
 		group_t *p_gp = p_gv->gv_parr[group_i];
-		if (p_gp && jpf_tw_stop_group_by_div(p_gp, div_pos, stop_type))
+		if (p_gp && nmp_tw_stop_group_by_div(p_gp, div_pos, stop_type))
 		{
 			if (stop_type == TW_STOP_TYPE_GPT)
 			{
 				p_gv->gv_parr[group_i] = NULL;
 				--p_gv->gv_size;
-				jpf_tw_delete_group(p_gp);
+				nmp_tw_delete_group(p_gp);
 				++found;
 				break;
 			}
@@ -1437,62 +1437,62 @@ int jpf_tw_stop_run_by_div(group_vec_t *p_gv, division_pos_t *div_pos,
 }
 
 
-int jpf_tw_do_step(tv_wall_t *p_tw, tw_general_guid *dis_guid, int tw_id, int screen_id,
+int nmp_tw_do_step(tv_wall_t *p_tw, tw_general_guid *dis_guid, int tw_id, int screen_id,
 	int div_num, int div_id, encoder_t *p_en, char *session_id, unsigned int cu_seq)
 {
 	func_begin("\n");
 	static int step_id = 0;
-	group_t *p_group = jpf_tw_new_group(--step_id, GPT_STEP, session_id, cu_seq);
+	group_t *p_group = nmp_tw_new_group(--step_id, GPT_STEP, session_id, cu_seq);
 	if (!p_group)
 	{
-		jpf_tw_log_msg("jpf_tw_new_group return NULL\n");
+		nmp_tw_log_msg("nmp_tw_new_group return NULL\n");
 		return -1;
 	}
 
-	jpf_tw_set_group_tw_id(p_group, tw_id);
+	nmp_tw_set_group_tw_id(p_group, tw_id);
 
-	dec_screen_t *p_screen = jpf_tw_add_dis_screen(p_group, dis_guid->guid,
+	dec_screen_t *p_screen = nmp_tw_add_dis_screen(p_group, dis_guid->guid,
 		dis_guid->domain_id, screen_id);
 	if (!p_screen)
 	{
-		jpf_tw_log_msg("jpf_tw_add_dis_screen failed\n");
-		jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("nmp_tw_add_dis_screen failed\n");
+		nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
-	if (jpf_tw_set_focus_screen_div(p_screen, div_id, div_num) < 0)
+	if (nmp_tw_set_focus_screen_div(p_screen, div_id, div_num) < 0)
 	{
 		error_msg("run step:set screen div error, div_num = %d\n", div_num);
-		jpf_tw_delete_group(p_group);
+		nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
-	step_t *p_step = jpf_tw_set_screen_step(p_screen, 1, 1);	//zyt,设置第一步，步长为1(这里步长只要不为0即可)
+	step_t *p_step = nmp_tw_set_screen_step(p_screen, 1, 1);	//zyt,设置第一步，步长为1(这里步长只要不为0即可)
 	if (!p_step)
 	{
-		jpf_tw_log_msg("add screen step failed\n");
-		jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("add screen step failed\n");
+		nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
-	if (jpf_tw_set_step_encoder(p_step, div_num, p_en) < 0)
+	if (nmp_tw_set_step_encoder(p_step, div_num, p_en) < 0)
 	{
-		jpf_tw_log_msg("set encoder failed\n");
-		jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("set encoder failed\n");
+		nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
-	if (jpf_tw_add_group(&p_tw->tw_group_vec_ok, p_group) < 0)
+	if (nmp_tw_add_group(&p_tw->tw_group_vec_ok, p_group) < 0)
 	{
-		jpf_tw_log_msg("add group to vector failed\n");
-		//jpf_tw_delete_group(p_group);
+		nmp_tw_log_msg("add group to vector failed\n");
+		//nmp_tw_delete_group(p_group);
 		return -1;
 	}
 
 	return 0;
 }
 
-void jpf_tw_get_screen_to_dec(dec_screen_t *p_dis_screen, int step,
+void nmp_tw_get_screen_to_dec(dec_screen_t *p_dis_screen, int step,
 	tw_screen_to_decoder *to_dec)
 {
 	group_t *p_gp = p_dis_screen->dis_group;
@@ -1549,7 +1549,7 @@ void jpf_tw_get_screen_to_dec(dec_screen_t *p_dis_screen, int step,
 }
 
 
-void jpf_tw_get_screen_to_cu(dec_screen_t *p_dis_screen, int step,
+void nmp_tw_get_screen_to_cu(dec_screen_t *p_dis_screen, int step,
 	tw_screen_to_cu *to_cu)
 {
 	group_t *p_gp = p_dis_screen->dis_group;
@@ -1580,7 +1580,7 @@ void jpf_tw_get_screen_to_cu(dec_screen_t *p_dis_screen, int step,
 			div_to_cu->ec_name[TW_MAX_VALUE_LEN - 1] = '\0';
 			strncpy(div_to_cu->ec_name, p_ec->ec_name, TW_MAX_VALUE_LEN - 1);
 			div_to_cu->level = (int)(p_ec->ec_guid[LEVEL_POS] - '0');
-			jpf_tw_get_channel_from_guid(p_ec->ec_guid, &div_to_cu->ec_channel);
+			nmp_tw_get_channel_from_guid(p_ec->ec_guid, &div_to_cu->ec_channel);
 			div_to_cu->result = TW_RES_SENT_TO_DEC_FAILED;
 			divs++;
 		}
@@ -1599,7 +1599,7 @@ void jpf_tw_get_screen_to_cu(dec_screen_t *p_dis_screen, int step,
 	to_cu->div_sum = divs;
 }
 
-tw_screen_to_decoder_with_seq *jpf_tw_new_screen_to_dec()
+tw_screen_to_decoder_with_seq *nmp_tw_new_screen_to_dec()
 {
 	tw_screen_to_decoder_with_seq *to_dec_with_seq = NULL;
 
@@ -1608,10 +1608,10 @@ tw_screen_to_decoder_with_seq *jpf_tw_new_screen_to_dec()
 	return to_dec_with_seq;
 }
 
-int jpf_tw_destroy_screen_to_dec(tw_screen_to_decoder_with_seq *to_dec_with_seq,
+int nmp_tw_destroy_screen_to_dec(tw_screen_to_decoder_with_seq *to_dec_with_seq,
 	int size)
 {
-	log_3("jpf_tw_destroy_screen_to_dec\n");
+	log_3("nmp_tw_destroy_screen_to_dec\n");
 	assert(to_dec_with_seq);
 
 	tw_screen_to_decoder *to_dec = &to_dec_with_seq->screen_to_dec;
@@ -1632,12 +1632,12 @@ int jpf_tw_destroy_screen_to_dec(tw_screen_to_decoder_with_seq *to_dec_with_seq,
 	return 0;
 }
 
-void jpf_tw_screen_work_failed(dec_screen_t *p_dis_screen)
+void nmp_tw_screen_work_failed(dec_screen_t *p_dis_screen)
 {
 	assert(p_dis_screen);
 }
 
-static void jpf_tw_screen_to_decoder_print(tw_screen_to_decoder *to_dec)
+static void nmp_tw_screen_to_decoder_print(tw_screen_to_decoder *to_dec)
 {
 	time_t now = time(NULL);
 	char *time_out = ctime(&now);
@@ -1664,13 +1664,13 @@ static void jpf_tw_screen_to_decoder_print(tw_screen_to_decoder *to_dec)
 
 
 int
-jpf_tw_is_first_time_run_group(group_t *p_gp)
+nmp_tw_is_first_time_run_group(group_t *p_gp)
 {
 	return (p_gp->gp_flags & GPF_FIRST_TIME_RUN) ? 1 : 0;
 }
 
 int
-jpf_tw_is_out_action_time(time_t action_time)
+nmp_tw_is_out_action_time(time_t action_time)
 {
 	time_t cur_time;
 
@@ -1682,7 +1682,7 @@ jpf_tw_is_out_action_time(time_t action_time)
 
 
 int
-jpf_tw_action_division_conflict(tw_screen_to_decoder *to_dec, action_step_t *action)
+nmp_tw_action_division_conflict(tw_screen_to_decoder *to_dec, action_step_t *action)
 {
 	int i;
 
@@ -1699,7 +1699,7 @@ jpf_tw_action_division_conflict(tw_screen_to_decoder *to_dec, action_step_t *act
 }
 
 
-int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
+int nmp_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 {
 	assert(p_dis_screen);
 	func_begin("\n");
@@ -1709,32 +1709,32 @@ int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 	unsigned int seq;
 	int is_action = 0;
 
-	to_dec_with_seq = jpf_tw_new_screen_to_dec();
+	to_dec_with_seq = nmp_tw_new_screen_to_dec();
 	if (!to_dec_with_seq)
 	{
-		error_msg("jpf_tw_new_screen_to_dec failed, no memory!\n");
+		error_msg("nmp_tw_new_screen_to_dec failed, no memory!\n");
 		return -1;
 	}
 
 	tw_screen_to_decoder *to_dec = &to_dec_with_seq->screen_to_dec;
-	jpf_tw_get_screen_to_dec(p_dis_screen, step, to_dec);
+	nmp_tw_get_screen_to_dec(p_dis_screen, step, to_dec);
 	seq = get_tw_dec_seq();
 	p_dis_screen->seq = to_dec_with_seq->seq = seq;	//设置seq
 
 	if (p_dis_screen->action.is_action)
 	{
-		tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+		tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 
-		if (jpf_tw_is_first_time_run_group(p_dis_screen->dis_group) && //第一次运行group
+		if (nmp_tw_is_first_time_run_group(p_dis_screen->dis_group) && //第一次运行group
 			to_dec->division_id != p_dis_screen->action.division_id)
 		{
-			jpf_tw_set_action_sign_no_lock(&p_tw->tw_group_vec_ok,
+			nmp_tw_set_action_sign_no_lock(&p_tw->tw_group_vec_ok,
 				to_dec->dis_guid, 0, 0, 0, NULL);
 
 			to_dec->keep_other = 0;
 			is_action = 0;
 		}
-		else if (jpf_tw_is_out_action_time(p_dis_screen->action.action_time))
+		else if (nmp_tw_is_out_action_time(p_dis_screen->action.action_time))
 		{
 			if (to_dec->division_id != p_dis_screen->action.division_id)
 			{
@@ -1743,7 +1743,7 @@ int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 				p_dis_screen->action_special.keep_other = to_dec->keep_other;
 			}
 
-			jpf_tw_set_action_sign_no_lock(&p_tw->tw_group_vec_ok,
+			nmp_tw_set_action_sign_no_lock(&p_tw->tw_group_vec_ok,
 				to_dec->dis_guid, 0, 0, 0, NULL);
 
 			is_action = 0;
@@ -1755,9 +1755,9 @@ int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 	if (is_action)
 	{
 		if (to_dec->keep_other == 0 ||
-			jpf_tw_action_division_conflict(to_dec, &p_dis_screen->action))
+			nmp_tw_action_division_conflict(to_dec, &p_dis_screen->action))
 		{
-			jpf_tw_destroy_screen_to_dec(to_dec_with_seq,
+			nmp_tw_destroy_screen_to_dec(to_dec_with_seq,
 				sizeof(tw_screen_to_decoder_with_seq));
 			log_msg("<Tw> being action, stop send screen to dec!!!\n");
 			return 0;
@@ -1767,16 +1767,16 @@ int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 	log_msg("1223335********** work,p_screen->screen_id:%d\n", p_dis_screen->screen_id);
 
 #ifdef TW_TEST2
-	jpf_tw_screen_to_decoder_print(to_dec);
+	nmp_tw_screen_to_decoder_print(to_dec);
 #endif
 
-	if (jpf_tw_info_handle(TW_INFO_SEND_SCREEN_TO_DEC, to_dec_with_seq, NULL) != 0)
+	if (nmp_tw_info_handle(TW_INFO_SEND_SCREEN_TO_DEC, to_dec_with_seq, NULL) != 0)
 	{
-		jpf_tw_destroy_screen_to_dec(to_dec_with_seq,
+		nmp_tw_destroy_screen_to_dec(to_dec_with_seq,
 			sizeof(tw_screen_to_decoder_with_seq));
 		if (p_dis_screen->dis_group->gp_type == GPT_STEP)
 		{
-			if (jpf_tw_send_cmd_res(p_dis_screen->dis_group->gp_session_id,
+			if (nmp_tw_send_cmd_res(p_dis_screen->dis_group->gp_session_id,
 				p_dis_screen->dis_group->gp_cu_seq, TW_RUN_STEP, -1001) < 0)
 			{
 				error_msg("send cmd_res to cu failed\n");
@@ -1786,9 +1786,9 @@ int jpf_tw_notify_decoder(dec_screen_t *p_dis_screen, int step)
 		{
 			tw_screen_to_cu to_cu;
 			memset(&to_cu, 0, sizeof(tw_screen_to_cu));
-			jpf_tw_get_screen_to_cu(p_dis_screen, step, &to_cu);
+			nmp_tw_get_screen_to_cu(p_dis_screen, step, &to_cu);
 
-			if (jpf_tw_info_handle(TW_INFO_SEND_SCREEN_TO_CU, &to_cu, NULL) < 0)
+			if (nmp_tw_info_handle(TW_INFO_SEND_SCREEN_TO_CU, &to_cu, NULL) < 0)
 			{
 				error_msg("send screen_err to cu failed\n");
 			}
@@ -1803,7 +1803,7 @@ notify_dec_end:
 }
 
 
-int jpf_tw_query_if_update_url(dec_screen_t *p_dis_screen, int step)
+int nmp_tw_query_if_update_url(dec_screen_t *p_dis_screen, int step)
 {
 	int div_i;
 	int regular = !!(p_dis_screen->dis_flags & DIS_SCREEN_REG_MODE);
@@ -1839,7 +1839,7 @@ int jpf_tw_query_if_update_url(dec_screen_t *p_dis_screen, int step)
 			update_url.ec_url[TW_MAX_URL_LEN - 1] = '\0';
 			strncpy(update_url.ec_url, p_ec->ec_url, TW_MAX_URL_LEN - 1);
 
-			if (jpf_tw_info_handle(TW_INFO_QUERY_IF_UPDATE_URL, &update_url,
+			if (nmp_tw_info_handle(TW_INFO_QUERY_IF_UPDATE_URL, &update_url,
 				NULL) < 0)
 			{
 				error_msg("update url failed\n");
@@ -1852,19 +1852,19 @@ int jpf_tw_query_if_update_url(dec_screen_t *p_dis_screen, int step)
 }
 
 
-void jpf_tw_screen_work(dec_screen_t *p_dis_screen)
+void nmp_tw_screen_work(dec_screen_t *p_dis_screen)
 {
 	assert(p_dis_screen);
 	func_begin("\n");
 
 	int step;
-	if (jpf_tw_is_invalid_screen(p_dis_screen))
+	if (nmp_tw_is_invalid_screen(p_dis_screen))
 		return ;
 
 	step = p_dis_screen->dis_group->gp_now_step;
 	if (step > p_dis_screen->dis_steps || step < 1)
 	{
-		jpf_tw_log_msg("gp %d step %d screen:%s error\n",
+		nmp_tw_log_msg("gp %d step %d screen:%s error\n",
 			p_dis_screen->dis_group->gp_id, step, p_dis_screen->dis_guid);
 		return ;
 	}
@@ -1876,8 +1876,8 @@ void jpf_tw_screen_work(dec_screen_t *p_dis_screen)
 		p_dis_screen->dis_flags |= DIS_SCREEN_COMPLITE;
 	}
 
-	if (jpf_tw_notify_decoder(p_dis_screen, step) < 0)
-		jpf_tw_screen_work_failed(p_dis_screen);
+	if (nmp_tw_notify_decoder(p_dis_screen, step) < 0)
+		nmp_tw_screen_work_failed(p_dis_screen);
 
 
 	int next_step = p_dis_screen->dis_group->gp_now_step + 1;
@@ -1886,18 +1886,18 @@ void jpf_tw_screen_work(dec_screen_t *p_dis_screen)
 	if (next_step > p_dis_screen->dis_steps)
 		return ;
 
-	if (jpf_tw_query_if_update_url(p_dis_screen, next_step) < 0)
+	if (nmp_tw_query_if_update_url(p_dis_screen, next_step) < 0)
 	{
-		error_msg("jpf_tw_query_if_update_url failed\n");
+		error_msg("nmp_tw_query_if_update_url failed\n");
 	}
 	else
 	{
-		log_msg("jpf_tw_query_if_update_url success\n");
+		log_msg("nmp_tw_query_if_update_url success\n");
 	}
 }
 
 
-int jpf_tw_get_step_time(group_t *p_gp, int step)
+int nmp_tw_get_step_time(group_t *p_gp, int step)
 {
 	assert(p_gp);
 
@@ -1906,7 +1906,7 @@ int jpf_tw_get_step_time(group_t *p_gp, int step)
 
 	if (step < 1 || step > p_gp->gp_max_steps)
 	{
-		jpf_tw_log_msg("gp %d get step time, invalid step:%d",
+		nmp_tw_log_msg("gp %d get step time, invalid step:%d",
 			p_gp->gp_id, step);
 		step = p_gp->gp_max_steps;
 	}
@@ -1927,7 +1927,7 @@ int jpf_tw_get_step_time(group_t *p_gp, int step)
 }
 
 
-void jpf_tw_group_work(group_t *p_gp)
+void nmp_tw_group_work(group_t *p_gp)
 {
 	assert(p_gp);
 	//func_begin("\n");
@@ -1955,7 +1955,7 @@ void jpf_tw_group_work(group_t *p_gp)
 			return ;
 
 		p_gp->gp_now_step = next_step;
-		step_time = jpf_tw_get_step_time(p_gp, next_step);
+		step_time = nmp_tw_get_step_time(p_gp, next_step);
 		if (step_time)
 		{
 			p_gp->gp_switch_time = now + step_time;
@@ -1964,11 +1964,11 @@ void jpf_tw_group_work(group_t *p_gp)
 	}
 
 	for (; screen_i < p_gp->gp_screens; ++screen_i)
-		jpf_tw_screen_work(&p_gp->gp_dis_screens[screen_i]);
+		nmp_tw_screen_work(&p_gp->gp_dis_screens[screen_i]);
 }
 
 
-int jpf_tw_groups_work(group_vec_t *p_gv)
+int nmp_tw_groups_work(group_vec_t *p_gv)
 {
 	assert(p_gv);
 	//func_begin("\n");
@@ -1981,7 +1981,7 @@ int jpf_tw_groups_work(group_vec_t *p_gv)
 		group_t *p_gp = p_gv->gv_parr[group_i];
 		if (p_gp)
 		{
-			jpf_tw_group_work(p_gp);
+			nmp_tw_group_work(p_gp);
 			if (p_gp->gp_flags & GPF_FIRST_TIME_RUN)
 				p_gp->gp_flags &= (!GPF_FIRST_TIME_RUN);
 
@@ -1993,7 +1993,7 @@ int jpf_tw_groups_work(group_vec_t *p_gv)
 }
 
 
-int jpf_tw_groups_clear(group_vec_t *p_gv)
+int nmp_tw_groups_clear(group_vec_t *p_gv)
 {
 	assert(p_gv);
 	func_begin("\n");
@@ -2008,7 +2008,7 @@ int jpf_tw_groups_clear(group_vec_t *p_gv)
 		{
 			p_gv->gv_parr[group_i] = NULL;
 			--p_gv->gv_size;
-			jpf_tw_delete_group(p_gp);
+			nmp_tw_delete_group(p_gp);
 		}
 	}
 	pthread_mutex_unlock(&p_gv->gv_mutex);
@@ -2017,7 +2017,7 @@ int jpf_tw_groups_clear(group_vec_t *p_gv)
 }
 
 
-int jpf_tw_deal_tour_auto_jump(group_vec_t *p_gv, unsigned int seq)
+int nmp_tw_deal_tour_auto_jump(group_vec_t *p_gv, unsigned int seq)
 {
 	assert(p_gv);
 	func_begin("\n");
@@ -2046,19 +2046,19 @@ int jpf_tw_deal_tour_auto_jump(group_vec_t *p_gv, unsigned int seq)
 
 				if (next_step == p_gp->gp_now_step)	//只有一步，无需再跳转
 				{
-					jpf_tw_log_msg("the tour has only one step, not jump again\n");
+					nmp_tw_log_msg("the tour has only one step, not jump again\n");
 					pthread_mutex_unlock(&p_gv->gv_mutex);
 					return 0;
 				}
 
 				p_gp->gp_now_step = next_step;
-				step_time = jpf_tw_get_step_time(p_gp, next_step);
+				step_time = nmp_tw_get_step_time(p_gp, next_step);
 				assert(step_time > 0);
 				if (step_time <= 0)
 					step_time = 1;
 				p_gp->gp_switch_time = now + step_time;
 
-				jpf_tw_screen_work(p_screen);
+				nmp_tw_screen_work(p_screen);
 				pthread_mutex_unlock(&p_gv->gv_mutex);
 				return 0;
 			}
@@ -2070,14 +2070,14 @@ int jpf_tw_deal_tour_auto_jump(group_vec_t *p_gv, unsigned int seq)
 }
 
 
-static int jpf_tw_get_tour_msg(int tour_id, tw_tour_msg_response *tour_msg)
+static int nmp_tw_get_tour_msg(int tour_id, tw_tour_msg_response *tour_msg)
 {
 	func_begin("\n");
 	tw_tour_msg_request req;
 
 	req.tour_id = tour_id;
 
-	if (jpf_tw_info_handle(TW_INFO_GET_TOUR, &req, tour_msg) < 0)
+	if (nmp_tw_info_handle(TW_INFO_GET_TOUR, &req, tour_msg) < 0)
 	{
 		error_msg("get tour msg failed\n");
 		return -1;
@@ -2094,13 +2094,13 @@ static int jpf_tw_get_tour_msg(int tour_id, tw_tour_msg_response *tour_msg)
 	return 0;
 }
 
-static int jpf_tw_get_group_msg(int group_id, tw_group_msg_response *group_msg)
+static int nmp_tw_get_group_msg(int group_id, tw_group_msg_response *group_msg)
 {
 	tw_group_msg_request req;
 
 	req.group_id = group_id;
 
-	if (jpf_tw_info_handle(TW_INFO_GET_GROUP, &req, group_msg) < 0)
+	if (nmp_tw_info_handle(TW_INFO_GET_GROUP, &req, group_msg) < 0)
 	{
 		error_msg("get group msg failed\n");
 		return -1;
@@ -2109,7 +2109,7 @@ static int jpf_tw_get_group_msg(int group_id, tw_group_msg_response *group_msg)
 	return 0;
 }
 
-static int jpf_tw_get_group_step_n(int group_id, int step_num,
+static int nmp_tw_get_group_step_n(int group_id, int step_num,
 	tw_group_step_n_response *group_step)
 {
 	tw_group_step_n_request req;
@@ -2117,7 +2117,7 @@ static int jpf_tw_get_group_step_n(int group_id, int step_num,
 	req.group_id = group_id;
 	req.step_num = step_num;
 
-	if (jpf_tw_info_handle(TW_INFO_GET_GROUP_STEP_N, &req, group_step) < 0)
+	if (nmp_tw_info_handle(TW_INFO_GET_GROUP_STEP_N, &req, group_step) < 0)
 	{
 		error_msg("get group step_n failed\n");
 		return -1;
@@ -2134,7 +2134,7 @@ static int jpf_tw_get_group_step_n(int group_id, int step_num,
 	return 0;
 }
 
-static int jpf_tw_get_dis_guid(int *tw_id, int *screen_id,
+static int nmp_tw_get_dis_guid(int *tw_id, int *screen_id,
 	tw_general_guid *dis_guid)
 {
 	tw_dis_guid_request req;
@@ -2143,7 +2143,7 @@ static int jpf_tw_get_dis_guid(int *tw_id, int *screen_id,
 	req.tw_id = *tw_id;
 	req.screen_id = *screen_id;
 
-	if (jpf_tw_info_handle(TW_INFO_GET_DIS_GUID, &req, &rsp) < 0)
+	if (nmp_tw_info_handle(TW_INFO_GET_DIS_GUID, &req, &rsp) < 0)
 	{
 		error_msg("get dis_guid failed\n");
 		return -1;
@@ -2157,7 +2157,7 @@ static int jpf_tw_get_dis_guid(int *tw_id, int *screen_id,
 }
 
 
-static int jpf_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
+static int nmp_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
 	char ec_guid[], char ec_domain_id[], char ec_url[], char ec_dec_plug[])
 {
 	tw_ec_url_request req;
@@ -2170,7 +2170,7 @@ static int jpf_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
 	strncpy(req.ec_guid, ec_guid, TW_ID_LEN - 1);
 	strncpy(req.ec_domain_id, ec_domain_id, TW_ID_LEN - 1);
 
-	if (jpf_tw_info_handle(TW_INFO_GET_EC_URL, &req, &rsp) < 0)
+	if (nmp_tw_info_handle(TW_INFO_GET_EC_URL, &req, &rsp) < 0)
 	{
 		error_msg("get ec_url failed\n");
 		return -1;
@@ -2184,13 +2184,13 @@ static int jpf_tw_get_ec_url(char dis_guid[], char dis_domain_id[],
 }
 
 
-int jpf_tw_get_decoder(tw_run_step_request *msg, tw_general_guid *dis_guid,
+int nmp_tw_get_decoder(tw_run_step_request *msg, tw_general_guid *dis_guid,
 	int *tw_id, int *screen_id, int *div_num, int *div_id)
 {
 	*tw_id = msg->tw_id;
 	*screen_id = msg->screen_id;
 
-	if (jpf_tw_get_dis_guid(tw_id, screen_id, dis_guid) < 0)
+	if (nmp_tw_get_dis_guid(tw_id, screen_id, dis_guid) < 0)
 	{
 		return -1;
 	}
@@ -2202,13 +2202,13 @@ int jpf_tw_get_decoder(tw_run_step_request *msg, tw_general_guid *dis_guid,
 }
 
 
-int jpf_tw_get_tour_decoder(tw_run_tour_request *msg, tw_general_guid *dis_guid,
+int nmp_tw_get_tour_decoder(tw_run_tour_request *msg, tw_general_guid *dis_guid,
 	int *tw_id, int *screen_id, int *div_num, int *div_id)
 {
 	*tw_id = msg->tw_id;
 	*screen_id = msg->screen_id;
 
-	if (jpf_tw_get_dis_guid(tw_id, screen_id, dis_guid) < 0)
+	if (nmp_tw_get_dis_guid(tw_id, screen_id, dis_guid) < 0)
 	{
 		return -1;
 	}
@@ -2220,7 +2220,7 @@ int jpf_tw_get_tour_decoder(tw_run_tour_request *msg, tw_general_guid *dis_guid,
 }
 
 
-int jpf_tw_get_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
+int nmp_tw_get_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 	tw_run_step_request *msg)
 {
 	assert(msg && p_en);
@@ -2231,7 +2231,7 @@ int jpf_tw_get_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 	strncpy(p_en->ec_guid, msg->ec_guid, TW_ID_LEN - 1);
 	strncpy(p_en->ec_name, msg->ec_name, TW_MAX_VALUE_LEN - 1);
 
-	if (jpf_tw_get_ec_url(dis_guid->guid, dis_guid->domain_id, p_en->ec_guid,
+	if (nmp_tw_get_ec_url(dis_guid->guid, dis_guid->domain_id, p_en->ec_guid,
 		p_en->ec_domain_id, p_en->ec_url, p_en->ec_dec_plug) < 0)
 	{
 		return -1;
@@ -2241,7 +2241,7 @@ int jpf_tw_get_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 }
 
 
-int jpf_tw_get_tour_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
+int nmp_tw_get_tour_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 	tw_tour_step_response*msg)
 {
 	assert(msg && p_en);
@@ -2253,7 +2253,7 @@ int jpf_tw_get_tour_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 	p_en->ec_guid[LEVEL_POS] = (char)(msg->level % 10 + '0');	//设置码流
 	strncpy(p_en->ec_name, msg->ec_name, TW_MAX_VALUE_LEN - 1);
 
-	if (jpf_tw_get_ec_url(dis_guid->guid, dis_guid->domain_id, p_en->ec_guid,
+	if (nmp_tw_get_ec_url(dis_guid->guid, dis_guid->domain_id, p_en->ec_guid,
 		p_en->ec_domain_id, p_en->ec_url, p_en->ec_dec_plug) < 0)
 	{
 		return -1;
@@ -2263,7 +2263,7 @@ int jpf_tw_get_tour_encoder(encoder_t *p_en, tw_general_guid *dis_guid,
 }
 
 
-int jpf_tw_get_group_step_encoder(encoder_t *p_en,
+int nmp_tw_get_group_step_encoder(encoder_t *p_en,
 	tw_group_screen_response *screen, tw_group_division_response *msg)
 {
 	assert(msg && p_en);
@@ -2275,7 +2275,7 @@ int jpf_tw_get_group_step_encoder(encoder_t *p_en,
 	p_en->ec_guid[LEVEL_POS] = (char)(msg->level % 10 + '0');	//设置码流
 	strncpy(p_en->ec_name, msg->ec_name, TW_MAX_VALUE_LEN - 1);
 
-	if (jpf_tw_get_ec_url(screen->dis_guid, screen->dis_domain_id,
+	if (nmp_tw_get_ec_url(screen->dis_guid, screen->dis_domain_id,
 		p_en->ec_guid, p_en->ec_domain_id, p_en->ec_url, p_en->ec_dec_plug) < 0)
 	{
 		return -1;
@@ -2285,7 +2285,7 @@ int jpf_tw_get_group_step_encoder(encoder_t *p_en,
 }
 
 
-void jpf_tw_get_div_pos(division_pos_t *div_pos, tw_division_position *msg)
+void nmp_tw_get_div_pos(division_pos_t *div_pos, tw_division_position *msg)
 {
 	assert(msg);
 
@@ -2295,7 +2295,7 @@ void jpf_tw_get_div_pos(division_pos_t *div_pos, tw_division_position *msg)
 	div_pos->division_id = -1;
 }
 
-void jpf_tw_get_div_pos_2(division_pos_t *div_pos, tw_operate *msg)
+void nmp_tw_get_div_pos_2(division_pos_t *div_pos, tw_operate *msg)
 {
 	assert(msg);
 
@@ -2305,7 +2305,7 @@ void jpf_tw_get_div_pos_2(division_pos_t *div_pos, tw_operate *msg)
 	div_pos->division_id = msg->division_id;
 }
 
-int  jpf_tw_check_tour_step_num(tw_tour_msg_response *tour_msg_rsp)
+int  nmp_tw_check_tour_step_num(tw_tour_msg_response *tour_msg_rsp)
 {
 	int count = tour_msg_rsp->step_count;
 	int i;
@@ -2318,7 +2318,7 @@ int  jpf_tw_check_tour_step_num(tw_tour_msg_response *tour_msg_rsp)
 	return 0;
 }
 
-static void jpf_tw_uninit_tour_msg_rsp(tw_tour_msg_response *rsp)
+static void nmp_tw_uninit_tour_msg_rsp(tw_tour_msg_response *rsp)
 {
 	assert(rsp);
 
@@ -2327,7 +2327,7 @@ static void jpf_tw_uninit_tour_msg_rsp(tw_tour_msg_response *rsp)
 	memset(rsp, 0, sizeof(tw_tour_msg_response));
 }
 
-int jpf_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
+int nmp_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
 	tw_general_guid *dis_guid)
 {
 	assert(p_gp);
@@ -2340,25 +2340,25 @@ int jpf_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
 	memset(&tour_msg_rsp, 0, sizeof(tw_tour_msg_response));
 	memset(&encoder, 0, sizeof(encoder_t));
 
-	if (jpf_tw_get_tour_msg(tour_id, &tour_msg_rsp) < 0)
+	if (nmp_tw_get_tour_msg(tour_id, &tour_msg_rsp) < 0)
 	{
-		error_msg("jpf_tw_get_tour_msg failed\n");
+		error_msg("nmp_tw_get_tour_msg failed\n");
 		goto get_tour_end;
 	}
-	if (jpf_tw_check_tour_step_num(&tour_msg_rsp) != 0)
+	if (nmp_tw_check_tour_step_num(&tour_msg_rsp) != 0)
 	{
-		error_msg("jpf_tw_check_tour_step_num error\n");
+		error_msg("nmp_tw_check_tour_step_num error\n");
 		goto get_tour_end;
 	}
 
-	jpf_tw_set_group_num(p_gp, tour_msg_rsp.tour_num);
-	jpf_tw_set_auto_jump(p_gp, tour_msg_rsp.auto_jump);
-	jpf_tw_set_group_name(p_gp, tour_msg_rsp.tour_name);
+	nmp_tw_set_group_num(p_gp, tour_msg_rsp.tour_num);
+	nmp_tw_set_auto_jump(p_gp, tour_msg_rsp.auto_jump);
+	nmp_tw_set_group_name(p_gp, tour_msg_rsp.tour_name);
 
-	dec_screen_t *p_screen = jpf_tw_get_tour_dis_screen(p_gp);
+	dec_screen_t *p_screen = nmp_tw_get_tour_dis_screen(p_gp);
 	if (!p_screen)
 	{
-		error_msg("jpf_tw_get_tour_dis_screen error\n");
+		error_msg("nmp_tw_get_tour_dis_screen error\n");
 		goto get_tour_end;
 	}
 
@@ -2370,7 +2370,7 @@ int jpf_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
 		step_num = step_rsp->step_num;	//zyt填充时注意
 		intr = step_rsp->step_ttl;
 
-		step_t *p_step = jpf_tw_set_screen_step(p_screen,
+		step_t *p_step = nmp_tw_set_screen_step(p_screen,
 			step_num, intr);
 		if (!p_step)
 		{
@@ -2378,11 +2378,11 @@ int jpf_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
 			goto get_tour_end;
 		}
 
-		if (jpf_tw_get_tour_encoder(&encoder, dis_guid, step_rsp) < 0)		//获取url失败不退出
+		if (nmp_tw_get_tour_encoder(&encoder, dis_guid, step_rsp) < 0)		//获取url失败不退出
 		{
 			error_msg("get tour encoder failed\n");
 		}
-		if (jpf_tw_set_step_encoder(p_step, div_num, &encoder) < 0)
+		if (nmp_tw_set_step_encoder(p_step, div_num, &encoder) < 0)
 		{
 			error_msg("set step encoder failed\n");
 			goto get_tour_end;
@@ -2392,7 +2392,7 @@ int jpf_tw_get_tour_info(group_t *p_gp, int tour_id, int div_num,
 	err = 0;
 
 get_tour_end:
-	jpf_tw_uninit_tour_msg_rsp(&tour_msg_rsp);
+	nmp_tw_uninit_tour_msg_rsp(&tour_msg_rsp);
 	return err;
 }
 
@@ -2408,7 +2408,7 @@ static dec_screen_t *get_empty_screen(group_t *p_gp)
 	return NULL;
 }
 
-int jpf_tw_get_group_info(group_t *p_gp, int group_id)
+int nmp_tw_get_group_info(group_t *p_gp, int group_id)
 {
 	assert(p_gp);
 
@@ -2418,47 +2418,47 @@ int jpf_tw_get_group_info(group_t *p_gp, int group_id)
 	tw_group_msg_response group_msg_rsp;
 	memset(&group_msg_rsp, 0, sizeof(tw_group_msg_response));
 
-	if (jpf_tw_get_group_msg(group_id, &group_msg_rsp) < 0)
+	if (nmp_tw_get_group_msg(group_id, &group_msg_rsp) < 0)
 	{
-		error_msg("jpf_tw_get_group_msg failed\n");
+		error_msg("nmp_tw_get_group_msg failed\n");
 		goto get_group_end;
 	}
 
-	jpf_tw_set_group_tw_id(p_gp, group_msg_rsp.tw_id);
-	jpf_tw_set_group_num(p_gp, group_msg_rsp.group_num);
-	jpf_tw_set_group_name(p_gp, group_msg_rsp.group_name);
+	nmp_tw_set_group_tw_id(p_gp, group_msg_rsp.tw_id);
+	nmp_tw_set_group_num(p_gp, group_msg_rsp.group_num);
+	nmp_tw_set_group_name(p_gp, group_msg_rsp.group_name);
 
 	step_count = group_msg_rsp.step_count;
 	for (step_i = 0; step_i < step_count; ++step_i)
 	{
 		tw_group_step_n_response group_step_rsp;
 		memset(&group_step_rsp, 0, sizeof(tw_group_step_n_response));
-		if (jpf_tw_get_group_step_n(group_id, group_msg_rsp.step_num[step_i], &group_step_rsp) < 0)
+		if (nmp_tw_get_group_step_n(group_id, group_msg_rsp.step_num[step_i], &group_step_rsp) < 0)
 		{
-			error_msg("jpf_tw_get_group_step_n failed\n");
+			error_msg("nmp_tw_get_group_step_n failed\n");
 			goto get_group_end;
 		}
 		intr = group_step_rsp.step_ttl;
 
-		//如果屏数为0，则增加一个空屏作为标识，在调用jpf_tw_verify_dis_screen会视为非正常屏
+		//如果屏数为0，则增加一个空屏作为标识，在调用nmp_tw_verify_dis_screen会视为非正常屏
 		if (group_step_rsp.screen_sum == 0)
 		{
 			dec_screen_t *empty_screen = get_empty_screen(p_gp);
 			if (!empty_screen)
 			{
-				empty_screen = jpf_tw_add_dis_screen(p_gp, "", "", EMPTY_SCREEN_ID);
+				empty_screen = nmp_tw_add_dis_screen(p_gp, "", "", EMPTY_SCREEN_ID);
 				if (empty_screen == NULL)
 				{
-					error_msg("jpf_tw_add_dis_screen failed\n");
+					error_msg("nmp_tw_add_dis_screen failed\n");
 					get_step_err = 1;
 					goto get_group_step_end;
 				}
 			}
-			step_t *empty_step = jpf_tw_set_screen_step(empty_screen,
+			step_t *empty_step = nmp_tw_set_screen_step(empty_screen,
 				step_i + 1, intr);
 			if (empty_step == NULL)
 			{
-				error_msg("jpf_tw_set_screen_step failed\n");
+				error_msg("nmp_tw_set_screen_step failed\n");
 				get_step_err = 1;
 				goto get_group_step_end;
 			}
@@ -2485,25 +2485,25 @@ int jpf_tw_get_group_info(group_t *p_gp, int group_id)
 
 			if (p_screen == NULL)
 			{
-				p_screen = jpf_tw_add_dis_screen(p_gp, screen_rsp->dis_guid,
+				p_screen = nmp_tw_add_dis_screen(p_gp, screen_rsp->dis_guid,
 					screen_rsp->dis_domain_id, screen_rsp->screen_id);
 				if (p_screen == NULL)
 				{
-					error_msg("jpf_tw_add_dis_screen failed\n");
+					error_msg("nmp_tw_add_dis_screen failed\n");
 					get_step_err = 1;
 					goto get_group_step_end;
 				}
 			}
 
-			step_t *p_step = jpf_tw_set_screen_step(p_screen,
+			step_t *p_step = nmp_tw_set_screen_step(p_screen,
 				step_i + 1, intr);
 			if (p_step == NULL)
 			{
-				error_msg("jpf_tw_set_screen_step error\n");
+				error_msg("nmp_tw_set_screen_step error\n");
 				get_step_err = 1;
 				goto get_group_step_end;
 			}
-			jpf_tw_set_step_div_id(p_step, screen_rsp->division_id);
+			nmp_tw_set_step_div_id(p_step, screen_rsp->division_id);
 
 			/* 获取分割信息 */
 			int div_i = 0, div_sum = screen_rsp->div_sum;
@@ -2519,14 +2519,14 @@ int jpf_tw_get_group_info(group_t *p_gp, int group_id)
 				tw_group_division_response *div_rsp =
 					&screen_rsp->divisions[div_i];
 
-				if (jpf_tw_get_group_step_encoder(&encoder, screen_rsp, div_rsp) < 0)
+				if (nmp_tw_get_group_step_encoder(&encoder, screen_rsp, div_rsp) < 0)
 				{
-					error_msg("jpf_tw_get_group_step_encoder failed\n");	//获取url失败不退出
+					error_msg("nmp_tw_get_group_step_encoder failed\n");	//获取url失败不退出
 				}
-				if (jpf_tw_set_step_encoder(p_step, div_rsp->division_num,
+				if (nmp_tw_set_step_encoder(p_step, div_rsp->division_num,
 					&encoder) < 0)
 				{
-					jpf_tw_log_msg("group, set step encoder:%s error\n",
+					nmp_tw_log_msg("group, set step encoder:%s error\n",
 						encoder.ec_guid);
 					get_step_err = 1;
 					goto get_group_step_end;
@@ -2551,12 +2551,12 @@ get_group_end:
 }
 
 
-int jpf_tw_run_step(tw_run_step_request_with_seq *msg_with_seq)
+int nmp_tw_run_step(tw_run_step_request_with_seq *msg_with_seq)
 {
 	assert(msg_with_seq);
 	func_begin("\n");
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	tw_run_step_request *msg = &msg_with_seq->req;
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	unsigned int cu_seq;
@@ -2570,39 +2570,39 @@ int jpf_tw_run_step(tw_run_step_request_with_seq *msg_with_seq)
 	memset(&encoder, 0, sizeof(encoder_t));
 	memset(&dis_guid, 0, sizeof(tw_general_guid));
 
-	if (jpf_tw_get_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
+	if (nmp_tw_get_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
 		&division_id) < 0)
 	{
-		error_msg("jpf_tw_get_decoder error\n");
+		error_msg("nmp_tw_get_decoder error\n");
 		goto run_step_end;
 	}
 
-	if (jpf_tw_get_encoder(&encoder, &dis_guid, msg) < 0)
+	if (nmp_tw_get_encoder(&encoder, &dis_guid, msg) < 0)
 	{
-		error_msg("jpf_tw_get_encoder error\n");
+		error_msg("nmp_tw_get_encoder error\n");
 		goto run_step_end;
 	}
 
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	cu_seq = msg_with_seq->seq;
 
-	if(jpf_tw_do_step(p_tw, &dis_guid, tw_id, screen_id, division_num,
+	if(nmp_tw_do_step(p_tw, &dis_guid, tw_id, screen_id, division_num,
 		division_id, &encoder, session_id, cu_seq) < 0)
 		goto run_step_end;
 	error = TW_RES_OK;
 
 run_step_end:
-	//jpf_tw_send_cmd_res(session_id, TW_RUN_STEP, -1, error);
+	//nmp_tw_send_cmd_res(session_id, TW_RUN_STEP, -1, error);
 	return error;
 }
 
 
-int jpf_tw_run_tour(tw_run_tour_request *msg)
+int nmp_tw_run_tour(tw_run_tour_request *msg)
 {
 	assert(msg);
 	func_begin("\n");
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	tw_general_guid dis_guid;
 	int tw_id;
@@ -2613,64 +2613,64 @@ int jpf_tw_run_tour(tw_run_tour_request *msg)
 	int error = TW_RES_EINVAL;
 	memset(&dis_guid, 0, sizeof(tw_general_guid));
 
-	if (jpf_tw_get_tour_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
+	if (nmp_tw_get_tour_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
 		&division_id) < 0)
 	{
-		error_msg("jpf_tw_get_tour_decoder error\n");
+		error_msg("nmp_tw_get_tour_decoder error\n");
 		goto run_tour_end;
 	}
 
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	tour_id = msg->tour_id;
 
-	group_t *p_gp = jpf_tw_new_group(tour_id, GPT_TOUR, session_id, 0);
+	group_t *p_gp = nmp_tw_new_group(tour_id, GPT_TOUR, session_id, 0);
 	if (!p_gp)
 		goto run_tour_end;
 
-	jpf_tw_set_group_tw_id(p_gp, tw_id);
+	nmp_tw_set_group_tw_id(p_gp, tw_id);
 
-	dec_screen_t *p_screen = jpf_tw_add_dis_screen(p_gp, dis_guid.guid,
+	dec_screen_t *p_screen = nmp_tw_add_dis_screen(p_gp, dis_guid.guid,
 		dis_guid.domain_id, screen_id);
 	if (!p_screen)
 	{
-		jpf_tw_log_msg("run tour %d jpf_tw_add_dis_screen failed\n", tour_id);
-		jpf_tw_delete_group(p_gp);
+		nmp_tw_log_msg("run tour %d nmp_tw_add_dis_screen failed\n", tour_id);
+		nmp_tw_delete_group(p_gp);
 		goto run_tour_end;
 	}
 
-	if (jpf_tw_set_focus_screen_div(p_screen, division_id, division_num) < 0)
+	if (nmp_tw_set_focus_screen_div(p_screen, division_id, division_num) < 0)
 	{
-		error_msg("run tour %d, jpf_tw_add_dis_screen failed\n", tour_id);
-		jpf_tw_delete_group(p_gp);
+		error_msg("run tour %d, nmp_tw_add_dis_screen failed\n", tour_id);
+		nmp_tw_delete_group(p_gp);
 		goto run_tour_end;
 	}
 
-	if (jpf_tw_get_tour_info(p_gp, tour_id, division_num, &dis_guid) < 0)
+	if (nmp_tw_get_tour_info(p_gp, tour_id, division_num, &dis_guid) < 0)
 	{
-		jpf_tw_log_msg("tour %d get info error\n", p_gp->gp_id);
-		jpf_tw_delete_group(p_gp);
+		nmp_tw_log_msg("tour %d get info error\n", p_gp->gp_id);
+		nmp_tw_delete_group(p_gp);
 		goto run_tour_end;
 	}
 
-	if (jpf_tw_add_group(&p_tw->tw_group_vec_ok, p_gp) != 0)
+	if (nmp_tw_add_group(&p_tw->tw_group_vec_ok, p_gp) != 0)
 	{
 		goto run_tour_end;
 	}
 
-	jpf_tw_log_msg("run tour %d OK\n", tour_id);
+	nmp_tw_log_msg("run tour %d OK\n", tour_id);
 	error = TW_RES_OK;
 
 run_tour_end:
-	//jpf_tw_send_cmd_res(session_id, TW_RUN_TOUR, tour_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_RUN_TOUR, tour_id, error);
 	return error;
 }
 
 
-int jpf_tw_run_group(tw_run_group_request *msg)
+int nmp_tw_run_group(tw_run_group_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	int group_id;
 	int error = TW_RES_EINVAL;
@@ -2678,35 +2678,35 @@ int jpf_tw_run_group(tw_run_group_request *msg)
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	group_id = msg->group_id;
 
-	group_t *p_gp = jpf_tw_new_group(group_id, GPT_GROUP, session_id, 0);
+	group_t *p_gp = nmp_tw_new_group(group_id, GPT_GROUP, session_id, 0);
 	if (p_gp == NULL)
 	{
 		goto run_group_end;
 	}
 
-	if (jpf_tw_get_group_info(p_gp, group_id) < 0)
+	if (nmp_tw_get_group_info(p_gp, group_id) < 0)
 	{
-		jpf_tw_log_msg("group %d get info error\n", p_gp->gp_id);
-		jpf_tw_delete_group(p_gp);
+		nmp_tw_log_msg("group %d get info error\n", p_gp->gp_id);
+		nmp_tw_delete_group(p_gp);
 		goto run_group_end;
 	}
 
-	if (jpf_tw_add_group(&p_tw->tw_group_vec_ok, p_gp) != 0)
+	if (nmp_tw_add_group(&p_tw->tw_group_vec_ok, p_gp) != 0)
 	{
 		goto run_group_end;
 	}
 
-	jpf_tw_log_msg("run group %d OK\n", group_id);
+	nmp_tw_log_msg("run group %d OK\n", group_id);
 	error = TW_RES_OK;
 
 run_group_end:
-	//jpf_tw_send_cmd_res(session_id, TW_RUN_GROUP, group_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_RUN_GROUP, group_id, error);
 	return error;
 }
 
 
 static void
-jpf_tw_set_action_sign_no_lock(group_vec_t *p_gv, char *dis_guid,
+nmp_tw_set_action_sign_no_lock(group_vec_t *p_gv, char *dis_guid,
 	int enable_action, int division_id, int division_num, int *keep_other)
 {
 	int group_i = 0, screen_i = 0;
@@ -2751,17 +2751,17 @@ jpf_tw_set_action_sign_no_lock(group_vec_t *p_gv, char *dis_guid,
 
 
 static void
-jpf_tw_set_action_sign(group_vec_t *p_gv, char *dis_guid,
+nmp_tw_set_action_sign(group_vec_t *p_gv, char *dis_guid,
 	int enable_action, int division_id, int division_num, int *keep_other)
 {
 	pthread_mutex_lock(&p_gv->gv_mutex);
-	jpf_tw_set_action_sign_no_lock(p_gv, dis_guid, enable_action,
+	nmp_tw_set_action_sign_no_lock(p_gv, dis_guid, enable_action,
 		division_id, division_num, keep_other);
 	pthread_mutex_unlock(&p_gv->gv_mutex);
 }
 
 static int
-jpf_tw_get_action_screen_to_dec(tw_screen_to_decoder *to_dec,
+nmp_tw_get_action_screen_to_dec(tw_screen_to_decoder *to_dec,
 	tw_run_step_request *msg)
 {
 	tw_general_guid dis_guid;
@@ -2775,16 +2775,16 @@ jpf_tw_get_action_screen_to_dec(tw_screen_to_decoder *to_dec,
 	memset(&encoder, 0, sizeof(encoder_t));
 	memset(to_dec, 0, sizeof(tw_screen_to_decoder));
 
-	if (jpf_tw_get_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
+	if (nmp_tw_get_decoder(msg, &dis_guid, &tw_id, &screen_id, &division_num,
 		&division_id) < 0)
 	{
-		error_msg("jpf_tw_get_decoder error\n");
+		error_msg("nmp_tw_get_decoder error\n");
 		return -1;
 	}
 
-	if (jpf_tw_get_encoder(&encoder, &dis_guid, msg) < 0)
+	if (nmp_tw_get_encoder(&encoder, &dis_guid, msg) < 0)
 	{
-		error_msg("jpf_tw_get_encoder error\n");
+		error_msg("nmp_tw_get_encoder error\n");
 		return -1;
 	}
 
@@ -2806,33 +2806,33 @@ jpf_tw_get_action_screen_to_dec(tw_screen_to_decoder *to_dec,
 
 
 int
-jpf_tw_run_action_step(tw_run_step_request *msg)
+nmp_tw_run_action_step(tw_run_step_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	tw_screen_to_decoder_with_seq *to_dec_with_seq = NULL;
 	tw_screen_to_decoder *to_dec;
 	unsigned int seq;
 	int keep_other;
 	int ret;
 
-	to_dec_with_seq = jpf_tw_new_screen_to_dec();
+	to_dec_with_seq = nmp_tw_new_screen_to_dec();
 	if (!to_dec_with_seq)
 	{
-		error_msg("jpf_tw_new_screen_to_dec failed, no memory!\n");
+		error_msg("nmp_tw_new_screen_to_dec failed, no memory!\n");
 		return -1;
 	}
 
 	to_dec = &to_dec_with_seq->screen_to_dec;
-	ret = jpf_tw_get_action_screen_to_dec(to_dec, msg);
+	ret = nmp_tw_get_action_screen_to_dec(to_dec, msg);
 	if (ret)
 	{
-		error_msg("jpf_tw_get_action_screen_to_dec failed\n");
+		error_msg("nmp_tw_get_action_screen_to_dec failed\n");
 		goto err;
 	}
 
-	jpf_tw_set_action_sign(&p_tw->tw_group_vec_ok, to_dec->dis_guid, 1,
+	nmp_tw_set_action_sign(&p_tw->tw_group_vec_ok, to_dec->dis_guid, 1,
 		to_dec->division_id, to_dec->divisions[0].division_num, &keep_other);
 
 	to_dec->keep_other = keep_other;
@@ -2840,31 +2840,31 @@ jpf_tw_run_action_step(tw_run_step_request *msg)
 	seq = get_tw_dec_seq();
 	to_dec_with_seq->seq = seq;
 
-	if (jpf_tw_info_handle(TW_INFO_SEND_SCREEN_TO_DEC, to_dec_with_seq, NULL) != 0)
+	if (nmp_tw_info_handle(TW_INFO_SEND_SCREEN_TO_DEC, to_dec_with_seq, NULL) != 0)
 	{
 		error_msg("TW_INFO_SEND_SCREEN_TO_DEC failed\n");
 		goto err;
 	}
 
-	jpf_tw_action_pool_add_info(seq, msg->tw_id, msg->screen_id,
+	nmp_tw_action_pool_add_info(seq, msg->tw_id, msg->screen_id,
 		keep_other);
 
 	return 0;
 err:
 	if (to_dec_with_seq)
 	{
-		jpf_tw_destroy_screen_to_dec(to_dec_with_seq,
+		nmp_tw_destroy_screen_to_dec(to_dec_with_seq,
 			sizeof(tw_screen_to_decoder_with_seq));
 	}
 	return -1;
 }
 
 
-int jpf_tw_stop_tour(tw_stop_tour_request *msg)
+int nmp_tw_stop_tour(tw_stop_tour_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	int tour_id;
 	int error = TW_RES_EINVAL;
@@ -2872,18 +2872,18 @@ int jpf_tw_stop_tour(tw_stop_tour_request *msg)
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	tour_id = msg->tour_id;
 
-	error = jpf_tw_stop_run(&p_tw->tw_group_vec_ok, GPT_TOUR, tour_id);
+	error = nmp_tw_stop_run(&p_tw->tw_group_vec_ok, GPT_TOUR, tour_id);
 
 //stop_tour_end:
-	//jpf_tw_send_cmd_res(session_id, TW_STOP_TOUR, tour_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_STOP_TOUR, tour_id, error);
 	return error;
 }
 
-int jpf_tw_stop_group(tw_stop_group_request *msg)
+int nmp_tw_stop_group(tw_stop_group_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	int group_id;
 	int error = TW_RES_EINVAL;
@@ -2891,18 +2891,18 @@ int jpf_tw_stop_group(tw_stop_group_request *msg)
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	group_id = msg->group_id;
 
-	error = jpf_tw_stop_run(&p_tw->tw_group_vec_ok, GPT_GROUP, group_id);
+	error = nmp_tw_stop_run(&p_tw->tw_group_vec_ok, GPT_GROUP, group_id);
 
 //stop_group_end:
-	//jpf_tw_send_cmd_res(session_id, TW_STOP_GROUP, group_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_STOP_GROUP, group_id, error);
 	return error;
 }
 
-int jpf_tw_if_run_tour(tw_if_run_tour_request *msg)
+int nmp_tw_if_run_tour(tw_if_run_tour_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	int tour_id;
 	int error = TW_RES_EINVAL;
@@ -2911,18 +2911,18 @@ int jpf_tw_if_run_tour(tw_if_run_tour_request *msg)
 	tour_id = msg->tour_id;
 
 	//此tour存在则返回0
-	error = jpf_tw_query_state(&p_tw->tw_group_vec_ok, GPT_TOUR, tour_id);
+	error = nmp_tw_query_state(&p_tw->tw_group_vec_ok, GPT_TOUR, tour_id);
 
 //query_tour_end:
-	//jpf_tw_send_cmd_res(session_id, TW_IF_RUN_TOUR, tour_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_IF_RUN_TOUR, tour_id, error);
 	return error;
 }
 
-int jpf_tw_if_run_group(tw_if_run_group_request *msg)
+int nmp_tw_if_run_group(tw_if_run_group_request *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	int group_id;
 	int error = TW_RES_EINVAL;
@@ -2930,18 +2930,18 @@ int jpf_tw_if_run_group(tw_if_run_group_request *msg)
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
 	group_id = msg->group_id;
 
-	error = jpf_tw_query_state(&p_tw->tw_group_vec_ok, GPT_GROUP, group_id);
+	error = nmp_tw_query_state(&p_tw->tw_group_vec_ok, GPT_GROUP, group_id);
 
 //query_group_end:
-	//jpf_tw_send_cmd_res(session_id, TW_IF_RUN_GROUP, group_id, error);
+	//nmp_tw_send_cmd_res(session_id, TW_IF_RUN_GROUP, group_id, error);
 	return error;
 }
 
-int jpf_tw_stop_gpt_by_division(tw_division_position *msg)
+int nmp_tw_stop_gpt_by_division(tw_division_position *msg)
 {
 	assert(msg);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	char session_id[TW_SESSION_ID_LEN] = {0};
 	division_pos_t div_pos;
 	int found = 0;
@@ -2954,24 +2954,24 @@ int jpf_tw_stop_gpt_by_division(tw_division_position *msg)
 	}
 
 	strncpy(session_id, msg->session_id, TW_SESSION_ID_LEN - 1);
-	jpf_tw_get_div_pos(&div_pos, msg);
+	nmp_tw_get_div_pos(&div_pos, msg);
 
-	found = jpf_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
+	found = nmp_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
 		TW_STOP_TYPE_GPT);
 	error = (found ? TW_RES_OK : TW_RES_ERROR);
 
 end:
-	//jpf_tw_send_cmd_res(session_id, TW_STOP_GPT_BY_DIVISION, -1, error);
+	//nmp_tw_send_cmd_res(session_id, TW_STOP_GPT_BY_DIVISION, -1, error);
 	return error;
 }
 
 
-int jpf_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type)
+int nmp_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type)
 {
 	assert(msg_with_seq);
 	log_msg("1223336********** operate_type:%s\n", get_operate_type(type));
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	tw_operate_to_decoder_with_seq to_dec_with_seq;
 	memset(&to_dec_with_seq, 0, sizeof(tw_operate_to_decoder_with_seq));
 	tw_operate *msg = &msg_with_seq->operate;
@@ -2996,13 +2996,13 @@ int jpf_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type)
 	case TW_CHANGE_DIVISION_MODE_TO_DEC:
 		{
 			division_pos_t div_pos;
-			jpf_tw_get_div_pos_2(&div_pos, msg);
+			nmp_tw_get_div_pos_2(&div_pos, msg);
 
 			if (type == TW_CLEAR_TO_DEC)
-				jpf_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
+				nmp_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
 					TW_STOP_TYPE_DIVISION);		//能保证停止即可，无需判断是否通过此操作停止
 			else if (type == TW_CHANGE_DIVISION_MODE_TO_DEC)
-				jpf_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
+				nmp_tw_stop_run_by_div(&p_tw->tw_group_vec_ok, &div_pos,
 					TW_STOP_TYPE_SCREEN_BY_DIVISION_ID);
 		}
 	case TW_FULL_SCREEN_TO_DEC:
@@ -3010,16 +3010,16 @@ int jpf_tw_screen_operate(tw_operate_with_seq *msg_with_seq, TW_INFO_TYPE type)
 		{
 			if (type == TW_CLEAR_TO_DEC && msg->operate_mode == 1)		//停止画面
 			{
-				jpf_tw_deal_stop_res(msg_with_seq);
+				nmp_tw_deal_stop_res(msg_with_seq);
 				break;
 			}
 
 			to_dec_with_seq.seq = get_tw_dec_operate_seq();
-			jpf_tw_save_dec_operate_info(msg_with_seq, to_dec_with_seq.seq);
+			nmp_tw_save_dec_operate_info(msg_with_seq, to_dec_with_seq.seq);
 
-			if (jpf_tw_info_handle(type, &to_dec_with_seq, NULL) < 0)
+			if (nmp_tw_info_handle(type, &to_dec_with_seq, NULL) < 0)
 			{
-				error_msg("send jpf_tw_screen_operate info to decoder failed\n");
+				error_msg("send nmp_tw_screen_operate info to decoder failed\n");
 				goto end;
 			}
 			break;
@@ -3038,14 +3038,14 @@ end:
 }
 
 
-int jpf_tw_get_action_tw_info(tw_screen_to_cu *to_cu, unsigned int seq)
+int nmp_tw_get_action_tw_info(tw_screen_to_cu *to_cu, unsigned int seq)
 {
 	int tw_id;
 	int screen_id;
 	int keep_other;
 	int ret;
 
-	ret = jpf_tw_action_pool_get_info(seq, &tw_id, &screen_id, &keep_other);
+	ret = nmp_tw_action_pool_get_info(seq, &tw_id, &screen_id, &keep_other);
 	if (ret)
 	{
 		return -1;
@@ -3060,11 +3060,11 @@ int jpf_tw_get_action_tw_info(tw_screen_to_cu *to_cu, unsigned int seq)
 }
 
 
-int jpf_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq)
+int nmp_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq)
 {
 	assert(dec_rsp_with_seq);
 
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	tw_decoder_rsp *dec_rsp = &dec_rsp_with_seq->dec_rsp;
 	unsigned int seq = dec_rsp_with_seq->seq;
 	tw_screen_to_cu to_cu;
@@ -3074,16 +3074,16 @@ int jpf_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq)
 	int error = TW_RES_OK;
 	memset(&to_cu, 0, sizeof(tw_screen_to_cu));
 
-	if (jpf_tw_get_tw_info(&to_cu, &cu_seq, &tour_auto_jump,
+	if (nmp_tw_get_tw_info(&to_cu, &cu_seq, &tour_auto_jump,
 		&p_tw->tw_group_vec_ok, seq) != 0)
 	{
-		if (jpf_tw_get_action_tw_info(&to_cu, seq) != 0)
+		if (nmp_tw_get_action_tw_info(&to_cu, seq) != 0)
 		{
-			log_msg("jpf_tw_get_action_tw_info failed\n");
+			log_msg("nmp_tw_get_action_tw_info failed\n");
 			error = TW_RES_EINVAL;
 			goto deal_res_end;
 		}
-		//log_msg("jpf_tw_get_action_tw_info success\n");
+		//log_msg("nmp_tw_get_action_tw_info success\n");
 	}
 
 	to_cu.division_id = dec_rsp->division_id;
@@ -3094,16 +3094,16 @@ int jpf_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq)
 	if (to_cu.gp_type == GPT_TOUR && to_cu.divisions[0].result != 0 &&
 		tour_auto_jump)		//巡回运行失败时自动跳转处理
 	{
-		if (jpf_tw_deal_tour_auto_jump(&p_tw->tw_group_vec_ok, seq) < 0)
+		if (nmp_tw_deal_tour_auto_jump(&p_tw->tw_group_vec_ok, seq) < 0)
 		{
-			error_msg("jpf_tw_deal_tour_auto_jump failed\n");
+			error_msg("nmp_tw_deal_tour_auto_jump failed\n");
 			error = TW_RES_EINVAL;
 		}
 	}
 
 	if (to_cu.gp_type == GPT_STEP)
 	{
-		if (jpf_tw_send_cmd_res(to_cu.session_id, cu_seq, TW_RUN_STEP,
+		if (nmp_tw_send_cmd_res(to_cu.session_id, cu_seq, TW_RUN_STEP,
 			to_cu.divisions[0].result) < 0)
 		{
 			error_msg("send cmd_res to cu failed\n");
@@ -3113,7 +3113,7 @@ int jpf_tw_deal_decoder_res(tw_decoder_rsp_with_seq *dec_rsp_with_seq)
 			goto deal_res_end;
 	}
 
-	if (jpf_tw_info_handle(TW_INFO_SEND_SCREEN_TO_CU, &to_cu, NULL) < 0)
+	if (nmp_tw_info_handle(TW_INFO_SEND_SCREEN_TO_CU, &to_cu, NULL) < 0)
 	{
 		error_msg("send pu_res to cu failed\n");
 		error = TW_RES_EINVAL;
@@ -3125,7 +3125,7 @@ deal_res_end:
 }
 
 
-static int jpf_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq)
+static int nmp_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq)
 {
 	tw_operate_result_to_cu_with_seq to_cu_with_seq;
 	memset(&to_cu_with_seq, 0, sizeof(tw_operate_result_to_cu_with_seq));
@@ -3143,7 +3143,7 @@ static int jpf_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq)
 	to_cu->operate_mode = 1;
 	to_cu->result = 0;
 
-	if (jpf_tw_info_handle(TW_CLEAR_RESULT_TO_CU, &to_cu_with_seq, NULL) < 0)
+	if (nmp_tw_info_handle(TW_CLEAR_RESULT_TO_CU, &to_cu_with_seq, NULL) < 0)
 	{
 		error_msg("send TW_CLEAR_RESULT_TO_CU(stop) failed\n");
 	}
@@ -3152,7 +3152,7 @@ static int jpf_tw_deal_stop_res(tw_operate_with_seq *msg_with_seq)
 }
 
 
-int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_with_seq,
+int nmp_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_with_seq,
 	TW_INFO_TYPE type)
 {
 	assert(dec_rsp_with_seq);
@@ -3168,9 +3168,9 @@ int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_wit
 	case TW_FULL_SCREEN_TO_DEC:
 	case TW_EXIT_FULL_SCREEN_TO_DEC:
 		{
-			if (jpf_tw_get_operate_info(&to_cu_with_seq, dec_rsp_with_seq->seq) < 0)
+			if (nmp_tw_get_operate_info(&to_cu_with_seq, dec_rsp_with_seq->seq) < 0)
 			{
-				error_msg("jpf_tw_get_operate_info failed\n");
+				error_msg("nmp_tw_get_operate_info failed\n");
 				goto end;
 			}
 			to_cu_with_seq.to_cu.result = dec_rsp_with_seq->operate_dec_rsp.result;
@@ -3188,7 +3188,7 @@ int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_wit
 	case TW_CLEAR_TO_DEC:
 		{
 			to_cu_with_seq.to_cu.operate_type = TW_OPERATE_CLEAR;
-			if (jpf_tw_info_handle(TW_CLEAR_RESULT_TO_CU,
+			if (nmp_tw_info_handle(TW_CLEAR_RESULT_TO_CU,
 				&to_cu_with_seq, NULL) < 0)
 			{
 				error_msg("send TW_CLEAR_RESULT_TO_CU(clear) failed\n");
@@ -3199,7 +3199,7 @@ int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_wit
 	case TW_CHANGE_DIVISION_MODE_TO_DEC:
 		{
 			to_cu_with_seq.to_cu.operate_type = TW_OPERATE_CHANGE_DIVISION_MODE;
-			if (jpf_tw_info_handle(TW_CHANGE_DIVISION_MODE_RESULT_TO_CU,
+			if (nmp_tw_info_handle(TW_CHANGE_DIVISION_MODE_RESULT_TO_CU,
 				&to_cu_with_seq, NULL) < 0)
 			{
 				error_msg("send TW_CHANGE_DIVISION_MODE_RESULT_TO_CU failed\n");
@@ -3210,7 +3210,7 @@ int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_wit
 	case TW_FULL_SCREEN_TO_DEC:
 		{
 			to_cu_with_seq.to_cu.operate_type = TW_OPERATE_FULL_SCREEN;
-			if (jpf_tw_info_handle(TW_FULL_SCREEN_RESULT_TO_CU,
+			if (nmp_tw_info_handle(TW_FULL_SCREEN_RESULT_TO_CU,
 				&to_cu_with_seq, NULL) < 0)
 			{
 				error_msg("send TW_FULL_SCREEN_RESULT_TO_CU failed\n");
@@ -3221,7 +3221,7 @@ int jpf_tw_deal_decoder_operate_res(tw_operate_decoder_rsp_with_seq *dec_rsp_wit
 	case TW_EXIT_FULL_SCREEN_TO_DEC:
 		{
 			to_cu_with_seq.to_cu.operate_type = TW_OPERATE_EXIT_FULL_SCREEN;
-			if (jpf_tw_info_handle(TW_EXIT_FULL_SCREEN_RESULT_TO_CU,
+			if (nmp_tw_info_handle(TW_EXIT_FULL_SCREEN_RESULT_TO_CU,
 				&to_cu_with_seq, NULL) < 0)
 			{
 				error_msg("send TW_CLEAR_RESULT_TO_CU failed\n");
@@ -3240,12 +3240,12 @@ end:
 }
 
 
-int jpf_tw_update_url(tw_update_url *update_url)
+int nmp_tw_update_url(tw_update_url *update_url)
 {
 	int group_i = 0, screen_i;
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
 	tw_encoder_position *pos = &update_url->ec_position;
-	log_msg("jpf_tw_update_url update\n");
+	log_msg("nmp_tw_update_url update\n");
 
 	if (pos->division_num < 0 ||
 		pos->division_num >= TW_MAX_DIVISIONS)
@@ -3287,7 +3287,7 @@ int jpf_tw_update_url(tw_update_url *update_url)
 			{
 				p_ec->ec_url[TW_MAX_URL_LEN - 1] = '\0';
 				strncpy(p_ec->ec_url, update_url->ec_url, TW_MAX_URL_LEN - 1);
-				log_msg("jpf_tw_update_url success\n");
+				log_msg("nmp_tw_update_url success\n");
 				pthread_mutex_unlock(&p_gv->gv_mutex);
 				return 0;
 			}
@@ -3299,19 +3299,19 @@ int jpf_tw_update_url(tw_update_url *update_url)
 }
 
 
-int jpf_tw_tvwall_work()
+int nmp_tw_tvwall_work()
 {
 	//func_begin("**********************************************************\n");
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
-	jpf_tw_groups_work(&p_tw->tw_group_vec_ok);
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
+	nmp_tw_groups_work(&p_tw->tw_group_vec_ok);
 	return 0;
 }
 
-int jpf_tw_tvwall_clear()
+int nmp_tw_tvwall_clear()
 {
 	func_begin("********** just test **********\n");
-	tv_wall_t *p_tw = jpf_tw_get_tv_wall_p();
-	jpf_tw_groups_clear(&p_tw->tw_group_vec_ok);
+	tv_wall_t *p_tw = nmp_tw_get_tv_wall_p();
+	nmp_tw_groups_clear(&p_tw->tw_group_vec_ok);
 	return 0;
 }
 

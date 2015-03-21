@@ -24,12 +24,12 @@ typedef enum
 	CONNECTING,
 	CONNECTED,
 	DISCONNECTING
-}JpfConnState;
+}NmpConnState;
 
 
 //注册以及连接状态信息
 typedef struct _register_info{
-	JpfNetIO	*bridge;		/* communication bridge */
+	NmpNetIO	*bridge;		/* communication bridge */
 	char damon_name[64];
 	char damod_id[64];
 	char ip[20];
@@ -38,71 +38,71 @@ typedef struct _register_info{
 	int unregistered;
 	int state_timer;
 	int seq_generator;
-	JpfConnState state;
+	NmpConnState state;
 	struct _register_info *next;
 }register_info;
 
 //心跳信息
-typedef struct _JpfHeart JpfHeart;
-struct _JpfHeart
+typedef struct _NmpHeart NmpHeart;
+struct _NmpHeart
 {
     gchar			 domain_id[USER_NAME_LEN];
 };
 
-typedef struct _JpfHeartResp JpfHeartResp;
-struct _JpfHeartResp
+typedef struct _NmpHeartResp NmpHeartResp;
+struct _NmpHeartResp
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     //gchar			server_time[TIME_INFO_LEN];
 };
 
 
 //注册数据结构体(暂时用这个名称)
-typedef struct _JpfClientLoginInfo JpfClientLoginInfo;
-struct _JpfClientLoginInfo
+typedef struct _NmpClientLoginInfo NmpClientLoginInfo;
+struct _NmpClientLoginInfo
 {
 	gchar domain_id[USER_NAME_LEN];
 	//gchar password[USER_PASSWD_LEN];
 };
 
 
-typedef struct _JpfClientLoginRes JpfClientLoginRes;
-struct _JpfClientLoginRes
+typedef struct _NmpClientLoginRes NmpClientLoginRes;
+struct _NmpClientLoginRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     //gchar       domain_name[DOMAIN_NAME_LEN];
     //gchar       domain_id[DOMAIN_ID_LEN];
 };
 
 
 typedef int (*PROC_REGISTER)(
-	JpfClientLoginInfo *reg,
-	JpfClientLoginRes *res_info
+	NmpClientLoginInfo *reg,
+	NmpClientLoginRes *res_info
 );
 
 
 //初始化注册初始化函数
-int jpf_proc_register_function_init(PROC_REGISTER registerfun);
+int nmp_proc_register_function_init(PROC_REGISTER registerfun);
 
 //socket连接服务器端
-int jpf_connect_to_server(register_info *node);
+int nmp_connect_to_server(register_info *node);
 
 //心跳发送
-int jpf_send_heartbeat(register_info *node);
+int nmp_send_heartbeat(register_info *node);
 
 //客户端关闭socket连接
-int jpf_close_connect(register_info *node);
+int nmp_close_connect(register_info *node);
 
 //客户端，获取注册所需信息函数
 register_info *get_register_platform_info();
 
 //客户端发起注册
-int jpf_register_to_server(register_info *node);
+int nmp_register_to_server(register_info *node);
 
 //client端初始化
-void jpf_client_mods_init(void);
+void nmp_client_mods_init(void);
 
-int jpf_client_register_callback(callback_function *function);
+int nmp_client_register_callback(callback_function *function);
 
 int add_parent_domain(char *ip, int port, char *domain_id);
 

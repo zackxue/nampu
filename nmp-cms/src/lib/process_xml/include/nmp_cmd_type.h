@@ -3,8 +3,8 @@
  * @author   Yang Ying
  * @section  LICENSE
  *
- * Copyright by Shenzhen JXJ Electronic Co.Ltd, 2011.
- * Website: www.szjxj.com
+ * Copyright by Shenzhen NMP Electronic Co.Ltd, 2011.
+ * Website: www.sznmp.com
  *
  * @section  DESCRIPTION
  *

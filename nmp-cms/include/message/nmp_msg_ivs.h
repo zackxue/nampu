@@ -5,17 +5,17 @@
 #include "nmp_list_head.h"
 
 
-typedef struct _JpfIvsRegister JpfIvsRegister;
-struct _JpfIvsRegister
+typedef struct _NmpIvsRegister NmpIvsRegister;
+struct _NmpIvsRegister
 {
     gchar ivs_id[IVS_ID_LEN];
     gchar  ivs_version[VERSION_LEN];
 };
 
-typedef struct _JpfIvsRegisterRes JpfIvsRegisterRes;
-struct _JpfIvsRegisterRes
+typedef struct _NmpIvsRegisterRes NmpIvsRegisterRes;
+struct _NmpIvsRegisterRes
 {
-    JpfMsgErrCode       code;
+    NmpMsgErrCode       code;
     gchar                    domain_id[DOMAIN_ID_LEN];
     gint                       keep_alive_time;
     gint                       storage_type;
@@ -24,16 +24,16 @@ struct _JpfIvsRegisterRes
     gchar              ivs_name[IVS_NAME_LEN];
 };
 
-typedef struct _JpfIvsHeart JpfIvsHeart;
-struct _JpfIvsHeart
+typedef struct _NmpIvsHeart NmpIvsHeart;
+struct _NmpIvsHeart
 {
     gchar		ivs_id[IVS_ID_LEN];
 };
 
-typedef struct _JpfIvsHeartRes JpfIvsHeartRes;
-struct _JpfIvsHeartRes
+typedef struct _NmpIvsHeartRes NmpIvsHeartRes;
+struct _NmpIvsHeartRes
 {
-    JpfMsgErrCode	code;
+    NmpMsgErrCode	code;
     gchar			server_time[TIME_INFO_LEN];
 };
 

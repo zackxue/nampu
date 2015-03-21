@@ -16,45 +16,45 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfNetIO JpfNetIO;
-typedef struct _JpfNet JpfNet;
+typedef struct _NmpNetIO NmpNetIO;
+typedef struct _NmpNet NmpNet;
 typedef void (*HmDesFun)(void *private_data);
-typedef void (*HmIOEst)(JpfNetIO *io, void *init_data);
+typedef void (*HmIOEst)(NmpNetIO *io, void *init_data);
 
-JpfNetIO *jpf_net_io_new(HmConnection *conn, JpfPacketProto *ll_proto,
-	JpfPayloadProto *hl_proto, gint *err);
+NmpNetIO *nmp_net_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+	NmpPayloadProto *hl_proto, gint *err);
 
-JpfNetIO *jpf_net_listen_io_new(HmConnection *conn,
-	JpfPacketProto *ll_proto, JpfPayloadProto *hl_proto, gint *err);
+NmpNetIO *nmp_net_listen_io_new(HmConnection *conn,
+	NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto, gint *err);
 
-void jpf_net_io_attach(JpfNetIO *net_io, GMainContext *context);
+void nmp_net_io_attach(NmpNetIO *net_io, GMainContext *context);
 
-JpfNetIO *jpf_net_io_ref(JpfNetIO *net_io);
-void jpf_net_io_unref(JpfNetIO *net_io);
+NmpNetIO *nmp_net_io_ref(NmpNetIO *net_io);
+void nmp_net_io_unref(NmpNetIO *net_io);
 
-void jpf_net_io_kill(JpfNetIO *net_io);
-void jpf_net_io_async_kill(JpfNetIO *net_io, gint err);
+void nmp_net_io_kill(NmpNetIO *net_io);
+void nmp_net_io_async_kill(NmpNetIO *net_io, gint err);
 
-void jpf_net_io_set_owner(JpfNetIO *net_io, gpointer owner);
+void nmp_net_io_set_owner(NmpNetIO *net_io, gpointer owner);
 
-void jpf_net_io_set_private(JpfNetIO *net_io, gpointer priv_data, HmDesFun des);
-gpointer jpf_net_io_get_private(JpfNetIO *net_io);
+void nmp_net_io_set_private(NmpNetIO *net_io, gpointer priv_data, HmDesFun des);
+gpointer nmp_net_io_get_private(NmpNetIO *net_io);
 
-gint jpf_net_io_read_message(JpfNetIO *net_io, gpointer msg);
-gint jpf_net_io_write_message(JpfNetIO *net_io, gpointer msg);
+gint nmp_net_io_read_message(NmpNetIO *net_io, gpointer msg);
+gint nmp_net_io_write_message(NmpNetIO *net_io, gpointer msg);
 
-gint jpf_net_io_add_child_watch(JpfNetIO *net_io, gpointer watch);
+gint nmp_net_io_add_child_watch(NmpNetIO *net_io, gpointer watch);
 
-void jpf_net_io_establish(JpfNetIO *net_io);
-void jpf_net_io_on_establish(JpfNetIO *net_io, gpointer init_data);
+void nmp_net_io_establish(NmpNetIO *net_io);
+void nmp_net_io_on_establish(NmpNetIO *net_io, gpointer init_data);
 
-gboolean jpf_net_io_set_ttd(JpfNetIO *net_io, gint milli_secs);
+gboolean nmp_net_io_set_ttd(NmpNetIO *net_io, gint milli_secs);
 
-void jpf_net_io_set_ester(JpfNetIO *net_io, HmIOEst on_est);
+void nmp_net_io_set_ester(NmpNetIO *net_io, HmIOEst on_est);
 
-gchar *jpf_net_io_get_peer(JpfNetIO *net_io);
-void jpf_net_io_set_heavy_load(JpfNetIO *net_io);
-void jpf_net_io_set_block_size(JpfNetIO *net_io, gint size);
+gchar *nmp_net_io_get_peer(NmpNetIO *net_io);
+void nmp_net_io_set_heavy_load(NmpNetIO *net_io);
+void nmp_net_io_set_block_size(NmpNetIO *net_io, gint size);
 
 G_END_DECLS
 

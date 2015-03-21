@@ -13,16 +13,16 @@ nmp_app_obj_init(NmpAppObj *self)
 static void
 nmp_app_obj_deliver_in_default(NmpAppObj *self, NmpSysMsg *msg)
 {
-    jpf_warning("<NmpAppObj> default deliver_in() called!");
-    jpf_sysmsg_destroy(msg);
+    nmp_warning("<NmpAppObj> default deliver_in() called!");
+    nmp_sysmsg_destroy(msg);
 }
 
 
 static void
 nmp_app_obj_deliver_out_default(NmpAppObj *self, NmpSysMsg *msg)
 {
-    jpf_warning("<NmpAppObj> default deliver_out() called!");
-    jpf_sysmsg_destroy(msg);
+    nmp_warning("<NmpAppObj> default deliver_out() called!");
+    nmp_sysmsg_destroy(msg);
 }
 
 
@@ -47,7 +47,7 @@ nmp_app_obj_deliver_out(NmpAppObj *self, NmpSysMsg *msg)
 {
     G_ASSERT(NMP_IS_APPOBJ(self) && NMP_IS_SYSMSG(msg));
 
-    jpf_sysmsg_detach_io(msg);
+    nmp_sysmsg_detach_io(msg);
     NMP_APPOBJ_GET_CLASS(self)->deliver_out(
         self, msg
     );
@@ -58,7 +58,7 @@ void
 nmp_app_obj_deliver_in(NmpAppObj *self, NmpSysMsg *msg)
 {
 	G_ASSERT(NMP_IS_APPOBJ(self) && NMP_IS_SYSMSG(msg));
-/*	jpf_sysmsg_detach_io(msg); */
+/*	nmp_sysmsg_detach_io(msg); */
 
     NMP_APPOBJ_GET_CLASS(self)->deliver_in(
         self, msg

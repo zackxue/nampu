@@ -1,5 +1,5 @@
 /*
- * jpf_etable.c
+ * nmp_etable.c
  *
  * routines for response waiting.
  *
@@ -15,24 +15,24 @@
 #include "nmp_debug.h"
 #include "nmp_memory.h"
 
-typedef struct _JpfEvent JpfEvent;
-struct _JpfEvent    /* Event description */
+typedef struct _NmpEvent NmpEvent;
+struct _NmpEvent    /* Event description */
 {
     LIST_HEAD   event_list;
     gint        event_id;
     guint       event_seq;
     gpointer    event_data;
 
-    JpfWait     *wait;  /* For waking up */
+    NmpWait     *wait;  /* For waking up */
 };
 
-typedef gint (*JpfEventHash)(JpfEvent *event);
+typedef gint (*NmpEventHash)(NmpEvent *event);
 
 
 struct _NmpEventTable       /* Event Hash Table */
 {
     LIST_HEAD       bucket[EVENT_HASH_TABLE_SIZE];
-    JpfEventHash    hash_fn;    /* Hash Func */
+    NmpEventHash    hash_fn;    /* Hash Func */
     guint           seq_generator;          
     GStaticMutex    lock;
 
@@ -45,14 +45,14 @@ struct _NmpEventTable       /* Event Hash Table */
 
 
 static gint
-jpf_event_hash(JpfEvent *event)
+nmp_event_hash(NmpEvent *event)
 {
     return event->event_seq;
 }
 
 
 static __inline__ void
-jpf_event_table_init(NmpEventTable *t, gpointer owner)
+nmp_event_table_init(NmpEventTable *t, gpointer owner)
 {
     gint i;
     
@@ -60,7 +60,7 @@ jpf_event_table_init(NmpEventTable *t, gpointer owner)
         INIT_LIST_HEAD(&t->bucket[i]);
 
     g_static_mutex_init(&t->lock);
-    t->hash_fn = jpf_event_hash;
+    t->hash_fn = nmp_event_hash;
     t->owner = owner;
 
 #ifdef NMP_DEBUG
@@ -70,34 +70,34 @@ jpf_event_table_init(NmpEventTable *t, gpointer owner)
 
 
 NmpEventTable *
-jpf_event_table_new(gpointer owner)
+nmp_event_table_new(gpointer owner)
 {
     NmpEventTable *t;
     G_ASSERT(owner != NULL);
 
-    t = jpf_new0(NmpEventTable, 1);
+    t = nmp_new0(NmpEventTable, 1);
     if (G_UNLIKELY(!t))
         return NULL;
 
-    jpf_event_table_init(t, owner);
+    nmp_event_table_init(t, owner);
 
     return t;
 }
 
 
-static __inline__ JpfEvent *
-jpf_event_new( void )
+static __inline__ NmpEvent *
+nmp_event_new( void )
 {
-    JpfEvent *event;
+    NmpEvent *event;
 
-    event = jpf_new0(JpfEvent, 1);
+    event = nmp_new0(NmpEvent, 1);
     if (G_UNLIKELY(!event))
         return NULL;
 
-    event->wait = jpf_wait_new();
+    event->wait = nmp_wait_new();
     if (G_UNLIKELY(!event->wait))
     {
-        jpf_free(event);
+        nmp_free(event);
         return NULL;
     }
 
@@ -106,18 +106,18 @@ jpf_event_new( void )
 
 
 static __inline__ void
-jpf_event_release(JpfEvent *event)
+nmp_event_release(NmpEvent *event)
 {
     G_ASSERT(event != NULL);
 
     BUG_ON(!event->wait);
-    jpf_wait_free(event->wait);
-    jpf_free(event);
+    nmp_wait_free(event->wait);
+    nmp_free(event);
 }
 
 
 void
-jpf_event_table_destroy(NmpEventTable *table)
+nmp_event_table_destroy(NmpEventTable *table)
 {//:TODO
     FATAL_ERROR_EXIT;
 }
@@ -125,7 +125,7 @@ jpf_event_table_destroy(NmpEventTable *table)
 
 
 static __inline__ gint
-jpf_event_add_to_table(NmpEventTable *table, JpfEvent *event,
+nmp_event_add_to_table(NmpEventTable *table, NmpEvent *event,
     NmpSysMsg *msg)
 {
     LIST_HEAD *head;
@@ -146,7 +146,7 @@ jpf_event_add_to_table(NmpEventTable *table, JpfEvent *event,
 
 
 static __inline__ void
-jpf_event_del_from_table(NmpEventTable *table, JpfEvent *event)
+nmp_event_del_from_table(NmpEventTable *table, NmpEvent *event)
 {
     LIST_HEAD *head, *l;
     gint key, found = 0;
@@ -159,7 +159,7 @@ jpf_event_del_from_table(NmpEventTable *table, JpfEvent *event)
 
     list_for_each(l, head)
     {
-        JpfEvent *e = list_entry(l, JpfEvent, event_list);
+        NmpEvent *e = list_entry(l, NmpEvent, event_list);
         if (e == event)
         {
             found = 1;
@@ -179,7 +179,7 @@ jpf_event_del_from_table(NmpEventTable *table, JpfEvent *event)
 
 
 static __inline__ void
-__jpf_event_wait(JpfEvent *event)
+__nmp_event_wait(NmpEvent *event)
 {
     GTimeVal abs_time;
     G_ASSERT(event != NULL);
@@ -187,68 +187,68 @@ __jpf_event_wait(JpfEvent *event)
     g_get_current_time(&abs_time);
     g_time_val_add(&abs_time, EVENT_WAIT_MILLISECONDS * 1000);
 
-    jpf_wait_timed_waiting(event->wait, &abs_time); 
+    nmp_wait_timed_waiting(event->wait, &abs_time); 
 }
 
 
 static __inline__ void
-jpf_event_wait(JpfEvent *event)
+nmp_event_wait(NmpEvent *event)
 {
     G_ASSERT(event != NULL);
 
-    jpf_wait_begin(event->wait);
-    if (!jpf_wait_is_cond_true(event->wait))
+    nmp_wait_begin(event->wait);
+    if (!nmp_wait_is_cond_true(event->wait))
     {
-    	__jpf_event_wait(event);
+    	__nmp_event_wait(event);
     }
-    jpf_wait_end(event->wait);
+    nmp_wait_end(event->wait);
 }
 
 
 static __inline__ void
-jpf_event_wakeup(JpfEvent *event)
+nmp_event_wakeup(NmpEvent *event)
 {
-    jpf_wait_begin(event->wait);
-    jpf_wait_set_cond_true(event->wait);
-    jpf_wait_wakeup(event->wait);
-    jpf_wait_end(event->wait);  
+    nmp_wait_begin(event->wait);
+    nmp_wait_set_cond_true(event->wait);
+    nmp_wait_wakeup(event->wait);
+    nmp_wait_end(event->wait);  
 }
 
 
 gint
-jpf_event_request(NmpEventTable *t, NmpSysMsg **msg)
+nmp_event_request(NmpEventTable *t, NmpSysMsg **msg)
 {
-    JpfEvent*event;
+    NmpEvent*event;
     gint ret;
     G_ASSERT(t != NULL && msg != NULL && *msg != NULL);
 
-    event = jpf_event_new();
+    event = nmp_event_new();
     if (G_UNLIKELY(!event))
         return -E_NOMEM;
 
-    ret = jpf_event_add_to_table(t, event, *msg);
+    ret = nmp_event_add_to_table(t, event, *msg);
     if (G_LIKELY(!ret))
     {
         ret = nmp_app_mod_snd((NmpAppMod*)t->owner, *msg);
         if (G_LIKELY(!ret))
-            jpf_event_wait(event);
+            nmp_event_wait(event);
 
-        jpf_event_del_from_table(t, event);
+        nmp_event_del_from_table(t, event);
     }
 
     if (G_LIKELY(!ret))
         *msg = event->event_data;
 
-    jpf_event_release(event);
+    nmp_event_release(event);
     return ret;
 }
 
 
 gint
-jpf_event_response(NmpEventTable *table, NmpSysMsg *msg)
+nmp_event_response(NmpEventTable *table, NmpSysMsg *msg)
 {
     LIST_HEAD *head, *l;
-    JpfEvent *event;
+    NmpEvent *event;
     guint seq, not_found = 1;
 
     g_static_mutex_lock(&table->lock);
@@ -258,12 +258,12 @@ jpf_event_response(NmpEventTable *table, NmpSysMsg *msg)
 
     list_for_each(l, head)
     {
-        event = list_entry(l, JpfEvent, event_list);
+        event = list_entry(l, NmpEvent, event_list);
         if (event->event_seq == seq)
         {
             if (G_UNLIKELY(event->event_id != MSG_GETID(msg)))
             {
-                jpf_warning(
+                nmp_warning(
                     "<NmpEventTable> event_id:%d not-equ msg_id:%d!",
                     event->event_id, MSG_GETID(msg)
                 );
@@ -272,7 +272,7 @@ jpf_event_response(NmpEventTable *table, NmpSysMsg *msg)
 
             not_found = 0;
             event->event_data = msg;
-            jpf_event_wakeup(event);
+            nmp_event_wakeup(event);
             break;
         }
     }

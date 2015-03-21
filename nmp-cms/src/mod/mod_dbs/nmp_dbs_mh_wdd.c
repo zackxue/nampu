@@ -19,7 +19,7 @@
 
 
 static __inline__ void
-jpf_dbs_covert_cms_modules_bits(guint *new_bits, guint *old_bits)
+nmp_dbs_covert_cms_modules_bits(guint *new_bits, guint *old_bits)
 {
 	*new_bits = 0;
 
@@ -51,7 +51,7 @@ jpf_dbs_covert_cms_modules_bits(guint *new_bits, guint *old_bits)
 
 
 static __inline__ void
-jpf_dbs_covert_tw_modules_bits(guint *new_bits, guint *old_bits)
+nmp_dbs_covert_tw_modules_bits(guint *new_bits, guint *old_bits)
 {
 	*new_bits = 0;
 
@@ -71,7 +71,7 @@ jpf_dbs_covert_tw_modules_bits(guint *new_bits, guint *old_bits)
 
 
 static __inline__ void
-jpf_dbs_covert_ams_modules_bits(guint *new_bits, guint *old_bits)
+nmp_dbs_covert_ams_modules_bits(guint *new_bits, guint *old_bits)
 {
 	*new_bits = 0;
 
@@ -115,7 +115,7 @@ jpf_dbs_covert_ams_modules_bits(guint *new_bits, guint *old_bits)
 
 
 static __inline__ void
-jpf_dbs_covert_modules_bits(JpfResourcesCap *new_res, JpfMsgWddDevCapInfo *old_res)
+nmp_dbs_covert_modules_bits(NmpResourcesCap *new_res, NmpMsgWddDevCapInfo *old_res)
 {
 	guint new_bits = 0, old_bits;
 
@@ -123,7 +123,7 @@ jpf_dbs_covert_modules_bits(JpfResourcesCap *new_res, JpfMsgWddDevCapInfo *old_r
 	if (old_bits & (1<<MODULES_CMS))
 	{
 		new_bits |= MODULE_CMS_BIT;
-		jpf_dbs_covert_cms_modules_bits(&new_res->modules_data[SYS_MODULE_CMS],
+		nmp_dbs_covert_cms_modules_bits(&new_res->modules_data[SYS_MODULE_CMS],
 			&old_res->modules_data[MODULES_CMS]);
 	}
 	if (old_bits & (1<<MODULES_MDS))
@@ -139,7 +139,7 @@ jpf_dbs_covert_modules_bits(JpfResourcesCap *new_res, JpfMsgWddDevCapInfo *old_r
 	if (old_bits & (1<<MODULES_ALM))
 	{
 		new_bits |= MODULE_ALM_BIT;
-		jpf_dbs_covert_ams_modules_bits(&new_res->modules_data[SYS_MODULE_ALM],
+		nmp_dbs_covert_ams_modules_bits(&new_res->modules_data[SYS_MODULE_ALM],
 			&old_res->modules_data[MODULES_ALM]);
 	}
 	if (old_bits & (1<<MODULES_EM))
@@ -150,7 +150,7 @@ jpf_dbs_covert_modules_bits(JpfResourcesCap *new_res, JpfMsgWddDevCapInfo *old_r
 	if (old_bits & (1<<MODULES_TW))
 	{
 		new_bits |= MODULE_TW_BIT;
-		jpf_dbs_covert_tw_modules_bits(&new_res->modules_data[SYS_MODULE_TW],
+		nmp_dbs_covert_tw_modules_bits(&new_res->modules_data[SYS_MODULE_TW],
 			&old_res->modules_data[MODULES_TW]);
 	}
 
@@ -158,12 +158,12 @@ jpf_dbs_covert_modules_bits(JpfResourcesCap *new_res, JpfMsgWddDevCapInfo *old_r
 }
 
 void
-jpf_dbs_wdd_set_resources_cap(JpfMsgWddDevCapInfo *wdd_cap)
+nmp_dbs_wdd_set_resources_cap(NmpMsgWddDevCapInfo *wdd_cap)
 {
-	JpfResourcesCap resources_cap;
+	NmpResourcesCap resources_cap;
 
-	memset(&resources_cap, 0, sizeof(JpfResourcesCap));
-	jpf_dbs_covert_modules_bits(&resources_cap, wdd_cap);
+	memset(&resources_cap, 0, sizeof(NmpResourcesCap));
+	nmp_dbs_covert_modules_bits(&resources_cap, wdd_cap);
 	resources_cap.expired_time = wdd_cap->expired_time;
 	resources_cap.dev_count = wdd_cap->max_dev;
 	resources_cap.av_count = wdd_cap->max_av;
@@ -175,38 +175,38 @@ jpf_dbs_wdd_set_resources_cap(JpfMsgWddDevCapInfo *wdd_cap)
 }
 
 NmpMsgFunRet
-jpf_dbs_wdd_check_resourse_b(NmpAppObj *app_obj, NmpSysMsg *msg)
+nmp_dbs_wdd_check_resourse_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
-	JpfModDbs * self = (JpfModDbs *)app_obj;
-	JpfMsgWddDevCapInfo *req_info;
-	JpfNotifyMessage notify_info;
+	NmpModDbs * self = (NmpModDbs *)app_obj;
+	NmpMsgWddDevCapInfo *req_info;
+	NmpNotifyMessage notify_info;
 	gint ret;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	jpf_dbs_wdd_set_resources_cap(req_info);
-	ret = jpf_dbs_check_gu_type_count(app_obj, 0, req_info->max_av, AV_TYPE);
+	nmp_dbs_wdd_set_resources_cap(req_info);
+	ret = nmp_dbs_check_gu_type_count(app_obj, 0, req_info->max_av, AV_TYPE);
 	if (ret == -1)
 		self->res_over_flag |= AV_OVER_FLAG;
 	if (ret == 0)
 		self->res_over_flag &= ~AV_OVER_FLAG;
 
-	ret = jpf_dbs_check_gu_type_count(app_obj, 0, req_info->max_ds, DS_TYPE);
+	ret = nmp_dbs_check_gu_type_count(app_obj, 0, req_info->max_ds, DS_TYPE);
 	if (ret == -1)
 		self->res_over_flag |= DS_OVER_FLAG;
 	if (ret == 0)
 		self->res_over_flag &= ~DS_OVER_FLAG;
 
-	ret = jpf_dbs_check_gu_type_count(app_obj, 0, req_info->max_ai, AI_TYPE);
+	ret = nmp_dbs_check_gu_type_count(app_obj, 0, req_info->max_ai, AI_TYPE);
 	if (ret == -1)
 		self->res_over_flag |= AI_OVER_FLAG;
 	if (ret == 0)
 		self->res_over_flag &= ~AI_OVER_FLAG;
 
-	ret = jpf_dbs_check_gu_type_count(app_obj, 0, req_info->max_ao, AO_TYPE);
+	ret = nmp_dbs_check_gu_type_count(app_obj, 0, req_info->max_ao, AO_TYPE);
 	if (ret == -1)
 		self->res_over_flag |= AO_OVER_FLAG;
 	if (ret == 0)
@@ -232,21 +232,21 @@ jpf_dbs_wdd_check_resourse_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 	self->wdd_status = 0;
 	self->authorization_expired = 0;
 	self->time_status = 0;
-      jpf_sysmsg_destroy(msg);
+      nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 
 NmpMsgFunRet
-jpf_dbs_wdd_set_auth_expired_b(NmpAppObj *app_obj, NmpSysMsg *msg)
+nmp_dbs_wdd_set_auth_expired_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
-	JpfModDbs * self = (JpfModDbs *)app_obj;
-	JpfMsgWddAuthErrorInfo *notify_info;
-	JpfResourcesCap resources_cap;
+	NmpModDbs * self = (NmpModDbs *)app_obj;
+	NmpMsgWddAuthErrorInfo *notify_info;
+	NmpResourcesCap resources_cap;
 
-	memset(&resources_cap, 0, sizeof(JpfResourcesCap));
+	memset(&resources_cap, 0, sizeof(NmpResourcesCap));
 	notify_info = MSG_GET_DATA(msg);
 	BUG_ON(!notify_info);
 
@@ -264,13 +264,13 @@ jpf_dbs_wdd_set_auth_expired_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 		self->time_status = 1;
 
 	nmp_mod_set_resource_cap(&resources_cap);
-	jpf_sysmsg_destroy(msg);
+	nmp_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 
 void
-nmp_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_wdd_msg_handler(NmpModDbs *self)
 {
 	NmpAppMod *super_self = (NmpAppMod*)self;
 
@@ -278,7 +278,7 @@ nmp_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
 		super_self,
 		MSG_WDD_DEV_CAP_INFO,
 		NULL,
-		jpf_dbs_wdd_check_resourse_b,
+		nmp_dbs_wdd_check_resourse_b,
 		0
 	);
 
@@ -286,7 +286,7 @@ nmp_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
 		super_self,
 		MSG_WDD_AUTH_ERROR,
 		NULL,
-		jpf_dbs_wdd_set_auth_expired_b,
+		nmp_dbs_wdd_set_auth_expired_b,
 		0
 	);
 }

@@ -1,1 +1,0 @@
-nmp_tv_wall.o: nmp_tv_wall.c nmp_tv_wall.h ../include/nmp_tw_interface.h

@@ -1,6 +1,0 @@
-fake.o: src/fake.c include/encrypt.h ../include/nmp_wdd_interface.h \
- include/fake.h
-et199_encrypt.o: src/et199_encrypt.c include/encrypt.h \
- ../include/nmp_wdd_interface.h include/ET199_32.h ../include/nmp_wdd.h
-encrypt_interface.o: src/encrypt_interface.c include/encrypt.h \
- ../include/nmp_wdd_interface.h

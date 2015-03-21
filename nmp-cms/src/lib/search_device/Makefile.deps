@@ -1,8 +1,7 @@
-main.o: src/main.c src/mb_api.h
-mb_api.o: src/mb_api.c src/mb_api.h src/mb_cu.h src/mb_basic.h src/list.h \
- src/mb_pu.h
-mb_basic.o: src/mb_basic.c src/mb_basic.h src/list.h src/mb_api.h
-mb_cu.o: src/mb_cu.c src/mb_cu.h src/mb_basic.h src/list.h src/mb_api.h
-mb_pu.o: src/mb_pu.c src/mb_pu.h src/mb_basic.h src/list.h src/mb_api.h
-search_device.o: src/search_device.c src/mb_api.h \
- /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/search_device.h
+main.o: main.c mb_api.h
+mb_api.o: mb_api.c mb_api.h mb_cu.h mb_basic.h list.h mb_pu.h
+mb_basic.o: mb_basic.c mb_basic.h list.h mb_api.h
+mb_pu.o: mb_pu.c mb_pu.h mb_basic.h list.h mb_api.h
+search_device.o: search_device.c mb_api.h \
+ /home/shiyong/usr/include/nampu/search_device.h
+mb_cu.o: mb_cu.c mb_cu.h mb_basic.h list.h mb_api.h

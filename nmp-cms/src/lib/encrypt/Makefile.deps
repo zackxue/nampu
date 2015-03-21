@@ -1,9 +1,6 @@
-encrypt_interface.o: src/encrypt_interface.c inc/encrypt.h \
- /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/nmp_wdd_interface.h
-et199_encrypt.o: src/et199_encrypt.c inc/encrypt.h \
- /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/nmp_wdd_interface.h \
- inc/ET199_32.h \
- /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/nmp_wdd.h
-fake.o: src/fake.c inc/encrypt.h \
- /home/shiyong/workroom/github.com/nampu/nmp-cms/lib/include/nmp_wdd_interface.h \
- inc/fake.h
+fake.o: src/fake.c include/encrypt.h ../include/nmp_wdd_interface.h \
+ include/fake.h
+et199_encrypt.o: src/et199_encrypt.c include/encrypt.h \
+ ../include/nmp_wdd_interface.h include/ET199_32.h ../include/nmp_wdd.h
+encrypt_interface.o: src/encrypt_interface.c include/encrypt.h \
+ ../include/nmp_wdd_interface.h

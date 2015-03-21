@@ -1,1 +1,0 @@
- -L/home/shiyong/workroom/github.com/nampu/nmp-cms/lib/bin -ldbc -L/home/shiyong/workroom/github.com/nampu/nmp-cms/lib/bin -lencrypt -L/home/shiyong/workroom/github.com/nampu/nmp-cms/lib/bin -lprocessxml -L/home/shiyong/workroom/github.com/nampu/nmp-cms/lib/bin -ljpfsearch -L/home/shiyong/workroom/github.com/nampu/nmp-cms/lib/bin -ltw

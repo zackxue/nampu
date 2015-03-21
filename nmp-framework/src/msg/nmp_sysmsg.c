@@ -10,11 +10,11 @@
 #include "nmp_memory.h"
 #include "nmp_debug.h"
 
-G_DEFINE_TYPE(JpfSysMsg, jpf_sysmsg, JPF_TYPE_DATA);
+G_DEFINE_TYPE(NmpSysMsg, jpf_sysmsg, NMP_TYPE_DATA);
 static gint total_sysmsg_count = 0;
 
 static void
-jpf_sysmsg_init(JpfSysMsg *self)
+jpf_sysmsg_init(NmpSysMsg *self)
 {
     G_ASSERT(self != NULL);
 
@@ -25,7 +25,7 @@ jpf_sysmsg_init(JpfSysMsg *self)
     self->dst = BUSSLOT_POS_MAX;
     self->src = BUSSLOT_POS_MAX;
     self->orig = BUSSLOT_POS_MAX;
-    self->priv = jpf_new0(JpfSysMsgPriv, 1);
+    self->priv = jpf_new0(NmpSysMsgPriv, 1);
     BUG_ON(!self->priv);    /* glib says never */
 	self->user_data = NULL;
 	self->user_size = 0;
@@ -50,14 +50,14 @@ jpf_sysmsg_init(JpfSysMsg *self)
 static void
 jpf_sysmsg_dispose(GObject *object)
 {
-//    JpfSysMsg *self = (JpfSysMsg*)object;
+//    NmpSysMsg *self = (NmpSysMsg*)object;
     g_atomic_int_add(&total_sysmsg_count, -1);
     G_OBJECT_CLASS(jpf_sysmsg_parent_class)->dispose(object);
 }
 
 
 static void
-jpf_sysmsg_class_init(JpfSysMsgClass *c_self)
+jpf_sysmsg_class_init(NmpSysMsgClass *c_self)
 {
     GObjectClass *gobject_class = (GObjectClass*)c_self;
 
@@ -75,9 +75,9 @@ jpf_sysmsg_default_priv_des(gpointer priv, gsize size)
 
 
 void 
-jpf_sysmsg_attach_io(JpfSysMsg *msg, JpfNetIO *io)
+jpf_sysmsg_attach_io(NmpSysMsg *msg, JpfNetIO *io)
 {
-    G_ASSERT(JPF_IS_SYSMSG(msg) && io != NULL);
+    G_ASSERT(NMP_IS_SYSMSG(msg) && io != NULL);
 
     BUG_ON(msg->from_io);
     msg->from_io = io;
@@ -86,9 +86,9 @@ jpf_sysmsg_attach_io(JpfSysMsg *msg, JpfNetIO *io)
 
 
 void
-jpf_sysmsg_detach_io(JpfSysMsg *msg)
+jpf_sysmsg_detach_io(NmpSysMsg *msg)
 {
-    G_ASSERT(JPF_IS_SYSMSG(msg));
+    G_ASSERT(NMP_IS_SYSMSG(msg));
 
     if (msg->from_io)
     {
@@ -99,7 +99,7 @@ jpf_sysmsg_detach_io(JpfSysMsg *msg)
 
 
 static __inline__ void
-jpf_sysmsg_copy_user_data(JpfSysMsg *msg_cpy, JpfSysMsg *msg)
+jpf_sysmsg_copy_user_data(NmpSysMsg *msg_cpy, NmpSysMsg *msg)
 {
 	if (msg->user_data)
 	{
@@ -111,7 +111,7 @@ jpf_sysmsg_copy_user_data(JpfSysMsg *msg_cpy, JpfSysMsg *msg)
 
 
 static __inline__ void
-jpf_sysmsg_free_user_data(JpfSysMsg *msg)
+jpf_sysmsg_free_user_data(NmpSysMsg *msg)
 {
 	if (msg->user_data)
 	{
@@ -121,7 +121,7 @@ jpf_sysmsg_free_user_data(JpfSysMsg *msg)
 
 
 static __inline__ void
-jpf_sysmsg_priv_init(JpfSysMsgPriv *priv, gpointer priv_data,
+jpf_sysmsg_priv_init(NmpSysMsgPriv *priv, gpointer priv_data,
     gsize priv_size, JpfMsgPrivDes priv_destroy)
 {
     priv->ref_count = 1;
@@ -132,7 +132,7 @@ jpf_sysmsg_priv_init(JpfSysMsgPriv *priv, gpointer priv_data,
 
 
 static __inline__ void
-jpf_sysmsg_private_set(JpfSysMsgPriv *priv, gpointer priv_data,
+jpf_sysmsg_private_set(NmpSysMsgPriv *priv, gpointer priv_data,
     gsize priv_size, JpfMsgPrivDes priv_destroy)
 {
     BUG_ON(g_atomic_int_get(&priv->ref_count) <= 0);
@@ -146,8 +146,8 @@ jpf_sysmsg_private_set(JpfSysMsgPriv *priv, gpointer priv_data,
 }
 
 
-static __inline__ JpfSysMsgPriv *
-jpf_sysmsg_ref_priv(JpfSysMsgPriv *priv)
+static __inline__ NmpSysMsgPriv *
+jpf_sysmsg_ref_priv(NmpSysMsgPriv *priv)
 {
     BUG_ON(!priv);
     BUG_ON(g_atomic_int_get(&priv->ref_count) <= 0);
@@ -158,7 +158,7 @@ jpf_sysmsg_ref_priv(JpfSysMsgPriv *priv)
 
 
 static __inline__ void
-jpf_sysmsg_unref_priv(JpfSysMsgPriv *priv)
+jpf_sysmsg_unref_priv(NmpSysMsgPriv *priv)
 {
     BUG_ON(!priv);
     BUG_ON(g_atomic_int_get(&priv->ref_count) <= 0);
@@ -173,7 +173,7 @@ jpf_sysmsg_unref_priv(JpfSysMsgPriv *priv)
 
 
 static __inline__ void
-jpf_sysmsg_copy(JpfSysMsg *msg_cpy, JpfSysMsg *msg)
+jpf_sysmsg_copy(NmpSysMsg *msg_cpy, NmpSysMsg *msg)
 {
     G_ASSERT(msg_cpy != NULL && msg != NULL);
 
@@ -193,9 +193,9 @@ jpf_sysmsg_copy(JpfSysMsg *msg_cpy, JpfSysMsg *msg)
 
 
 void
-jpf_sysmsg_destroy(JpfSysMsg *msg)
+jpf_sysmsg_destroy(NmpSysMsg *msg)
 {
-    G_ASSERT(JPF_IS_SYSMSG(msg));
+    G_ASSERT(NMP_IS_SYSMSG(msg));
 
     jpf_sysmsg_unref_priv(msg->priv);
     jpf_sysmsg_detach_io(msg);
@@ -204,13 +204,13 @@ jpf_sysmsg_destroy(JpfSysMsg *msg)
 }
 
 
-JpfSysMsg*
-__jpf_sysmsg_new(JpfMsgID msg_id, gpointer priv, gsize size, guint seq,
+NmpSysMsg*
+__jpf_sysmsg_new(NmpMsgID msg_id, gpointer priv, gsize size, guint seq,
     JpfMsgPrivDes priv_destroy)
 {
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
 
-    msg = g_object_new(JPF_TYPE_SYSMSG, NULL);
+    msg = g_object_new(NMP_TYPE_SYSMSG, NULL);
     if (G_UNLIKELY(!msg))
         return msg;
 
@@ -222,8 +222,8 @@ __jpf_sysmsg_new(JpfMsgID msg_id, gpointer priv, gsize size, guint seq,
 }
 
 
-JpfSysMsg*
-jpf_sysmsg_new(JpfMsgID msg_id, gpointer priv, gsize size,
+NmpSysMsg*
+jpf_sysmsg_new(NmpMsgID msg_id, gpointer priv, gsize size,
     guint seq, JpfMsgPrivDes priv_destroy)
 {
     if (G_UNLIKELY(priv && !priv_destroy))
@@ -233,10 +233,10 @@ jpf_sysmsg_new(JpfMsgID msg_id, gpointer priv, gsize size,
 }
 
 
-JpfSysMsg *
-jpf_sysmsg_new_2(JpfMsgID msg_id, gpointer priv, gsize size, guint seq)
+NmpSysMsg *
+jpf_sysmsg_new_2(NmpMsgID msg_id, gpointer priv, gsize size, guint seq)
 {
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
     JpfMsgPrivDes des = NULL;
     gpointer priv_copy = 0;
 
@@ -265,15 +265,15 @@ jpf_sysmsg_new_2(JpfMsgID msg_id, gpointer priv, gsize size, guint seq)
 
 
 static __inline__ void
-jpf_sysmsg_detach_shared_private(JpfSysMsg *msg)
+jpf_sysmsg_detach_shared_private(NmpSysMsg *msg)
 {
-	JpfSysMsgPriv *priv = msg->priv;
+	NmpSysMsgPriv *priv = msg->priv;
 	BUG_ON(!priv);
 
 	if(g_atomic_int_get(&priv->ref_count) > 1)
 	{//@{someone else owns it}
 		jpf_sysmsg_unref_priv(priv);
-		msg->priv = jpf_new0(JpfSysMsgPriv, 1);
+		msg->priv = jpf_new0(NmpSysMsgPriv, 1);
 		BUG_ON(!msg->priv);	/* glib says never */
 		jpf_sysmsg_priv_init(msg->priv, NULL, 0, NULL);
 	}
@@ -281,10 +281,10 @@ jpf_sysmsg_detach_shared_private(JpfSysMsg *msg)
 
 
 void
-jpf_sysmsg_set_private(JpfSysMsg *msg, gpointer priv, gsize size,
+jpf_sysmsg_set_private(NmpSysMsg *msg, gpointer priv, gsize size,
     JpfMsgPrivDes priv_destroy)
 {
-    G_ASSERT(JPF_IS_SYSMSG(msg) && !(priv && !priv_destroy));
+    G_ASSERT(NMP_IS_SYSMSG(msg) && !(priv && !priv_destroy));
 
 	jpf_sysmsg_detach_shared_private(msg);
     jpf_sysmsg_private_set(msg->priv, priv, size, priv_destroy);
@@ -292,11 +292,11 @@ jpf_sysmsg_set_private(JpfSysMsg *msg, gpointer priv, gsize size,
 
 
 gint
-jpf_sysmsg_set_private_2(JpfSysMsg *msg, gpointer priv, gsize size)
+jpf_sysmsg_set_private_2(NmpSysMsg *msg, gpointer priv, gsize size)
 {
     JpfMsgPrivDes des = NULL;
     gpointer priv_copy = 0;
-    G_ASSERT(JPF_IS_SYSMSG(msg));
+    G_ASSERT(NMP_IS_SYSMSG(msg));
 
     if (priv && size)
     {
@@ -313,10 +313,10 @@ jpf_sysmsg_set_private_2(JpfSysMsg *msg, gpointer priv, gsize size)
 }
 
 
-JpfSysMsg *
-jpf_sysmsg_copy_one(JpfSysMsg *msg)
+NmpSysMsg *
+jpf_sysmsg_copy_one(NmpSysMsg *msg)
 {
-    JpfSysMsg *msg_cpy = NULL;
+    NmpSysMsg *msg_cpy = NULL;
 
     msg_cpy = jpf_sysmsg_new_2(MSG_GETID(msg), NULL, 0, MSG_SEQ(msg));
     if (msg_cpy)
@@ -328,10 +328,10 @@ jpf_sysmsg_copy_one(JpfSysMsg *msg)
 
 
 gint
-jpf_sysmsg_set_userdata(JpfSysMsg *msg, gpointer data, gsize size)
+jpf_sysmsg_set_userdata(NmpSysMsg *msg, gpointer data, gsize size)
 {
 	gpointer p;
-	G_ASSERT(JPF_IS_SYSMSG(msg));
+	G_ASSERT(NMP_IS_SYSMSG(msg));
 
 	if (data && size)
 	{
@@ -357,9 +357,9 @@ jpf_sysmsg_set_userdata(JpfSysMsg *msg, gpointer data, gsize size)
 
 
 gint
-jpf_sysmsg_get_userdata(JpfSysMsg *msg, gpointer *pdata, gsize *psize)
+jpf_sysmsg_get_userdata(NmpSysMsg *msg, gpointer *pdata, gsize *psize)
 {
-	G_ASSERT(JPF_IS_SYSMSG(msg));
+	G_ASSERT(NMP_IS_SYSMSG(msg));
 
 	if (pdata && psize)
 	{

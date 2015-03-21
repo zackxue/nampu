@@ -36,7 +36,7 @@
 
 
 gint
-jpf_log_get_record_count(JpfAppObj *app_obj, char *query);
+jpf_log_get_record_count(NmpAppObj *app_obj, char *query);
 unsigned long long
 jpf_log_sql_get_num_rows(JpfMysqlRes *res);
 unsigned int
@@ -44,7 +44,7 @@ jpf_log_sql_get_num_fields(JpfMysqlRes *res);
 JpfMysqlRes*
 jpf_log_sql_get_res(JpfMysql *db);
 gint
-jpf_log_dbs_get_row_num(JpfAppObj *app_obj, JpfSysMsg *sys_msg, char *query);
+jpf_log_dbs_get_row_num(NmpAppObj *app_obj, NmpSysMsg *sys_msg, char *query);
 JpfMysqlRow
 jpf_log_sql_fetch_row(JpfMysqlRes *res);
 JpfMysqlField*
@@ -77,7 +77,7 @@ jpf_log_mysql_do_query(JpfMysql *db, const char *query)
 	{
 		error_code =  mysql_errno(db);
 		jpf_warning(
-			"<JpfModLog> exec SQL command \"%s\" failed, err:%d.",
+			"<NmpModLog> exec SQL command \"%s\" failed, err:%d.",
 			query, error_code
 		);
 		return -error_code;
@@ -153,15 +153,15 @@ jpf_log_process_query_procedure(JpfMysql *mysql, const char *query_buf)
 
 /* 处理操作结果码，不处理结果集 */
 void
-jpf_log_dbs_do_query_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_log_dbs_do_query_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect)
 {
 	G_ASSERT(result != NULL);
 	db_conn_status *conn = NULL;
-	JpfModLog *log_obj;
+	NmpModLog *log_obj;
 	gint size;
 	gint code;
 	glong affect_num = 0;
@@ -169,20 +169,20 @@ jpf_log_dbs_do_query_code(JpfAppObj *app_obj,
 	code = RES_CODE(result);
 	if (G_UNLIKELY(code))
 		goto dbs_query_end;
-	log_obj = JPF_MODLOG(app_obj);
+	log_obj = NMP_MODLOG(app_obj);
 
 redo:
 	conn = get_db_connection(log_obj->pool_info, log_obj->pool_conf);
 	if (G_UNLIKELY(!conn))
 	{
-		jpf_warning("<JpfModLog> get db connection error,query=%s.", query);
+		jpf_warning("<NmpModLog> get db connection error,query=%s.", query);
 		code = -E_GETDBCONN;
 		goto dbs_query_end;
 	}
 
 	if (G_UNLIKELY(!conn->mysql))
 	{
-		jpf_warning("<JpfModLog> get db connection error,query=%s.", query);
+		jpf_warning("<NmpModLog> get db connection error,query=%s.", query);
 		put_db_connection(log_obj->pool_info, conn);
 		code = -E_GETDBCONN;
 		goto dbs_query_end;
@@ -207,8 +207,8 @@ dbs_query_end:
 
 
 void
-jpf_log_dbs_do_del_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_log_dbs_do_del_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect)
@@ -221,13 +221,13 @@ jpf_log_dbs_do_del_code(JpfAppObj *app_obj,
 
 /* 处理结果集 */
 JpfMysqlRes*
-jpf_log_dbs_do_query_res(JpfAppObj *app_obj, char *query)
+jpf_log_dbs_do_query_res(NmpAppObj *app_obj, char *query)
 {
 	db_conn_status *conn = NULL;
-	JpfModLog *log_obj;
+	NmpModLog *log_obj;
 	JpfMysqlRes *result = NULL;
 
-	log_obj = JPF_MODLOG(app_obj);
+	log_obj = NMP_MODLOG(app_obj);
 
 redo:
 	conn = get_db_connection(log_obj->pool_info, log_obj->pool_conf);
@@ -252,7 +252,7 @@ redo:
 query_result_end:
 	if (G_UNLIKELY(!result))
 	{
-		jpf_warning("<JpfModLog> get db connection error,query=%s.", query);
+		jpf_warning("<NmpModLog> get db connection error,query=%s.", query);
 		result = mysql_malloc(sizeof(JpfMysqlRes));
 		if (G_UNLIKELY(!result))
 		return NULL;
@@ -315,14 +315,14 @@ jpf_log_get_count_value(JpfMysqlRes *result)
 
 
 gint
-jpf_log_get_record_count(JpfAppObj *app_obj, char *query)
+jpf_log_get_record_count(NmpAppObj *app_obj, char *query)
 {
 	db_conn_status *conn = NULL;
-	JpfModLog *log_obj;
+	NmpModLog *log_obj;
 	JpfMysqlRes *result = NULL;
 	gint count = 0;
 
-	log_obj = JPF_MODLOG(app_obj);
+	log_obj = NMP_MODLOG(app_obj);
 
 redo:
 	conn = get_db_connection(log_obj->pool_info, log_obj->pool_conf);
@@ -415,8 +415,8 @@ jpf_log_sql_get_res(JpfMysql *db)         //获取结果集
 }
 
 
-gint jpf_log_dbs_get_row_num(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+gint jpf_log_dbs_get_row_num(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query)
 {
 	JpfMysqlRes *result;
@@ -427,7 +427,7 @@ gint jpf_log_dbs_get_row_num(JpfAppObj *app_obj,
 
 	if (G_UNLIKELY(!result))
 	{
-		jpf_error("<JpfModLog> alloc error");
+		jpf_error("<NmpModLog> alloc error");
 		ret = -ENOMEM;
 		return ret;
 	}

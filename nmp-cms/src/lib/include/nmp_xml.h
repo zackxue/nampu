@@ -14,7 +14,7 @@
 //#include "nmp_xml_fun.h"
 #define MAX_CMD_ID_LEN                  64
 //typedef char JpfCmdID[MAX_CMD_ID_LEN];
-//typedef char JpfMsgID[MAX_CMD_ID_LEN];
+//typedef char NmpMsgID[MAX_CMD_ID_LEN];
 
 /**/
 typedef void (*JpfMsgInfoPrivDes)(void* priv, int size);
@@ -35,7 +35,7 @@ int
 jpf_create_str_xml(char *xml_buff, int *buff_len, JpfMsgInfo *sys_msg);
 
 void
-jpf_init_xml_cmd();
+nmp_init_xml_cmd();
 void
 jpf_free_msginfo(JpfMsgInfo *sys_msg);
 

@@ -64,8 +64,8 @@ jpf_get_ams_register_info(JpfMysqlRes *mysql_result, JpfAmsRegisterRes*res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_ams_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_ams_register_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -104,8 +104,8 @@ jpf_dbs_ams_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_change_ams_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_change_ams_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -186,7 +186,7 @@ jpf_get_ams_time_policy(JpfMysqlRes *mysql_result, gchar *time_policy)
 
 
 void
-jpf_mod_dbs_ams_get_time_policy(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_time_policy(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfActionPolicy *res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -353,7 +353,7 @@ jpf_dbs_ams_get_link_record(JpfMysqlRes *result,
 }
 
 void
-jpf_mod_dbs_ams_get_link_record(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_record(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionRecord **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -489,7 +489,7 @@ jpf_dbs_ams_get_link_io(JpfMysqlRes *result, JpfMsgActionIO *query_res)
 
 
 void
-jpf_mod_dbs_ams_get_link_io(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_io(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionIO **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -654,7 +654,7 @@ jpf_dbs_ams_get_link_step(JpfMysqlRes *result, JpfMsgActionStep *query_res)
 
 
 void
-jpf_mod_dbs_ams_get_link_step(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_step(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionStep **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -777,7 +777,7 @@ jpf_dbs_ams_get_link_preset(JpfMysqlRes *result, JpfMsgActionPreset *query_res)
 
 
 void
-jpf_mod_dbs_ams_get_link_preset(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_preset(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionPreset **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -961,7 +961,7 @@ jpf_dbs_ams_get_link_snapshot(JpfMysqlRes *result, JpfMsgActionSnapshot *query_r
 
 
 void
-jpf_mod_dbs_ams_get_link_snapshot(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_snapshot(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionSnapshot **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -1225,7 +1225,7 @@ jpf_dbs_ams_get_alarm_info(JpfMysqlRes *result, JpfMsgActionMap *query_res)
 }
 
 void
-jpf_mod_dbs_ams_get_link_map(JpfAppObj *app_obj,
+nmp_mod_dbs_ams_get_link_map(NmpAppObj *app_obj,
 	JpfMsgAmsGetActionInfo *req_info, JpfMsgActionMap **res_info)
 {
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -1346,8 +1346,8 @@ jpf_mem_kfree_action_policy(gpointer p, gint size)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_action_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_action_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -1364,24 +1364,24 @@ jpf_mod_dbs_get_action_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 		return MFR_ACCEPTED;
 	}
 	memset(res_info, 0, sizeof(JpfMsgAmsGetActionInfoRes));
-	jpf_mod_dbs_ams_get_time_policy(app_obj, req_info, &res_info->action_policy);
+	nmp_mod_dbs_ams_get_time_policy(app_obj, req_info, &res_info->action_policy);
 
-	jpf_mod_dbs_ams_get_link_record(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_record(app_obj, req_info,
 		(JpfMsgActionRecord **)(&res_info->actions[AMS_ACTION_RECORD]));
 
-	jpf_mod_dbs_ams_get_link_io(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_io(app_obj, req_info,
 		(JpfMsgActionIO **)(&res_info->actions[AMS_ACTION_IO]));
 
-	jpf_mod_dbs_ams_get_link_step(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_step(app_obj, req_info,
 		(JpfMsgActionStep **)(&res_info->actions[AMS_ACTION_STEP]));
 
-	jpf_mod_dbs_ams_get_link_preset(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_preset(app_obj, req_info,
 		(JpfMsgActionPreset **)(&res_info->actions[AMS_ACTION_PRESET]));
 
-	jpf_mod_dbs_ams_get_link_snapshot(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_snapshot(app_obj, req_info,
 		(JpfMsgActionSnapshot **)(&res_info->actions[AMS_ACTION_SNAPSHOT]));
 
-	jpf_mod_dbs_ams_get_link_map(app_obj, req_info,
+	nmp_mod_dbs_ams_get_link_map(app_obj, req_info,
 		(JpfMsgActionMap **)(&res_info->actions[AMS_ACTION_MAP]));
 
 	jpf_dbs_modify_sysmsg(msg, res_info, sizeof(JpfMsgAmsGetActionInfoRes),
@@ -1422,35 +1422,35 @@ jpf_dbs_ams_get_device_info(JpfMysqlRes *result, JpfAmsGetDeviceInfoRes *query_r
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(dev->puid, value,
+					NMP_COPY_VAL(dev->puid, value,
 					MAX_ID_LEN);
 			}
 			else if (!strcmp(name, "pu_domain"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(dev->domain, value,
+					NMP_COPY_VAL(dev->domain, value,
 					DOMAIN_ID_LEN);
 			}
 			else if (!strcmp(name, "dev_name"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(dev->dev_name, value,
+					NMP_COPY_VAL(dev->dev_name, value,
 					AMS_DEV_NAME_LEN);
 			}
 			else if (!strcmp(name, "dev_passwd"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(dev->dev_passwd, value,
+					NMP_COPY_VAL(dev->dev_passwd, value,
 					AMS_DEV_PASSWD_LEN);
 			}
 			else if (!strcmp(name, "dev_ip"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(dev->dev_ip, value,
+					NMP_COPY_VAL(dev->dev_ip, value,
 					MAX_IP_LEN);
 			}
 			else if (!strcmp(name, "dev_port"))
@@ -1505,8 +1505,8 @@ jpf_dbs_ams_get_device(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_ams_get_device_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_ams_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfAmsGetDeviceInfo *req_info = NULL;
@@ -1538,7 +1538,7 @@ jpf_dbs_ams_get_device_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	);
 
 	mysql_result = jpf_dbs_do_query_res(app_obj, query_buf);
-	JPF_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end);
+	NMP_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end);
 
 	res_info = jpf_dbs_ams_get_device(mysql_result, &size);
 	if (G_UNLIKELY(!res_info))
@@ -1573,7 +1573,7 @@ end:
 	}
 
 	SET_CODE(res_info, ret);
-	JPF_COPY_VAL(res_info->ams_id, req_info->ams_id, AMS_ID_LEN);
+	NMP_COPY_VAL(res_info->ams_id, req_info->ams_id, AMS_ID_LEN);
 
 	jpf_dbs_modify_sysmsg(msg, res_info, size, BUSSLOT_POS_DBS,
 		BUSSLOT_POS_AMS, jpf_mem_kfree);
@@ -1583,11 +1583,11 @@ end:
 
 
 void
-jpf_mod_dbs_register_ams_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_ams_msg_handler(JpfModDbs *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_AMS_REGISTER,
         NULL,
@@ -1595,23 +1595,23 @@ jpf_mod_dbs_register_ams_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MSG_AMS_ONLINE_CHANGE,
     	 NULL,
-    	 jpf_mod_dbs_change_ams_online_state_b,
+    	 nmp_mod_dbs_change_ams_online_state_b,
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MSG_AMS_GET_ACTION_INFO,
     	 NULL,
-    	 jpf_mod_dbs_get_action_info_b,
+    	 nmp_mod_dbs_get_action_info_b,
     	 0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_AMS_GET_DEVICE_INFO,
 		NULL,

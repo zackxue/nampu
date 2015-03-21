@@ -13,10 +13,10 @@
 #include <stdint.h>
 #include "nmp_netproto.h"
 
-#define JPF_PROTO_HEAD_MAGIC	0x6a786a2d
+#define NMP_PROTO_HEAD_MAGIC	0x6a786a2d
 
 #define SET_PROTO_HEAD_M(head) \
-	(head)->magic = htonl(JPF_PROTO_HEAD_MAGIC)
+	(head)->magic = htonl(NMP_PROTO_HEAD_MAGIC)
 #define SET_PROTO_HEAD_S(head, seq) \
 	(head)->seq = htonl(seq)
 #define SET_PROTO_HEAD_L(head, len) \
@@ -27,7 +27,7 @@
 	(head)->packet_no = no
 
 #define VALID_PROTO_HEAD(head)	\
-	ntohl((head)->magic) == JPF_PROTO_HEAD_MAGIC
+	ntohl((head)->magic) == NMP_PROTO_HEAD_MAGIC
 #define GET_PROTO_HEAD_S(head) \
 	ntohl((head)->seq)
 #define GET_PROTO_HEAD_L(head) \

@@ -13,7 +13,7 @@
  *    Every new message must be registered before using
  *    it. this function can finish it.
  *
- * 2. jpf_init_cmd_id
+ * 2. nmp_init_cmd_id
  *    When adding a new message id, user only need to expand
  *    this function look piece "to do ...." in it.
  *
@@ -83,7 +83,7 @@ jpf_cmd_type_register(
 }
 
 /**
- * jpf_init_cmd_id: initiate command set of platform
+ * nmp_init_cmd_id: initiate command set of platform
  *
  * When platform startup, firstly, invoke this function to initiate
  * all commands in command set
@@ -92,7 +92,7 @@ jpf_cmd_type_register(
  * @return none
  */
 void
-jpf_init_cmd_id(JpfCmdType *self)
+nmp_init_cmd_id(JpfCmdType *self)
 {
 	//memset(self, 0 ,sizeof(JpfCmdType));
     jpf_cmd_type_register(self,
@@ -3354,9 +3354,9 @@ jpf_init_cmd_id(JpfCmdType *self)
 
 
 void
-jpf_init_xml_cmd()
+nmp_init_xml_cmd()
 {
-	jpf_init_cmd_id(&jpf_cmd_sets);
+	nmp_init_cmd_id(&jpf_cmd_sets);
 
 }
 

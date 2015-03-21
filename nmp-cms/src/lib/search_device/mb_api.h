@@ -286,23 +286,23 @@ typedef struct J_Decoder_Test
 }J_Decoder_Test;
 
 
-#define JPF_SEARCH_ID_LEN               32
-#define JPF_SEARCH_IP_LEN               16
-#define JPF_SEARCH_MNFCT_LEN            12
+#define NMP_SEARCH_ID_LEN               32
+#define NMP_SEARCH_IP_LEN               16
+#define NMP_SEARCH_MNFCT_LEN            12
 
 typedef struct Device_Info
 {
     int pu_type;                        //设备类型
     int av_mun;                         //音视频点个数
-    char mnfct[JPF_SEARCH_MNFCT_LEN];   //设备厂商
-    char pu_id[JPF_SEARCH_ID_LEN];      //设备标识
-    char dev_ip[JPF_SEARCH_IP_LEN];     //设备ip
+    char mnfct[NMP_SEARCH_MNFCT_LEN];   //设备厂商
+    char pu_id[NMP_SEARCH_ID_LEN];      //设备标识
+    char dev_ip[NMP_SEARCH_IP_LEN];     //设备ip
     char res[32];                       //保留
 }Device_Info;
 typedef struct Jpf_Platform
 {
-    char cms_ip[JPF_SEARCH_IP_LEN];     //平台cms ip
-    char mds_ip[JPF_SEARCH_IP_LEN];     //平台mds ip
+    char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
+    char mds_ip[NMP_SEARCH_IP_LEN];     //平台mds ip
     int cms_port;                       //平台cms端口号
     int mds_port;                       //平台mds端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
@@ -317,8 +317,8 @@ typedef struct Jpf_Search
 
 typedef struct Jpf_Redirect
 {
-    char pu_id[JPF_SEARCH_ID_LEN];      //设备标识
-    char cms_ip[JPF_SEARCH_IP_LEN];     //平台cms ip
+    char pu_id[NMP_SEARCH_ID_LEN];      //设备标识
+    char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
     int cms_port;                       //平台cms端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
 }Jpf_Redirect;

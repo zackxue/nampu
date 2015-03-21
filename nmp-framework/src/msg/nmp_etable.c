@@ -29,7 +29,7 @@ struct _JpfEvent    /* Event description */
 typedef gint (*JpfEventHash)(JpfEvent *event);
 
 
-struct _JpfEventTable       /* Event Hash Table */
+struct _NmpEventTable       /* Event Hash Table */
 {
     LIST_HEAD       bucket[EVENT_HASH_TABLE_SIZE];
     JpfEventHash    hash_fn;    /* Hash Func */
@@ -38,7 +38,7 @@ struct _JpfEventTable       /* Event Hash Table */
 
     gpointer        *owner; /* owner */
 
-#ifdef JPF_DEBUG
+#ifdef NMP_DEBUG
     gint            events;
 #endif
 };
@@ -52,7 +52,7 @@ jpf_event_hash(JpfEvent *event)
 
 
 static __inline__ void
-jpf_event_table_init(JpfEventTable *t, gpointer owner)
+jpf_event_table_init(NmpEventTable *t, gpointer owner)
 {
     gint i;
     
@@ -63,19 +63,19 @@ jpf_event_table_init(JpfEventTable *t, gpointer owner)
     t->hash_fn = jpf_event_hash;
     t->owner = owner;
 
-#ifdef JPF_DEBUG
+#ifdef NMP_DEBUG
     t->events = 0;
 #endif
 }
 
 
-JpfEventTable *
+NmpEventTable *
 jpf_event_table_new(gpointer owner)
 {
-    JpfEventTable *t;
+    NmpEventTable *t;
     G_ASSERT(owner != NULL);
 
-    t = jpf_new0(JpfEventTable, 1);
+    t = jpf_new0(NmpEventTable, 1);
     if (G_UNLIKELY(!t))
         return NULL;
 
@@ -117,7 +117,7 @@ jpf_event_release(JpfEvent *event)
 
 
 void
-jpf_event_table_destroy(JpfEventTable *table)
+jpf_event_table_destroy(NmpEventTable *table)
 {//:TODO
     FATAL_ERROR_EXIT;
 }
@@ -125,8 +125,8 @@ jpf_event_table_destroy(JpfEventTable *table)
 
 
 static __inline__ gint
-jpf_event_add_to_table(JpfEventTable *table, JpfEvent *event,
-    JpfSysMsg *msg)
+jpf_event_add_to_table(NmpEventTable *table, JpfEvent *event,
+    NmpSysMsg *msg)
 {
     LIST_HEAD *head;
     gint key;
@@ -146,7 +146,7 @@ jpf_event_add_to_table(JpfEventTable *table, JpfEvent *event,
 
 
 static __inline__ void
-jpf_event_del_from_table(JpfEventTable *table, JpfEvent *event)
+jpf_event_del_from_table(NmpEventTable *table, JpfEvent *event)
 {
     LIST_HEAD *head, *l;
     gint key, found = 0;
@@ -165,7 +165,7 @@ jpf_event_del_from_table(JpfEventTable *table, JpfEvent *event)
             found = 1;
             list_del(&e->event_list);
 
-#ifdef JPF_DEBUG
+#ifdef NMP_DEBUG
             --table->events;
 #endif
             break;
@@ -216,7 +216,7 @@ jpf_event_wakeup(JpfEvent *event)
 
 
 gint
-jpf_event_request(JpfEventTable *t, JpfSysMsg **msg)
+jpf_event_request(NmpEventTable *t, NmpSysMsg **msg)
 {
     JpfEvent*event;
     gint ret;
@@ -229,7 +229,7 @@ jpf_event_request(JpfEventTable *t, JpfSysMsg **msg)
     ret = jpf_event_add_to_table(t, event, *msg);
     if (G_LIKELY(!ret))
     {
-        ret = jpf_app_mod_snd((JpfAppMod*)t->owner, *msg);
+        ret = nmp_app_mod_snd((NmpAppMod*)t->owner, *msg);
         if (G_LIKELY(!ret))
             jpf_event_wait(event);
 
@@ -245,7 +245,7 @@ jpf_event_request(JpfEventTable *t, JpfSysMsg **msg)
 
 
 gint
-jpf_event_response(JpfEventTable *table, JpfSysMsg *msg)
+jpf_event_response(NmpEventTable *table, NmpSysMsg *msg)
 {
     LIST_HEAD *head, *l;
     JpfEvent *event;
@@ -264,7 +264,7 @@ jpf_event_response(JpfEventTable *table, JpfSysMsg *msg)
             if (G_UNLIKELY(event->event_id != MSG_GETID(msg)))
             {
                 jpf_warning(
-                    "<JpfEventTable> event_id:%d not-equ msg_id:%d!",
+                    "<NmpEventTable> event_id:%d not-equ msg_id:%d!",
                     event->event_id, MSG_GETID(msg)
                 );
                 continue;

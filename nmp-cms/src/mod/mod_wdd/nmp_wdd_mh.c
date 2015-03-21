@@ -6,8 +6,8 @@
 
 
 
-JpfMsgFunRet
-jpf_mod_wdd_get_license_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_wdd_get_license_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfGetLicenseInfo *req_info;
 	JpfGetLicenseInfoRes res_info;
@@ -31,15 +31,15 @@ jpf_mod_wdd_get_license_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 void
-jpf_mod_wdd_register_msg_handler(JpfModWdd *self)
+nmp_mod_wdd_register_msg_handler(JpfModWdd *self)
 {
-	JpfAppMod *super_self = (JpfAppMod*)self;
+	NmpAppMod *super_self = (NmpAppMod*)self;
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_LICENSE_INFO,
 		NULL,
-		jpf_mod_wdd_get_license_info_b,
+		nmp_mod_wdd_get_license_info_b,
 		0
 	);
 }

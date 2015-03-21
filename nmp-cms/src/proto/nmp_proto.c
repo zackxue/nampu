@@ -49,7 +49,7 @@ static gint
 jpf_proto_private_pack(gpointer pack_data, gsize payload_len,
     gchar buff[], gsize buff_size)
 {
-	JpfSysMsg *sysmsg;
+	NmpSysMsg *sysmsg;
 	JpfProtoHead *head;
 	guint seq;
 	G_ASSERT(pack_data != NULL && buff != NULL);
@@ -58,7 +58,7 @@ jpf_proto_private_pack(gpointer pack_data, gsize payload_len,
 		return -E_BUFFSIZE;
 
 	head = (JpfProtoHead*)buff;
-	sysmsg = JPF_SYSMSG(pack_data);
+	sysmsg = NMP_SYSMSG(pack_data);
 	seq = MSG_SEQ(sysmsg);
 
 	SET_PROTO_HEAD_M(head);
@@ -74,7 +74,7 @@ jpf_proto_private_pack(gpointer pack_data, gsize payload_len,
 static gpointer
 jpf_proto_xml_get_payload(gchar *start, gsize size, gpointer from_lower)
 {
-	JpfSysMsg *packet;
+	NmpSysMsg *packet;
 
 	packet = jpf_get_sysmsg_from_xml(start, size, (guint)from_lower);
 	if (G_UNLIKELY(!packet))
@@ -90,7 +90,7 @@ jpf_proto_xml_put_payload(gpointer pack_data,  gchar buf[], gsize size)
 	gint buff_size = (gint)size;
 	G_ASSERT(pack_data != NULL && buf != NULL);
 
-	gint ret = jpf_proto_create_xml_str(buf, &buff_size, (JpfSysMsg*)pack_data);
+	gint ret = jpf_proto_create_xml_str(buf, &buff_size, (NmpSysMsg*)pack_data);
 	printf("==============create xml len=%d,size=%d\n",ret,size);
 	return ret;
 }
@@ -99,7 +99,7 @@ jpf_proto_xml_put_payload(gpointer pack_data,  gchar buf[], gsize size)
 static void
 jpf_proto_xml_destroy_msg(gpointer msg, gint err)
 {
-	jpf_sysmsg_destroy((JpfSysMsg*)msg);
+	jpf_sysmsg_destroy((NmpSysMsg*)msg);
 }
 
 

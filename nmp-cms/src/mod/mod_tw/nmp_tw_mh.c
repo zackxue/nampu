@@ -15,8 +15,8 @@
 } while (0)
 
 
-JpfMsgFunRet
-jpf_mod_tw_run_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_run_step_request *req_info;
@@ -54,8 +54,8 @@ jpf_mod_tw_run_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_run_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_run_tour_request *req_info;
@@ -89,8 +89,8 @@ jpf_mod_tw_run_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_run_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_run_group_request *req_info;
@@ -124,8 +124,8 @@ jpf_mod_tw_run_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_stop_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_stop_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_stop_tour_request *req_info;
@@ -159,8 +159,8 @@ jpf_mod_tw_stop_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_stop_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_stop_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_stop_group_request *req_info;
@@ -194,8 +194,8 @@ jpf_mod_tw_stop_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_if_run_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_if_run_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_if_run_tour_request *req_info;
@@ -229,8 +229,8 @@ jpf_mod_tw_if_run_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_if_run_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_if_run_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_if_run_group_request *req_info;
@@ -264,8 +264,8 @@ jpf_mod_tw_if_run_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_stop_gpt_by_division_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_stop_gpt_by_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_division_position *req_info;
@@ -301,8 +301,8 @@ jpf_mod_tw_stop_gpt_by_division_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_play_resp_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_play_resp_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_decoder_rsp *rsp_info;
@@ -327,8 +327,8 @@ jpf_mod_tw_play_resp_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_change_direction_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_change_direction_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_PU)
 	{
@@ -343,8 +343,8 @@ jpf_mod_tw_change_direction_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_operate_b(JpfAppObj *app_obj, JpfSysMsg *msg, TW_INFO_TYPE type)
+NmpMsgFunRet
+nmp_mod_tw_operate_b(NmpAppObj *app_obj, NmpSysMsg *msg, TW_INFO_TYPE type)
 {
 	JpfModTw *self;
 	tw_operate *req_info;
@@ -381,8 +381,8 @@ jpf_mod_tw_operate_b(JpfAppObj *app_obj, JpfSysMsg *msg, TW_INFO_TYPE type)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_operate_resp_b(JpfAppObj *app_obj, JpfSysMsg *msg, TW_INFO_TYPE type)
+NmpMsgFunRet
+nmp_mod_tw_operate_resp_b(NmpAppObj *app_obj, NmpSysMsg *msg, TW_INFO_TYPE type)
 {
 
 	JpfModTw *self;
@@ -408,45 +408,45 @@ jpf_mod_tw_operate_resp_b(JpfAppObj *app_obj, JpfSysMsg *msg, TW_INFO_TYPE type)
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_clear_division_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_clear_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_CU)
-		return jpf_mod_tw_operate_b(app_obj, msg, TW_CLEAR_TO_DEC);
+		return nmp_mod_tw_operate_b(app_obj, msg, TW_CLEAR_TO_DEC);
 	else
-		return jpf_mod_tw_operate_resp_b(app_obj, msg, TW_CLEAR_TO_DEC);
+		return nmp_mod_tw_operate_resp_b(app_obj, msg, TW_CLEAR_TO_DEC);
 }
 
-JpfMsgFunRet
-jpf_mod_tw_change_div_mode_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_change_div_mode_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_CU)
-		return jpf_mod_tw_operate_b(app_obj, msg, TW_CHANGE_DIVISION_MODE_TO_DEC);
+		return nmp_mod_tw_operate_b(app_obj, msg, TW_CHANGE_DIVISION_MODE_TO_DEC);
 	else
-		return jpf_mod_tw_operate_resp_b(app_obj, msg, TW_CHANGE_DIVISION_MODE_TO_DEC);
+		return nmp_mod_tw_operate_resp_b(app_obj, msg, TW_CHANGE_DIVISION_MODE_TO_DEC);
 }
 
-JpfMsgFunRet
-jpf_mod_tw_full_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_CU)
-		return jpf_mod_tw_operate_b(app_obj, msg, TW_FULL_SCREEN_TO_DEC);
+		return nmp_mod_tw_operate_b(app_obj, msg, TW_FULL_SCREEN_TO_DEC);
 	else
-		return jpf_mod_tw_operate_resp_b(app_obj, msg, TW_FULL_SCREEN_TO_DEC);
+		return nmp_mod_tw_operate_resp_b(app_obj, msg, TW_FULL_SCREEN_TO_DEC);
 }
 
-JpfMsgFunRet
-jpf_mod_tw_exit_full_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_exit_full_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	if (MSG_GET_SRCPOS(msg) == BUSSLOT_POS_CU)
-		return jpf_mod_tw_operate_b(app_obj, msg, TW_EXIT_FULL_SCREEN_TO_DEC);
+		return nmp_mod_tw_operate_b(app_obj, msg, TW_EXIT_FULL_SCREEN_TO_DEC);
 	else
-		return jpf_mod_tw_operate_resp_b(app_obj, msg, TW_EXIT_FULL_SCREEN_TO_DEC);
+		return nmp_mod_tw_operate_resp_b(app_obj, msg, TW_EXIT_FULL_SCREEN_TO_DEC);
 }
 
 
-JpfMsgFunRet
-jpf_mod_tw_update_ec_url_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_update_ec_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_update_url *update_url;
@@ -478,15 +478,15 @@ void jpf_step_print_test(tw_run_step_request *req_info)
 	jpf_print("<JpfTwMh> req_info->ec_guid:%s", req_info->ec_guid);
 }
 */
-JpfMsgFunRet
-jpf_mod_tw_link_run_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_tw_link_run_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModTw *self;
 	tw_run_step_request *req_info;
 	JpfCuExecuteRes res_info;
 	gint ret;
 	memset(&res_info, 0, sizeof(res_info));
-	jpf_print("<JpfTwMh> jpf_mod_tw_link_run_step_b begin...");
+	jpf_print("<JpfTwMh> nmp_mod_tw_link_run_step_b begin...");
 
 	self = (JpfModTw *)app_obj;
 	req_info = (tw_run_step_request *)MSG_GET_DATA(msg);
@@ -506,135 +506,135 @@ jpf_mod_tw_link_run_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 void
-jpf_mod_tw_register_msg_handler(JpfModTw *self)
+nmp_mod_tw_register_msg_handler(JpfModTw *self)
 {
-	JpfAppMod *super_self = (JpfAppMod*)self;
+	NmpAppMod *super_self = (NmpAppMod*)self;
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_RUN_STEP,
 		NULL,
-		jpf_mod_tw_run_step_b,
+		nmp_mod_tw_run_step_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_RUN_TOUR,
 		NULL,
-		jpf_mod_tw_run_tour_b,
+		nmp_mod_tw_run_tour_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_RUN_GROUP,
 		NULL,
-		jpf_mod_tw_run_group_b,
+		nmp_mod_tw_run_group_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_STOP_TOUR,
 		NULL,
-		jpf_mod_tw_stop_tour_b,
+		nmp_mod_tw_stop_tour_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_STOP_GROUP,
 		NULL,
-		jpf_mod_tw_stop_group_b,
+		nmp_mod_tw_stop_group_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_TOUR_RUN_STATE,
 		NULL,
-		jpf_mod_tw_if_run_tour_b,
+		nmp_mod_tw_if_run_tour_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_GROUP_RUN_STATE,
 		NULL,
-		jpf_mod_tw_if_run_group_b,
+		nmp_mod_tw_if_run_group_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_STOP_DIVISION,
 		NULL,
-		jpf_mod_tw_stop_gpt_by_division_b,
+		nmp_mod_tw_stop_gpt_by_division_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_PLAY,
 		NULL,
-		jpf_mod_tw_play_resp_b,
+		nmp_mod_tw_play_resp_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_SCR_STATE,
 		NULL,
-		jpf_mod_tw_change_direction_b,
+		nmp_mod_tw_change_direction_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_TW_CLEAR_DIVISION,
 		NULL,
-		jpf_mod_tw_clear_division_b,
+		nmp_mod_tw_clear_division_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_CHANGE_DIV_MODE,
 		NULL,
-		jpf_mod_tw_change_div_mode_b,
+		nmp_mod_tw_change_div_mode_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_FULL_SCREEN,
 		NULL,
-		jpf_mod_tw_full_screen_b,
+		nmp_mod_tw_full_screen_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_EXIT_FULL_SCREEN,
 		NULL,
-		jpf_mod_tw_exit_full_b,
+		nmp_mod_tw_exit_full_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_NOTIFY_UPDATE_EC_URL,
 		NULL,
-		jpf_mod_tw_update_ec_url_b,
+		nmp_mod_tw_update_ec_url_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_LINK_RUN_STEP,
 		NULL,
-		jpf_mod_tw_link_run_step_b,
+		nmp_mod_tw_link_run_step_b,
 		0
 	);
 }

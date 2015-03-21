@@ -15,11 +15,11 @@ G_BEGIN_DECLS
  * Interface of slot, must be implemented by all sort of slots.
  * Of cause it can not be instantiated directly.
 */
-#define JPF_TYPE_ISLOT (jpf_islot_get_type())
-#define JPF_IS_ISLOT(o) (G_TYPE_CHECK_INSTANCE_TYPE((o),  JPF_TYPE_ISLOT))
-#define JPF_ISLOT(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_ISLOT, JpfISlot))
-#define JPF_ISLOT_GET_IFACE(o) \
-	(G_TYPE_INSTANCE_GET_INTERFACE((o), JPF_TYPE_ISLOT, JpfISlotInterface))
+#define NMP_TYPE_ISLOT (jpf_islot_get_type())
+#define NMP_IS_ISLOT(o) (G_TYPE_CHECK_INSTANCE_TYPE((o),  NMP_TYPE_ISLOT))
+#define NMP_ISLOT(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_ISLOT, JpfISlot))
+#define NMP_ISLOT_GET_IFACE(o) \
+	(G_TYPE_INSTANCE_GET_INTERFACE((o), NMP_TYPE_ISLOT, JpfISlotInterface))
 
 typedef struct _JpfISlot JpfISlot;	/* dummy */
 typedef struct _JpfISlotInterface JpfISlotInterface;

@@ -118,14 +118,14 @@ struct __JpfResourcesCap
 	gint ao_count;
 };
 
-void jpf_mod_init_resource(JpfResourcesCtl *res);
-gint  jpf_mod_ctl_resource(JpfResourcesCtl *res, gint type, gint weight);
-void jpf_mod_init_resource_cap();
-gint jpf_mod_get_capability_av();
-gint jpf_mod_get_capability_ds();
-gint jpf_mod_get_capability_ai();
-gint jpf_mod_get_capability_ao();
-void jpf_mod_set_resource_cap(JpfResourcesCap *res_cap);
-void jpf_mod_get_resource_cap(JpfResourcesCap *req_cap);
+void nmp_mod_init_resource(JpfResourcesCtl *res);
+gint  nmp_mod_ctl_resource(JpfResourcesCtl *res, gint type, gint weight);
+void nmp_mod_init_resource_cap();
+gint nmp_mod_get_capability_av();
+gint nmp_mod_get_capability_ds();
+gint nmp_mod_get_capability_ai();
+gint nmp_mod_get_capability_ao();
+void nmp_mod_set_resource_cap(JpfResourcesCap *res_cap);
+void nmp_mod_get_resource_cap(JpfResourcesCap *req_cap);
 
 #endif

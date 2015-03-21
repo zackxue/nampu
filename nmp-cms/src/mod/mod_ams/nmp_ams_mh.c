@@ -14,13 +14,13 @@ USING_MSG_ID_MAP(cms);
 
 
 gint
-jpf_mod_ams_action_handler(gint dst, gint msg_type, void *parm, guint size)
+nmp_mod_ams_action_handler(gint dst, gint msg_type, void *parm, guint size)
 {
-	jpf_warning("<JpfAmsMh> jpf_mod_ams_action_handler begin...");
+	jpf_warning("<JpfAmsMh> nmp_mod_ams_action_handler begin...");
 	gint ret;
-	JpfAppObj *self = (JpfAppObj *)jpf_get_mod_ams();
+	NmpAppObj *self = (NmpAppObj *)jpf_get_mod_ams();
 
-	ret = jpf_cms_mod_deliver_msg_2(self, dst, msg_type,
+	ret = nmp_cms_mod_deliver_msg_2(self, dst, msg_type,
 		parm, size);
 
 	return ret;
@@ -28,7 +28,7 @@ jpf_mod_ams_action_handler(gint dst, gint msg_type, void *parm, guint size)
 
 
 static __inline__ gint
-jpf_mod_ams_register(JpfModAms *self, JpfNetIO *io,  JpfMsgID msg_id,
+nmp_mod_ams_register(JpfModAms *self, JpfNetIO *io,  NmpMsgID msg_id,
     JpfAmsRegister *req, JpfAmsRegisterRes *res)
 {
     gint ret;
@@ -36,25 +36,25 @@ jpf_mod_ams_register(JpfModAms *self, JpfNetIO *io,  JpfMsgID msg_id,
 
     G_ASSERT(self != NULL && io != NULL && req != NULL && res != NULL);
 
-    ret = jpf_mod_ams_new_ams(self, io,  req->ams_id, &conflict);
+    ret = nmp_mod_ams_new_ams(self, io,  req->ams_id, &conflict);
     if (G_UNLIKELY(ret))
         return ret;
 
-    ret = jpf_mod_ams_sync_req(self, msg_id, req,
+    ret = nmp_mod_ams_sync_req(self, msg_id, req,
          sizeof(JpfAmsRegister), res, sizeof(JpfAmsRegisterRes));
 
     return ret;
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_register_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_register_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModAms *self;
     JpfNetIO *io;
     JpfAmsRegister *req_info;
     JpfAmsRegisterRes res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     JpfGuestBase *ams_base;
     JpfAms *ams;
     JpfMsgAmsOnlineChange notify_info;
@@ -73,7 +73,7 @@ jpf_mod_ams_register_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     notify_info.ams_id[AMS_ID_LEN - 1] = 0;
     strncpy(notify_info.ams_id, req_info->ams_id, AMS_ID_LEN - 1);
     memset(&res_info, 0, sizeof(res_info));
-    ret = jpf_mod_ams_register(self, io, msg_id, req_info, &res_info);
+    ret = nmp_mod_ams_register(self, io, msg_id, req_info, &res_info);
     if (ret)
     {
         jpf_print(
@@ -85,9 +85,9 @@ jpf_mod_ams_register_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         MSG_SET_RESPONSE(msg);
         jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
-        jpf_app_obj_deliver_in((JpfAppObj*)self, msg);
-        jpf_mod_acc_release_io((JpfModAccess*)self, io);
-        jpf_mod_container_del_io(self->container, io);
+        nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
+        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_container_del_io(self->container, io);
 
         return MFR_ACCEPTED;
     }
@@ -115,7 +115,7 @@ jpf_mod_ams_register_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         jpf_net_io_set_ttd(io, res_info.keep_alive_time*1000*TIMEOUT_N_PERIODS);
 
         notify_info.new_status = 1;
-        jpf_mod_ams_change_ams_online_status(app_obj, notify_info);
+        nmp_mod_ams_change_ams_online_status(app_obj, notify_info);
     }
 
     SET_CODE(&res_info, -ret);
@@ -126,15 +126,15 @@ jpf_mod_ams_register_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_heart_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModAms *self;
     JpfNetIO *io;
     JpfGuestBase *ams_base;
     JpfAmsHeart *req_info;
     JpfAmsHeartRes res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
 
     self = (JpfModAms*)app_obj;
@@ -166,8 +166,8 @@ jpf_mod_ams_heart_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_backward(JpfModAms *self, JpfSysMsg *msg, const gchar *id_str)
+NmpMsgFunRet
+nmp_mod_ams_backward(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str)
 {
     JpfGuestBase *ams_base;
     JpfNetIO *io;
@@ -195,8 +195,8 @@ jpf_mod_ams_backward(JpfModAms *self, JpfSysMsg *msg, const gchar *id_str)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_backward_2(JpfModAms *self, JpfSysMsg *msg, const gchar *id_str, const gchar *session_id)
+NmpMsgFunRet
+nmp_mod_ams_backward_2(JpfModAms *self, NmpSysMsg *msg, const gchar *id_str, const gchar *session_id)
 {
     JpfGuestBase *ams_base;
     JpfNetIO *io;
@@ -253,7 +253,7 @@ static int jpf_get_week_time(JpfTime *jpf_time, char *time)
 	return 0;
 }
 
-static int jpf_mod_ams_get_alarm_info(JpfAlarmInfo *alarm_info,
+static int nmp_mod_ams_get_alarm_info(JpfAlarmInfo *alarm_info,
 	JpfSubmitAlarm *req_info)
 {
 	memset(alarm_info, 0, sizeof(JpfAlarmInfo));
@@ -277,10 +277,10 @@ static int jpf_mod_ams_get_alarm_info(JpfAlarmInfo *alarm_info,
  *	if return 0, destroy_msg need to be destroyed
  */
 gint jpf_ams_get_action_info_from_dbs(JpfMsgAmsGetActionInfoRes **res,
-	JpfAlarmInfo *alarm_info, JpfSysMsg **destroy_msg)
+	JpfAlarmInfo *alarm_info, NmpSysMsg **destroy_msg)
 {
 	JpfMsgAmsGetActionInfo req;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	gint ret;
 
 	req.alarm_guid = alarm_info->alarm_guid;
@@ -290,7 +290,7 @@ gint jpf_ams_get_action_info_from_dbs(JpfMsgAmsGetActionInfoRes **res,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	ret = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_ams(), &msg);
+	ret = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_ams(), &msg);
 	if (G_UNLIKELY(ret))
 	{
 		jpf_warning("<JpfModAms> request action info failed!");
@@ -321,11 +321,11 @@ end:
 }
 
 
-void jpf_mod_ams_do_alarm_action(JpfAlarmInfo *alarm_info)
+void nmp_mod_ams_do_alarm_action(JpfAlarmInfo *alarm_info)
 {
 	g_assert(alarm_info);
 	JpfMsgAmsGetActionInfoRes *res = NULL;
-	JpfSysMsg *msg = NULL;
+	NmpSysMsg *msg = NULL;
 	gint ret;
 
 	ret = jpf_ams_find_gu_and_action(alarm_info);
@@ -364,8 +364,8 @@ void ams_alarm_info_print(JpfAlarmInfo *alarm_info)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModAms *self;
 	JpfSubmitAlarm *req_info;
@@ -376,7 +376,7 @@ jpf_mod_ams_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	ret = jpf_mod_ams_get_alarm_info(&alarm_info, req_info);
+	ret = nmp_mod_ams_get_alarm_info(&alarm_info, req_info);
 	if (ret < 0)
 	{
 		jpf_warning("<JpfModAms> get alarm info error.");
@@ -386,7 +386,7 @@ jpf_mod_ams_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 #ifdef AMS_MH_TEST
 		ams_alarm_info_print(&alarm_info);
 #endif
-		jpf_mod_ams_do_alarm_action(&alarm_info);
+		nmp_mod_ams_do_alarm_action(&alarm_info);
 	}
 
 	jpf_sysmsg_destroy(msg);
@@ -395,8 +395,8 @@ jpf_mod_ams_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_change_link_time_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_change_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModAms *self;
 	JpfShareGuid *req_info;
@@ -422,8 +422,8 @@ jpf_mod_ams_change_link_time_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_del_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_del_alarm_link_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModAms *self;
 	JpfShareGuid *req_info;
@@ -449,15 +449,15 @@ jpf_mod_ams_del_alarm_link_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_device_info_change_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_device_info_change_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModAms *self;
 	JpfGuestBase *ams_base;
 	gint msg_id;
 	JpfAmsId *req_info = NULL;
 
-	self = JPF_MODAMS(app_obj);
+	self = NMP_MODAMS(app_obj);
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
@@ -479,8 +479,8 @@ jpf_mod_ams_device_info_change_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_get_device_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_get_device_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfModAms *self;
@@ -488,7 +488,7 @@ jpf_mod_ams_get_device_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 	JpfGuestBase *ams_base;
 	JpfAmsGetDeviceInfo *req_info;
 	JpfAmsGetDeviceInfoRes res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	memset(&res_info, 0, sizeof(res_info));
 
@@ -521,8 +521,8 @@ jpf_mod_ams_get_device_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_ams_get_device_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_ams_get_device_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModAms *self;
     JpfAmsGetDeviceInfoRes *res_info;
@@ -531,69 +531,69 @@ jpf_mod_ams_get_device_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     res_info = MSG_GET_DATA(msg);
     BUG_ON(!res_info);
 
-    return jpf_mod_ams_backward(self, msg, res_info->ams_id);
+    return nmp_mod_ams_backward(self, msg, res_info->ams_id);
 }
 
 
 
 void
-jpf_mod_ams_register_msg_handler(JpfModAms *self)
+nmp_mod_ams_register_msg_handler(JpfModAms *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_AMS_REGISTER,
-        jpf_mod_ams_register_f,
+        nmp_mod_ams_register_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_AMS_HEART,
-        jpf_mod_ams_heart_f,
+        nmp_mod_ams_heart_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SUBMIT_ALARM,
         NULL,
-        jpf_mod_ams_alarm_link_b,
+        nmp_mod_ams_alarm_link_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MSG_CHANGE_LINK_TIME_POLICY,
         NULL,
-        jpf_mod_ams_change_link_time_policy_b,
+        nmp_mod_ams_change_link_time_policy_b,
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_DEL_ALARM_LINK,
 		NULL,
-		jpf_mod_ams_del_alarm_link_b,
+		nmp_mod_ams_del_alarm_link_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_AMS_DEVICE_INFO_CHANGE,
 		NULL,
-		jpf_mod_ams_device_info_change_b,
+		nmp_mod_ams_device_info_change_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_AMS_GET_DEVICE_INFO,
-		jpf_mod_ams_get_device_info_f,
-		jpf_mod_ams_get_device_info_b,
+		nmp_mod_ams_get_device_info_f,
+		nmp_mod_ams_get_device_info_b,
 		0
 	);
 }

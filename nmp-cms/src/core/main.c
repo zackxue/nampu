@@ -14,31 +14,31 @@
 
 //:TODO .inc
 
-extern void jpf_cms_pu_insert(void);
-extern void jpf_cms_cu_insert(void);
-extern void jpf_cms_bss_insert(void);
-extern void jpf_cms_dbs_insert(void);
-extern void jpf_cms_mds_insert(void);
-extern void jpf_cms_mss_insert(void);
-extern void jpf_cms_cascade_insert(void);
-extern void jpf_cms_tw_insert(void);
-extern void jpf_cms_ams_insert(void);
-extern void jpf_cms_wdd_insert(void);
-extern void jpf_cms_log_insert(void);
-extern void jpf_init_xml_cmd(void);
+extern void nmp_cms_pu_insert(void);
+extern void nmp_cms_cu_insert(void);
+extern void nmp_cms_bss_insert(void);
+extern void nmp_cms_dbs_insert(void);
+extern void nmp_cms_mds_insert(void);
+extern void nmp_cms_mss_insert(void);
+extern void nmp_cms_cascade_insert(void);
+extern void nmp_cms_tw_insert(void);
+extern void nmp_cms_ams_insert(void);
+extern void nmp_cms_wdd_insert(void);
+extern void nmp_cms_log_insert(void);
+extern void nmp_init_xml_cmd(void);
 
 extern gint jpf_set_system_time_zone(gchar *zone);
 
 
 static __inline__ void
-jpf_cms_setup_signals( void )
+nmp_cms_setup_signals( void )
 {
 	jpf_sig_setup_signals();
 }
 
 
 static __inline__ void
-jpf_cms_log_facility_init( void )
+nmp_cms_log_facility_init( void )
 {//TODO: PATH
 	jpf_debug_log_facility_init(
 		jpf_get_sys_parm_str(SYS_PARM_LOGFILEPATH),
@@ -52,7 +52,7 @@ jpf_cms_log_facility_init( void )
 
 
 static __inline__ void
-jpf_cms_open_core_facility( void )
+nmp_cms_open_core_facility( void )
 {
 	struct rlimit rli;
 
@@ -68,7 +68,7 @@ jpf_cms_open_core_facility( void )
 
 
 static __inline__ void
-jpf_cms_running_env_init( void )
+nmp_cms_running_env_init( void )
 {
 #ifndef G_THREADS_ENABLED
 	jpf_error("<main> CMS compiled without 'G_THREADS_ENABLED' defined!");
@@ -82,34 +82,34 @@ jpf_cms_running_env_init( void )
 
     jpf_sysctl_init();
     jpf_set_system_time_zone(jpf_get_sys_parm_str(SYS_PARM_TIMEZONE));
-    jpf_cms_log_facility_init();
+    nmp_cms_log_facility_init();
     jpf_debug_set_log_size(jpf_get_sys_parm_int(SYS_PARM_LOGFILESIZE));
-    jpf_cms_setup_signals();
-/*    jpf_cms_open_core_facility(); */
+    nmp_cms_setup_signals();
+/*    nmp_cms_open_core_facility(); */
 }
 
 
 static __inline__ void
-jpf_cms_mods_init( void )
+nmp_cms_mods_init( void )
 {
-    jpf_cms_pu_insert();
-    jpf_cms_cu_insert();
-    jpf_cms_bss_insert();
-    jpf_cms_dbs_insert();
-    jpf_cms_mds_insert();
-    jpf_cms_mss_insert();
-//    jpf_cms_cascade_insert();
-    jpf_cms_tw_insert();
-    jpf_cms_ams_insert();
-    jpf_cms_wdd_insert();
-    jpf_cms_log_insert();
+    nmp_cms_pu_insert();
+    nmp_cms_cu_insert();
+    nmp_cms_bss_insert();
+    nmp_cms_dbs_insert();
+    nmp_cms_mds_insert();
+    nmp_cms_mss_insert();
+//    nmp_cms_cascade_insert();
+    nmp_cms_tw_insert();
+    nmp_cms_ams_insert();
+    nmp_cms_wdd_insert();
+    nmp_cms_log_insert();
 }
 
 
 static __inline__ void
-jpf_cms_lib_init( void )
+nmp_cms_lib_init( void )
 {
-    jpf_init_xml_cmd();
+    nmp_init_xml_cmd();
 }
 
 
@@ -118,10 +118,10 @@ int main(int argc, char *argv[])
     GMainLoop *loop;
 
     jpf_process_main_args(argc, argv);
-    jpf_cms_running_env_init();
+    nmp_cms_running_env_init();
     jpf_afx_core_init();
-    jpf_cms_lib_init();
-    jpf_cms_mods_init();
+    nmp_cms_lib_init();
+    nmp_cms_mods_init();
     loop = g_main_loop_new(NULL, FALSE);
     g_main_loop_run(loop);
 

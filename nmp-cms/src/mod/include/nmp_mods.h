@@ -118,9 +118,9 @@ typedef void (*JpfGuestVisit)(JpfGuestBase *obj, gpointer data);
 JpfGuestContainer *jpf_mods_container_new(gpointer owner,
 	guint timeout);
 
-gint jpf_mod_container_add_io(JpfGuestContainer *container,
+gint nmp_mod_container_add_io(JpfGuestContainer *container,
 	JpfNetIO *io);
-gint jpf_mod_container_del_io(JpfGuestContainer *container,
+gint nmp_mod_container_del_io(JpfGuestContainer *container,
 	JpfNetIO *io);
 
 gint jpf_mods_container_add_guest(JpfGuestContainer *container,
@@ -145,11 +145,11 @@ JpfGuestBase *jpf_mods_guest_new(gsize size, const gchar *id,
 void jpf_mods_guest_attach_io(JpfGuestBase *guest, JpfNetIO *io);
 void jpf_mods_guest_ref(JpfGuestBase *base_obj);
 void jpf_mods_guest_unref(JpfGuestBase *base_obj);
-gint jpf_cms_mod_deliver_msg(JpfAppObj *self, gint dst, gint msg_id,
+gint nmp_cms_mod_deliver_msg(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size, void (*destroy)(void *, gsize size));
-gint jpf_cms_mod_deliver_msg_2(JpfAppObj *self, gint dst, gint msg_id,
+gint nmp_cms_mod_deliver_msg_2(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size);
-gint jpf_cms_mod_cpy_msg(JpfAppObj *app_obj,JpfSysMsg *msg,  gint dst);
+gint nmp_cms_mod_cpy_msg(NmpAppObj *app_obj,NmpSysMsg *msg,  gint dst);
 
 void jpf_mods_container_do_for_each(JpfGuestContainer *container,
 	JpfGuestVisit func, gpointer user_data);

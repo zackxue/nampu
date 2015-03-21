@@ -39,33 +39,33 @@ USING_MSG_ID_MAP(cms);
 /*
  *	operate res must be JpfMsgErrCode!
  */
-#define JPF_DEAL_GET_BSS_USR_NAME(app_obj, msg, name, ret) do {	\
-	ret = jpf_mod_bss_get_admin_name(app_obj, msg, name);	\
+#define NMP_DEAL_GET_BSS_USR_NAME(app_obj, msg, name, ret) do {	\
+	ret = nmp_mod_bss_get_admin_name(app_obj, msg, name);	\
 	if (ret) {	\
-		return jpf_mod_deal_get_admin_name_failed(app_obj, msg, ret);	\
+		return nmp_mod_deal_get_admin_name_failed(app_obj, msg, ret);	\
 	}	\
 } while (0)
 
-#define JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, name) do {	\
+#define NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, name) do {	\
 	name[USER_NAME_LEN - 1] = '\0';	\
 	strncpy(name, ID_OF_GUEST(bss_base), USER_NAME_LEN - 1);	\
 } while (0)
 
-#define JPF_CREATE_MSG_TO_LOG(msg_id, priv_p, size) do { \
-	JpfSysMsg *_msg_to_log; \
+#define NMP_CREATE_MSG_TO_LOG(msg_id, priv_p, size) do { \
+	NmpSysMsg *_msg_to_log; \
 	_msg_to_log = jpf_sysmsg_new_2(msg_id, priv_p, size, 0); \
 	MSG_SET_DSTPOS(_msg_to_log, BUSSLOT_POS_LOG); \
-	jpf_app_obj_deliver_out((JpfAppObj *)self, _msg_to_log); \
+	nmp_app_obj_deliver_out((NmpAppObj *)self, _msg_to_log); \
 } while (0)
 
 
 gint
-jpf_mod_bss_get_admin_name(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
+nmp_mod_bss_get_admin_name(NmpAppObj *app_obj, NmpSysMsg *msg, gchar *name)
 {
     JpfModBss *self;
     JpfGuestBase *bss_base;
     JpfNetIO *io;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
 
     self = (JpfModBss*)app_obj;
@@ -90,13 +90,13 @@ jpf_mod_bss_get_admin_name(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_forward(JpfModBss *self, JpfSysMsg *msg, const gchar *id_str)
+NmpMsgFunRet
+nmp_mod_bss_forward(JpfModBss *self, NmpSysMsg *msg, const gchar *id_str)
 {
     JpfErrRes	code;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     io = MSG_IO(msg);
@@ -125,8 +125,8 @@ jpf_mod_bss_forward(JpfModBss *self, JpfSysMsg *msg, const gchar *id_str)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_backward(JpfModBss *self, JpfSysMsg *msg, const gchar *id_str)
+NmpMsgFunRet
+nmp_mod_bss_backward(JpfModBss *self, NmpSysMsg *msg, const gchar *id_str)
 {
     JpfGuestBase *bss_base;
     JpfNetIO *io;
@@ -153,13 +153,13 @@ jpf_mod_bss_backward(JpfModBss *self, JpfSysMsg *msg, const gchar *id_str)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_forward_2(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
+NmpMsgFunRet
+nmp_mod_bss_forward_2(NmpAppObj *app_obj, NmpSysMsg *msg, gchar *name)
 {
     gint ret;
     JpfMsgErrCode res_info;
 
-    ret = jpf_mod_bss_get_admin_name(app_obj, msg, name);
+    ret = nmp_mod_bss_get_admin_name(app_obj, msg, name);
     if (!ret)
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
@@ -175,13 +175,13 @@ jpf_mod_bss_forward_2(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_forward_to_log(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
+NmpMsgFunRet
+nmp_mod_bss_forward_to_log(NmpAppObj *app_obj, NmpSysMsg *msg, gchar *name)
 {
     gint ret;
     JpfMsgErrCode res_info;
 
-    ret = jpf_mod_bss_get_admin_name(app_obj, msg, name);
+    ret = nmp_mod_bss_get_admin_name(app_obj, msg, name);
     if (!ret)
     {
         MSG_SET_DSTPOS(msg, BUSSLOT_POS_LOG);
@@ -197,8 +197,8 @@ jpf_mod_bss_forward_to_log(JpfAppObj *app_obj, JpfSysMsg *msg, gchar *name)
 }
 
 
-JpfMsgFunRet
-jpf_mod_deal_get_admin_name_failed(JpfAppObj *app_obj, JpfSysMsg *msg, gint ret)
+NmpMsgFunRet
+nmp_mod_deal_get_admin_name_failed(NmpAppObj *app_obj, NmpSysMsg *msg, gint ret)
 {
 	JpfMsgErrCode res_info;
 
@@ -212,7 +212,7 @@ jpf_mod_deal_get_admin_name_failed(JpfAppObj *app_obj, JpfSysMsg *msg, gint ret)
 
 
 static __inline__ gint
-jpf_mod_bss_admin_login(JpfModBss *self, JpfNetIO *io,  JpfMsgID msg_id,
+nmp_mod_bss_admin_login(JpfModBss *self, JpfNetIO *io,  NmpMsgID msg_id,
     JpfBssLoginInfo *admin, JpfBssLoginRes *res)
 {
     gint ret;
@@ -220,25 +220,25 @@ jpf_mod_bss_admin_login(JpfModBss *self, JpfNetIO *io,  JpfMsgID msg_id,
 
     G_ASSERT(self != NULL && io != NULL && admin != NULL && res != NULL);
 
-    ret = jpf_mod_bss_new_admin(self, io,  admin->admin_name, &conflict);
+    ret = nmp_mod_bss_new_admin(self, io,  admin->admin_name, &conflict);
     if (G_UNLIKELY(ret))
         return ret;
 
-    ret = jpf_mod_bss_sync_req(self, msg_id, admin,
+    ret = nmp_mod_bss_sync_req(self, msg_id, admin,
          sizeof(JpfBssLoginInfo), res, sizeof(JpfBssLoginRes));
 
     return ret;
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_login_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_login_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfBssLoginInfo *req_info;
     JpfBssLoginRes  res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     JpfResourcesCap res_cap;
 
@@ -251,7 +251,7 @@ jpf_mod_bss_login_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = (JpfBssLoginInfo*)MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    ret = jpf_mod_bss_admin_login(self, io, msg_id, req_info, &res_info);
+    ret = nmp_mod_bss_admin_login(self, io, msg_id, req_info, &res_info);
     if (ret)
     {
         jpf_warning(
@@ -263,9 +263,9 @@ jpf_mod_bss_login_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         MSG_SET_RESPONSE(msg);
         jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 
-        jpf_app_obj_deliver_in((JpfAppObj*)self, msg);
-        jpf_mod_acc_release_io((JpfModAccess*)self, io);
-        jpf_mod_container_del_io(self->container, io);
+        nmp_app_obj_deliver_in((NmpAppObj*)self, msg);
+        nmp_mod_acc_release_io((JpfModAccess*)self, io);
+        nmp_mod_container_del_io(self->container, io);
 
         return MFR_ACCEPTED;
     }
@@ -276,7 +276,7 @@ jpf_mod_bss_login_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             req_info->admin_name
         );
         memset(&res_cap, 0, sizeof(res_cap));
-        jpf_mod_get_resource_cap(&res_cap);
+        nmp_mod_get_resource_cap(&res_cap);
         res_info.module_sets = res_cap.module_bits;
         jpf_net_set_io_ttd(io, BSS_TIMEOUT);
         SET_CODE(&res_info, -ret);
@@ -288,15 +288,15 @@ jpf_mod_bss_login_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_heart_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_heart_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfBssHeart *req_info;
     JpfBssHeartResp res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
 
     self = (JpfModBss*)app_obj;
@@ -329,15 +329,15 @@ jpf_mod_bss_heart_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validata_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validata_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAdminInfo *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -356,7 +356,7 @@ jpf_mod_bss_validata_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAdminInfo), NULL, 0);
         if (ret)
         {
@@ -384,15 +384,15 @@ jpf_mod_bss_validata_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validata_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validata_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfValidateUserGroup *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -411,7 +411,7 @@ jpf_mod_bss_validata_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfValidateUserGroup), NULL, 0);
         if (ret)
         {
@@ -439,15 +439,15 @@ jpf_mod_bss_validata_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validata_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validata_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfValidateUser *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -466,7 +466,7 @@ jpf_mod_bss_validata_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfValidateUser), NULL, 0);
         if (ret)
         {
@@ -494,15 +494,15 @@ jpf_mod_bss_validata_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validata_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validata_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfValidateArea *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -521,7 +521,7 @@ jpf_mod_bss_validata_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfValidateArea), NULL, 0);
         if (ret)
         {
@@ -549,15 +549,15 @@ jpf_mod_bss_validata_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validata_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validata_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfValidatePu *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -576,7 +576,7 @@ jpf_mod_bss_validata_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfValidatePu), NULL, 0);
         if (ret)
         {
@@ -604,12 +604,12 @@ jpf_mod_bss_validata_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_general_cmd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_general_cmd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
 
     self = (JpfModBss*)app_obj;
     res_info = MSG_GET_DATA(msg);
@@ -630,16 +630,16 @@ jpf_mod_bss_general_cmd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
             MESSAGE_ID_TO_STR(cms, msg_id));
     }
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_general_modify_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_general_modify_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -664,19 +664,19 @@ jpf_mod_bss_general_modify_b(JpfAppObj *app_obj, JpfSysMsg *msg)
             MESSAGE_ID_TO_STR(cms, msg_id));
     }
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddAdmin *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -695,7 +695,7 @@ jpf_mod_bss_add_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->admin_name, exclude_reg))
             || (regex_mached(req_info->password, exclude_reg)))
         {
@@ -703,7 +703,7 @@ jpf_mod_bss_add_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto add_admin_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddAdmin), NULL, 0);
         if (ret)
         {
@@ -731,15 +731,15 @@ jpf_mod_bss_add_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddUserGroup *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -758,14 +758,14 @@ jpf_mod_bss_add_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->group_name, exclude_reg)))
         {
             ret = -E_STRINGFORMAT;
             goto add_user_group_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddUserGroup), NULL, 0);
         if (ret)
         {
@@ -794,15 +794,15 @@ jpf_mod_bss_add_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddUser *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -822,7 +822,7 @@ jpf_mod_bss_add_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->username, exclude_reg))
             || (regex_mached(req_info->password, exclude_reg))
             || (regex_mached(req_info->user_phone, exclude_reg))
@@ -832,7 +832,7 @@ jpf_mod_bss_add_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto add_user_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddUser), NULL, 0);
         if (ret)
         {
@@ -861,15 +861,15 @@ jpf_mod_bss_add_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddArea *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -893,7 +893,7 @@ jpf_mod_bss_add_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             ret = -E_STRINGFORMAT;
             goto add_area_string_format_wrong;
         }
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddArea), NULL, 0);
         if (ret)
         {
@@ -922,15 +922,15 @@ jpf_mod_bss_add_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddPu *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -956,7 +956,7 @@ jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             ret = -E_STRINGFORMAT;
             goto add_pu_string_format_wrong;
         }
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddPu), NULL, 0);
         if (ret)
         {
@@ -985,8 +985,8 @@ jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 */
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddPu *req_info;
     JpfMsgErrCode res_info;
@@ -1007,7 +1007,7 @@ jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 
     jpf_get_mf_from_guid(req_info->puid, mf);
     memset(&res_cap, 0, sizeof(res_cap));
-    jpf_mod_get_resource_cap(&res_cap);
+    nmp_mod_get_resource_cap(&res_cap);
     if (res_cap.module_bits&MODULE_CMS_BIT)
     {
         ret = jpf_compare_manufacturer(res_cap.modules_data[SYS_MODULE_CMS], mf);
@@ -1020,7 +1020,7 @@ jpf_mod_bss_add_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     else
         goto err_add_pu;
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 
 err_add_pu:
     MSG_SET_RESPONSE(msg);
@@ -1033,8 +1033,8 @@ err_add_pu:
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfAddPuRes *res_info;
@@ -1054,19 +1054,19 @@ jpf_mod_bss_add_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     else
 	    jpf_warning("<JpfModBss> admin:%s add pu ok", res_info->bss_usr);
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_add_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddGu *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1093,7 +1093,7 @@ jpf_mod_bss_add_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto add_gu_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddGu), NULL, 0);
         if (ret)
         {
@@ -1121,8 +1121,8 @@ jpf_mod_bss_add_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_add_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddGu *req_info;
     JpfMsgErrCode res_info;
@@ -1144,12 +1144,12 @@ jpf_mod_bss_add_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1166,19 +1166,19 @@ jpf_mod_bss_add_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     else
 	    jpf_print("<JpfModBss> add gu ok");
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddMds *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1197,7 +1197,7 @@ jpf_mod_bss_add_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((!regex_mached(req_info->mds_id, mds_reg))
             || (regex_mached(req_info->mds_name, exclude_reg)))
         {
@@ -1205,7 +1205,7 @@ jpf_mod_bss_add_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto add_mds_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddMds), NULL, 0);
         if (ret)
         {
@@ -1233,15 +1233,15 @@ jpf_mod_bss_add_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddMdsIp *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1260,8 +1260,8 @@ jpf_mod_bss_add_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddMdsIp), NULL, 0);
         if (ret)
         {
@@ -1289,15 +1289,15 @@ jpf_mod_bss_add_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddMss *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1316,7 +1316,7 @@ jpf_mod_bss_add_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((!regex_mached(req_info->mss_id, mss_reg))
             || (regex_mached(req_info->mss_name, exclude_reg)))
         {
@@ -1324,7 +1324,7 @@ jpf_mod_bss_add_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto add_mss_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddMss), NULL, 0);
         if (ret)
         {
@@ -1352,15 +1352,15 @@ jpf_mod_bss_add_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_gu_to_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_gu_to_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddGuToUser *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret,size;
 
     self = (JpfModBss*)app_obj;
@@ -1380,8 +1380,8 @@ jpf_mod_bss_add_gu_to_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, size, NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, size, NULL, 0);
         if (ret)
             jpf_warning( "<JpfModBss> add gu to user: failed, err:%d", ret);
         else
@@ -1398,20 +1398,20 @@ jpf_mod_bss_add_gu_to_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tw_to_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tw_to_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddTwToUser *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tw_to_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tw_to_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1423,24 +1423,24 @@ jpf_mod_bss_add_tw_to_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_to_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_to_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddTourToUser *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_to_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_to_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1452,19 +1452,19 @@ jpf_mod_bss_add_tour_to_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddDefenceArea *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1483,8 +1483,8 @@ jpf_mod_bss_add_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddDefenceArea), NULL, 0);
         if (ret)
         {
@@ -1512,15 +1512,15 @@ jpf_mod_bss_add_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddDefenceMap *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1539,8 +1539,8 @@ jpf_mod_bss_add_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddDefenceMap), NULL, 0);
         if (ret)
         {
@@ -1568,15 +1568,15 @@ jpf_mod_bss_add_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddDefenceGu *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1595,8 +1595,8 @@ jpf_mod_bss_add_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddDefenceGu), NULL, 0);
         if (ret)
         {
@@ -1624,15 +1624,15 @@ jpf_mod_bss_add_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfSetMapHref *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1651,8 +1651,8 @@ jpf_mod_bss_set_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfSetMapHref), NULL, 0);
         if (ret)
         {
@@ -1680,15 +1680,15 @@ jpf_mod_bss_set_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_del_alarm_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelAlarmPolicy *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1707,8 +1707,8 @@ jpf_mod_bss_set_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfDelAlarmPolicy), NULL, 0);
         if (ret)
         {
@@ -1735,15 +1735,15 @@ jpf_mod_bss_set_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddTw *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1762,8 +1762,8 @@ jpf_mod_bss_add_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddTw), NULL, 0);
         if (ret)
         {
@@ -1791,15 +1791,15 @@ jpf_mod_bss_add_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddScreen *req_info;
     JpfMsgErrCode res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -1819,8 +1819,8 @@ jpf_mod_bss_add_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfAddScreen), NULL, 0);
         if (ret)
         {
@@ -1848,20 +1848,20 @@ jpf_mod_bss_add_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1873,24 +1873,24 @@ jpf_mod_bss_add_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddTourStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_tour_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1902,48 +1902,48 @@ jpf_mod_bss_add_tour_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_group_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_group_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddGroupStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_ivs_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_ivs_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfAddIvs *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_ivs_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1955,24 +1955,24 @@ jpf_mod_bss_add_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validate_gu_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validate_gu_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfValidateGuMap *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_validate_gu_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_validate_gu_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -1984,23 +1984,23 @@ jpf_mod_bss_validate_gu_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
-JpfMsgFunRet
-jpf_mod_bss_config_group_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_config_group_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfConfigGroupStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_time_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_time_policy_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkTimePolicyConfig *req_info;
     JpfMsgErrCode res_info;
@@ -2021,12 +2021,12 @@ jpf_mod_bss_link_time_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_record_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_record_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkRecord *req_info;
     JpfMsgErrCode res_info;
@@ -2049,12 +2049,12 @@ jpf_mod_bss_link_record_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_IO_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_IO_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkIO *req_info;
     JpfMsgErrCode res_info;
@@ -2077,12 +2077,12 @@ jpf_mod_bss_link_IO_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_snapshot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_snapshot_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkSnapshot *req_info;
     JpfMsgErrCode res_info;
@@ -2105,12 +2105,12 @@ jpf_mod_bss_link_snapshot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_preset_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_preset_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkPreset *req_info;
     JpfMsgErrCode res_info;
@@ -2133,12 +2133,12 @@ jpf_mod_bss_link_preset_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkStepConfig *req_info;
     JpfMsgErrCode res_info;
@@ -2161,12 +2161,12 @@ jpf_mod_bss_link_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkTourConfig *req_info;
     JpfMsgErrCode res_info;
@@ -2187,12 +2187,12 @@ jpf_mod_bss_link_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkGroupConfig *req_info;
     JpfMsgErrCode res_info;
@@ -2213,12 +2213,12 @@ jpf_mod_bss_link_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_link_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_link_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfLinkMap *req_info;
     JpfMsgErrCode res_info;
@@ -2241,19 +2241,19 @@ jpf_mod_bss_link_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddAdmin *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2272,14 +2272,14 @@ jpf_mod_bss_modify_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->password, exclude_reg)))
         {
             ret = -E_STRINGFORMAT;
             goto modify_admin_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfAddAdmin), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfAddAdmin), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -2307,17 +2307,17 @@ jpf_mod_bss_modify_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfUserGroupInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-	JpfSysMsg *msg_del_user;
+	NmpSysMsg *msg_del_user;
 	JpfMsgDelUserGroup del_group;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2337,14 +2337,14 @@ jpf_mod_bss_modify_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->group_name, exclude_reg)))
         {
             ret = -E_STRINGFORMAT;
             goto modify_user_group_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfUserGroupInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfUserGroupInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2371,7 +2371,7 @@ jpf_mod_bss_modify_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 			}
 
 			MSG_SET_DSTPOS(msg_del_user, BUSSLOT_POS_CU);
-			jpf_mod_bss_deliver_out_msg(app_obj, msg_del_user);
+			nmp_mod_bss_deliver_out_msg(app_obj, msg_del_user);
 
 	    	ret = 0;
         }
@@ -2387,17 +2387,17 @@ jpf_mod_bss_modify_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfUserInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfSysMsg *msg_del_user;
+    NmpSysMsg *msg_del_user;
     JpfMsgDelUser user;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2417,7 +2417,7 @@ jpf_mod_bss_modify_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->password, exclude_reg))
             || (regex_mached(req_info->user_phone, exclude_reg))
             || (regex_mached(req_info->user_description, exclude_reg)))
@@ -2426,7 +2426,7 @@ jpf_mod_bss_modify_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto modify_user_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info,
               sizeof(JpfUserInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
@@ -2454,7 +2454,7 @@ jpf_mod_bss_modify_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
                 }
 
                 MSG_SET_DSTPOS(msg_del_user, BUSSLOT_POS_CU);
-                jpf_mod_bss_deliver_out_msg(app_obj, msg_del_user);
+                nmp_mod_bss_deliver_out_msg(app_obj, msg_del_user);
             }
 
             ret = 0;
@@ -2471,16 +2471,16 @@ jpf_mod_bss_modify_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_domain_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDomainInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
-    JpfSysMsg *msg_modify_domain;
+    NmpMsgID msg_id;
+    NmpSysMsg *msg_modify_domain;
     JpfModifyDomain domain;
     gint ret;
 
@@ -2500,14 +2500,14 @@ jpf_mod_bss_modify_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if (regex_mached(req_info->domain_name, exclude_reg))
         {
             ret = -E_STRINGFORMAT;
             goto modify_domain_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfDomainInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfDomainInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2533,7 +2533,7 @@ jpf_mod_bss_modify_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
                 }
 
                 MSG_SET_DSTPOS(msg_modify_domain, BUSSLOT_POS_CU);
-                jpf_mod_bss_deliver_out_msg(app_obj, msg_modify_domain);
+                nmp_mod_bss_deliver_out_msg(app_obj, msg_modify_domain);
             }
 
 	     ret = 0;
@@ -2551,15 +2551,15 @@ jpf_mod_bss_modify_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_modify_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_modify_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAreaInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2578,14 +2578,14 @@ jpf_mod_bss_add_modify_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->area_name, exclude_reg)))
         {
             ret = -E_STRINGFORMAT;
             goto modify_area_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfAreaInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfAreaInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2613,15 +2613,15 @@ jpf_mod_bss_add_modify_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_modify_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_modify_manufacturer_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddModifyManufacturer *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2640,7 +2640,7 @@ jpf_mod_bss_add_modify_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((!regex_mached(req_info->mf_id, manufactur_reg))
 		|| (regex_mached(req_info->mf_name, mf_exclude_reg)))
         {
@@ -2648,7 +2648,7 @@ jpf_mod_bss_add_modify_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
             goto modify_manufacturer_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info,
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info,
               sizeof(JpfAddModifyManufacturer), NULL, 0);
         if (ret)
         {
@@ -2677,15 +2677,15 @@ jpf_mod_bss_add_modify_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfPuInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2704,14 +2704,14 @@ jpf_mod_bss_modify_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if ((regex_mached(req_info->pu_info, exclude_reg)))
         {
             ret = -E_STRINGFORMAT;
             goto modify_pu_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfPuInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfPuInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2739,15 +2739,15 @@ jpf_mod_bss_modify_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2766,14 +2766,14 @@ jpf_mod_bss_modify_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if (regex_mached(req_info->gu_name, exclude_reg))
         {
             ret = -E_STRINGFORMAT;
             goto modify_gu_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfGuInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfGuInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2801,15 +2801,15 @@ jpf_mod_bss_modify_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfMdsInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2828,14 +2828,14 @@ jpf_mod_bss_modify_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if (regex_mached(req_info->mds_name, exclude_reg))
         {
             ret = -E_STRINGFORMAT;
             goto modify_mds_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfMdsInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfMdsInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2864,15 +2864,15 @@ jpf_mod_bss_modify_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfMssInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2891,14 +2891,14 @@ jpf_mod_bss_modify_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         if (regex_mached(req_info->mss_name, exclude_reg))
         {
             ret = -E_STRINGFORMAT;
             goto modify_mss_string_format_wrong;
         }
 
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfMssInfo), NULL, 0);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfMssInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2927,15 +2927,15 @@ jpf_mod_bss_modify_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDefenceAreaInfo *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -2954,8 +2954,8 @@ jpf_mod_bss_modify_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfDefenceAreaInfo), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfDefenceAreaInfo), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -2983,15 +2983,15 @@ jpf_mod_bss_modify_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfModifyDefenceGu *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3010,8 +3010,8 @@ jpf_mod_bss_modify_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyDefenceGu), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyDefenceGu), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -3039,15 +3039,15 @@ jpf_mod_bss_modify_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfModifyMapHref *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3066,8 +3066,8 @@ jpf_mod_bss_modify_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyMapHref), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyMapHref), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -3095,15 +3095,15 @@ jpf_mod_bss_modify_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfModifyTw *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3122,8 +3122,8 @@ jpf_mod_bss_modify_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyTw), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyTw), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -3151,15 +3151,15 @@ jpf_mod_bss_modify_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfModifyScreen *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3178,8 +3178,8 @@ jpf_mod_bss_modify_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyScreen), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, sizeof(JpfModifyScreen), NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -3207,20 +3207,20 @@ jpf_mod_bss_modify_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModifyTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -3232,168 +3232,168 @@ jpf_mod_bss_modify_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModifyGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_group_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_group_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModifyGroupStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_group_step_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_group_step_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModifyGroupStepInfo *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_time_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_time_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkTimePolicy *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_record_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_record_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkRecord *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_IO_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_IO_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkIO *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_snapshot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_snapshot_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkRecord *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_preset_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_preset_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkPreset *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkStep *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkTour *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkGroup *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_link_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_link_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyLinkMap *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ivs_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ivs_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfIvsInfo *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ivs_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -3405,21 +3405,21 @@ jpf_mod_bss_modify_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelAdmin *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfSysMsg *msg_notify;
+    NmpSysMsg *msg_notify;
     JpfForceUsrOffline notify_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 	gchar *username;
 	gchar *name;
@@ -3441,8 +3441,8 @@ jpf_mod_bss_del_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelAdmin), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelAdmin), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3476,7 +3476,7 @@ jpf_mod_bss_del_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
                 strncpy(offline_name,&username[1],strlen(username) - 2);
                 offline_name[USER_NAME_LEN - 1] = 0;
                 printf("&&&&&&&&&&&&&&&username : %s,offline_name:%s\n",username,offline_name);
-                jpf_mod_bss_force_usr_offline(self, offline_name, msg_notify);
+                nmp_mod_bss_force_usr_offline(self, offline_name, msg_notify);
             }
 
 	        jpf_sysmsg_destroy(msg_notify);
@@ -3493,17 +3493,17 @@ jpf_mod_bss_del_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelUserGroup *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-	JpfSysMsg *msg_del_user;
+	NmpSysMsg *msg_del_user;
 	JpfMsgDelUserGroup del_group;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3523,8 +3523,8 @@ jpf_mod_bss_del_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelUserGroup), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelUserGroup), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3548,7 +3548,7 @@ jpf_mod_bss_del_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 			}
 
 			MSG_SET_DSTPOS(msg_del_user, BUSSLOT_POS_CU);
-			jpf_mod_bss_deliver_out_msg(app_obj, msg_del_user);
+			nmp_mod_bss_deliver_out_msg(app_obj, msg_del_user);
         }
 
         jpf_mods_container_put_guest(self->container, bss_base);
@@ -3562,16 +3562,16 @@ jpf_mod_bss_del_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelUser *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
-    JpfSysMsg *msg_del_user;
+    NmpMsgID msg_id;
+    NmpSysMsg *msg_del_user;
     JpfMsgDelUser user;
     gint ret;
 
@@ -3592,8 +3592,8 @@ jpf_mod_bss_del_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelUser), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelUser), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3617,7 +3617,7 @@ jpf_mod_bss_del_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
            }
 
            MSG_SET_DSTPOS(msg_del_user, BUSSLOT_POS_CU);
-           jpf_mod_bss_deliver_out_msg(app_obj, msg_del_user);
+           nmp_mod_bss_deliver_out_msg(app_obj, msg_del_user);
         }
 
         jpf_mods_container_put_guest(self->container, bss_base);
@@ -3631,15 +3631,15 @@ jpf_mod_bss_del_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelArea *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3658,8 +3658,8 @@ jpf_mod_bss_del_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelArea), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelArea), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3683,15 +3683,15 @@ jpf_mod_bss_del_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelPu *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret, size;
 
     self = (JpfModBss*)app_obj;
@@ -3710,9 +3710,9 @@ jpf_mod_bss_del_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
         size = sizeof(JpfDelPu) + req_info->count*sizeof(JpfPuPoint);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info,size, NULL, 0);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info,size, NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3736,15 +3736,15 @@ jpf_mod_bss_del_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelGu *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3763,8 +3763,8 @@ jpf_mod_bss_del_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelGu), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelGu), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3788,15 +3788,15 @@ jpf_mod_bss_del_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_manufacturer_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelManufacturer *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3815,8 +3815,8 @@ jpf_mod_bss_del_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(
 	     self, msg_id,  req_info,
             sizeof(JpfDelManufacturer), NULL, 0
         );
@@ -3843,15 +3843,15 @@ jpf_mod_bss_del_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelMds *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3870,8 +3870,8 @@ jpf_mod_bss_del_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMds), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMds), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3895,15 +3895,15 @@ jpf_mod_bss_del_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelMdsIp *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3922,8 +3922,8 @@ jpf_mod_bss_del_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelMdsIp), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelMdsIp), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3947,15 +3947,15 @@ jpf_mod_bss_del_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelMss *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -3974,8 +3974,8 @@ jpf_mod_bss_del_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMss), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMss), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -3999,15 +3999,15 @@ jpf_mod_bss_del_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelDefenceArea *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4026,8 +4026,8 @@ jpf_mod_bss_del_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceArea), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceArea), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4051,15 +4051,15 @@ jpf_mod_bss_del_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelDefenceMap *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4078,8 +4078,8 @@ jpf_mod_bss_del_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceMap), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceMap), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4103,15 +4103,15 @@ jpf_mod_bss_del_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelDefenceGu *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4130,8 +4130,8 @@ jpf_mod_bss_del_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceGu), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelDefenceGu), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4155,15 +4155,15 @@ jpf_mod_bss_del_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelMapHref *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4182,8 +4182,8 @@ jpf_mod_bss_del_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMapHref), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelMapHref), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4207,15 +4207,15 @@ jpf_mod_bss_del_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelTw *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4234,8 +4234,8 @@ jpf_mod_bss_del_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelTw), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelTw), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4259,15 +4259,15 @@ jpf_mod_bss_del_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelScreen *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -4286,8 +4286,8 @@ jpf_mod_bss_del_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelScreen), NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id,  req_info, sizeof(JpfDelScreen), NULL, 0);
         if (ret)
         {
             jpf_warning(
@@ -4311,20 +4311,20 @@ jpf_mod_bss_del_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -4336,168 +4336,168 @@ jpf_mod_bss_del_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_group_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_group_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelGroupStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_group_step_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_group_step_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelGroupStepInfo *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_time_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_time_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkTimePolicy *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_record_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_record_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkRecord *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_IO_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_IO_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkIO *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_snapshot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_snapshot_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkSnapshot *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_preset_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_preset_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkPreset *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_link_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_link_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelLinkMap *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_ivs_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_ivs_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfDelIvs *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_ivs_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -4509,20 +4509,20 @@ jpf_mod_bss_del_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryAdmin *req_info;
     JpfQueryAdminRes  *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -4550,7 +4550,7 @@ jpf_mod_bss_query_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     	req_info = MSG_GET_DATA(msg);
     	BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryAdmin), &size);
         if (res_info)
         {
@@ -4582,20 +4582,20 @@ jpf_mod_bss_query_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_admin_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_admin_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryAdmin *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_admin_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_admin_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAdminRes *res_info;
@@ -4607,20 +4607,20 @@ jpf_mod_bss_query_admin_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryUserGroup *req_info;
     JpfQueryUserGroupRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -4648,7 +4648,7 @@ jpf_mod_bss_query_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         req_info = MSG_GET_DATA(msg);
         BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryUserGroup), &size);
         if (res_info)
         {
@@ -4679,20 +4679,20 @@ jpf_mod_bss_query_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUserGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryUserGroupRes *res_info;
@@ -4704,19 +4704,19 @@ jpf_mod_bss_query_user_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryUser *req_info;
     JpfQueryUserRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -4744,7 +4744,7 @@ jpf_mod_bss_query_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         req_info = MSG_GET_DATA(msg);
         BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryUser), &size);
         if (res_info)
         {
@@ -4776,20 +4776,20 @@ jpf_mod_bss_query_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUser *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryUserRes *res_info;
@@ -4801,19 +4801,19 @@ jpf_mod_bss_query_user_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_domain_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryDomain *req_info;
     JpfQueryDomainRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -4842,7 +4842,7 @@ jpf_mod_bss_query_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         req_info = MSG_GET_DATA(msg);
         BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryDomain), &size);
         if (res_info)
         {
@@ -4873,20 +4873,20 @@ jpf_mod_bss_query_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_domain_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_domain_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryDomain *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_domain_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_domain_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryDomainRes *res_info;
@@ -4898,19 +4898,19 @@ jpf_mod_bss_query_domain_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryArea *req_info;
     JpfQueryAreaRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -4937,7 +4937,7 @@ jpf_mod_bss_query_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryArea), &size);
         if (res_info)
         {
@@ -4969,20 +4969,20 @@ jpf_mod_bss_query_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryArea *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAreaRes *res_info;
@@ -4994,19 +4994,19 @@ jpf_mod_bss_query_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryPu *req_info;
     JpfQueryPuRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5034,7 +5034,7 @@ jpf_mod_bss_query_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     	req_info = MSG_GET_DATA(msg);
     	BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryPu), &size);
         if (res_info)
        {
@@ -5067,20 +5067,20 @@ jpf_mod_bss_query_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 */
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryPu *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryPuRes *res_info;
@@ -5092,19 +5092,19 @@ jpf_mod_bss_query_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryGu *req_info;
     JpfQueryGuRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5132,7 +5132,7 @@ jpf_mod_bss_query_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         req_info = MSG_GET_DATA(msg);
         BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryGu), &size);
         if (res_info)
         {
@@ -5164,20 +5164,20 @@ jpf_mod_bss_query_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryGu *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGuRes *res_info;
@@ -5189,19 +5189,19 @@ jpf_mod_bss_query_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_manufacturer_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryManufacturer *req_info;
     JpfQueryManufacturerRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5228,7 +5228,7 @@ jpf_mod_bss_query_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryManufacturer), &size);
         if (res_info)
         {
@@ -5260,20 +5260,20 @@ jpf_mod_bss_query_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_manufacturer_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_manufacturer_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryManufacturer *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_manufacturer_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_manufacturer_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryManufacturerRes *res_info;
@@ -5285,19 +5285,19 @@ jpf_mod_bss_query_manufacturer_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryMds *req_info;
     JpfQueryMdsRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5324,7 +5324,7 @@ jpf_mod_bss_query_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryMds), &size);
         if (res_info)
         {
@@ -5356,20 +5356,20 @@ jpf_mod_bss_query_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_mds_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUserGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_mds_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryMdsRes *res_info;
@@ -5381,19 +5381,19 @@ jpf_mod_bss_query_mds_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryMdsIp *req_info;
     JpfQueryMdsIpRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5420,7 +5420,7 @@ jpf_mod_bss_query_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryMdsIp), &size);
         if (res_info)
         {
@@ -5452,20 +5452,20 @@ jpf_mod_bss_query_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_mds_ip_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_ip_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryMdsIp *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryMdsIpRes *res_info;
@@ -5477,19 +5477,19 @@ jpf_mod_bss_query_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryMss *req_info;
     JpfQueryMssRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5516,7 +5516,7 @@ jpf_mod_bss_query_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryMss), &size);
         if (res_info)
         {
@@ -5548,20 +5548,20 @@ jpf_mod_bss_query_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryMss *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_mss_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryMssRes *res_info;
@@ -5573,19 +5573,19 @@ jpf_mod_bss_query_mss_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryDefenceArea *req_info;
     JpfQueryDefenceAreaRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5612,7 +5612,7 @@ jpf_mod_bss_query_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryDefenceArea), &size);
         if (res_info)
         {
@@ -5644,20 +5644,20 @@ jpf_mod_bss_query_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_area_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_area_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryDefenceArea *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryDefenceAreaRes *res_info;
@@ -5669,19 +5669,19 @@ jpf_mod_bss_query_defence_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryDefenceMap*req_info;
     JpfQueryDefenceMapRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5708,7 +5708,7 @@ jpf_mod_bss_query_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryDefenceMap), &size);
         if (res_info)
         {
@@ -5740,20 +5740,20 @@ jpf_mod_bss_query_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryDefenceMap *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryDefenceMapRes *res_info;
@@ -5765,19 +5765,19 @@ jpf_mod_bss_query_defence_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryDefenceGu *req_info;
     JpfQueryDefenceGuRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5804,7 +5804,7 @@ jpf_mod_bss_query_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryDefenceGu), &size);
         if (res_info)
         {
@@ -5836,20 +5836,20 @@ jpf_mod_bss_query_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryDefenceGu *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_defence_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryDefenceGuRes *res_info;
@@ -5861,19 +5861,19 @@ jpf_mod_bss_query_defence_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryMapHref *req_info;
     JpfQueryMapHrefRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5900,7 +5900,7 @@ jpf_mod_bss_query_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryMapHref), &size);
         if (res_info)
         {
@@ -5932,20 +5932,20 @@ jpf_mod_bss_query_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_map_href_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_map_href_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryMapHref *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_map_href_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryMapHrefRes *res_info;
@@ -5957,18 +5957,18 @@ jpf_mod_bss_query_map_href_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryTw *req_info;
     JpfQueryTwRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -5995,7 +5995,7 @@ jpf_mod_bss_query_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryTw), &size);
         if (res_info)
         {
@@ -6027,20 +6027,20 @@ jpf_mod_bss_query_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryTw *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tw_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryTwRes *res_info;
@@ -6052,19 +6052,19 @@ jpf_mod_bss_query_tw_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryScreen *req_info;
     JpfQueryScreenRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -6091,7 +6091,7 @@ jpf_mod_bss_query_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryScreen), &size);
         if (res_info)
         {
@@ -6123,20 +6123,20 @@ jpf_mod_bss_query_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_screen_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryScreen *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryScreenRes *res_info;
@@ -6148,19 +6148,19 @@ jpf_mod_bss_query_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_screen_division_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_division_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryScrDiv *req_info;
     JpfQueryScrDivRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -6187,7 +6187,7 @@ jpf_mod_bss_query_screen_division_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryScrDiv), &size);
         if (res_info)
         {
@@ -6219,20 +6219,20 @@ jpf_mod_bss_query_screen_division_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_screen_division_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_division_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryScrDiv *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_screen_division_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_screen_division_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryScrDivRes *res_info;
@@ -6244,24 +6244,24 @@ jpf_mod_bss_query_screen_division_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryTourRes *res_info;
@@ -6273,24 +6273,24 @@ jpf_mod_bss_query_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tour_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tour_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryTourStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tour_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryTourStepRes *res_info;
@@ -6302,24 +6302,24 @@ jpf_mod_bss_query_tour_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryGroup *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGroupRes *res_info;
@@ -6331,24 +6331,24 @@ jpf_mod_bss_query_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryGroupStep *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGroupStepRes *res_info;
@@ -6360,24 +6360,24 @@ jpf_mod_bss_query_group_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryGroupStepInfo *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGroupStepInfoRes *res_info;
@@ -6389,24 +6389,24 @@ jpf_mod_bss_query_group_step_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_div_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_div_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryGroupStepDiv *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_group_step_div_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_group_step_div_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGroupStepDivRes *res_info;
@@ -6418,18 +6418,18 @@ jpf_mod_bss_query_group_step_div_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_record_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_record_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryRecordPolicy *req_info;
     JpfQueryRecordPolicyRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -6456,7 +6456,7 @@ jpf_mod_bss_query_record_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     {
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryRecordPolicy), &size);
         if (res_info)
         {
@@ -6490,20 +6490,20 @@ jpf_mod_bss_query_record_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 */
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_record_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_record_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryRecordPolicy *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_record_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_record_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryRecordPolicyRes *res_info;
@@ -6515,19 +6515,19 @@ jpf_mod_bss_query_record_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_record_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_record_policy_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfRecordPolicyConfig *req_info;
     JpfMsgErrCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret, i;
     gint size = 0;
 
@@ -6548,8 +6548,8 @@ jpf_mod_bss_record_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self,  msg_id, req_info, size, NULL, 0);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self,  msg_id, req_info, size, NULL, 0);
         if (ret && (ret != -E_NODBENT))
         {
             jpf_warning(
@@ -6574,13 +6574,13 @@ jpf_mod_bss_record_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
                         strncpy(policy_change.guid, req_info->record_policy[i].guid, MAX_ID_LEN -1);
                         strncpy(policy_change.domain_id, req_info->record_policy[i].domain_id, DOMAIN_ID_LEN -1);
                         strncpy(policy_change.mss_id, req_info->record_policy[i].mss_id, MSS_ID_LEN -1);
-                        jpf_mod_bss_notify_policy_change(app_obj, &policy_change, sizeof(policy_change));
+                        nmp_mod_bss_notify_policy_change(app_obj, &policy_change, sizeof(policy_change));
                     }
                     break;
                 case 1:
                     strncpy(policy_change.mss_id, req_info->mss_id, MSS_ID_LEN -1);
                     policy_change.all_changed = 1;
-                    jpf_mod_bss_notify_policy_change(app_obj, &policy_change, sizeof(policy_change));
+                    nmp_mod_bss_notify_policy_change(app_obj, &policy_change, sizeof(policy_change));
                     break;
                 }
             }
@@ -6600,15 +6600,15 @@ jpf_mod_bss_record_policy_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 /*
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryUserOwnGu *req_info;
     JpfQueryUserOwnGuRes *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -6636,7 +6636,7 @@ jpf_mod_bss_query_user_own_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
 
-        res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+        res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryUserOwnGu), &size);
         if (res_info)
         {
@@ -6668,20 +6668,20 @@ jpf_mod_bss_query_user_own_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_gu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_gu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUserOwnGu *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryUserOwnGuRes *res_info;
@@ -6693,24 +6693,24 @@ jpf_mod_bss_query_user_own_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_tw_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_tw_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUserOwnTw *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_tw_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryUserOwnTwRes *res_info;
@@ -6722,24 +6722,24 @@ jpf_mod_bss_query_user_own_tw_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryUserOwnTour *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_user_own_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_user_own_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryUserOwnTourRes *res_info;
@@ -6751,18 +6751,18 @@ jpf_mod_bss_query_user_own_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_del_alarm_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryDelAlarmPolicyRes res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -6779,7 +6779,7 @@ jpf_mod_bss_query_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        ret = jpf_mod_bss_sync_req(self, msg_id, NULL,
+        ret = nmp_mod_bss_sync_req(self, msg_id, NULL,
             0, &res_info, sizeof(res_info));
         if (ret)
         {
@@ -6800,14 +6800,14 @@ jpf_mod_bss_query_del_alarm_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     return MFR_DELIVER_BACK;
 }
 
-JpfMsgFunRet
-jpf_mod_bss_query_system_time_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_system_time_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryServerTimeRes res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -6836,15 +6836,15 @@ jpf_mod_bss_query_system_time_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_system_time_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_system_time_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfSetServerTime *req_info;
     JpfSetServerTimeRes res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     memset(&res_info, 0, sizeof(res_info));
 
@@ -6862,7 +6862,7 @@ jpf_mod_bss_set_system_time_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
         req_info = MSG_GET_DATA(msg);
     	 BUG_ON(!req_info);
         ret = jpf_set_system_time(req_info->system_time, req_info->time_zone);
@@ -6875,27 +6875,27 @@ jpf_mod_bss_set_system_time_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     /*** sent msg to mod_log ***/
     strncpy(res_info.time_zone, req_info->time_zone, TIME_ZONE_LEN - 1);	//must before jpf_sysmsg_set_private_2
     strncpy(res_info.system_time, req_info->system_time, TIME_LEN - 1);
-    JPF_CREATE_MSG_TO_LOG(MSG_LOG_SET_SYSTEM_TIME, &res_info, sizeof(res_info));
+    NMP_CREATE_MSG_TO_LOG(MSG_LOG_SET_SYSTEM_TIME, &res_info, sizeof(res_info));
 
     jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_time_policy_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_time_policy_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkTimePolicy *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_time_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_time_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkTimePolicyRes *res_info;
@@ -6907,24 +6907,24 @@ jpf_mod_bss_query_link_time_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 	    SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_record_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_record_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkRecord *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_record_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_record_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkRecordRes *res_info;
@@ -6936,24 +6936,24 @@ jpf_mod_bss_query_link_record_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_IO_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_IO_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkIO *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_IO_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_IO_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkIORes *res_info;
@@ -6965,24 +6965,24 @@ jpf_mod_bss_query_link_IO_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_snapshot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_snapshot_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkSnapshot *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_snapshot_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_snapshot_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkSnapshotRes *res_info;
@@ -6994,24 +6994,24 @@ jpf_mod_bss_query_link_snapshot_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_preset_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_preset_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkPreset *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_preset_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_preset_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkPresetRes *res_info;
@@ -7023,24 +7023,24 @@ jpf_mod_bss_query_link_preset_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_step_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_step_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkStep *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkStepRes *res_info;
@@ -7052,24 +7052,24 @@ jpf_mod_bss_query_link_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_tour_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_tour_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkTour *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkTourRes *res_info;
@@ -7081,24 +7081,24 @@ jpf_mod_bss_query_link_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkGroup *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkGroupRes *res_info;
@@ -7110,24 +7110,24 @@ jpf_mod_bss_query_link_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_map_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_map_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLinkMap *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_link_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_link_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLinkMapRes *res_info;
@@ -7139,24 +7139,24 @@ jpf_mod_bss_query_link_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ivs_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ivs_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryIvs *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ivs_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryIvsRes *res_info;
@@ -7168,12 +7168,12 @@ jpf_mod_bss_query_ivs_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_database_backup_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_database_backup_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -7181,7 +7181,7 @@ jpf_mod_bss_database_backup_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     JpfNetIO *io;
     JpfDbBackup *req_info;
     JpfMsgErrCode res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     struct stat file_state;
     gint ret = 0;
 
@@ -7206,12 +7206,12 @@ jpf_mod_bss_database_backup_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
     }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_database_backup_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_database_backup_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -7225,12 +7225,12 @@ jpf_mod_bss_database_backup_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_database_import_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_database_import_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -7238,7 +7238,7 @@ jpf_mod_bss_database_import_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     JpfNetIO *io;
     JpfDbImport *req_info;
     JpfDbImportRes res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     struct stat file_state;
     gint ret = 0;
     char filename[STRING_LEN] = {0};
@@ -7269,12 +7269,12 @@ jpf_mod_bss_database_import_f(JpfAppObj *app_obj, JpfSysMsg *msg)
         return MFR_DELIVER_BACK;
      }
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_database_import_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_database_import_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfDbImportRes *res_info;
@@ -7292,7 +7292,7 @@ jpf_mod_bss_database_import_b(JpfAppObj *app_obj, JpfSysMsg *msg)
         exit(-1);
       }
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
@@ -7317,14 +7317,14 @@ static int check_interface_valid(char *eth_str)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_net_interface_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_net_interface_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfGetNetInterfaceConfigRes res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	FILE *fp;
 	char query_buf[STRING_LEN] = {0};
@@ -7418,15 +7418,15 @@ static void get_net_info(JpfGetNetworkConfigRes *res_info, int ip_i, char *buffe
 	}
 }
 
-JpfMsgFunRet
-jpf_mod_bss_get_network_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_network_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfGetNetworkConfig *req_info;
 	JpfGetNetworkConfigRes *res_info = NULL;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	gint size = 0;
 	FILE *fp;
@@ -7673,15 +7673,15 @@ static int check_ip_conflict(JpfSetNetworkConfig *req_info)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_network_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_network_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfSetNetworkConfig *req_info;
 	JpfSetResult	res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	FILE *fp;
 	char query_buf[STRING_LEN] = {0};
@@ -7707,7 +7707,7 @@ jpf_mod_bss_set_network_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 		jpf_warning("<JpfModBss> user has not login.");
 		goto end;
 	}
-	JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
+	NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
 	jpf_mods_container_put_guest(self->container, bss_base);
 
 	jpf_warning("<JpfModBss> set network configure");
@@ -7760,21 +7760,21 @@ end:
 	MSG_SET_RESPONSE(msg);
 	SET_CODE(&res_info, -ret);
 
-	JPF_CREATE_MSG_TO_LOG(MSG_LOG_SET_NETWORK_CONFIG, &res_info, sizeof(res_info));
+	NMP_CREATE_MSG_TO_LOG(MSG_LOG_SET_NETWORK_CONFIG, &res_info, sizeof(res_info));
 
 	jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
 	return MFR_DELIVER_BACK;
 }
 
-JpfMsgFunRet
-jpf_mod_bss_add_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfAddHdGroup *req_info;
     JpfAddHdGroupRes res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -7805,8 +7805,8 @@ jpf_mod_bss_add_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfAddHdGroupRes *res_info;
@@ -7818,12 +7818,12 @@ jpf_mod_bss_add_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfAddHdToGroup *req_info;
@@ -7833,12 +7833,12 @@ jpf_mod_bss_add_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfAddHdToGroupRes *res_info;
@@ -7850,11 +7850,11 @@ jpf_mod_bss_add_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
-JpfMsgFunRet
-jpf_mod_bss_del_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfDelHdFromGroup *req_info;
@@ -7863,12 +7863,12 @@ jpf_mod_bss_del_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfDelHdFromGroupRes *res_info;
@@ -7880,12 +7880,12 @@ jpf_mod_bss_del_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_reboot_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_reboot_mss_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfRebootMss *req_info;
@@ -7895,12 +7895,12 @@ jpf_mod_bss_reboot_mss_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_reboot_mss_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_reboot_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfRebootMssRes *res_info;
@@ -7912,12 +7912,12 @@ jpf_mod_bss_reboot_mss_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_all_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_all_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -7930,12 +7930,12 @@ jpf_mod_bss_query_all_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_all_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_all_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAllHdGroupRes *res_info;
@@ -7946,12 +7946,12 @@ jpf_mod_bss_query_all_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_hd_group_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_hd_group_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -7964,12 +7964,12 @@ jpf_mod_bss_query_hd_group_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_hd_group_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_hd_group_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryHdGroupInfoRes *res_info;
@@ -7981,12 +7981,12 @@ jpf_mod_bss_query_hd_group_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_all_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_all_hd_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -7999,12 +7999,12 @@ jpf_mod_bss_query_all_hd_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_all_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_all_hd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAllHdRes *res_info;
@@ -8016,12 +8016,12 @@ jpf_mod_bss_query_all_hd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_hd_group_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8034,12 +8034,12 @@ jpf_mod_bss_del_hd_group_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_hd_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfDelHdGroupRes *res_info;
@@ -8051,12 +8051,12 @@ jpf_mod_bss_del_hd_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_hd_format_progress_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_hd_format_progress_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8069,12 +8069,12 @@ jpf_mod_bss_get_hd_format_progress_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_hd_format_progress_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_hd_format_progress_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfGetHdFormatProgressRes *res_info;
@@ -8086,12 +8086,12 @@ jpf_mod_bss_get_hd_format_progress_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_gu_record_status_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_gu_record_status_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8104,12 +8104,12 @@ jpf_mod_bss_query_gu_record_status_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_gu_record_status_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_gu_record_status_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryGuRecordStatusRes *res_info;
@@ -8121,19 +8121,19 @@ jpf_mod_bss_query_gu_record_status_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_platform_upgrade_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_platform_upgrade_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfPlatformUpgrade *req_info;
     JpfPlatformUpgradeResp res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gchar script_path[MAX_FILE_PATH + 2] = {0};
     gint ret = 0;
 
@@ -8153,7 +8153,7 @@ jpf_mod_bss_platform_upgrade_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, res_info.bss_usr);
         jpf_warning("system begin to upgrade");
 	 ret = jpf_get_platform_upgrade_script(script_path);
 	 if (ret)
@@ -8173,22 +8173,22 @@ jpf_mod_bss_platform_upgrade_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     MSG_SET_RESPONSE(msg);
     SET_CODE(&res_info, -ret);
 
-    JPF_CREATE_MSG_TO_LOG(MSG_LOG_PLATFORM_UPGRADE, &res_info, sizeof(res_info));
+    NMP_CREATE_MSG_TO_LOG(MSG_LOG_PLATFORM_UPGRADE, &res_info, sizeof(res_info));
 
     jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
     return MFR_DELIVER_BACK;
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfQueryAlarm *req_info;
     JpfQueryAlarmRes  *res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
     gint size = 0;
 
@@ -8219,7 +8219,7 @@ jpf_mod_bss_query_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
      //  bss = (JpfBss*)bss_base;
        strncpy(req_info->bss_usr, ID_OF_GUEST(bss_base), USER_NAME_LEN - 1);
 
-       /* res_info = jpf_mod_bss_sync_req_2(self, msg_id, req_info,
+       /* res_info = nmp_mod_bss_sync_req_2(self, msg_id, req_info,
             sizeof(JpfQueryAlarm), &size);
         if (res_info)
         {
@@ -8254,8 +8254,8 @@ jpf_mod_bss_query_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_alarm_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAlarmRes *res_info;
@@ -8267,19 +8267,19 @@ jpf_mod_bss_query_alarm_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_alarm_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfDelAlarm *req_info;
     JpfMsgCode  res_info;
     JpfGuestBase *bss_base;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret;
 
     self = (JpfModBss*)app_obj;
@@ -8299,8 +8299,8 @@ jpf_mod_bss_del_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     }
     else
     {
-        JPF_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
-        ret = jpf_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelAlarm), &res_info, sizeof(res_info));
+        NMP_GET_BSS_USR_NAME_FROM_GUESTBASE(bss_base, req_info->bss_usr);
+        ret = nmp_mod_bss_sync_req(self, msg_id, req_info, sizeof(JpfDelAlarm), &res_info, sizeof(res_info));
         if (ret)
         {
             jpf_warning(
@@ -8324,21 +8324,21 @@ jpf_mod_bss_del_alarm_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_server_resource_info_f(JpfAppObj *app_obj,
-	JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_server_resource_info_f(NmpAppObj *app_obj,
+	NmpSysMsg *msg)
 {
 	JpfQueryServerResourceInfo *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_server_resource_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_server_resource_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryServerResourceInfoRes *res_info;
@@ -8350,19 +8350,19 @@ jpf_mod_bss_query_server_resource_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_search_device_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_search_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfSearchPuRes res_info;
     search_array_t  *pu_list;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
 
     self = (JpfModBss*)app_obj;
@@ -8450,8 +8450,8 @@ jpf_get_searched_pus_list(JpfGetSearchedPu *req, search_pu_list *pu_list)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_searched_device_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_searched_device_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8459,7 +8459,7 @@ jpf_mod_bss_get_searched_device_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     JpfGetSearchedPu *req_info;
     JpfGetSearchedPuRes *res_info = NULL;
     search_pu_list  *pu_list = NULL;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0, size;
 
     self = (JpfModBss*)app_obj;
@@ -8511,15 +8511,15 @@ jpf_mod_bss_get_searched_device_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_cms_all_ips_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_cms_all_ips_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfQueryCmsAllIpRes *res_info = NULL;
     JpfHostIps ips;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0, size;
 
     self = (JpfModBss*)app_obj;
@@ -8562,16 +8562,16 @@ jpf_mod_bss_query_cms_all_ips_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_tw_auth_info_f(JpfAppObj *app_obj,
-	JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_tw_auth_info_f(NmpAppObj *app_obj,
+	NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfQueryTwAuthInfo *req_info;
     JpfQueryTwAuthInfoRes res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
     JpfResourcesCap res_cap;
 
@@ -8593,7 +8593,7 @@ jpf_mod_bss_query_tw_auth_info_f(JpfAppObj *app_obj,
     else
     {
         memset(&res_cap, 0, sizeof(res_cap));
-        jpf_mod_get_resource_cap(&res_cap);
+        nmp_mod_get_resource_cap(&res_cap);
         res_info.tw_auth_type = res_cap.modules_data[SYS_MODULE_TW];
         jpf_mods_container_put_guest(self->container, bss_base);
      }
@@ -8606,16 +8606,16 @@ jpf_mod_bss_query_tw_auth_info_f(JpfAppObj *app_obj,
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_alarm_link_auth_info_f(JpfAppObj *app_obj,
-	JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_alarm_link_auth_info_f(NmpAppObj *app_obj,
+	NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
     JpfGuestBase *bss_base;
     JpfQueryAlarmLinkAuthInfo *req_info;
     JpfQueryAlarmLinkAuthInfoRes res_info;
-    JpfMsgID msg_id;
+    NmpMsgID msg_id;
     gint ret = 0;
     JpfResourcesCap res_cap;
 
@@ -8637,7 +8637,7 @@ jpf_mod_bss_query_alarm_link_auth_info_f(JpfAppObj *app_obj,
     else
     {
         memset(&res_cap, 0, sizeof(res_cap));
-        jpf_mod_get_resource_cap(&res_cap);
+        nmp_mod_get_resource_cap(&res_cap);
         res_info.alarm_link_auth_type = res_cap.modules_data[SYS_MODULE_ALM];
         jpf_mods_container_put_guest(self->container, bss_base);
      }
@@ -8650,9 +8650,9 @@ jpf_mod_bss_query_alarm_link_auth_info_f(JpfAppObj *app_obj,
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_auto_add_pu_f(JpfAppObj *app_obj,
-	JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_auto_add_pu_f(NmpAppObj *app_obj,
+	NmpSysMsg *msg)
 {
     JpfAutoAddPu *req_info;
     JpfMsgErrCode res_info;
@@ -8673,7 +8673,7 @@ jpf_mod_bss_auto_add_pu_f(JpfAppObj *app_obj,
 
     jpf_get_mf_from_guid(req_info->puid, mf);
     memset(&res_cap, 0, sizeof(res_cap));
-    jpf_mod_get_resource_cap(&res_cap);
+    nmp_mod_get_resource_cap(&res_cap);
     if (res_cap.module_bits&MODULE_CMS_BIT)
     {
         ret = jpf_compare_manufacturer(res_cap.modules_data[SYS_MODULE_CMS], mf);
@@ -8686,7 +8686,7 @@ jpf_mod_bss_auto_add_pu_f(JpfAppObj *app_obj,
     else
         goto err_auto_add_pu;
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 err_auto_add_pu:
     MSG_SET_RESPONSE(msg);
     jpf_sysmsg_set_private_2(msg, &res_info, sizeof(res_info));
@@ -8698,8 +8698,8 @@ err_auto_add_pu:
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_auto_add_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_auto_add_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfBssRes *res_info;
@@ -8711,25 +8711,25 @@ jpf_mod_bss_auto_add_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_next_puno_f(JpfAppObj *app_obj,
-	JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_next_puno_f(NmpAppObj *app_obj,
+	NmpSysMsg *msg)
 {
 	JpfGetNextPuNo *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_next_puno_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_next_puno_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfGetNextPuNoRes *res_info;
@@ -8741,12 +8741,12 @@ jpf_mod_bss_get_next_puno_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_initiator_name_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8759,12 +8759,12 @@ jpf_mod_bss_get_initiator_name_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_initiator_name_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_initiator_name_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfGetInitNameRes *res_info;
@@ -8776,12 +8776,12 @@ jpf_mod_bss_get_initiator_name_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_initiator_name_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_initiator_name_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8794,12 +8794,12 @@ jpf_mod_bss_set_initiator_name_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_initiator_name_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_initiator_name_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfSetInitNameRes *res_info;
@@ -8811,12 +8811,12 @@ jpf_mod_bss_set_initiator_name_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_ipsan_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_ipsan_info_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8829,12 +8829,12 @@ jpf_mod_bss_get_ipsan_info_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_ipsan_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_ipsan_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfGetIpsanInfoRes *res_info;
@@ -8846,12 +8846,12 @@ jpf_mod_bss_get_ipsan_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_one_ipsan_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8864,12 +8864,12 @@ jpf_mod_bss_add_one_ipsan_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_one_ipsan_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfAddOneIpsanRes *res_info;
@@ -8881,12 +8881,12 @@ jpf_mod_bss_add_one_ipsan_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_delete_one_ipsan_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_delete_one_ipsan_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8899,12 +8899,12 @@ jpf_mod_bss_delete_one_ipsan_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_delete_one_ipsan_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_delete_one_ipsan_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfDeleteOneIpsanRes *res_info;
@@ -8916,12 +8916,12 @@ jpf_mod_bss_delete_one_ipsan_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_one_ipsan_detail_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_one_ipsan_detail_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfNetIO *io;
@@ -8934,12 +8934,12 @@ jpf_mod_bss_get_one_ipsan_detail_f(JpfAppObj *app_obj, JpfSysMsg *msg)
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward(self, msg, req_info->session);
+    return nmp_mod_bss_forward(self, msg, req_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_one_ipsan_detail_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_one_ipsan_detail_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfGetOneIpsanDetailRes *res_info;
@@ -8951,24 +8951,24 @@ jpf_mod_bss_get_one_ipsan_detail_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->session);
+    return nmp_mod_bss_backward(self, msg, res_info->session);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_log_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_log_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryLog *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_to_log(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_to_log(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_log_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_log_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfQueryLogRes *res_info;
@@ -8980,25 +8980,25 @@ jpf_mod_bss_query_log_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (RES_CODE(res_info) < 0)
 		SET_CODE(res_info, -RES_CODE(res_info));
 
-	return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+	return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
 #if ONLINE_RATE_FLAG
-JpfMsgFunRet
-jpf_mod_bss_query_area_dev_rate_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_area_dev_rate_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfQueryAreaDevRate *req_info;
 
     req_info = MSG_GET_DATA(msg);
     BUG_ON(!req_info);
 
-    return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+    return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_area_dev_rate_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_area_dev_rate_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAreaDevRateRes *res_info;
@@ -9010,12 +9010,12 @@ jpf_mod_bss_query_area_dev_rate_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 #endif
 
 
-static int jpf_mod_get_state_num(char *operate)
+static int nmp_mod_get_state_num(char *operate)
 {
 	char query_buf[STRING_LEN] = {0};
 	char buffer[STRING_LEN] = {0};
@@ -9049,8 +9049,8 @@ static int jpf_mod_get_state_num(char *operate)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_server_flag_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_server_flag_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfGetServerFlagRes res_info;
@@ -9059,7 +9059,7 @@ jpf_mod_bss_get_server_flag_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 	self = (JpfModBss*)app_obj;
 
-	res_info.server_flag = jpf_mod_get_state_num(POPEN_GET_MODULES_FLAG);
+	res_info.server_flag = nmp_mod_get_state_num(POPEN_GET_MODULES_FLAG);
 	if (res_info.server_flag < 0)
 	{
 		jpf_warning("<JpfModBss> get server_flag failed, server_flag = %d!",
@@ -9076,8 +9076,8 @@ jpf_mod_bss_get_server_flag_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_mds_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_mds_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
@@ -9114,15 +9114,15 @@ jpf_mod_bss_get_mds_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_mds_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_mds_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfSetMdsConfig *req_info;
 	JpfSetResult res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	memset(&res_info, 0, sizeof(res_info));
 
@@ -9164,14 +9164,14 @@ jpf_mod_bss_set_mds_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_mds_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_mds_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfGetMdsStateRes res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 
 	self = (JpfModBss*)app_obj;
@@ -9192,7 +9192,7 @@ jpf_mod_bss_get_mds_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 	}
 
 	MSG_SET_RESPONSE(msg);
-	res_info.state = jpf_mod_get_state_num(POPEN_GET_MDS_STATE);
+	res_info.state = nmp_mod_get_state_num(POPEN_GET_MDS_STATE);
 	if (res_info.state < 0)
 	{
 		ret = res_info.state;
@@ -9205,8 +9205,8 @@ jpf_mod_bss_get_mds_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_mss_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_mss_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
@@ -9241,15 +9241,15 @@ jpf_mod_bss_get_mss_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_mss_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_mss_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfSetMssConfig *req_info;
 	JpfSetResult res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	memset(&res_info, 0, sizeof(res_info));
 
@@ -9289,14 +9289,14 @@ jpf_mod_bss_set_mss_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_mss_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_mss_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfGetMssStateRes res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 
 	self = (JpfModBss*)app_obj;
@@ -9317,7 +9317,7 @@ jpf_mod_bss_get_mss_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 	}
 
 	MSG_SET_RESPONSE(msg);
-	res_info.state = jpf_mod_get_state_num(POPEN_GET_MSS_STATE);
+	res_info.state = nmp_mod_get_state_num(POPEN_GET_MSS_STATE);
 	if (res_info.state < 0)
 	{
 		ret = res_info.state;
@@ -9330,8 +9330,8 @@ jpf_mod_bss_get_mss_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_ivs_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_ivs_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
@@ -9366,15 +9366,15 @@ jpf_mod_bss_get_ivs_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_set_ivs_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_set_ivs_config_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfSetIvsConfig *req_info;
 	JpfSetResult res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 	memset(&res_info, 0, sizeof(res_info));
 
@@ -9414,14 +9414,14 @@ jpf_mod_bss_set_ivs_config_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_get_ivs_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_get_ivs_state_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModBss *self;
 	JpfNetIO *io;
 	JpfGuestBase *bss_base;
 	JpfGetIvsStateRes res_info;
-	JpfMsgID msg_id;
+	NmpMsgID msg_id;
 	gint ret = 0;
 
 	self = (JpfModBss*)app_obj;
@@ -9442,7 +9442,7 @@ jpf_mod_bss_get_ivs_state_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 	}
 
 	MSG_SET_RESPONSE(msg);
-	res_info.state = jpf_mod_get_state_num(POPEN_GET_IVS_STATE);
+	res_info.state = nmp_mod_get_state_num(POPEN_GET_IVS_STATE);
 	if (res_info.state < 0)
 	{
 		ret = res_info.state;
@@ -9460,8 +9460,8 @@ static void jpf_will_shutdown()
 	system("sleep 1 && shutdown -h now &");
 };
 
-static JpfMsgFunRet
-jpf_mod_bss_cms_shutdown_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+nmp_mod_bss_cms_shutdown_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfSetResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
@@ -9482,8 +9482,8 @@ static void jpf_will_reboot()
 	system("sleep 1 && reboot &");
 };
 
-static JpfMsgFunRet
-jpf_mod_bss_cms_reboot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+nmp_mod_bss_cms_reboot_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfSetResult res_info;
 	memset(&res_info, 0, sizeof(res_info));
@@ -9499,20 +9499,20 @@ jpf_mod_bss_cms_reboot_f(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_ams_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_ams_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfAddAms *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_add_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_add_ams_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -9524,24 +9524,24 @@ jpf_mod_bss_add_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ams_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ams_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyAms *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ams_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -9553,24 +9553,24 @@ jpf_mod_bss_modify_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_ams_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_ams_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfDelAms *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_del_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_del_ams_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -9582,24 +9582,24 @@ jpf_mod_bss_del_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ams_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ams_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryAms *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ams_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAmsRes *res_info;
@@ -9611,24 +9611,24 @@ jpf_mod_bss_query_ams_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ams_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ams_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfQueryAmsPu *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_query_ams_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_query_ams_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfQueryAmsPuRes *res_info;
@@ -9640,24 +9640,24 @@ jpf_mod_bss_query_ams_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ams_pu_f(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ams_pu_f(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	JpfModifyAmsPu *req_info;
 
 	req_info = MSG_GET_DATA(msg);
 	BUG_ON(!req_info);
 
-	return jpf_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
+	return nmp_mod_bss_forward_2(app_obj, msg, req_info->bss_usr);
 }
 
 
-JpfMsgFunRet
-jpf_mod_bss_modify_ams_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_bss_modify_ams_pu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     JpfModBss *self;
     JpfBssRes *res_info;
@@ -9669,169 +9669,169 @@ jpf_mod_bss_modify_ams_pu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     if (RES_CODE(res_info) < 0)
         SET_CODE(res_info, -RES_CODE(res_info));
 
-    return jpf_mod_bss_backward(self, msg, res_info->bss_usr);
+    return nmp_mod_bss_backward(self, msg, res_info->bss_usr);
 }
 
 
 
 void
-jpf_mod_bss_register_msg_handler(JpfModBss *self)
+nmp_mod_bss_register_msg_handler(JpfModBss *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_BSS_LOGIN,
-        jpf_mod_bss_login_f,
+        nmp_mod_bss_login_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_BSS_HEART,
-        jpf_mod_bss_heart_f,
+        nmp_mod_bss_heart_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_ADMIN,
-        jpf_mod_bss_add_admin_f,
+        nmp_mod_bss_add_admin_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_ADMIN,
-        jpf_mod_bss_modify_admin_f,
+        nmp_mod_bss_modify_admin_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_ADMIN,
-        jpf_mod_bss_del_admin_f,
+        nmp_mod_bss_del_admin_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_ADMIN,
-        jpf_mod_bss_query_admin_f,
-        jpf_mod_bss_query_admin_b,
+        nmp_mod_bss_query_admin_f,
+        nmp_mod_bss_query_admin_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_VALIDATA_ADMIN,
-        jpf_mod_bss_validata_admin_f,
+        nmp_mod_bss_validata_admin_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_USER_GROUP,
-        jpf_mod_bss_add_user_group_f,
+        nmp_mod_bss_add_user_group_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_VALIDATA_USER_GROUP,
-        jpf_mod_bss_validata_user_group_f,
+        nmp_mod_bss_validata_user_group_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_USER_GROUP,
-        jpf_mod_bss_query_user_group_f,
-        jpf_mod_bss_query_user_group_b,
+        nmp_mod_bss_query_user_group_f,
+        nmp_mod_bss_query_user_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_USER_GROUP,
-        jpf_mod_bss_modify_user_group_f,
+        nmp_mod_bss_modify_user_group_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_USER_GROUP,
-        jpf_mod_bss_del_user_group_f,
+        nmp_mod_bss_del_user_group_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_USER,
-        jpf_mod_bss_add_user_f,
+        nmp_mod_bss_add_user_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_VALIDATA_USER,
-        jpf_mod_bss_validata_user_f,
+        nmp_mod_bss_validata_user_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_USER,
-        jpf_mod_bss_query_user_f,
-        jpf_mod_bss_query_user_b,
+        nmp_mod_bss_query_user_f,
+        nmp_mod_bss_query_user_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_USER,
-        jpf_mod_bss_modify_user_f,
+        nmp_mod_bss_modify_user_f,
         NULL,
         0
     );
 
-   jpf_app_mod_register_msg(
+   nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_USER,
-        jpf_mod_bss_del_user_f,
+        nmp_mod_bss_del_user_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_DOMAIN,
-        jpf_mod_bss_query_domain_f,
-        jpf_mod_bss_query_domain_b,
+        nmp_mod_bss_query_domain_f,
+        nmp_mod_bss_query_domain_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_DOMAIN,
-        jpf_mod_bss_modify_domain_f,
+        nmp_mod_bss_modify_domain_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_DOMAIN,
         NULL,
@@ -9839,7 +9839,7 @@ jpf_mod_bss_register_msg_handler(JpfModBss *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_DOMAIN,
         NULL,
@@ -9847,1399 +9847,1399 @@ jpf_mod_bss_register_msg_handler(JpfModBss *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_AREA,
-        jpf_mod_bss_query_area_f,
-        jpf_mod_bss_query_area_b,
+        nmp_mod_bss_query_area_f,
+        nmp_mod_bss_query_area_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_MODIFY_AREA,
-        jpf_mod_bss_add_modify_area_f,
+        nmp_mod_bss_add_modify_area_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_AREA,
-        jpf_mod_bss_del_area_f,
+        nmp_mod_bss_del_area_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_PU,
-        jpf_mod_bss_add_pu_f,
-        jpf_mod_bss_add_pu_b,
+        nmp_mod_bss_add_pu_f,
+        nmp_mod_bss_add_pu_b,
         0
     );
 
-    /*jpf_app_mod_register_msg(
+    /*nmp_app_mod_register_msg(
         super_self,
         MESSAGE_VALIDATA_PU,
-        jpf_mod_bss_validata_pu_f,
+        nmp_mod_bss_validata_pu_f,
         NULL,
         0
     );*/
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_PU,
-        jpf_mod_bss_query_pu_f,
-        jpf_mod_bss_query_pu_b,
+        nmp_mod_bss_query_pu_f,
+        nmp_mod_bss_query_pu_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_PU,
-        jpf_mod_bss_modify_pu_f,
+        nmp_mod_bss_modify_pu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_PU,
-        jpf_mod_bss_del_pu_f,
+        nmp_mod_bss_del_pu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_GU,
-        jpf_mod_bss_add_gu_f,
-        jpf_mod_bss_add_gu_b,
+        nmp_mod_bss_add_gu_f,
+        nmp_mod_bss_add_gu_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GU,
-        jpf_mod_bss_query_gu_f,
-        jpf_mod_bss_query_gu_b,
+        nmp_mod_bss_query_gu_f,
+        nmp_mod_bss_query_gu_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_GU,
-        jpf_mod_bss_modify_gu_f,
+        nmp_mod_bss_modify_gu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_GU,
-        jpf_mod_bss_del_gu_f,
+        nmp_mod_bss_del_gu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_MDS,
-        jpf_mod_bss_add_mds_f,
+        nmp_mod_bss_add_mds_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_MDS,
-        jpf_mod_bss_query_mds_f,
-        jpf_mod_bss_query_mds_b,
+        nmp_mod_bss_query_mds_f,
+        nmp_mod_bss_query_mds_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_MDS,
-        jpf_mod_bss_modify_mds_f,
+        nmp_mod_bss_modify_mds_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_MDS,
-        jpf_mod_bss_del_mds_f,
+        nmp_mod_bss_del_mds_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_MDS_IP,
-        jpf_mod_bss_add_mds_ip_f,
+        nmp_mod_bss_add_mds_ip_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_MDS_IP,
-        jpf_mod_bss_query_mds_ip_f,
-        jpf_mod_bss_query_mds_ip_b,
+        nmp_mod_bss_query_mds_ip_f,
+        nmp_mod_bss_query_mds_ip_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_MDS_IP,
-        jpf_mod_bss_del_mds_ip_f,
+        nmp_mod_bss_del_mds_ip_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_MSS,
-        jpf_mod_bss_add_mss_f,
+        nmp_mod_bss_add_mss_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_MSS,
-        jpf_mod_bss_query_mss_f,
-        jpf_mod_bss_query_mss_b,
+        nmp_mod_bss_query_mss_f,
+        nmp_mod_bss_query_mss_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_MSS,
-        jpf_mod_bss_modify_mss_f,
+        nmp_mod_bss_modify_mss_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_MSS,
-        jpf_mod_bss_del_mss_f,
+        nmp_mod_bss_del_mss_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_RECORD_POLICY,
-        jpf_mod_bss_query_record_policy_f,
-        jpf_mod_bss_query_record_policy_b,
+        nmp_mod_bss_query_record_policy_f,
+        nmp_mod_bss_query_record_policy_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_RECORD_POLICY_CONFIG,
-        jpf_mod_bss_record_policy_config_f,
+        nmp_mod_bss_record_policy_config_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_MANUFACTURER,
-        jpf_mod_bss_query_manufacturer_f,
-        jpf_mod_bss_query_manufacturer_b,
+        nmp_mod_bss_query_manufacturer_f,
+        nmp_mod_bss_query_manufacturer_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_MODIFY_MANUFACTURER,
-        jpf_mod_bss_add_modify_manufacturer_f,
+        nmp_mod_bss_add_modify_manufacturer_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_MANUFACTURER,
-        jpf_mod_bss_del_manufacturer_f,
+        nmp_mod_bss_del_manufacturer_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_GU_TO_USER,
-        jpf_mod_bss_add_gu_to_user_f,
+        nmp_mod_bss_add_gu_to_user_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_USER_OWN_GU,
-        jpf_mod_bss_query_user_own_gu_f,
-        jpf_mod_bss_query_user_own_gu_b,
+        nmp_mod_bss_query_user_own_gu_f,
+        nmp_mod_bss_query_user_own_gu_b,
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_TW_TO_USER,
-        jpf_mod_bss_add_tw_to_user_f,
-        jpf_mod_bss_add_tw_to_user_b,
+        nmp_mod_bss_add_tw_to_user_f,
+        nmp_mod_bss_add_tw_to_user_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_USER_OWN_TW,
-        jpf_mod_bss_query_user_own_tw_f,
-        jpf_mod_bss_query_user_own_tw_b,
+        nmp_mod_bss_query_user_own_tw_f,
+        nmp_mod_bss_query_user_own_tw_b,
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_TOUR_TO_USER,
-        jpf_mod_bss_add_tour_to_user_f,
-        jpf_mod_bss_add_tour_to_user_b,
+        nmp_mod_bss_add_tour_to_user_f,
+        nmp_mod_bss_add_tour_to_user_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_USER_OWN_TOUR,
-        jpf_mod_bss_query_user_own_tour_f,
-        jpf_mod_bss_query_user_own_tour_b,
+        nmp_mod_bss_query_user_own_tour_f,
+        nmp_mod_bss_query_user_own_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_TIME,
-        jpf_mod_bss_query_system_time_f,
+        nmp_mod_bss_query_system_time_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SET_TIME,
-        jpf_mod_bss_set_system_time_f,
+        nmp_mod_bss_set_system_time_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DATABASE_BACKUP,
-        jpf_mod_bss_database_backup_f,
-        jpf_mod_bss_database_backup_b,
+        nmp_mod_bss_database_backup_f,
+        nmp_mod_bss_database_backup_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DATABASE_IMPORT,
-        jpf_mod_bss_database_import_f,
-        jpf_mod_bss_database_import_b,
+        nmp_mod_bss_database_import_f,
+        nmp_mod_bss_database_import_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_NETINTERFACE_CONFIG,
-        jpf_mod_bss_get_net_interface_config_f,
+        nmp_mod_bss_get_net_interface_config_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_NETWORK_CONFIG,
-        jpf_mod_bss_get_network_config_f,
+        nmp_mod_bss_get_network_config_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SET_NETWORK_CONFIG,
-        jpf_mod_bss_set_network_config_f,
+        nmp_mod_bss_set_network_config_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_HD_GROUP,
-        jpf_mod_bss_add_hd_group_f,
-        jpf_mod_bss_add_hd_group_b,
+        nmp_mod_bss_add_hd_group_f,
+        nmp_mod_bss_add_hd_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_HD,
-        jpf_mod_bss_add_hd_f,
-        jpf_mod_bss_add_hd_b,
+        nmp_mod_bss_add_hd_f,
+        nmp_mod_bss_add_hd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_HD,
-        jpf_mod_bss_del_hd_f,
-        jpf_mod_bss_del_hd_b,
+        nmp_mod_bss_del_hd_f,
+        nmp_mod_bss_del_hd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_REBOOT_MSS,
-        jpf_mod_bss_reboot_mss_f,
-        jpf_mod_bss_reboot_mss_b,
+        nmp_mod_bss_reboot_mss_f,
+        nmp_mod_bss_reboot_mss_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_ALL_HD_GROUP,
-        jpf_mod_bss_query_all_hd_group_f,
-        jpf_mod_bss_query_all_hd_group_b,
+        nmp_mod_bss_query_all_hd_group_f,
+        nmp_mod_bss_query_all_hd_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_HD_GROUP_INFO,
-        jpf_mod_bss_query_hd_group_info_f,
-        jpf_mod_bss_query_hd_group_info_b,
+        nmp_mod_bss_query_hd_group_info_f,
+        nmp_mod_bss_query_hd_group_info_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_ALL_HD,
-        jpf_mod_bss_query_all_hd_f,
-        jpf_mod_bss_query_all_hd_b,
+        nmp_mod_bss_query_all_hd_f,
+        nmp_mod_bss_query_all_hd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_HD_GROUP,
-        jpf_mod_bss_del_hd_group_f,
-        jpf_mod_bss_del_hd_group_b,
+        nmp_mod_bss_del_hd_group_f,
+        nmp_mod_bss_del_hd_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_HD_FORMAT_PROGRESS,
-        jpf_mod_bss_get_hd_format_progress_f,
-        jpf_mod_bss_get_hd_format_progress_b,
+        nmp_mod_bss_get_hd_format_progress_f,
+        nmp_mod_bss_get_hd_format_progress_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GU_RECORD_STATUS,
-        jpf_mod_bss_query_gu_record_status_f,
-        jpf_mod_bss_query_gu_record_status_b,
+        nmp_mod_bss_query_gu_record_status_f,
+        nmp_mod_bss_query_gu_record_status_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_DEFENCE_AREA,
-        jpf_mod_bss_add_defence_area_f,
+        nmp_mod_bss_add_defence_area_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_DEFENCE_AREA,
-        jpf_mod_bss_modify_defence_area_f,
+        nmp_mod_bss_modify_defence_area_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_DEFENCE_AREA,
-        jpf_mod_bss_del_defence_area_f,
+        nmp_mod_bss_del_defence_area_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_DEFENCE_AREA,
-        jpf_mod_bss_query_defence_area_f,
-        jpf_mod_bss_query_defence_area_b,
+        nmp_mod_bss_query_defence_area_f,
+        nmp_mod_bss_query_defence_area_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_DEFENCE_MAP,
-        jpf_mod_bss_add_defence_map_f,
+        nmp_mod_bss_add_defence_map_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_DEFENCE_MAP,
-        jpf_mod_bss_del_defence_map_f,
+        nmp_mod_bss_del_defence_map_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_DEFENCE_MAP,
-        jpf_mod_bss_query_defence_map_f,
-        jpf_mod_bss_query_defence_map_b,
+        nmp_mod_bss_query_defence_map_f,
+        nmp_mod_bss_query_defence_map_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_DEFENCE_GU,
-        jpf_mod_bss_add_defence_gu_f,
+        nmp_mod_bss_add_defence_gu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_DEFENCE_GU,
-        jpf_mod_bss_modify_defence_gu_f,
+        nmp_mod_bss_modify_defence_gu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_DEFENCE_GU,
-        jpf_mod_bss_del_defence_gu_f,
+        nmp_mod_bss_del_defence_gu_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_DEFENCE_GU,
-        jpf_mod_bss_query_defence_gu_f,
-        jpf_mod_bss_query_defence_gu_b,
+        nmp_mod_bss_query_defence_gu_f,
+        nmp_mod_bss_query_defence_gu_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SET_MAP_HREF,
-        jpf_mod_bss_set_map_href_f,
+        nmp_mod_bss_set_map_href_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_MAP_HREF,
-        jpf_mod_bss_modify_map_href_f,
+        nmp_mod_bss_modify_map_href_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_MAP_HREF,
-        jpf_mod_bss_del_map_href_f,
+        nmp_mod_bss_del_map_href_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_MAP_HREF,
-        jpf_mod_bss_query_map_href_f,
-        jpf_mod_bss_query_map_href_b,
+        nmp_mod_bss_query_map_href_f,
+        nmp_mod_bss_query_map_href_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_PLATFORM_UPGRADE,
-        jpf_mod_bss_platform_upgrade_f,
+        nmp_mod_bss_platform_upgrade_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_ALARM,
-        jpf_mod_bss_query_alarm_f,
-        jpf_mod_bss_query_alarm_b,
+        nmp_mod_bss_query_alarm_f,
+        nmp_mod_bss_query_alarm_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_ALARM,
-        jpf_mod_bss_del_alarm_f,
+        nmp_mod_bss_del_alarm_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_DEL_ALARM_POLICY,
-        jpf_mod_bss_query_del_alarm_policy_f,
+        nmp_mod_bss_query_del_alarm_policy_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SET_DEL_ALARM_POLICY,
-        jpf_mod_bss_set_del_alarm_policy_f,
+        nmp_mod_bss_set_del_alarm_policy_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_TW,
-        jpf_mod_bss_add_tw_f,
+        nmp_mod_bss_add_tw_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_TW,
-        jpf_mod_bss_modify_tw_f,
+        nmp_mod_bss_modify_tw_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_TW,
-        jpf_mod_bss_del_tw_f,
+        nmp_mod_bss_del_tw_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_TW,
-        jpf_mod_bss_query_tw_f,
-        jpf_mod_bss_query_tw_b,
+        nmp_mod_bss_query_tw_f,
+        nmp_mod_bss_query_tw_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_SCREEN,
-        jpf_mod_bss_add_screen_f,
+        nmp_mod_bss_add_screen_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_SCREEN,
-        jpf_mod_bss_modify_screen_f,
+        nmp_mod_bss_modify_screen_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_SCREEN,
-        jpf_mod_bss_del_screen_f,
+        nmp_mod_bss_del_screen_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_SCREEN,
-        jpf_mod_bss_query_screen_f,
-        jpf_mod_bss_query_screen_b,
+        nmp_mod_bss_query_screen_f,
+        nmp_mod_bss_query_screen_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_SCR_DIV,
-        jpf_mod_bss_query_screen_division_f,
+        nmp_mod_bss_query_screen_division_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_TOUR,
-        jpf_mod_bss_add_tour_f,
-        jpf_mod_bss_add_tour_b,
+        nmp_mod_bss_add_tour_f,
+        nmp_mod_bss_add_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_TOUR,
-        jpf_mod_bss_modify_tour_f,
-        jpf_mod_bss_modify_tour_b,
+        nmp_mod_bss_modify_tour_f,
+        nmp_mod_bss_modify_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_TOUR,
-        jpf_mod_bss_del_tour_f,
-        jpf_mod_bss_del_tour_b,
+        nmp_mod_bss_del_tour_f,
+        nmp_mod_bss_del_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_TOUR,
-        jpf_mod_bss_query_tour_f,
-        jpf_mod_bss_query_tour_b,
+        nmp_mod_bss_query_tour_f,
+        nmp_mod_bss_query_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_TOUR_STEP,
-        jpf_mod_bss_add_tour_step_f,
-        jpf_mod_bss_add_tour_step_b,
+        nmp_mod_bss_add_tour_step_f,
+        nmp_mod_bss_add_tour_step_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_TOUR_STEP,
-        jpf_mod_bss_query_tour_step_f,
-        jpf_mod_bss_query_tour_step_b,
+        nmp_mod_bss_query_tour_step_f,
+        nmp_mod_bss_query_tour_step_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_GROUP,
-        jpf_mod_bss_add_group_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_add_group_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_GROUP,
-        jpf_mod_bss_modify_group_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_group_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_GROUP,
-        jpf_mod_bss_del_group_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_group_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GROUP,
-        jpf_mod_bss_query_group_f,
-        jpf_mod_bss_query_group_b,
+        nmp_mod_bss_query_group_f,
+        nmp_mod_bss_query_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_GROUP_STEP,
-        jpf_mod_bss_add_group_step_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_add_group_step_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_GROUP_STEP,
-        jpf_mod_bss_modify_group_step_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_group_step_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_GROUP_STEP,
-        jpf_mod_bss_del_group_step_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_group_step_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GROUP_STEP,
-        jpf_mod_bss_query_group_step_f,
-        jpf_mod_bss_query_group_b,
+        nmp_mod_bss_query_group_step_f,
+        nmp_mod_bss_query_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_CONFIG_GROUP_STEP,
-        jpf_mod_bss_config_group_step_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_config_group_step_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_GROUP_STEP_INFO,
-        jpf_mod_bss_modify_group_step_info_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_group_step_info_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_GROUP_STEP_INFO,
-        jpf_mod_bss_del_group_step_info_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_group_step_info_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GROUP_STEP_INFO,
-        jpf_mod_bss_query_group_step_info_f,
-        jpf_mod_bss_query_group_step_info_b,
+        nmp_mod_bss_query_group_step_info_f,
+        nmp_mod_bss_query_group_step_info_b,
         0
     );
 
-  	jpf_app_mod_register_msg(
+  	nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_GROUP_STEP_DIV,
-        jpf_mod_bss_query_group_step_div_f,
-        jpf_mod_bss_query_group_step_div_b,
+        nmp_mod_bss_query_group_step_div_f,
+        nmp_mod_bss_query_group_step_div_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_TIME_POLICY_CONFIG,
-        jpf_mod_bss_link_time_policy_config_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_time_policy_config_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_TIME_POLICY,
-        jpf_mod_bss_modify_link_time_policy_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_time_policy_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_TIME_POLICY,
-        jpf_mod_bss_query_link_time_policy_f,
-        jpf_mod_bss_query_link_time_policy_b,
+        nmp_mod_bss_query_link_time_policy_f,
+        nmp_mod_bss_query_link_time_policy_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_TIME_POLICY,
-        jpf_mod_bss_del_link_time_policy_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_time_policy_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_RECORD_CONFIG,
-        jpf_mod_bss_link_record_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_record_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_RECORD,
-        jpf_mod_bss_modify_link_record_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_record_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_RECORD,
-        jpf_mod_bss_query_link_record_f,
-        jpf_mod_bss_query_link_record_b,
+        nmp_mod_bss_query_link_record_f,
+        nmp_mod_bss_query_link_record_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_RECORD,
-        jpf_mod_bss_del_link_record_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_record_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_IO_CONFIG,
-        jpf_mod_bss_link_IO_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_IO_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_IO,
-        jpf_mod_bss_modify_link_IO_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_IO_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_IO,
-        jpf_mod_bss_query_link_IO_f,
-        jpf_mod_bss_query_link_IO_b,
+        nmp_mod_bss_query_link_IO_f,
+        nmp_mod_bss_query_link_IO_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_IO,
-        jpf_mod_bss_del_link_IO_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_IO_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-jpf_app_mod_register_msg(
+nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_SNAPSHOT_CONFIG,
-        jpf_mod_bss_link_snapshot_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_snapshot_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_SNAPSHOT,
-        jpf_mod_bss_modify_link_snapshot_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_snapshot_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_SNAPSHOT,
-        jpf_mod_bss_query_link_snapshot_f,
-        jpf_mod_bss_query_link_snapshot_b,
+        nmp_mod_bss_query_link_snapshot_f,
+        nmp_mod_bss_query_link_snapshot_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_SNAPSHOT,
-        jpf_mod_bss_del_link_snapshot_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_snapshot_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_PRESET_CONFIG,
-        jpf_mod_bss_link_preset_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_preset_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_PRESET,
-        jpf_mod_bss_modify_link_preset_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_preset_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_PRESET,
-        jpf_mod_bss_query_link_preset_f,
-        jpf_mod_bss_query_link_preset_b,
+        nmp_mod_bss_query_link_preset_f,
+        nmp_mod_bss_query_link_preset_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_PRESET,
-        jpf_mod_bss_del_link_preset_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_preset_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_STEP_CONFIG,
-        jpf_mod_bss_link_step_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_step_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_STEP,
-        jpf_mod_bss_modify_link_step_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_step_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_STEP,
-        jpf_mod_bss_query_link_step_f,
-        jpf_mod_bss_query_link_step_b,
+        nmp_mod_bss_query_link_step_f,
+        nmp_mod_bss_query_link_step_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_STEP,
-        jpf_mod_bss_del_link_step_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_step_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_TOUR_CONFIG,
-        jpf_mod_bss_link_tour_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_tour_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_TOUR,
-        jpf_mod_bss_modify_link_tour_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_tour_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_TOUR,
-        jpf_mod_bss_query_link_tour_f,
-        jpf_mod_bss_query_link_tour_b,
+        nmp_mod_bss_query_link_tour_f,
+        nmp_mod_bss_query_link_tour_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_TOUR,
-        jpf_mod_bss_del_link_tour_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_tour_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_GROUP_CONFIG,
-        jpf_mod_bss_link_group_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_group_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_GROUP,
-        jpf_mod_bss_modify_link_group_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_group_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_GROUP,
-        jpf_mod_bss_query_link_group_f,
-        jpf_mod_bss_query_link_group_b,
+        nmp_mod_bss_query_link_group_f,
+        nmp_mod_bss_query_link_group_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_GROUP,
-        jpf_mod_bss_del_link_group_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_group_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-   jpf_app_mod_register_msg(
+   nmp_app_mod_register_msg(
         super_self,
         MESSAGE_LINK_MAP_CONFIG,
-        jpf_mod_bss_link_map_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_link_map_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_LINK_MAP,
-        jpf_mod_bss_modify_link_map_f,
-        jpf_mod_bss_general_modify_b,
+        nmp_mod_bss_modify_link_map_f,
+        nmp_mod_bss_general_modify_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LINK_MAP,
-        jpf_mod_bss_query_link_map_f,
-        jpf_mod_bss_query_link_map_b,
+        nmp_mod_bss_query_link_map_f,
+        nmp_mod_bss_query_link_map_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_LINK_MAP,
-        jpf_mod_bss_del_link_map_f,
-        jpf_mod_bss_general_cmd_b,
+        nmp_mod_bss_del_link_map_f,
+        nmp_mod_bss_general_cmd_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_SERVER_RESOURCE,
-        jpf_mod_bss_query_server_resource_info_f,
-        jpf_mod_bss_query_server_resource_info_b,
+        nmp_mod_bss_query_server_resource_info_f,
+        nmp_mod_bss_query_server_resource_info_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_TW_AUTH_INFO,
-        jpf_mod_bss_query_tw_auth_info_f,
+        nmp_mod_bss_query_tw_auth_info_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_ALARM_LINK_AUTH_INFO,
-        jpf_mod_bss_query_alarm_link_auth_info_f,
+        nmp_mod_bss_query_alarm_link_auth_info_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_CMS_ALL_IP,
-        jpf_mod_bss_query_cms_all_ips_f,
+        nmp_mod_bss_query_cms_all_ips_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SEARCH_PU,
-        jpf_mod_bss_search_device_f,
+        nmp_mod_bss_search_device_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_SEARCH_PUS,
-        jpf_mod_bss_get_searched_device_f,
+        nmp_mod_bss_get_searched_device_f,
         NULL,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_AUTO_ADD_PU,
-        jpf_mod_bss_auto_add_pu_f,
-        jpf_mod_bss_auto_add_pu_b,
+        nmp_mod_bss_auto_add_pu_f,
+        nmp_mod_bss_auto_add_pu_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_NEXT_PUNO,
-        jpf_mod_bss_get_next_puno_f,
-        jpf_mod_bss_get_next_puno_b,
+        nmp_mod_bss_get_next_puno_f,
+        nmp_mod_bss_get_next_puno_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_INIT_NAME,
-        jpf_mod_bss_get_initiator_name_f,
-        jpf_mod_bss_get_initiator_name_b,
+        nmp_mod_bss_get_initiator_name_f,
+        nmp_mod_bss_get_initiator_name_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_SET_INIT_NAME,
-        jpf_mod_bss_set_initiator_name_f,
-        jpf_mod_bss_set_initiator_name_b,
+        nmp_mod_bss_set_initiator_name_f,
+        nmp_mod_bss_set_initiator_name_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_IPSAN_INFO,
-        jpf_mod_bss_get_ipsan_info_f,
-        jpf_mod_bss_get_ipsan_info_b,
+        nmp_mod_bss_get_ipsan_info_f,
+        nmp_mod_bss_get_ipsan_info_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_ONE_IPSAN,
-        jpf_mod_bss_add_one_ipsan_f,
-        jpf_mod_bss_add_one_ipsan_b,
+        nmp_mod_bss_add_one_ipsan_f,
+        nmp_mod_bss_add_one_ipsan_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DELETE_ONE_IPSAN,
-        jpf_mod_bss_delete_one_ipsan_f,
-        jpf_mod_bss_delete_one_ipsan_b,
+        nmp_mod_bss_delete_one_ipsan_f,
+        nmp_mod_bss_delete_one_ipsan_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_ONE_IPSAN,
-        jpf_mod_bss_get_one_ipsan_detail_f,
-        jpf_mod_bss_get_one_ipsan_detail_b,
+        nmp_mod_bss_get_one_ipsan_detail_f,
+        nmp_mod_bss_get_one_ipsan_detail_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_LOG,
-        jpf_mod_bss_query_log_f,
-        jpf_mod_bss_query_log_b,
+        nmp_mod_bss_query_log_f,
+        nmp_mod_bss_query_log_b,
         0
     );
 
 #if ONLINE_RATE_FLAG
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_AREA_DEV_ONLINE_RATE,
-        jpf_mod_bss_query_area_dev_rate_f,
-        jpf_mod_bss_query_area_dev_rate_b,
+        nmp_mod_bss_query_area_dev_rate_f,
+        nmp_mod_bss_query_area_dev_rate_b,
         0
     );
 #endif
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_VALIDATA_GU_MAP,
-        jpf_mod_bss_validate_gu_map_f,
-        jpf_mod_bss_validate_gu_map_b,
+        nmp_mod_bss_validate_gu_map_f,
+        nmp_mod_bss_validate_gu_map_b,
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
         super_self,
         MESSAGE_ADD_IVS,
-        jpf_mod_bss_add_ivs_f,
-        jpf_mod_bss_add_ivs_b,
+        nmp_mod_bss_add_ivs_f,
+        nmp_mod_bss_add_ivs_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MODIFY_IVS,
-        jpf_mod_bss_modify_ivs_f,
-        jpf_mod_bss_modify_ivs_b,
+        nmp_mod_bss_modify_ivs_f,
+        nmp_mod_bss_modify_ivs_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEL_IVS,
-        jpf_mod_bss_del_ivs_f,
-        jpf_mod_bss_del_ivs_b,
+        nmp_mod_bss_del_ivs_f,
+        nmp_mod_bss_del_ivs_b,
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_QUERY_IVS,
-        jpf_mod_bss_query_ivs_f,
-        jpf_mod_bss_query_ivs_b,
+        nmp_mod_bss_query_ivs_f,
+        nmp_mod_bss_query_ivs_b,
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_SERVER_FLAG,
-		jpf_mod_bss_get_server_flag_f,
+		nmp_mod_bss_get_server_flag_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_MDS_CONFIG,
-		jpf_mod_bss_get_mds_config_f,
+		nmp_mod_bss_get_mds_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_MDS_CONFIG,
-		jpf_mod_bss_set_mds_config_f,
+		nmp_mod_bss_set_mds_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_MDS_STATE,
-		jpf_mod_bss_get_mds_state_f,
+		nmp_mod_bss_get_mds_state_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_MSS_CONFIG,
-		jpf_mod_bss_get_mss_config_f,
+		nmp_mod_bss_get_mss_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_MSS_CONFIG,
-		jpf_mod_bss_set_mss_config_f,
+		nmp_mod_bss_set_mss_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_MSS_STATE,
-		jpf_mod_bss_get_mss_state_f,
+		nmp_mod_bss_get_mss_state_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_IVS_CONFIG,
-		jpf_mod_bss_get_ivs_config_f,
+		nmp_mod_bss_get_ivs_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_IVS_CONFIG,
-		jpf_mod_bss_set_ivs_config_f,
+		nmp_mod_bss_set_ivs_config_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_GET_IVS_STATE,
-		jpf_mod_bss_get_ivs_state_f,
+		nmp_mod_bss_get_ivs_state_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_CMS_SHUTDOWN,
-		jpf_mod_bss_cms_shutdown_f,
+		nmp_mod_bss_cms_shutdown_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_CMS_REBOOT,
-		jpf_mod_bss_cms_reboot_f,
+		nmp_mod_bss_cms_reboot_f,
 		NULL,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_ADD_AMS,
-		jpf_mod_bss_add_ams_f,
-		jpf_mod_bss_add_ams_b,
+		nmp_mod_bss_add_ams_f,
+		nmp_mod_bss_add_ams_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_MODIFY_AMS,
-		jpf_mod_bss_modify_ams_f,
-		jpf_mod_bss_modify_ams_b,
+		nmp_mod_bss_modify_ams_f,
+		nmp_mod_bss_modify_ams_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_DEL_AMS,
-		jpf_mod_bss_del_ams_f,
-		jpf_mod_bss_del_ams_b,
+		nmp_mod_bss_del_ams_f,
+		nmp_mod_bss_del_ams_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_AMS,
-		jpf_mod_bss_query_ams_f,
-		jpf_mod_bss_query_ams_b,
+		nmp_mod_bss_query_ams_f,
+		nmp_mod_bss_query_ams_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_AMS_PU,
-		jpf_mod_bss_query_ams_pu_f,
-		jpf_mod_bss_query_ams_pu_b,
+		nmp_mod_bss_query_ams_pu_f,
+		nmp_mod_bss_query_ams_pu_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_MODIFY_AMS_PU,
-		jpf_mod_bss_modify_ams_pu_f,
-		jpf_mod_bss_modify_ams_pu_b,
+		nmp_mod_bss_modify_ams_pu_f,
+		nmp_mod_bss_modify_ams_pu_b,
 		0
 	);
 }

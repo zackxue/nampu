@@ -7,13 +7,13 @@
 
 G_BEGIN_DECLS
 
-#define JPF_TYPE_APPCORE	(jpf_app_core_get_type())
-#define JPF_IS_APPCORE(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_APPCORE))
-#define JPF_IS_APPCORE_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_APPCORE))
-#define JPF_APPCORE(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_APPCORE, JpfAppCore))
-#define JPF_APPCORE_CLASS(c) (G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_APPCORE, JpfAppCoreClass))
-#define JPF_APPCORE_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_APPCORE, JpfAppCoreClass))
+#define NMP_TYPE_APPCORE	(nmp_app_core_get_type())
+#define NMP_IS_APPCORE(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_APPCORE))
+#define NMP_IS_APPCORE_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_APPCORE))
+#define NMP_APPCORE(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_APPCORE, JpfAppCore))
+#define NMP_APPCORE_CLASS(c) (G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_APPCORE, JpfAppCoreClass))
+#define NMP_APPCORE_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_APPCORE, JpfAppCoreClass))
 
 typedef void *JpfAfxInst;
 
@@ -22,7 +22,7 @@ typedef struct _JpfAppCoreClass JpfAppCoreClass;
 
 struct _JpfAppCore
 {
-	JpfAppObj parent_object;
+	NmpAppObj parent_object;
 
 	JpfMsgBus *p_bus;
 };
@@ -30,18 +30,18 @@ struct _JpfAppCore
 
 struct _JpfAppCoreClass
 {
-	JpfAppObjClass parent_class;
+	NmpAppObjClass parent_class;
 };
 
 
-GType jpf_app_core_get_type( void );
+GType nmp_app_core_get_type( void );
 
 void jpf_afx_core_init( void );
-void jpf_afx_mod_insert(JpfBusSlotPos slot, JpfAppMod *mod);
+void jpf_afx_mod_insert(JpfBusSlotPos slot, NmpAppMod *mod);
 void jpf_afx_bus_bypass( void );
 
 JpfAfxInst jpf_afx_inst_init( void );
-gint jpf_afx_inst_insert_mod(JpfAfxInst inst, JpfBusSlotPos slot, JpfAppMod *mod);
+gint jpf_afx_inst_insert_mod(JpfAfxInst inst, JpfBusSlotPos slot, NmpAppMod *mod);
 void jpf_afx_inst_bus_bypass(JpfAfxInst inst);
 
 G_BEGIN_DECLS

@@ -82,7 +82,7 @@ typedef enum
 }JpfDbsPuType;
 
 
-#define JPF_COPY_VAL(dst_p, src_p, dst_len) do {	\
+#define NMP_COPY_VAL(dst_p, src_p, dst_len) do {	\
 	dst_p[dst_len - 1] = '\0';	\
 	strncpy(dst_p, src_p, dst_len - 1);	\
 } while (0)
@@ -110,7 +110,7 @@ jpf_get_current_zone_time(gchar *sys_time);
 
 gint jpf_check_string(gchar *string, gint size);
 
-const gchar *jpf_app_core_get_domain();
+const gchar *nmp_app_core_get_domain();
 
 gchar *jpf_get_local_domain_id();
 

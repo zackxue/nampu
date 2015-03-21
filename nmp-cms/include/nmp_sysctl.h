@@ -88,7 +88,7 @@ void jpf_set_sys_parm_str(gint id, gchar *value);
 gchar* jpf_get_sys_parm_str(gint id);
 void jpf_sysctl_init( void );
 gint jpf_get_platform_upgrade_script(gchar script_path[]);
-extern JpfSysCtl	jpf_cms_params;
+extern JpfSysCtl	nmp_cms_params;
 
 void jpf_get_mds_parm(JpfMdsCtl *gc);
 void jpf_set_mds_parm(JpfMdsCtl gc);

@@ -7,11 +7,11 @@
 //static guint msg_seq_generator = 0;
 
 gint
-jpf_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
+nmp_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
 {
     JpfMsgUserInfo req_info;
     JpfMsgUserInfoRes *res_info;
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
     gint ret;
 
     memset(&req_info, 0, sizeof(req_info));
@@ -23,7 +23,7 @@ jpf_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
     	return -E_NOMEM;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    ret = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+    ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
         jpf_warning(
@@ -54,7 +54,7 @@ jpf_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
     	return ret;
     }
 
-    jpf_mod_cu_add_user_info(user, res_info->passwd,
+    nmp_mod_cu_add_user_info(user, res_info->passwd,
     	res_info->group_id);
     jpf_sysmsg_destroy(msg);
     return 0;
@@ -62,11 +62,11 @@ jpf_mod_cu_get_user_info(JpfModCu *self, JpfUsr *user)
 
 
 gint
-jpf_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
+nmp_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
 {
     JpfMsgUserGroupInfo req_info;
     JpfMsgUserGroupInfoRes *res_info;
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
     gint ret;
 
     memset(&req_info, 0, sizeof(req_info));
@@ -78,7 +78,7 @@ jpf_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
     	return -E_NOMEM;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    ret = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+    ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
         jpf_warning(
@@ -112,7 +112,7 @@ jpf_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
         return ret;
     }
 
-    jpf_mod_cu_add_group_info(grp, res_info->rank,
+    nmp_mod_cu_add_group_info(grp, res_info->rank,
     	res_info->permission);
 
     jpf_sysmsg_destroy(msg);
@@ -121,10 +121,10 @@ jpf_mod_cu_get_group_info(JpfModCu *self, JpfUsrGroup *grp)
 }
 
 gint
-jpf_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
+nmp_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 {
 	JpfMsgUserLoginInfoRes *res_info;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	gint ret;
 
 	msg = jpf_sysmsg_new_2(MSG_GET_USER_LOGIN_INFO, NULL,
@@ -133,7 +133,7 @@ jpf_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	ret = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+	ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
 	if (G_UNLIKELY(ret))	/* send failed */
 	{
 		jpf_warning(
@@ -172,13 +172,13 @@ jpf_mod_cu_get_user_login_info(JpfModCu *self, JpfMsgUserLoginInfoRes *res)
 
 
 gint
-jpf_mod_cu_get_mdu_ip(
+nmp_mod_cu_get_mdu_ip(
     JpfModCu *self, JpfMsgGetMdsIp *req_info,
     JpfMsgGetMdsIpRes *getMduIpRes
 )
 {
     JpfMsgGetMdsIpRes *res_info;
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
     gint ret;
 
     msg = jpf_sysmsg_new_2(MSG_GET_MDS_IP, req_info,
@@ -187,7 +187,7 @@ jpf_mod_cu_get_mdu_ip(
     	return -E_NOMEM;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    ret = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+    ret = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(ret))	/* send failed */
     {
     	jpf_warning(

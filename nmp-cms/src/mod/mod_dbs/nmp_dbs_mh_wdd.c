@@ -171,11 +171,11 @@ jpf_dbs_wdd_set_resources_cap(JpfMsgWddDevCapInfo *wdd_cap)
 	resources_cap.ai_count = wdd_cap->max_ai;
 	resources_cap.ao_count = wdd_cap->max_ao;
 	resources_cap.system_version = wdd_cap->version;
-	jpf_mod_set_resource_cap(&resources_cap);
+	nmp_mod_set_resource_cap(&resources_cap);
 }
 
-JpfMsgFunRet
-jpf_dbs_wdd_check_resourse_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_wdd_check_resourse_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -217,14 +217,14 @@ jpf_dbs_wdd_check_resourse_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 		memset(&notify_info, 0, sizeof(notify_info));
 		notify_info.msg_id = MSG_DEV_GU_OVER;
 		sprintf(notify_info.param1, "%d", self->res_over_flag);
-	      jpf_cms_mod_deliver_msg_2((JpfAppObj *)self, BUSSLOT_POS_CU,
+	      nmp_cms_mod_deliver_msg_2((NmpAppObj *)self, BUSSLOT_POS_CU,
 	        	MESSAGE_BROADCAST_GENERAL_MSG, &notify_info, sizeof(notify_info));
 
 		  if (req_info->version == VER_TEST)
 		  {
 		  	memset(&notify_info, 0, sizeof(notify_info));
 			notify_info.msg_id = MSG_WDD_ABNORMAL;
-			jpf_cms_mod_deliver_msg_2((JpfAppObj *)self, BUSSLOT_POS_CU,
+			nmp_cms_mod_deliver_msg_2((NmpAppObj *)self, BUSSLOT_POS_CU,
 				MESSAGE_BROADCAST_GENERAL_MSG, &notify_info, sizeof(notify_info));
 		  }
       }
@@ -237,8 +237,8 @@ jpf_dbs_wdd_check_resourse_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_wdd_set_auth_expired_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_wdd_set_auth_expired_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -263,18 +263,18 @@ jpf_dbs_wdd_set_auth_expired_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	if (notify_info->type == WDD_SYS_TIME_ERROR)
 		self->time_status = 1;
 
-	jpf_mod_set_resource_cap(&resources_cap);
+	nmp_mod_set_resource_cap(&resources_cap);
 	jpf_sysmsg_destroy(msg);
 	return MFR_ACCEPTED;
 }
 
 
 void
-jpf_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
 {
-	JpfAppMod *super_self = (JpfAppMod*)self;
+	NmpAppMod *super_self = (NmpAppMod*)self;
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_WDD_DEV_CAP_INFO,
 		NULL,
@@ -282,7 +282,7 @@ jpf_mod_dbs_register_wdd_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_WDD_AUTH_ERROR,
 		NULL,

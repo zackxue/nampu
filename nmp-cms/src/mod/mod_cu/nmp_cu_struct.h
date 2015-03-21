@@ -23,7 +23,7 @@ typedef enum
 	USR_GRP_BROWSE_DEV_STATUS     	= 1 << 8
 }JpfUsrGrpPermissions;
 
-#define JPF_USR_GRP_PERMISSION(permission, flag)		(permission & flag)
+#define NMP_USR_GRP_PERMISSION(permission, flag)		(permission & flag)
 
 
 typedef enum
@@ -172,7 +172,7 @@ jpf_get_usr_rank(JpfCu *cu)
     return user_group->rank;
 }
 
-void jpf_mod_cu_add_user_info(JpfUsr *user, gchar *passwd, gint grp_id);
-void jpf_mod_cu_add_group_info(JpfUsrGroup *grp, gint rank, guint perm);
+void nmp_mod_cu_add_user_info(JpfUsr *user, gchar *passwd, gint grp_id);
+void nmp_mod_cu_add_group_info(JpfUsrGroup *grp, gint rank, guint perm);
 
 #endif	//__NMP_CU_STRUCT_H__

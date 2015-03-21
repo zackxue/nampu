@@ -11,40 +11,40 @@
 #include "nmp_memory.h"
 #include "nmp_msg_pu.h"
 
-G_DEFINE_TYPE(JpfModPu, jpf_mod_pu, JPF_TYPE_MODACCESS);
+G_DEFINE_TYPE(JpfModPu, nmp_mod_pu, NMP_TYPE_MODACCESS);
 //static guint msg_seq_generator = 0;
 
 
 void
-jpf_mod_pu_register_msg_handler(JpfModPu *self);
+nmp_mod_pu_register_msg_handler(JpfModPu *self);
 
 
 static __inline__ void
-jpf_mod_pu_struct_init(JpfPu *pu, JpfPuType type)
+nmp_mod_pu_struct_init(JpfPu *pu, JpfPuType type)
 {
 	pu->type = type;
 	pu->state = STAT_PU_REGISTERING;
 	pu->age = 0;
 
-	jpf_mod_init_resource(&pu->res_ctl);
+	nmp_mod_init_resource(&pu->res_ctl);
 }
 
 
 void
-jpf_mod_pu_change_pu_online_status(JpfAppObj *app_obj,
+nmp_mod_pu_change_pu_online_status(NmpAppObj *app_obj,
     JpfPuOnlineStatusChange notify_info)
 {
-	jpf_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_DBS,
+	nmp_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_DBS,
 		MESSAGE_CHANGED_PU_ONLINE_STATE, &notify_info, sizeof(notify_info));
 }
 
 
 static void
-jpf_mod_pu_destroy(JpfGuestBase *obj, gpointer priv_data)
+nmp_mod_pu_destroy(JpfGuestBase *obj, gpointer priv_data)
 {
     G_ASSERT(obj != NULL);
 
-    JpfAppObj *self = JPF_APPOBJ(priv_data);
+    NmpAppObj *self = NMP_APPOBJ(priv_data);
     JpfPuOnlineStatusChange notify_info;
     JpfPu *pu = NULL;
 
@@ -55,24 +55,24 @@ jpf_mod_pu_destroy(JpfGuestBase *obj, gpointer priv_data)
         strncpy(notify_info.puid, ID_OF_GUEST(obj), MAX_ID_LEN - 1);
         strncpy(notify_info.domain_id, jpf_get_local_domain_id(), DOMAIN_ID_LEN - 1);
         notify_info.new_status = 0;
-        jpf_mod_pu_change_pu_online_status(self, notify_info);
+        nmp_mod_pu_change_pu_online_status(self, notify_info);
     }
 }
 
 
 gint
-jpf_mod_pu_register(JpfModPu *self, JpfNetIO *io, const gchar *id,
+nmp_mod_pu_register(JpfModPu *self, JpfNetIO *io, const gchar *id,
 	JpfPuType t, JpfID *conflict)
 {
 	JpfGuestBase *pu_base;
 	gint ret;
 	G_ASSERT(self != NULL && io != NULL);
 
-	pu_base = jpf_mods_guest_new(sizeof(JpfPu), id, jpf_mod_pu_destroy, self);
+	pu_base = jpf_mods_guest_new(sizeof(JpfPu), id, nmp_mod_pu_destroy, self);
 	if (G_UNLIKELY(!pu_base))
 		return -E_NOMEM;
 
-	jpf_mod_pu_struct_init((JpfPu*)pu_base, t);
+	nmp_mod_pu_struct_init((JpfPu*)pu_base, t);
 	jpf_mods_guest_attach_io(pu_base, io);
 
 	ret = jpf_mods_container_add_guest(self->container,
@@ -90,7 +90,7 @@ jpf_mod_pu_register(JpfModPu *self, JpfNetIO *io, const gchar *id,
 
 
 static void
-jpf_mod_pu_set_recheck_tag_one(JpfGuestBase *obj, gpointer data)
+nmp_mod_pu_set_recheck_tag_one(JpfGuestBase *obj, gpointer data)
 {
 	JpfPu *pu = NULL;
 
@@ -100,20 +100,20 @@ jpf_mod_pu_set_recheck_tag_one(JpfGuestBase *obj, gpointer data)
 
 
 void
-jpf_mod_pu_set_recheck_tag(JpfModPu *self)
+nmp_mod_pu_set_recheck_tag(JpfModPu *self)
 {
 	jpf_mods_container_do_for_each(self->container,
-		jpf_mod_pu_set_recheck_tag_one, NULL);
+		nmp_mod_pu_set_recheck_tag_one, NULL);
 }
 
 
 gint
-jpf_mod_pu_sync_req(JpfModPu *self, JpfMsgID msg_id,
+nmp_mod_pu_sync_req(JpfModPu *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size)
 {
 	gint err = 0;
 	JpfMsgErrCode *res_info;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	G_ASSERT(self != NULL);
 
 	msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
@@ -121,7 +121,7 @@ jpf_mod_pu_sync_req(JpfModPu *self, JpfMsgID msg_id,
 		return -E_NOMEM;
 
        MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
  	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -153,13 +153,13 @@ jpf_mod_pu_sync_req(JpfModPu *self, JpfMsgID msg_id,
 
 
 gpointer
-jpf_mod_pu_sync_req_2(JpfModPu *self, JpfMsgID msg_id,
+nmp_mod_pu_sync_req_2(JpfModPu *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size)
 {
 	gint err = 0;
 	JpfMsgErrCode *res_info;
 	gpointer res;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	G_ASSERT(self != NULL);
 
 	msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
@@ -167,7 +167,7 @@ jpf_mod_pu_sync_req_2(JpfModPu *self, JpfMsgID msg_id,
 		return NULL;
 
        MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
  	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -223,14 +223,14 @@ jpf_mod_pu_sync_req_2(JpfModPu *self, JpfMsgID msg_id,
 
 
 static void
-jpf_mod_pu_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
+nmp_mod_pu_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 {
 	gint ret;
 	JpfModPu *self;
 	G_ASSERT(s_self != NULL);
 
 	self = (JpfModPu*)s_self;
-	ret = jpf_mod_container_del_io(self->container, io);
+	ret = nmp_mod_container_del_io(self->container, io);
 	if (G_UNLIKELY(!ret))
 	{
 		jpf_print(
@@ -242,14 +242,14 @@ jpf_mod_pu_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 
 
 static gint
-jpf_mod_pu_io_init(JpfModAccess *s_self, JpfNetIO *io)
+nmp_mod_pu_io_init(JpfModAccess *s_self, JpfNetIO *io)
 {
 	gint err;
 	JpfModPu *self;
 	G_ASSERT(s_self != NULL);
 
 	self = (JpfModPu*)s_self;
-	err = jpf_mod_container_add_io(self->container, io);
+	err = nmp_mod_container_add_io(self->container, io);
 	if (err)
 	{
 		jpf_error(
@@ -265,7 +265,7 @@ jpf_mod_pu_io_init(JpfModAccess *s_self, JpfNetIO *io)
 
 
 gint
-jpf_mod_pu_setup(JpfAppMod *am_self)
+nmp_mod_pu_setup(NmpAppMod *am_self)
 {
 	gint err;
 	JpfModAccess *ma_self;
@@ -281,9 +281,9 @@ jpf_mod_pu_setup(JpfAppMod *am_self)
 	sin.sin_port = htons(JPFCMS_PU_PORT);
 	sin.sin_addr.s_addr = INADDR_ANY;
 
-	jpf_mod_acc_init_net(ma_self, &jxj_packet_proto, &jxj_xml_proto);
+	nmp_mod_acc_init_net(ma_self, &jxj_packet_proto, &jxj_xml_proto);
 
-	self->listen_io = jpf_mod_acc_create_listen_io(
+	self->listen_io = nmp_mod_acc_create_listen_io(
 		ma_self, (struct sockaddr*)&sin, &err
 	);
 	if (!self->listen_io)
@@ -292,14 +292,14 @@ jpf_mod_pu_setup(JpfAppMod *am_self)
 		return err;
 	}
 
-	jpf_app_mod_set_name(am_self, "MOD-PU");
-	jpf_mod_pu_register_msg_handler(self);
+	nmp_app_mod_set_name(am_self, "MOD-PU");
+	nmp_mod_pu_register_msg_handler(self);
 	return 0;
 }
 
 
 static void
-jpf_mod_pu_init(JpfModPu *self)
+nmp_mod_pu_init(JpfModPu *self)
 {
 	self->container = jpf_mods_container_new(
 		self,
@@ -316,21 +316,21 @@ jpf_mod_pu_init(JpfModPu *self)
 
 
 void
-jpf_mod_pu_update_online_status(JpfAppObj *self, JpfSysMsg *msg)
+nmp_mod_pu_update_online_status(NmpAppObj *self, NmpSysMsg *msg)
 {
-    jpf_app_obj_deliver_out(self, msg);
+    nmp_app_obj_deliver_out(self, msg);
 }
 
 
 static void
-jpf_mod_pu_class_init(JpfModPuClass *k_class)
+nmp_mod_pu_class_init(JpfModPuClass *k_class)
 {
 	JpfModAccessClass *ma_class = (JpfModAccessClass*)k_class;
-	JpfAppModClass *am_class = (JpfAppModClass*)k_class;
+	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
-	ma_class->io_close	= jpf_mod_pu_io_close;
-	ma_class->io_init	= jpf_mod_pu_io_init;
-	am_class->setup_mod	= jpf_mod_pu_setup;
+	ma_class->io_close	= nmp_mod_pu_io_close;
+	ma_class->io_init	= nmp_mod_pu_io_init;
+	am_class->setup_mod	= nmp_mod_pu_setup;
 }
 
 

@@ -7,11 +7,11 @@
 
 USING_MSG_ID_MAP(cms);
 
-JpfSysMsg *
+NmpSysMsg *
 jpf_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
 {
 	JpfMsgInfo *msg_info;
-	JpfSysMsg  *sys_msg;
+	NmpSysMsg  *sys_msg;
 	gchar     cmd[MAX_CMD_ID_LEN] = {0};
 	gint        msg_id;
 	gint        cmd_len;
@@ -55,7 +55,7 @@ jpf_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
 
 
 gint
-jpf_proto_create_xml_str(char *xml_buff, int *buff_size, JpfSysMsg *sys_msg)
+jpf_proto_create_xml_str(char *xml_buff, int *buff_size, NmpSysMsg *sys_msg)
 {
 	JpfMsgInfo  msg_info;
 	gint        msg_id;

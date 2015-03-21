@@ -8,7 +8,7 @@
 
 //E_USRINFO 287
 
-#define JPF_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end) do {	\
+#define NMP_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end) do {	\
 	BUG_ON(!mysql_result);	\
 	if (G_UNLIKELY(MYSQL_RESULT_CODE(mysql_result))) {	\
 		ret = MYSQL_RESULT_CODE(mysql_result);	\
@@ -89,21 +89,21 @@ G_BEGIN_DECLS
 #define ENABLE_DEL_ALARM        (1 << 1)
 
 
-#define JPF_TYPE_MODDBS	(jpf_mod_dbs_get_type())
-#define JPF_IS_MODDBS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MODDBS))
-#define JPF_IS_MODDBS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_MODDBS))
-#define JPF_MODDBS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MODDBS, JpfModDbs))
+#define NMP_TYPE_MODDBS	(nmp_mod_dbs_get_type())
+#define NMP_IS_MODDBS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODDBS))
+#define NMP_IS_MODDBS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODDBS))
+#define NMP_MODDBS(o) \
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODDBS, JpfModDbs))
 #define JpfModDBSClass(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_MODDBS, JpfModDbsClass))
-#define JPF_MODDBS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MODDBS, JpfModDbsClass))
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODDBS, JpfModDbsClass))
+#define NMP_MODDBS_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODDBS, JpfModDbsClass))
 
 typedef struct _JpfModDbs JpfModDbs;
 typedef struct _JpfModDbsClass JpfModDbsClass;
 struct _JpfModDbs
 {
-	JpfAppMod	  parent_object;
+	NmpAppMod	  parent_object;
 	db_conn_pool_conf *pool_conf;
 	db_conn_pool_info *pool_info;
 	gint  del_alarm_flag;
@@ -115,17 +115,17 @@ struct _JpfModDbs
 
 struct _JpfModDbsClass
 {
-	JpfAppModClass	parent_class;
+	NmpAppModClass	parent_class;
 };
 
 
-GType jpf_mod_dbs_get_type( void );
+GType nmp_mod_dbs_get_type( void );
 
 void
-jpf_mod_dbs_register_bss_msg_handler(JpfModDbs *self);
+nmp_mod_dbs_register_bss_msg_handler(JpfModDbs *self);
 
 void
-jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self);
+nmp_mod_dbs_register_cu_msg_handler(JpfModDbs *self);
 
 void
 jpf_mods_dbs_broadcast_msg(JpfModDbs * self, gpointer priv, gsize size);

@@ -9045,13 +9045,13 @@ jpf_parse_cu_query_guid(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuQueryGuid tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.gu_num, "guNum")
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.gu_num, "guNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -9060,15 +9060,15 @@ jpf_create_cu_query_guid_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
 	JpfCuQueryGuidRes *tmp = NULL;
 
-	JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
+	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
 
-	JPF_XML_DEF_STR_CREATE_CHILD_SINGLE("guid", tmp->guid);
-	JPF_XML_DEF_STR_CREATE_CHILD_SINGLE("domain", tmp->domain);
-	JPF_XML_DEF_STR_CREATE_CHILD_SINGLE("guName", tmp->gu_name);
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("level", tmp->level);
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("guAttributes", tmp->gu_attributes);
+	NMP_XML_DEF_STR_CREATE_CHILD_SINGLE("guid", tmp->guid);
+	NMP_XML_DEF_STR_CREATE_CHILD_SINGLE("domain", tmp->domain);
+	NMP_XML_DEF_STR_CREATE_CHILD_SINGLE("guName", tmp->gu_name);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("level", tmp->level);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("guAttributes", tmp->gu_attributes);
 
-	JPF_XML_DEF_CREATE_END_SINGLE();
+	NMP_XML_DEF_CREATE_END_SINGLE();
 }
 
 
@@ -9077,13 +9077,13 @@ jpf_parse_cu_query_screen_id(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuQueryScreenID tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.screen_num, "screenNum")
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.screen_num, "screenNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -9092,12 +9092,12 @@ jpf_create_cu_query_screen_id_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
 	JpfCuQueryScreenIDRes *tmp = NULL;
 
-	JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
+	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("screenID", tmp->screen_id);
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("twID", tmp->tw_id);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("screenID", tmp->screen_id);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("twID", tmp->tw_id);
 
-	JPF_XML_DEF_CREATE_END_SINGLE();
+	NMP_XML_DEF_CREATE_END_SINGLE();
 }
 
 
@@ -9107,14 +9107,14 @@ jpf_parse_cu_query_user_guids(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuQueryUserGuids tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "reqNum")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "reqNum")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -9127,9 +9127,9 @@ jpf_create_cu_query_user_guids_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	JPF_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
+	NMP_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD("totalCount", tmp->total_count, root_node, str);
+	NMP_XML_DEF_VAL_CREATE_CHILD("totalCount", tmp->total_count, root_node, str);
 
 	back_count = tmp->back_count;
 	snprintf(str, INT_TO_CHAR_LEN, "%d", back_count);
@@ -9144,11 +9144,11 @@ jpf_create_cu_query_user_guids_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 		node1 = xmlNewNode(NULL, BAD_CAST "device");
 		xmlAddChild(node, node1);
 
-		JPF_XML_DEF_STR_CREATE_CHILD("guid", gu->guid, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("domain", gu->domain, node1);
-		JPF_XML_DEF_VAL_CREATE_CHILD("level", gu->level, node1, str);
-		JPF_XML_DEF_STR_CREATE_CHILD("guName", gu->gu_name, node1);
-		JPF_XML_DEF_VAL_CREATE_CHILD("guNum", gu->gu_num, node1, str);
+		NMP_XML_DEF_STR_CREATE_CHILD("guid", gu->guid, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("domain", gu->domain, node1);
+		NMP_XML_DEF_VAL_CREATE_CHILD("level", gu->level, node1, str);
+		NMP_XML_DEF_STR_CREATE_CHILD("guName", gu->gu_name, node1);
+		NMP_XML_DEF_VAL_CREATE_CHILD("guNum", gu->gu_num, node1, str);
 
 		i++;
 	}
@@ -9277,7 +9277,7 @@ end:
 int
 jpf_create_cu_set_user_guids_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -9286,21 +9286,21 @@ jpf_parse_cu_set_screen_num(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuSetScreenNum tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.screen_id, "screenID")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.screen_num, "screenNum")
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.screen_id, "screenID")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.screen_num, "screenNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_cu_set_screen_num_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -9309,13 +9309,13 @@ jpf_parse_cu_query_tour_id(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuQueryTourID tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.tour_num, "tourNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.tour_num, "tourNum")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -9324,11 +9324,11 @@ jpf_create_cu_query_tour_id_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
 	JpfCuQueryTourIDRes *tmp = NULL;
 
-	JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
+	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("tourID", tmp->tour_id);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("tourID", tmp->tour_id);
 
-	JPF_XML_DEF_CREATE_END_SINGLE();
+	NMP_XML_DEF_CREATE_END_SINGLE();
 }
 
 
@@ -9337,21 +9337,21 @@ jpf_parse_cu_set_tour_num(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuSetTourNum tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.tour_id, "tourID")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.tour_num, "tourNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.tour_id, "tourID")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.tour_num, "tourNum")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_cu_set_tour_num_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -9360,13 +9360,13 @@ jpf_parse_cu_query_group_id(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuQueryGroupID tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.group_num, "groupNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.group_num, "groupNum")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -9375,11 +9375,11 @@ jpf_create_cu_query_group_id_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
 	JpfCuQueryGroupIDRes *tmp = NULL;
 
-	JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
+	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE("groupID", tmp->group_id);
+	NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE("groupID", tmp->group_id);
 
-	JPF_XML_DEF_CREATE_END_SINGLE();
+	NMP_XML_DEF_CREATE_END_SINGLE();
 }
 
 
@@ -9388,20 +9388,20 @@ jpf_parse_cu_set_group_num(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfCuSetGroupNum tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.group_id, "groupID")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.group_num, "groupNum")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.session, "sessionId", SESSION_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.user, "user", USER_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.group_id, "groupID")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.group_num, "groupNum")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_cu_set_group_num_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 

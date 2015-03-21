@@ -8,15 +8,15 @@ G_BEGIN_DECLS
 
 #define DEFAULT_HEART_SLICE		3
 
-#define JPF_TYPE_MODMSS	(jpf_mod_mss_get_type())
-#define JPF_IS_MODMSS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MODMSS))
-#define JPF_IS_MODMSS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_MODMSS))
-#define JPF_MODMSS(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MODMSS, JpfModMss))
-#define JPF_MODMSS_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_MODMSS, JpfModMssClass))
-#define JPF_MODMSS_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MODMSS, JpfModMssClass))
+#define NMP_TYPE_MODMSS	(nmp_mod_mss_get_type())
+#define NMP_IS_MODMSS(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODMSS))
+#define NMP_IS_MODMSS_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODMSS))
+#define NMP_MODMSS(o) \
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODMSS, JpfModMss))
+#define NMP_MODMSS_CLASS(c) \
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODMSS, JpfModMssClass))
+#define NMP_MODMSS_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODMSS, JpfModMssClass))
 
 typedef struct _JpfModMss JpfModMss;
 typedef struct _JpfModMssClass JpfModMssClass;
@@ -36,23 +36,23 @@ struct _JpfModMssClass
 };
 
 
-GType jpf_mod_mss_get_type( void );
+GType nmp_mod_mss_get_type( void );
 
 
 gint
-jpf_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
+nmp_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
 	JpfID *conflict);
 
 gint
-jpf_mod_mss_sync_req(JpfModMss *self, JpfMsgID msg_id,
+nmp_mod_mss_sync_req(JpfModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size);
 
 gpointer
-jpf_mod_mss_sync_req_2(JpfModMss *self, JpfMsgID msg_id,
+nmp_mod_mss_sync_req_2(JpfModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size);
 
 void
-jpf_mod_mss_change_mss_online_status(JpfAppObj *app_obj,
+nmp_mod_mss_change_mss_online_status(NmpAppObj *app_obj,
     JpfMsgMssOnlineChange notify_info);
 
 G_END_DECLS

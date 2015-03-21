@@ -9,12 +9,12 @@
 #include <stdio.h>
 
 
-#define JPF_SEARCH_ID_LEN               32
-#define JPF_SEARCH_IP_LEN               16
-#define JPF_SEARCH_MNFCT_LEN            12
+#define NMP_SEARCH_ID_LEN               32
+#define NMP_SEARCH_IP_LEN               16
+#define NMP_SEARCH_MNFCT_LEN            12
 
-#define JPF_SEARCH_USERNAME_LEN         32
-#define JPF_SEARCH_PASSWORD_LEN         32
+#define NMP_SEARCH_USERNAME_LEN         32
+#define NMP_SEARCH_PASSWORD_LEN         32
 
 typedef enum JPE_SEARCH_ERROR
 {
@@ -27,16 +27,16 @@ typedef struct device_info
 {
     int pu_type;                        //设备类型
     int av_mun;                         //音视频点个数
-    char mnfct[JPF_SEARCH_MNFCT_LEN];   //设备厂商
-    char pu_id[JPF_SEARCH_ID_LEN];      //设备标识
-    char dev_ip[JPF_SEARCH_IP_LEN];     //设备ip
+    char mnfct[NMP_SEARCH_MNFCT_LEN];   //设备厂商
+    char pu_id[NMP_SEARCH_ID_LEN];      //设备标识
+    char dev_ip[NMP_SEARCH_IP_LEN];     //设备ip
     char res[32];
 }device_info_t;
 
 typedef struct jpf_platform
 {
-    char cms_ip[JPF_SEARCH_IP_LEN];     //平台cms ip
-    char mds_ip[JPF_SEARCH_IP_LEN];     //平台mds ip
+    char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
+    char mds_ip[NMP_SEARCH_IP_LEN];     //平台mds ip
     int cms_port;                       //平台cms端口号
     int mds_port;                       //平台mds端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
@@ -51,7 +51,7 @@ typedef struct jpf_search
 
 typedef struct search_result
 {
-    char dst_id[JPF_SEARCH_ID_LEN];
+    char dst_id[NMP_SEARCH_ID_LEN];
     jpf_search_t jpf_srch;
 }search_result_t;
 
@@ -66,14 +66,14 @@ typedef struct search_array
 
 typedef struct user_info
 {
-    char usr[JPF_SEARCH_USERNAME_LEN];
-    char pwd[JPF_SEARCH_PASSWORD_LEN];
+    char usr[NMP_SEARCH_USERNAME_LEN];
+    char pwd[NMP_SEARCH_PASSWORD_LEN];
 }user_info_t;
 
 typedef struct redirect
 {
-    char pu_id[JPF_SEARCH_ID_LEN];      //设备标识
-    char cms_ip[JPF_SEARCH_IP_LEN];     //平台cms ip
+    char pu_id[NMP_SEARCH_ID_LEN];      //设备标识
+    char cms_ip[NMP_SEARCH_IP_LEN];     //平台cms ip
     int cms_port;                       //平台cms端口号
     int conn_cms;                       //连接平台开关，1-连接  0-不连接
 }redirect_t;

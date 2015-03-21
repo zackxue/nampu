@@ -3,18 +3,18 @@
 #include "nmp_mod_wdd.h"
 
 void
-jpf_cms_wdd_insert( void )
+nmp_cms_wdd_insert( void )
 {
-	JpfAppMod *mod;
+	NmpAppMod *mod;
 
-	mod = g_object_new(JPF_TYPE_MODWDD, NULL);
+	mod = g_object_new(NMP_TYPE_MODWDD, NULL);
 	if (G_UNLIKELY(!mod))
 	{
 		jpf_error("<JpfModWdd> alloc mod wdd failed!");
 		FATAL_ERROR_EXIT;
 	}
 
-	jpf_app_mod_setup((JpfAppMod*)mod);
+	nmp_app_mod_setup((NmpAppMod*)mod);
 	jpf_afx_mod_insert(BUSSLOT_POS_WDD, mod);
 }
 

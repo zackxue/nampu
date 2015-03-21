@@ -16,7 +16,7 @@
 #define SC_CONFIG_FILE_NAME		"jxj_server.conf"
 #define SC_PLATFORM_UPGRADE_SCRIPT  "upgrade-platform-system"
 
-JpfSysCtl jpf_cms_params =
+JpfSysCtl nmp_cms_params =
 {
 	.base_port			= 9902,
 	.max_log_file_size	= 50,
@@ -69,7 +69,7 @@ void __jpf_set_sys_parm_int(JpfSysCtl *sc, gint id, gint value)
 
 void jpf_set_sys_parm_int(gint id, gint value)
 {
-	__jpf_set_sys_parm_int(&jpf_cms_params, id, value);
+	__jpf_set_sys_parm_int(&nmp_cms_params, id, value);
 }
 
 
@@ -103,7 +103,7 @@ gint __jpf_get_sys_parm_int(JpfSysCtl *sc, gint id)
 
 gint jpf_get_sys_parm_int(gint id)
 {
-    return __jpf_get_sys_parm_int(&jpf_cms_params, id);
+    return __jpf_get_sys_parm_int(&nmp_cms_params, id);
 }
 
 
@@ -168,7 +168,7 @@ void __jpf_set_sys_parm_str(JpfSysCtl *sc, gint id, gchar *value)
 
 void jpf_set_sys_parm_str(gint id, gchar *value)
 {
-	__jpf_set_sys_parm_str(&jpf_cms_params, id, value);
+	__jpf_set_sys_parm_str(&nmp_cms_params, id, value);
 }
 
 
@@ -218,7 +218,7 @@ gchar* __jpf_get_sys_parm_str(JpfSysCtl *sc, gint id)
 
 gchar* jpf_get_sys_parm_str(gint id)
 {
-    return __jpf_get_sys_parm_str(&jpf_cms_params, id);
+    return __jpf_get_sys_parm_str(&nmp_cms_params, id);
 }
 
 
@@ -331,7 +331,7 @@ _jpf_sysctl_init(JpfSysCtl *sc, const gchar *env_name)
 void
 jpf_sysctl_init( void )
 {
-	_jpf_sysctl_init(&jpf_cms_params, SC_CONFIG_ENV_NAME);
+	_jpf_sysctl_init(&nmp_cms_params, SC_CONFIG_ENV_NAME);
 }
 
 

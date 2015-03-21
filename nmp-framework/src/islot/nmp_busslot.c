@@ -9,8 +9,8 @@
 static void 
 jpf_bus_slot_islot_interface_init(JpfISlotInterface *islot_iface);
 
-G_DEFINE_TYPE_WITH_CODE(JpfBusSlot, jpf_bus_slot, JPF_TYPE_OBJECT,
-	G_IMPLEMENT_INTERFACE(JPF_TYPE_ISLOT, jpf_bus_slot_islot_interface_init));
+G_DEFINE_TYPE_WITH_CODE(JpfBusSlot, jpf_bus_slot, NMP_TYPE_OBJECT,
+	G_IMPLEMENT_INTERFACE(NMP_TYPE_ISLOT, jpf_bus_slot_islot_interface_init));
 
 
 static gint
@@ -18,11 +18,11 @@ jpf_bus_slot_islot_init(JpfISlot *i_self, GValue *parm)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), -E_INVAL);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 
-	return JPF_BUSSLOT_GET_CLASS(self)->slot_init(self, parm);
+	return NMP_BUSSLOT_GET_CLASS(self)->slot_init(self, parm);
 }
 
 
@@ -31,12 +31,12 @@ jpf_bus_slot_islot_send(JpfISlot *i_self, JpfData *data)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), -E_INVAL);
-	g_return_val_if_fail(JPF_IS_SYSMSG(data), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_SYSMSG(data), -E_INVAL);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 	
-	return JPF_BUSSLOT_GET_CLASS(self)->bus_snd(self, JPF_SYSMSG(data));
+	return NMP_BUSSLOT_GET_CLASS(self)->bus_snd(self, NMP_SYSMSG(data));
 }
 
 
@@ -45,12 +45,12 @@ jpf_bus_slot_islot_recv(JpfISlot *i_self, JpfData *data)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), -E_INVAL);
-	g_return_val_if_fail(JPF_IS_SYSMSG(data), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_SYSMSG(data), -E_INVAL);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 
-	return JPF_BUSSLOT_GET_CLASS(self)->bus_rcv(self, JPF_SYSMSG(data));
+	return NMP_BUSSLOT_GET_CLASS(self)->bus_rcv(self, NMP_SYSMSG(data));
 }
 
 
@@ -59,12 +59,12 @@ jpf_bus_slot_islot_link(JpfISlot *i_self, JpfISlot *i_peer)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), -E_INVAL);
-	g_return_val_if_fail(JPF_IS_ISLOT(i_peer), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_ISLOT(i_peer), -E_INVAL);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 
-	return JPF_BUSSLOT_GET_CLASS(self)->connect(self, i_peer);
+	return NMP_BUSSLOT_GET_CLASS(self)->connect(self, i_peer);
 }
 
 
@@ -74,11 +74,11 @@ jpf_bus_slot_islot_unlink(JpfISlot *i_self)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), -E_INVAL);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), -E_INVAL);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 
-	return JPF_BUSSLOT_GET_CLASS(self)->disconnect(self);
+	return NMP_BUSSLOT_GET_CLASS(self)->disconnect(self);
 }
 
 
@@ -87,11 +87,11 @@ jpf_bus_slot_islot_ready(JpfISlot *i_self)
 {
 	JpfBusSlot *self;
 
-	g_return_val_if_fail(JPF_IS_BUSSLOT(i_self), FALSE);
+	g_return_val_if_fail(NMP_IS_BUSSLOT(i_self), FALSE);
 
-	self = JPF_BUSSLOT(i_self);
+	self = NMP_BUSSLOT(i_self);
 
-	return !JPF_BUSSLOT_GET_CLASS(self)->slot_ok(self);
+	return !NMP_BUSSLOT_GET_CLASS(self)->slot_ok(self);
 }
 
 
@@ -105,7 +105,7 @@ jpf_bus_slot_slot_init(JpfBusSlot *self, GValue *parm)
 	gint err = -E_INVAL;
 	JpfMsgBus *owner = (JpfMsgBus*)parm->data[0].v_pointer;
 
-	if (G_UNLIKELY(!JPF_IS_MSGBUS(owner)))
+	if (G_UNLIKELY(!NMP_IS_MSGBUS(owner)))
 		return err;
 
 	if (!(err = jpf_msg_bus_request_slot(owner, self,
@@ -121,17 +121,17 @@ jpf_bus_slot_slot_init(JpfBusSlot *self, GValue *parm)
 
 
 static gint
-jpf_bus_slot_bus_snd(JpfBusSlot *self, JpfSysMsg *msg)
+jpf_bus_slot_bus_snd(JpfBusSlot *self, NmpSysMsg *msg)
 {
 	if (G_UNLIKELY(!self->i_peer))
 		return -E_SLOTNCONN;
 
-	return jpf_islot_recv(self->i_peer, JPF_DATA(msg));
+	return jpf_islot_recv(self->i_peer, NMP_DATA(msg));
 }
 
 
 static gint
-jpf_bus_slot_bus_rcv(JpfBusSlot *self, JpfSysMsg *msg)
+jpf_bus_slot_bus_rcv(JpfBusSlot *self, NmpSysMsg *msg)
 {
 	if (G_UNLIKELY(!self->bus_ready))
 		return -E_SLOTNREADY;

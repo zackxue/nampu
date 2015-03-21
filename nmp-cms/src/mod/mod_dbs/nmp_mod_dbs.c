@@ -9,15 +9,15 @@
 #include "nmp_message.h"
 #include "nmp_internal_msg.h"
 
-G_DEFINE_TYPE(JpfModDbs, jpf_mod_dbs, JPF_TYPE_APPMOD);
+G_DEFINE_TYPE(JpfModDbs, nmp_mod_dbs, NMP_TYPE_APPMOD);
 
-void jpf_mod_dbs_register_msg_handler(JpfModDbs *self);
-void jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self);
-void	jpf_mod_dbs_register_mds_msg_handler(JpfModDbs *self);
-void	jpf_mod_dbs_register_mss_msg_handler(JpfModDbs *self);
-void jpf_mod_dbs_register_tw_msg_handler(JpfModDbs *self);
-void jpf_mod_dbs_register_ams_msg_handler(JpfModDbs *self);
-void jpf_mod_dbs_register_wdd_msg_handler(JpfModDbs *self);
+void nmp_mod_dbs_register_msg_handler(JpfModDbs *self);
+void nmp_mod_dbs_register_pu_msg_handler(JpfModDbs *self);
+void	nmp_mod_dbs_register_mds_msg_handler(JpfModDbs *self);
+void	nmp_mod_dbs_register_mss_msg_handler(JpfModDbs *self);
+void nmp_mod_dbs_register_tw_msg_handler(JpfModDbs *self);
+void nmp_mod_dbs_register_ams_msg_handler(JpfModDbs *self);
+void nmp_mod_dbs_register_wdd_msg_handler(JpfModDbs *self);
 
 #define CHECK_ALARM_TIME      (1000*60)   //60 s
 #define EPSINON  0.00001
@@ -25,7 +25,7 @@ void jpf_mod_dbs_register_wdd_msg_handler(JpfModDbs *self);
 
 
 db_conn_pool_conf *
-jpf_init_mysql_conf()
+nmp_init_mysql_conf()
 {
 	db_conn_pool_conf *pool_conf;
 
@@ -89,10 +89,10 @@ jpf_get_domain_id(JpfMysqlRes *result)
 
 
 static __inline__ void
-jpf_mod_dbs_del_mysql_bin(JpfAppMod *am_self)
+nmp_mod_dbs_del_mysql_bin(NmpAppMod *am_self)
 {
 	gchar query_buf[QUERY_STR_LEN];
-	JpfAppObj *app_obj = (JpfAppObj *)am_self;
+	NmpAppObj *app_obj = (NmpAppObj *)am_self;
 	JpfMsgErrCode mysql_result;
 	glong affect_num = 0;
 
@@ -104,10 +104,10 @@ jpf_mod_dbs_del_mysql_bin(JpfAppMod *am_self)
 
 
 static __inline__ gint
-jpf_mod_dbs_get_domain_id(JpfAppMod *am_self)
+nmp_mod_dbs_get_domain_id(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMysqlRes *mysql_result;
     gint res, row_num;
 
@@ -139,10 +139,10 @@ get_domain_id_failed:
 
 
 static __inline__ void
-jpf_clear_pu_state(JpfAppMod *am_self)
+jpf_clear_pu_state(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -160,10 +160,10 @@ jpf_clear_pu_state(JpfAppMod *am_self)
 
 
 static __inline__ void
-jpf_clear_mss_state(JpfAppMod *am_self)
+jpf_clear_mss_state(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -179,10 +179,10 @@ jpf_clear_mss_state(JpfAppMod *am_self)
 
 
 static __inline__ void
-jpf_clear_mds_state(JpfAppMod *am_self)
+jpf_clear_mds_state(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -198,10 +198,10 @@ jpf_clear_mds_state(JpfAppMod *am_self)
 
 
 static __inline__ void
-jpf_clear_ams_state(JpfAppMod *am_self)
+jpf_clear_ams_state(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -217,10 +217,10 @@ jpf_clear_ams_state(JpfAppMod *am_self)
 
 
 static __inline__ void
-jpf_clear_ivs_state(JpfAppMod *am_self)
+jpf_clear_ivs_state(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -236,10 +236,10 @@ jpf_clear_ivs_state(JpfAppMod *am_self)
 
 
 static __inline__ void
-jpf_check_area_dev_online_rate(JpfAppMod *am_self)
+jpf_check_area_dev_online_rate(NmpAppMod *am_self)
 {
     gchar query_buf[QUERY_STR_LEN];
-    JpfAppObj *app_obj = (JpfAppObj *)am_self;
+    NmpAppObj *app_obj = (NmpAppObj *)am_self;
     JpfMsgErrCode mysql_result;
     glong affect_num = 0;
 
@@ -267,21 +267,21 @@ jpf_mods_dbs_del_alarm_timer(gpointer user_data)
 void
 jpf_mods_dbs_broadcast_msg(JpfModDbs * self, gpointer priv, gsize size)
 {
-    JpfSysMsg *msg_notify;
+    NmpSysMsg *msg_notify;
 
     msg_notify = jpf_sysmsg_new_2(MESSAGE_BROADCAST_GENERAL_MSG,
         priv, size, ++msg_seq_generator);
     MSG_SET_DSTPOS(msg_notify, BUSSLOT_POS_CU);
-    jpf_app_obj_deliver_out((JpfAppObj*)self, msg_notify);
+    nmp_app_obj_deliver_out((NmpAppObj*)self, msg_notify);
 }
 
 
 static void
-jpf_mod_dbs_init(JpfModDbs *self)
+nmp_mod_dbs_init(JpfModDbs *self)
 {
-	JpfAppMod *a_self = ( JpfAppMod *)self;
+	NmpAppMod *a_self = ( NmpAppMod *)self;
 
-	self->pool_conf = jpf_init_mysql_conf();
+	self->pool_conf = nmp_init_mysql_conf();
 	if (G_UNLIKELY(!self->pool_conf))
 		jpf_error("out of memory");
 
@@ -290,15 +290,15 @@ jpf_mod_dbs_init(JpfModDbs *self)
 		jpf_error("out of memory");
 
 	init_db_conn_pool(self->pool_info, self->pool_conf);
-	jpf_mod_dbs_del_mysql_bin(a_self);
-	jpf_mod_dbs_get_domain_id(a_self);
+	nmp_mod_dbs_del_mysql_bin(a_self);
+	nmp_mod_dbs_get_domain_id(a_self);
 	jpf_clear_pu_state(a_self);
 	jpf_clear_mss_state(a_self);
 	jpf_clear_mds_state(a_self);
 	jpf_clear_ams_state(a_self);
 	jpf_clear_ivs_state(a_self);
 	jpf_check_area_dev_online_rate(a_self);
-	jpf_mod_init_resource_cap();
+	nmp_mod_init_resource_cap();
 	self->del_alarm_flag = 0;
 	self->authorization_expired = 0;
 	self->res_over_flag = 0;
@@ -307,7 +307,7 @@ jpf_mod_dbs_init(JpfModDbs *self)
 
 
 gint
-jpf_mod_dbs_setup(JpfAppMod *am_self)
+nmp_mod_dbs_setup(NmpAppMod *am_self)
 {
 	G_ASSERT(am_self != NULL);
 
@@ -315,26 +315,26 @@ jpf_mod_dbs_setup(JpfAppMod *am_self)
 
 	self = (JpfModDbs*)am_self;
 
-	jpf_app_mod_set_name(am_self, "MOD-DBS");
-	jpf_mod_dbs_register_cu_msg_handler(self);
-	jpf_mod_dbs_register_bss_msg_handler(self);
-	jpf_mod_dbs_register_pu_msg_handler(self);
-	jpf_mod_dbs_register_mds_msg_handler(self);
-	jpf_mod_dbs_register_mss_msg_handler(self);
-	jpf_mod_dbs_register_tw_msg_handler(self);
-	jpf_mod_dbs_register_ams_msg_handler(self);
-	jpf_mod_dbs_register_wdd_msg_handler(self);
+	nmp_app_mod_set_name(am_self, "MOD-DBS");
+	nmp_mod_dbs_register_cu_msg_handler(self);
+	nmp_mod_dbs_register_bss_msg_handler(self);
+	nmp_mod_dbs_register_pu_msg_handler(self);
+	nmp_mod_dbs_register_mds_msg_handler(self);
+	nmp_mod_dbs_register_mss_msg_handler(self);
+	nmp_mod_dbs_register_tw_msg_handler(self);
+	nmp_mod_dbs_register_ams_msg_handler(self);
+	nmp_mod_dbs_register_wdd_msg_handler(self);
 
 	return 0;
 }
 
 
 static void
-jpf_mod_dbs_class_init(JpfModDbsClass *k_class)
+nmp_mod_dbs_class_init(JpfModDbsClass *k_class)
 {
-	JpfAppModClass *am_class = (JpfAppModClass*)k_class;
+	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
-	am_class->setup_mod	= jpf_mod_dbs_setup;
+	am_class->setup_mod	= nmp_mod_dbs_setup;
 }
 
 

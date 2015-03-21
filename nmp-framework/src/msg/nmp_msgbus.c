@@ -4,7 +4,7 @@
 #include "nmp_msgbus.h"
 #include "nmp_busslot.h"
 
-G_DEFINE_TYPE(JpfMsgBus, jpf_msg_bus, JPF_TYPE_OBJECT);
+G_DEFINE_TYPE(JpfMsgBus, jpf_msg_bus, NMP_TYPE_OBJECT);
 
 #define MAX_MSG_HOOKS		8
 
@@ -25,7 +25,7 @@ static gint
 jpf_msg_bus_setup_slots(JpfMsgBus *self);
 
 static JpfBusHookRet
-jpf_msg_bus_default_hook(JpfMsgBus *bus, JpfSysMsg *msg);
+jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg);
 
 static void
 jpf_msg_bus_init_zero(JpfMsgBus *self)
@@ -101,7 +101,7 @@ jpf_msg_bus_setup_slots(JpfMsgBus *self)
 
     for (; idx < BUSSLOT_IDX_MAX; ++idx)
     {
-        slot = g_object_new(JPF_TYPE_BUSSLOT, NULL);
+        slot = g_object_new(NMP_TYPE_BUSSLOT, NULL);
         if (G_UNLIKELY(!slot))
         {
             jpf_error("<JpfMsgBus> alloc bus slot failed!");
@@ -111,7 +111,7 @@ jpf_msg_bus_setup_slots(JpfMsgBus *self)
 
         v.data[0].v_pointer = self;
         v.data[1].v_int = 1 << idx;
-        jpf_islot_init(JPF_ISLOT(slot), &v);
+        jpf_islot_init(NMP_ISLOT(slot), &v);
     }
 
     return 0;
@@ -121,7 +121,7 @@ jpf_msg_bus_setup_slots(JpfMsgBus *self)
 gint
 jpf_msg_bus_request_slot(JpfMsgBus *self, gpointer slot, JpfBusSlotPos i_slot)
 {
-    if (!JPF_IS_BUSSLOT(slot))
+    if (!NMP_IS_BUSSLOT(slot))
         return -E_INVAL;
 
     if (jpf_bus_slots_get(&self->bus_slots, i_slot))
@@ -133,30 +133,30 @@ jpf_msg_bus_request_slot(JpfMsgBus *self, gpointer slot, JpfBusSlotPos i_slot)
 
 
 gint
-jpf_msg_bus_slot_link(JpfMsgBus *self, JpfBusSlotPos i_slot, JpfModIO *modio)
+jpf_msg_bus_slot_link(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpModIO *modio)
 {
     gint err;
     JpfBusSlot *slot;
 
-    g_return_val_if_fail(JPF_IS_MSGBUS(self), EINVAL);
-    g_return_val_if_fail(JPF_IS_MODIO(modio), EINVAL);
+    g_return_val_if_fail(NMP_IS_MSGBUS(self), EINVAL);
+    g_return_val_if_fail(NMP_IS_MODIO(modio), EINVAL);
 
     slot = jpf_bus_slots_get(&self->bus_slots, i_slot);
     if (G_UNLIKELY(!slot))
         return -E_SLOTNEXIST;
 
-    err = jpf_islot_link(JPF_ISLOT(slot), JPF_ISLOT(modio));
+    err = jpf_islot_link(NMP_ISLOT(slot), NMP_ISLOT(modio));
     if (G_UNLIKELY(err))
     {
         jpf_warning("<JpfMsgBus> link failed, bus slot isn't ready!");
         return err;
     }
 
-    err = jpf_islot_link(JPF_ISLOT(modio), JPF_ISLOT(slot));
+    err = jpf_islot_link(NMP_ISLOT(modio), NMP_ISLOT(slot));
     if (G_UNLIKELY(err))
     {
         jpf_warning("<JpfMsgBus> link failed, MOD-IO isn't ready!");
-        jpf_islot_unlink(JPF_ISLOT(slot));
+        jpf_islot_unlink(NMP_ISLOT(slot));
         return err;
     }
 
@@ -167,7 +167,7 @@ jpf_msg_bus_slot_link(JpfMsgBus *self, JpfBusSlotPos i_slot, JpfModIO *modio)
 JpfBusMsgHook	/* implict */
 jpf_msg_bus_set_hook(JpfMsgBus *self, JpfBusMsgHook hook)
 {
-    g_return_val_if_fail(JPF_IS_MSGBUS(self), NULL);
+    g_return_val_if_fail(NMP_IS_MSGBUS(self), NULL);
 
     JpfBusMsgHook old = self->msg_hook;
     self->msg_hook = hook;
@@ -176,32 +176,32 @@ jpf_msg_bus_set_hook(JpfMsgBus *self, JpfBusMsgHook hook)
 
 
 static void
-jpf_msg_bus_destroy_msg(JpfMsgBus *self, JpfSysMsg *msg)
+jpf_msg_bus_destroy_msg(JpfMsgBus *self, NmpSysMsg *msg)
 {
-    g_return_if_fail(JPF_IS_MSGBUS(self));
-    g_return_if_fail(JPF_IS_SYSMSG(msg));
+    g_return_if_fail(NMP_IS_MSGBUS(self));
+    g_return_if_fail(NMP_IS_SYSMSG(msg));
 
     jpf_sysmsg_destroy(msg);
 }
 
 
 static __inline__ gint
-jpf_msg_bus_deliver_unicast(JpfMsgBus *self, JpfSysMsg *msg)
+jpf_msg_bus_deliver_unicast(JpfMsgBus *self, NmpSysMsg *msg)
 {
 	gpointer next_slot;
 
 	if (!(next_slot = jpf_bus_slots_get(&self->bus_slots, msg->dst)))
 	    return -E_SLOTNEXIST;
 
-	return jpf_islot_send(JPF_ISLOT(next_slot), JPF_DATA(msg));			
+	return jpf_islot_send(NMP_ISLOT(next_slot), NMP_DATA(msg));			
 }
 
 
 static __inline__ gint
-jpf_msg_bus_deliver_multicast(JpfMsgBus *self, JpfSysMsg *msg)
+jpf_msg_bus_deliver_multicast(JpfMsgBus *self, NmpSysMsg *msg)
 {
     JpfBusSlotIdx idx;
-    JpfSysMsg *msg_cpy;
+    NmpSysMsg *msg_cpy;
     gint msgs = 0, err;
     guint next = (guint)msg->dst;
 
@@ -255,7 +255,7 @@ jpf_msg_bus_deliver_multicast(JpfMsgBus *self, JpfSysMsg *msg)
 
 
 static gint
-jpf_msg_bus_deliver(JpfMsgBus *self, JpfSysMsg *msg)
+jpf_msg_bus_deliver(JpfMsgBus *self, NmpSysMsg *msg)
 {
     guint next = (guint)msg->dst;
 
@@ -272,10 +272,10 @@ jpf_msg_bus_deliver(JpfMsgBus *self, JpfSysMsg *msg)
 
 
 gint
-jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, JpfSysMsg *msg)
+jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpSysMsg *msg)
 {
-    g_return_val_if_fail(JPF_IS_MSGBUS(self), EINVAL);
-    g_return_val_if_fail(JPF_IS_SYSMSG(msg), EINVAL);
+    g_return_val_if_fail(NMP_IS_MSGBUS(self), EINVAL);
+    g_return_val_if_fail(NMP_IS_SYSMSG(msg), EINVAL);
 
 	BUG_ON(!jpf_bus_slots_get(&self->bus_slots, i_slot));
 	MSG_SET_SRCPOS(msg, i_slot);
@@ -298,7 +298,7 @@ jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, JpfSysMsg *msg)
 static gpointer
 jpf_msg_bus_thread_worker(gpointer user_data)
 {
-    JpfSysMsg *msg;
+    NmpSysMsg *msg;
     JpfMsgBus *self = (JpfMsgBus*)user_data;
 
     for (;;)
@@ -339,17 +339,17 @@ jpf_msg_bus_thread_worker(gpointer user_data)
 void
 jpf_msg_bus_set_bypass(JpfMsgBus *self)
 {
-	g_return_if_fail(JPF_IS_MSGBUS(self));
+	g_return_if_fail(NMP_IS_MSGBUS(self));
 	self->bus_bypass = TRUE;
 }
 
 
 static JpfBusHookRet
-jpf_msg_bus_default_hook(JpfMsgBus *bus, JpfSysMsg *msg)
+jpf_msg_bus_default_hook(JpfMsgBus *bus, NmpSysMsg *msg)
 {
 	JpfBusHook *hook;
 	gint ihook = 0;
-	JpfSysMsg *msg_copy;
+	NmpSysMsg *msg_copy;
 
 	for (; ihook < msg_hooks_count; ++ihook)
 	{

@@ -10,24 +10,24 @@
 
 
 void
-jpf_log_dbs_do_query_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_log_dbs_do_query_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect);
 
 void
-jpf_log_dbs_do_del_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_log_dbs_do_del_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect);
 
 gint
-jpf_log_get_record_count(JpfAppObj *app_obj, char *query);
+jpf_log_get_record_count(NmpAppObj *app_obj, char *query);
 
 JpfMysqlRes*
-jpf_log_dbs_do_query_res(JpfAppObj *app_obj, char *query);
+jpf_log_dbs_do_query_res(NmpAppObj *app_obj, char *query);
 
 JpfMysqlFieldOffset
 jpf_log_sql_field_seek(JpfMysqlRes *res, JpfMysqlFieldOffset offset);

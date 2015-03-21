@@ -21,20 +21,20 @@ typedef enum        /* ret-value type of bus hooks */
     BHR_QUEUE
 }JpfBusHookRet;
 
-#define JPF_TYPE_MSGBUS (jpf_msg_bus_get_type())
-#define JPF_IS_MSGBUS(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MSGBUS))
-#define JPF_IS_MSGBUS_CLASS(c) \
-    (G_TYPE_CHECK_CALSS_TYPE((c), JPF_TYPE_MSGBUS))
-#define JPF_MSGBUS(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MSGBUS, JpfMsgBus))
-#define JPF_MSGBUS_CLASS(c) \
-    (G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_MSGBUS, JpfMsgBusClass))
-#define JPF_MSGBUS_GET_CLASS(o) \
-    (G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MSGBUS, JpfMsgBusClass))
+#define NMP_TYPE_MSGBUS (jpf_msg_bus_get_type())
+#define NMP_IS_MSGBUS(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MSGBUS))
+#define NMP_IS_MSGBUS_CLASS(c) \
+    (G_TYPE_CHECK_CALSS_TYPE((c), NMP_TYPE_MSGBUS))
+#define NMP_MSGBUS(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MSGBUS, JpfMsgBus))
+#define NMP_MSGBUS_CLASS(c) \
+    (G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MSGBUS, JpfMsgBusClass))
+#define NMP_MSGBUS_GET_CLASS(o) \
+    (G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MSGBUS, JpfMsgBusClass))
 
 typedef struct _JpfMsgBus JpfMsgBus;
 typedef struct _JpfMsgBusClass JpfMsgBusClass;
-typedef gint (*JpfMsgHookFn)(JpfSysMsg *msg);
-typedef JpfBusHookRet (*JpfBusMsgHook)(JpfMsgBus *bus, JpfSysMsg *msg);
+typedef gint (*JpfMsgHookFn)(NmpSysMsg *msg);
+typedef JpfBusHookRet (*JpfBusMsgHook)(JpfMsgBus *bus, NmpSysMsg *msg);
 
 struct _JpfMsgBus
 {
@@ -58,12 +58,12 @@ gint jpf_msg_bus_request_slot(JpfMsgBus *self,
     gpointer slot, JpfBusSlotPos i_slot);
 
 gint jpf_msg_bus_slot_link(JpfMsgBus *self,
-    JpfBusSlotPos i_slot, JpfModIO *modio);
+    JpfBusSlotPos i_slot, NmpModIO *modio);
 
 void jpf_msg_bus_set_bypass(JpfMsgBus *self);
 
 gint jpf_msg_bus_add_msg_hook(JpfBusSlotPos who, JpfMsgHookFn fun);
-gint jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, JpfSysMsg *msg);
+gint jpf_msg_bus_rcv_msg(JpfMsgBus *self, JpfBusSlotPos i_slot, NmpSysMsg *msg);
 
 GType jpf_msg_bus_get_type( void );
 

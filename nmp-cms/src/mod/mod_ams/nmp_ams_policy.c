@@ -61,7 +61,7 @@ jpf_check_alarm_action_enabled(guint action_bit)
 	JpfResourcesCap res_cap;
 	memset(&res_cap, 0, sizeof(res_cap));
 
-	jpf_mod_get_resource_cap(&res_cap);
+	nmp_mod_get_resource_cap(&res_cap);
 	if (!(res_cap.module_bits & MODULE_ALM_BIT))
 	{
 		return AMS_ACTIONS_CLOSED;
@@ -465,7 +465,7 @@ jpf_policy_add_time_seg_day(JpfPolicy *p,
 
 
 static __inline__ void
-jpf_mod_policy_adjust_seg(time_t *start, time_t *end)
+nmp_mod_policy_adjust_seg(time_t *start, time_t *end)
 {
 	*end += 1;
 }
@@ -495,7 +495,7 @@ jpf_ams_policy_parse(JpfPolicy *policy, JpfActionPolicy *p)
 			//	w->weekday, s->time_seg);
 			if (!jpf_get_string_time_range(s->time_seg, &start, &end))
 			{
-				jpf_mod_policy_adjust_seg(&start, &end);
+				nmp_mod_policy_adjust_seg(&start, &end);
 				jpf_policy_add_time_seg_day(policy,
 					(w->weekday < 7 ? w->weekday : 0), start, end);
 			}

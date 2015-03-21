@@ -12,7 +12,7 @@
  * create function parameters must be: xmlDocPtr doc, JpfMsgInfo *sys_msg
  */
 
-#define JPF_XML_DEF_PARSE_BEGIN(tmp)	\
+#define NMP_XML_DEF_PARSE_BEGIN(tmp)	\
 	JpfMsgInfo *sys_msg = NULL;	\
 	xmlXPathObjectPtr app_result;	\
 	char *xpath = "/message";	\
@@ -29,17 +29,17 @@
 			if (0 == 1);
 
 
-#define JPF_XML_DEF_PARSE_GET_VALUE(dst_p, src_str)	\
+#define NMP_XML_DEF_PARSE_GET_VALUE(dst_p, src_str)	\
 	else if ((!xmlStrcmp(cur->name, (const xmlChar *)src_str)))	\
 				jpf_deal_value(doc, cur, dst_p);
 
 
-#define JPF_XML_DEF_PARSE_GET_TEXT(dst_p, src_str, dst_max_len)	\
+#define NMP_XML_DEF_PARSE_GET_TEXT(dst_p, src_str, dst_max_len)	\
 	else if ((!xmlStrcmp(cur->name, (const xmlChar *)src_str)))	\
 				jpf_deal_text(doc, cur, dst_p, dst_max_len);
 
 
-#define JPF_XML_DEF_PARSE_END(tmp)	\
+#define NMP_XML_DEF_PARSE_END(tmp)	\
 	cur = cur->next;	\
 			while (cur && xmlIsBlankNode(cur))	\
 				cur = cur->next;	\
@@ -51,7 +51,7 @@
 
 
 
-#define JPF_XML_DEF_CREATE_BEGIN(tmp, str_tmp, root_node, end) do {	\
+#define NMP_XML_DEF_CREATE_BEGIN(tmp, str_tmp, root_node, end) do {	\
 	tmp = jpf_get_msginfo_data(sys_msg);	\
 	if (!tmp)	\
 		return -E_NOMEM;	\
@@ -64,46 +64,46 @@
 } while (0)
 
 
-#define JPF_XML_DEF_VAL_CREATE_CHILD(dst_str, src_val, node_parent, str_tmp) do {	\
+#define NMP_XML_DEF_VAL_CREATE_CHILD(dst_str, src_val, node_parent, str_tmp) do {	\
 	snprintf(str_tmp, INT_TO_CHAR_LEN, "%d", src_val);	\
 		xmlNewChild(node_parent, NULL, BAD_CAST dst_str, BAD_CAST str_tmp);	\
 } while (0)
 
 
-#define JPF_XML_DEF_STR_CREATE_CHILD(dst_str, src_p, node_parent) do {	\
+#define NMP_XML_DEF_STR_CREATE_CHILD(dst_str, src_p, node_parent) do {	\
 	xmlNewChild(node_parent, NULL, BAD_CAST dst_str, BAD_CAST src_p);	\
 } while (0)
 
 
 
-#define JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp)	\
+#define NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp)	\
 	ASSERT(sys_msg != NULL);	\
 	xmlNodePtr root_node = NULL;	\
 	char str[INT_TO_CHAR_LEN] = {0};	\
-	JPF_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
+	NMP_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
 
 
-#define JPF_XML_DEF_VAL_CREATE_CHILD_SINGLE(dst_str, src_val) do {	\
+#define NMP_XML_DEF_VAL_CREATE_CHILD_SINGLE(dst_str, src_val) do {	\
 	snprintf(str, INT_TO_CHAR_LEN, "%d", src_val);	\
 		xmlNewChild(root_node, NULL, BAD_CAST dst_str, BAD_CAST str);	\
 } while (0)
 
 
-#define JPF_XML_DEF_STR_CREATE_CHILD_SINGLE(dst_str, src_p) do {	\
+#define NMP_XML_DEF_STR_CREATE_CHILD_SINGLE(dst_str, src_p) do {	\
 	xmlNewChild(root_node, NULL, BAD_CAST dst_str, BAD_CAST src_p);	\
 } while (0)
 
 
-#define JPF_XML_DEF_CREATE_END_SINGLE()	 \
+#define NMP_XML_DEF_CREATE_END_SINGLE()	 \
 	end:	\
 	return 0;
 
 
 
-#define JPF_XML_DEF_CREATE_JPF_RESULT() do {	\
+#define NMP_XML_DEF_CREATE_NMP_RESULT() do {	\
 	JpfResult *tmp = NULL;	\
-	JPF_XML_DEF_CREATE_BEGIN_SINGLE(tmp);	\
-	JPF_XML_DEF_CREATE_END_SINGLE();	\
+	NMP_XML_DEF_CREATE_BEGIN_SINGLE(tmp);	\
+	NMP_XML_DEF_CREATE_END_SINGLE();	\
 } while (0)
 
 

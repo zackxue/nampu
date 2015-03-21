@@ -17,21 +17,21 @@ JpfMysqlRes*
 jpf_process_query(JpfMysql *mysql, const char *query_buf);
 
 void
-jpf_dbs_do_query_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_dbs_do_query_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect);
 
 void
-jpf_dbs_do_del_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_dbs_do_del_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect);
 
 JpfMysqlRes*
-jpf_dbs_do_query_res(JpfAppObj *app_obj, char *query);
+jpf_dbs_do_query_res(NmpAppObj *app_obj, char *query);
 
 JpfMysqlRes*
 jpf_process_query_res(JpfMysql *mysql, const char *query_buf);
@@ -40,12 +40,12 @@ int
 jpf_process_query_procedure(JpfMysql *mysql, const char *query_buf);
 
 gint
-jpf_get_record_count(JpfAppObj *app_obj, char *query);
+jpf_get_record_count(NmpAppObj *app_obj, char *query);
 
 gint jpf_get_count_value(JpfMysqlRes *result);
 
-gint jpf_dbs_get_row_num(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+gint jpf_dbs_get_row_num(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query);
 unsigned long long
 jpf_sql_get_num_rows(JpfMysqlRes *res);

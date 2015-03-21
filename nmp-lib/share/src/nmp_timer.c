@@ -142,7 +142,7 @@ jpf_timer_thread_loop(gpointer user_data)
 
 
 static __inline__ void
-jpf_init_timer( void )
+nmp_init_timer( void )
 {
 	G_ASSERT(!global_timer_engine);
 
@@ -158,7 +158,7 @@ jpf_set_timer(guint interval, HmTimerFun fun, gpointer data)
 
 	if (g_once_init_enter(&g_init_global_timer_engine_volatile))
 	{
-		jpf_init_timer();
+		nmp_init_timer();
 		g_once_init_leave(&g_init_global_timer_engine_volatile, 1);
 	}
 

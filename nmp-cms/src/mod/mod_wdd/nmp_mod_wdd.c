@@ -67,11 +67,11 @@ static wdd_time_info g_wdd_time_info =
 
 static gint g_wdd_version = VER_TEST;
 
-static JpfModWdd *g_jpf_mod_wdd;
+static JpfModWdd *g_nmp_mod_wdd;
 
-G_DEFINE_TYPE(JpfModWdd, jpf_mod_wdd, JPF_TYPE_APPMOD);
+G_DEFINE_TYPE(JpfModWdd, nmp_mod_wdd, NMP_TYPE_APPMOD);
 
-void jpf_mod_wdd_register_msg_handler(JpfModWdd *self);
+void nmp_mod_wdd_register_msg_handler(JpfModWdd *self);
 
 static JpfMsgWddDevCapInfo g_default_wdd_dev_cap_info =
 {
@@ -103,8 +103,8 @@ static JpfMsgWddDevCapInfo g_test_wdd_dev_cap_info =
 
 static JpfMsgWddDevCapInfo g_tmp_wdd_dev_cap_info;
 
-#define JPF_WDD_FORBIDDEN_NUM		(1)
-static gint g_wdd_maker_forbidden[JPF_WDD_FORBIDDEN_NUM] = {17};
+#define NMP_WDD_FORBIDDEN_NUM		(1)
+static gint g_wdd_maker_forbidden[NMP_WDD_FORBIDDEN_NUM] = {17};
 
 
 wdd g_wdd_test;
@@ -160,7 +160,7 @@ gint jpf_wdd_write_data_test(char *wdd_info)
 
 JpfModWdd *jpf_get_mod_wdd()
 {
-	return g_jpf_mod_wdd;
+	return g_nmp_mod_wdd;
 }
 
 
@@ -635,7 +635,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		sprintf(notify_info.param1, "%d", WDD_TYPE_0);
 		sprintf(notify_info.param2, "%d", tmp_info.type);
 		strncpy(notify_info.param3, tmp_info.info, GENERAL_MSG_PARM_LEN - 1);
-		jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+		nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 			sizeof(JpfNotifyMessage));
 		break;
@@ -646,7 +646,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		jpf_warning("<JpfModWdd> to cu: wdd time out warning");
 		notify_info.msg_id = MSG_AUTHORIZATION_EXPIRED;
 		sprintf(notify_info.param1, "%d", WDD_TYPE_1);
-		jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+		nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 			sizeof(JpfNotifyMessage));
 		break;
@@ -660,7 +660,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 			jpf_warning("<JpfModWdd> to cu: wdd time out");
 			notify_info.msg_id = MSG_AUTHORIZATION_EXPIRED;
 			sprintf(notify_info.param1, "%d", WDD_TYPE_2);
-			jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+			nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 			sizeof(JpfNotifyMessage));
 		}
@@ -669,7 +669,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		{
 			jpf_warning("<JpfModWdd> to dbs: wdd time out");
 			auth_info.type = WDD_AUTH_EXPIRED;
-			jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+			nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 				BUSSLOT_POS_DBS, MSG_WDD_AUTH_ERROR, &auth_info,
 				sizeof(JpfMsgWddAuthErrorInfo));
 		}
@@ -684,7 +684,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		if (g_inexistent_times >= WDD_INEXISTENT_MAX_MINS *
 			WDD_WORK_NUMS_ONE_MINUTE)		// 3 times later, to cu
 			sprintf(notify_info.param1, "%d", 1);
-		jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+		nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 			sizeof(JpfNotifyMessage));
 
@@ -693,7 +693,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		{
 			jpf_warning("<JpfModWdd> to dbs: wdd inexistent");
 			auth_info.type = WDD_AUTH_INEXISTENT;
-			jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+			nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 				BUSSLOT_POS_DBS, MSG_WDD_AUTH_ERROR, &auth_info,
 				sizeof(JpfMsgWddAuthErrorInfo));
 		}
@@ -710,7 +710,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		snprintf(notify_info.param1, GENERAL_MSG_PARM_LEN, "%s",
 			jpf_get_cur_time_str());
 		jpf_warning("<JpfModWdd> cms system time error, %s", jpf_get_cur_time_str());
-		jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+		nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 			sizeof(JpfNotifyMessage));
 
@@ -718,7 +718,7 @@ static void jpf_wdd_deal_time_result(WDD_TIME_DEAL_RESULT ret)
 		{
 			jpf_warning("<JpfModWdd> to dbs: system time error");
 			auth_info.type = WDD_SYS_TIME_ERROR;
-			jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+			nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 				BUSSLOT_POS_DBS, MSG_WDD_AUTH_ERROR, &auth_info,
 				sizeof(JpfMsgWddAuthErrorInfo));
 		}
@@ -803,7 +803,7 @@ void jpf_wdd_deal_version1(char *wdd_info)
 		info.max_ai = ntohl(data->max_ai);
 		info.max_ao = ntohl(data->max_ao);
 
-		jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+		nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 			BUSSLOT_POS_DBS, MSG_WDD_DEV_CAP_INFO, &info,
 			sizeof(JpfMsgWddDevCapInfo));
 	}
@@ -819,11 +819,11 @@ static void jpf_wdd_deal_eopen_err()
 	jpf_wdd_backup_time_info_forever();
 
 	notify_info.msg_id = MSG_WDD_EOPEN_ERROER;
-	jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+	nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 		BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 		sizeof(JpfNotifyMessage));
 
-	jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+	nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 		BUSSLOT_POS_DBS, MSG_WDD_DEV_CAP_INFO, &g_default_wdd_dev_cap_info,
 		sizeof(JpfMsgWddDevCapInfo));
 }
@@ -837,7 +837,7 @@ static void jpf_wdd_deal_version_test()
 
 	jpf_wdd_backup_time_info_forever();
 
-	jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+	nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 		BUSSLOT_POS_DBS, MSG_WDD_DEV_CAP_INFO, &g_test_wdd_dev_cap_info,
 		sizeof(JpfMsgWddDevCapInfo));
 }
@@ -853,7 +853,7 @@ static void jpf_wdd_deal_forbidden()
 	jpf_wdd_backup_time_info_forbidden();
 
 	notify_info.msg_id = MSG_WDD_FORBIDDEN;
-	jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+	nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 		BUSSLOT_POS_CU, MESSAGE_BROADCAST_GENERAL_MSG, &notify_info,
 		sizeof(JpfNotifyMessage));
 
@@ -861,7 +861,7 @@ static void jpf_wdd_deal_forbidden()
 	g_tmp_wdd_dev_cap_info.version = 1;
 	g_tmp_wdd_dev_cap_info.expired_time.type = WDD_DOG_FORBIDDEN;
 
-	jpf_cms_mod_deliver_msg_2((JpfAppObj *)jpf_get_mod_wdd(),
+	nmp_cms_mod_deliver_msg_2((NmpAppObj *)jpf_get_mod_wdd(),
 		BUSSLOT_POS_DBS, MSG_WDD_DEV_CAP_INFO, &g_tmp_wdd_dev_cap_info,
 		sizeof(JpfMsgWddDevCapInfo));
 }
@@ -872,7 +872,7 @@ jpf_wdd_check_maker_code(gint maker_code)
 {
 	gint i;
 
-	for (i = 0; i < JPF_WDD_FORBIDDEN_NUM; i++)
+	for (i = 0; i < NMP_WDD_FORBIDDEN_NUM; i++)
 	{
 		if (maker_code == g_wdd_maker_forbidden[i])
 			return -1;
@@ -946,7 +946,7 @@ error:
 }
 
 
-void *jpf_mod_wdd_work(void *arg)
+void *nmp_mod_wdd_work(void *arg)
 {
 	jpf_wdd_work_init();
 #ifdef WDD_TEST
@@ -984,37 +984,37 @@ jpf_wdd_get_version()
 
 
 gint
-jpf_mod_wdd_setup(JpfAppMod *am_self)
+nmp_mod_wdd_setup(NmpAppMod *am_self)
 {
 	JpfModWdd *self;
 	G_ASSERT(am_self != NULL);
 
 	self = (JpfModWdd*)am_self;
 
-	jpf_app_mod_set_name(am_self, "MOD-WDD");
-	jpf_mod_wdd_register_msg_handler(self);
+	nmp_app_mod_set_name(am_self, "MOD-WDD");
+	nmp_mod_wdd_register_msg_handler(self);
 	return 0;
 }
 
 
 static void
-jpf_mod_wdd_init(JpfModWdd *self)
+nmp_mod_wdd_init(JpfModWdd *self)
 {
 	gint ret;
 
-	g_jpf_mod_wdd = self;
+	g_nmp_mod_wdd = self;
 
-	ret = pthread_create(&g_wdd_tid, NULL, jpf_mod_wdd_work, NULL);
+	ret = pthread_create(&g_wdd_tid, NULL, nmp_mod_wdd_work, NULL);
 	if (ret != 0)
 		jpf_warning("<JpfModWdd>pthread_create failed\n");
 }
 
 
 static void
-jpf_mod_wdd_class_init(JpfModWddClass *k_class)
+nmp_mod_wdd_class_init(JpfModWddClass *k_class)
 {
-	JpfAppModClass *am_class = (JpfAppModClass*)k_class;
+	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
-	am_class->setup_mod	= jpf_mod_wdd_setup;
+	am_class->setup_mod	= nmp_mod_wdd_setup;
 }
 

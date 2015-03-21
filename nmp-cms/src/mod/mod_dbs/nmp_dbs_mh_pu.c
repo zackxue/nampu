@@ -79,8 +79,8 @@ jpf_get_pu_register_info(JpfMysqlRes *mysql_result, JpfPuRegRes *res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_pu_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_pu_register_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -94,7 +94,7 @@ jpf_dbs_pu_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     BUG_ON(!req_info);
 
     memset(&res_info, 0, sizeof(res_info));
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
     if (dbs_obj->wdd_status)
     {
         code = -E_NOWDD;
@@ -205,8 +205,8 @@ end_pu_register:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_pu_heart_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_pu_heart_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -222,7 +222,7 @@ jpf_dbs_pu_heart_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
     memset(&res_info, 0, sizeof(res_info));
     strncpy(res_info.puid, req_info->puid, MAX_ID_LEN - 1);
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
     if (dbs_obj->authorization_expired)
     {
         SET_CODE(&res_info,  -E_EXPIRED);
@@ -324,8 +324,8 @@ jpf_pu_get_mds_info(JpfMysqlRes *mysql_result, JpfGetMdsInfoRes *res_info)
     }
 }
 
-JpfMsgFunRet
-jpf_dbs_pu_get_mds_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_pu_get_mds_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -563,12 +563,12 @@ jpf_dbs_get_tw_scr(JpfMysqlRes *mysql_res, gint *size)
 
 
 static __inline__ void
-jpf_mod_dbs_dec_online_state_notify(JpfAppObj *app_obj,
+nmp_mod_dbs_dec_online_state_notify(NmpAppObj *app_obj,
     JpfPuOnlineStatusChange *req_info)
 {
     JpfPuTwScr *screens;
     JpfMysqlRes *result;
-    JpfSysMsg *msg_notify;
+    NmpSysMsg *msg_notify;
     gchar query_buf[QUERY_STR_LEN] = {0};
     gchar dev_type[DEV_TYPE_LEN] = {0};
     gint size,ret;
@@ -612,15 +612,15 @@ jpf_mod_dbs_dec_online_state_notify(JpfAppObj *app_obj,
         jpf_warning("<dbs_mh_pu> alloc error");
 
     MSG_SET_DSTPOS(msg_notify, BUSSLOT_POS_CU);
-    jpf_app_obj_deliver_out(app_obj, msg_notify);
+    nmp_app_obj_deliver_out(app_obj, msg_notify);
 
 end_dec_online_state_notify:
     jpf_mem_kfree(screens, size);
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_change_pu_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_change_pu_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -669,7 +669,7 @@ jpf_mod_dbs_change_pu_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
         if (mysql_res1.err_no != 0)
            jpf_warning("!!!!!!!!!!!!!!!error");
     }
-    jpf_mod_dbs_dec_online_state_notify(app_obj, req_info);
+    nmp_mod_dbs_dec_online_state_notify(app_obj, req_info);
 
     snprintf(query_buf, QUERY_STR_LEN,
         "select distinct user_name from %s where user_guid like '%s%%' and \
@@ -725,8 +725,8 @@ jpf_mod_dbs_change_pu_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_submit_format_pro_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_submit_format_pro_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -905,14 +905,14 @@ jpf_get_alarm_id(JpfMysqlRes *result)
 
 
 static __inline__ gint
-jpf_mod_dbs_get_init_alarm_id(JpfAppObj *app_obj)
+nmp_mod_dbs_get_init_alarm_id(NmpAppObj *app_obj)
 {
 	char query_buf[QUERY_STR_LEN] = {0};
 	JpfModDbs *dbs_obj;
 	JpfMysqlRes *result = NULL;
 	gint alarm_id = 0;
 
-	dbs_obj = JPF_MODDBS(app_obj);
+	dbs_obj = NMP_MODDBS(app_obj);
 
 	snprintf(
 		query_buf, QUERY_STR_LEN,
@@ -931,14 +931,14 @@ jpf_mod_dbs_get_init_alarm_id(JpfAppObj *app_obj)
 }
 
 static __inline__ gint
-jpf_mod_dbs_get_alarm_id(JpfAppObj *app_obj, JpfSubmitAlarm *req)
+nmp_mod_dbs_get_alarm_id(NmpAppObj *app_obj, JpfSubmitAlarm *req)
 {
     static gint g_alarm_id = 0;
     static volatile gsize g_init_alarm_id = 0;
 
     if (g_once_init_enter(&g_init_alarm_id))
     {
-    	g_alarm_id = jpf_mod_dbs_get_init_alarm_id(app_obj);
+    	g_alarm_id = nmp_mod_dbs_get_init_alarm_id(app_obj);
 	if (g_alarm_id < 0)
 	{
     	    g_once_init_leave(&g_init_alarm_id, 0);
@@ -959,7 +959,7 @@ jpf_mod_dbs_get_alarm_id(JpfAppObj *app_obj, JpfSubmitAlarm *req)
 
 
 static __inline__ gint
-jpf_mod_dbs_get_alarm_param(JpfAppObj *self, JpfAlarmParam *alarm_param)
+nmp_mod_dbs_get_alarm_param(NmpAppObj *self, JpfAlarmParam *alarm_param)
 {
     char query_buf[QUERY_STR_LEN] = {0};
     JpfMysqlRes *result;
@@ -972,7 +972,7 @@ jpf_mod_dbs_get_alarm_param(JpfAppObj *self, JpfAlarmParam *alarm_param)
     gint field_no =0;
     gchar alarm_value[MAX_STR_LEN] = {0};
     JpfModDbs        *dbs_obj;
-    dbs_obj = JPF_MODDBS(self);
+    dbs_obj = NMP_MODDBS(self);
 
     snprintf(
         query_buf, QUERY_STR_LEN,
@@ -1033,7 +1033,7 @@ jpf_mod_dbs_get_alarm_param(JpfAppObj *self, JpfAlarmParam *alarm_param)
 
 
 static __inline__ void
-jpf_mod_dbs_del_redundant_alarm(JpfAppObj *self)
+nmp_mod_dbs_del_redundant_alarm(NmpAppObj *self)
 {
     char query_buf[QUERY_STR_LEN] = {0};
     gint total_num;
@@ -1050,7 +1050,7 @@ jpf_mod_dbs_del_redundant_alarm(JpfAppObj *self)
     d_self->del_alarm_flag = 0;
 
     memset(&alarm_param, 0, sizeof(alarm_param));
-    ret = jpf_mod_dbs_get_alarm_param(self, &alarm_param);
+    ret = nmp_mod_dbs_get_alarm_param(self, &alarm_param);
     if (ret)
 	return;
 
@@ -1076,7 +1076,7 @@ jpf_mod_dbs_del_redundant_alarm(JpfAppObj *self)
 
 
 static __inline__ void
-jpf_mod_dbs_write_alarm_to_db(JpfAppObj *app_obj, JpfSysMsg *msg, JpfSubmitAlarm *req)
+nmp_mod_dbs_write_alarm_to_db(NmpAppObj *app_obj, NmpSysMsg *msg, JpfSubmitAlarm *req)
 {
     JpfModDbs * self = (JpfModDbs *)app_obj;
     gint alarm_id;
@@ -1098,7 +1098,7 @@ jpf_mod_dbs_write_alarm_to_db(JpfAppObj *app_obj, JpfSysMsg *msg, JpfSubmitAlarm
         notify_info.msg_id = MSG_ALARM;
         sprintf(notify_info.param1, "%d", MAX_ALARM_NUM);
         jpf_mods_dbs_broadcast_msg(self, &notify_info, sizeof(notify_info));
-        alarm_id = jpf_mod_dbs_get_alarm_id(app_obj, req);
+        alarm_id = nmp_mod_dbs_get_alarm_id(app_obj, req);
         if (alarm_id < 0)
         {
             jpf_warning("get alarm_id error:%d.", alarm_id);
@@ -1106,11 +1106,11 @@ jpf_mod_dbs_write_alarm_to_db(JpfAppObj *app_obj, JpfSysMsg *msg, JpfSubmitAlarm
         }
 
         req->alarm_id = alarm_id;
-        jpf_mod_dbs_del_redundant_alarm(app_obj);
+        nmp_mod_dbs_del_redundant_alarm(app_obj);
         return;
     }
 again:
-    alarm_id = jpf_mod_dbs_get_alarm_id(app_obj, req);
+    alarm_id = nmp_mod_dbs_get_alarm_id(app_obj, req);
     if (alarm_id < 0)
     {
         jpf_warning("get alarm_id error:%d.", alarm_id);
@@ -1136,7 +1136,7 @@ again:
        jpf_warning("insert alarm into database error:%d.", RES_CODE(&result));
     }
 
-    jpf_mod_dbs_del_redundant_alarm(app_obj);
+    nmp_mod_dbs_del_redundant_alarm(app_obj);
 }
 
 
@@ -1197,7 +1197,7 @@ jpf_get_pu_gu_name(JpfMysqlRes *result, gchar *pu_name, gchar *gu_name)
 }
 
 static __inline__ gint
-jpf_mod_dbs_get_pu_gu_name(JpfAppObj *app_obj, JpfSysMsg *msg,
+nmp_mod_dbs_get_pu_gu_name(NmpAppObj *app_obj, NmpSysMsg *msg,
     gchar *guid, gchar *pu_name, gchar *gu_name, gint *num)
 {
     JpfSubmitAlarm *req;
@@ -1271,7 +1271,7 @@ jpf_get_gu_attributes(JpfMysqlRes *result)
 
 
 static __inline__ gint
-jpf_mod_dbs_get_gu_bypass(JpfAppObj *app_obj, gchar *guid, gchar *domain_id)
+nmp_mod_dbs_get_gu_bypass(NmpAppObj *app_obj, gchar *guid, gchar *domain_id)
 {
     JpfMysqlRes *result;
     gchar query_buf[QUERY_STR_LEN] = {0};
@@ -1300,8 +1300,8 @@ jpf_mod_dbs_get_gu_bypass(JpfAppObj *app_obj, gchar *guid, gchar *domain_id)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_submit_alarm_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_submit_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -1329,7 +1329,7 @@ try_again:
     }
 
 //----------------------------------------
-    ret = jpf_mod_dbs_get_pu_gu_name(app_obj, msg, guid, pu_name, gu_name, &found);
+    ret = nmp_mod_dbs_get_pu_gu_name(app_obj, msg, guid, pu_name, gu_name, &found);
     if (ret)
     {
         jpf_warning("alarm get guid error");
@@ -1347,7 +1347,7 @@ try_again:
     strncpy(req_info->gu_name, gu_name, GU_NAME_LEN - 1);
     strncpy(req_info->guid, guid, MAX_ID_LEN - 1);
 
-    bypass = jpf_mod_dbs_get_gu_bypass(app_obj, guid, req_info->domain_id);
+    bypass = nmp_mod_dbs_get_gu_bypass(app_obj, guid, req_info->domain_id);
     if (bypass)
     {
         jpf_sysmsg_destroy(msg);
@@ -1357,8 +1357,8 @@ try_again:
     jpf_get_current_zone_time(req_info->alarm_time);
     if (req_info->action_type == 0)
     {
-        jpf_mod_dbs_write_alarm_to_db(app_obj, msg, req_info);
-        jpf_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_AMS, MESSAGE_SUBMIT_ALARM,
+        nmp_mod_dbs_write_alarm_to_db(app_obj, msg, req_info);
+        nmp_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_AMS, MESSAGE_SUBMIT_ALARM,
         	req_info, sizeof(JpfSubmitAlarm));  //ÔÝÊ±ÆÁ±Î
     }
 
@@ -1488,8 +1488,8 @@ jpf_pu_get_mf_name(JpfMysqlRes *mysql_result, JpfMsgGetManufactRes *res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_pu_get_device_manufact_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_pu_get_device_manufact_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -1527,8 +1527,8 @@ jpf_dbs_pu_get_device_manufact_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_pu_get_div_mode_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_pu_get_div_mode_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -1614,11 +1614,11 @@ err_get_scr_div:
 
 
 void
-jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_PU_REGISTER,
         NULL,
@@ -1626,7 +1626,7 @@ jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_PU_HEART,
         NULL,
@@ -1634,31 +1634,31 @@ jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_CHANGED_PU_ONLINE_STATE,
     	 NULL,
-    	 jpf_mod_dbs_change_pu_online_state_b,
+    	 nmp_mod_dbs_change_pu_online_state_b,
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_SUBMIT_FORMAT_POS,
     	 NULL,
-    	 jpf_mod_dbs_submit_format_pro_b,
+    	 nmp_mod_dbs_submit_format_pro_b,
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_SUBMIT_ALARM,
     	 NULL,
-    	 jpf_mod_dbs_submit_alarm_b,
+    	 nmp_mod_dbs_submit_alarm_b,
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_GET_MDS_INFO,
     	 NULL,
@@ -1666,7 +1666,7 @@ jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MSG_GET_DEVICE_MANUFACT,
     	 NULL,
@@ -1674,7 +1674,7 @@ jpf_mod_dbs_register_pu_msg_handler(JpfModDbs *self)
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_PU_GET_DIV_MODE,
     	 NULL,

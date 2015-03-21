@@ -147,8 +147,8 @@ jpf_process_query_procedure(JpfMysql *mysql, const char *query_buf)
 
 /* 处理操作结果码，不处理结果集 */
 void
-jpf_dbs_do_query_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_dbs_do_query_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect)
@@ -165,7 +165,7 @@ jpf_dbs_do_query_code(JpfAppObj *app_obj,
     if (G_UNLIKELY(code))
         goto END_DBS_QUERY;
 
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
 redo:
     conn = get_db_connection(dbs_obj->pool_info, dbs_obj->pool_conf);
     if (G_UNLIKELY(!conn))
@@ -202,8 +202,8 @@ END_DBS_QUERY:
 
 
 void
-jpf_dbs_do_del_code(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+jpf_dbs_do_del_code(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query,
                       JpfMsgErrCode *result,
                       glong *affect)
@@ -216,13 +216,13 @@ jpf_dbs_do_del_code(JpfAppObj *app_obj,
 
 /* 处理结果集    */
 JpfMysqlRes*
-jpf_dbs_do_query_res(JpfAppObj *app_obj, char *query)
+jpf_dbs_do_query_res(NmpAppObj *app_obj, char *query)
 {
     db_conn_status  *conn = NULL;
     JpfModDbs        *dbs_obj;
     JpfMysqlRes      *result = NULL;
 
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
 redo:
     conn = get_db_connection(dbs_obj->pool_info, dbs_obj->pool_conf);
     if (G_UNLIKELY(!conn))
@@ -307,14 +307,14 @@ jpf_get_count_value(JpfMysqlRes *result)
 }
 
 gint
-jpf_get_record_count(JpfAppObj *app_obj, char *query)
+jpf_get_record_count(NmpAppObj *app_obj, char *query)
 {
 	db_conn_status *conn = NULL;
 	JpfModDbs *dbs_obj;
 	JpfMysqlRes *result = NULL;
 	gint count = 0;
 
-	dbs_obj = JPF_MODDBS(app_obj);
+	dbs_obj = NMP_MODDBS(app_obj);
 
 redo:
 	conn = get_db_connection(dbs_obj->pool_info, dbs_obj->pool_conf);
@@ -410,8 +410,8 @@ jpf_sql_get_res(JpfMysql *db)         // 获取结果集
 }
 
 
-gint jpf_dbs_get_row_num(JpfAppObj *app_obj,
-                      JpfSysMsg *sys_msg,
+gint jpf_dbs_get_row_num(NmpAppObj *app_obj,
+                      NmpSysMsg *sys_msg,
                       char *query)
 {
 	 JpfMysqlRes *result;

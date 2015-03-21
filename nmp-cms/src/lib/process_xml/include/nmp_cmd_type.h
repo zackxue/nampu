@@ -32,7 +32,7 @@
 #define ATTRIBUTE_TYPE   "type"
 
 
-//void jpf_init_cmd_id();
+//void nmp_init_cmd_id();
 
 
 #define xml_malloc(size)  malloc(size)

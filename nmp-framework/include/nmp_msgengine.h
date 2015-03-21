@@ -25,10 +25,10 @@ typedef enum
 	MFR_DELIVER_AHEAD,		//@{deliver, go on ahead}
 	MFR_DELIVER_BACK		//@{deliver, go on backward}
 
-}JpfMsgFunRet;
+}NmpMsgFunRet;
 
 
-typedef JpfMsgFunRet (*JpfMsgFun)(JpfAppObj *app_obj, JpfSysMsg *msg);
+typedef NmpMsgFunRet (*NmpMsgFun)(NmpAppObj *app_obj, NmpSysMsg *msg);
 
 /* 
  * This is POD type
@@ -38,42 +38,42 @@ typedef struct _JpfMsgTable JpfMsgTable;
 struct _JpfMsgTable
 {
 	struct _JpfMsgTableEntry {
-		JpfMsgID entry_msg;
+		NmpMsgID entry_msg;
 		guint entry_flags;
-		JpfMsgFun fun_forward;
-		JpfMsgFun fun_backward;
+		NmpMsgFun fun_forward;
+		NmpMsgFun fun_backward;
 	}msg_enties[MAX_MSG_ENTRIES];
 	guint counts;
 };
 
-#define JPF_TYPE_MSGENGINE	(jpf_msg_engine_get_type())
-#define JPF_IS_MSGENGINE(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MSGENGINE))
-#define JPF_IS_MSGENGINE_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_MSGENGINE))
-#define JPF_MSGENGINE(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MSGENGINE, JpfMsgEngine))
-#define JPF_MSGENGINE_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_MSGENGINE, JpfMsgEngineClass))
-#define JPF_MSGENGINE_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MSGENGINE, JpfMsgEngineClass))
+#define NMP_TYPE_MSGENGINE	(jpf_msg_engine_get_type())
+#define NMP_IS_MSGENGINE(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MSGENGINE))
+#define NMP_IS_MSGENGINE_CLASS(c) \
+	(G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MSGENGINE))
+#define NMP_MSGENGINE(o) \
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MSGENGINE, NmpMsgEngine))
+#define NMP_MSGENGINE_CLASS(c) \
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MSGENGINE, NmpMsgEngineClass))
+#define NMP_MSGENGINE_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MSGENGINE, NmpMsgEngineClass))
 
-typedef struct _JpfMsgEngine JpfMsgEngine;
-typedef struct _JpfMsgEngineClass JpfMsgEngineClass;
+typedef struct _NmpMsgEngine NmpMsgEngine;
+typedef struct _NmpMsgEngineClass NmpMsgEngineClass;
 
 
-struct _JpfMsgEngine
+struct _NmpMsgEngine
 {
 	JpfObject parent_object;
 
 	gchar		name[ENGINE_NAME];
-	JpfAppObj	*owner;
+	NmpAppObj	*owner;
 	JpfMsgTable *msg_dict;
 	GThreadPool	*th_pool_f;		/* Forward msg threads pool */
 	GThreadPool	*th_pool_b;		/* Backward msg threads pool */
 };
 
 
-struct _JpfMsgEngineClass
+struct _NmpMsgEngineClass
 {
 	JpfObjectClass parent_class;
 };
@@ -82,13 +82,13 @@ struct _JpfMsgEngineClass
 GType jpf_msg_engine_get_type( void );
 void jpf_msg_engine_set_thread_exclusive(gboolean exclusive);
 void jpf_msg_engine_set_threads(guint fthreads, guint bthreads);
-void jpf_msg_engine_set_name(JpfMsgEngine *self, const gchar *name);
-gint jpf_msg_engine_set_owner(JpfMsgEngine *self, JpfAppObj *owner);
-gint jpf_msg_engine_push_msg_f(JpfMsgEngine *self, JpfSysMsg *msg);
-gint jpf_msg_engine_push_msg_b(JpfMsgEngine *self, JpfSysMsg *msg);
+void jpf_msg_engine_set_name(NmpMsgEngine *self, const gchar *name);
+gint jpf_msg_engine_set_owner(NmpMsgEngine *self, NmpAppObj *owner);
+gint jpf_msg_engine_push_msg_f(NmpMsgEngine *self, NmpSysMsg *msg);
+gint jpf_msg_engine_push_msg_b(NmpMsgEngine *self, NmpSysMsg *msg);
 
-gint jpf_msg_engine_register_msg(JpfMsgEngine *self, JpfMsgID msg_id,
-	JpfMsgFun f_fun, JpfMsgFun b_fun, guint flags);
+gint jpf_msg_engine_register_msg(NmpMsgEngine *self, NmpMsgID msg_id,
+	NmpMsgFun f_fun, NmpMsgFun b_fun, guint flags);
 
 G_END_DECLS
 

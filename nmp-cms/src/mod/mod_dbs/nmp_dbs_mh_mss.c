@@ -91,8 +91,8 @@ jpf_get_mss_register_info(JpfMysqlRes *mysql_result, JpfMssRegisterRes*res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_register_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -132,8 +132,8 @@ jpf_dbs_mss_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_change_mss_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_change_mss_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -176,7 +176,7 @@ jpf_dbs_mss_change_mss_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 			sprintf(notify_info.param1, "%d", MSS_STATE_TYPE_1);
 		sprintf(notify_info.param2, "%s", req_info->mss_id);
 
-		jpf_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_CU,
+		nmp_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_CU,
 			MESSAGE_BROADCAST_GENERAL_MSG, &notify_info, sizeof(JpfNotifyMessage));
 	}
 
@@ -286,8 +286,8 @@ jpf_dbs_get_guid(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_get_guid_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_get_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -499,8 +499,8 @@ jpf_dbs_mss_get_record_policy(JpfMysqlRes *mysql_result,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_get_record_policy_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_get_record_policy_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -602,8 +602,8 @@ jpf_dbs_mss_get_route(JpfMysqlRes *mysql_result,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_get_route_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_get_route_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -761,8 +761,8 @@ jpf_dbs_mss_get_mds(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_get_mds_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_get_mds_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -892,8 +892,8 @@ jpf_dbs_mss_get_mds_ip(JpfMysqlRes *mysql_result,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_get_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_get_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -959,8 +959,8 @@ jpf_dbs_mss_get_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_mss_check_mss_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mss_check_mss_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	gchar query_buf[QUERY_STR_LEN] = {0};
@@ -979,7 +979,7 @@ jpf_dbs_mss_check_mss_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 		notify_info.msg_id = MSG_MSS_STATE_CHANGE;
 		sprintf(notify_info.param1, "%d", MSS_STATE_TYPE_2);
 		sprintf(notify_info.param2, "%d", total_num);
-		jpf_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_CU,
+		nmp_cms_mod_deliver_msg_2(app_obj, BUSSLOT_POS_CU,
 			MESSAGE_BROADCAST_GENERAL_MSG, &notify_info, sizeof(JpfNotifyMessage));
 	}
 
@@ -990,39 +990,39 @@ jpf_dbs_mss_check_mss_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 void
-jpf_mod_dbs_register_mss_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_mss_msg_handler(JpfModDbs *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_REGISTER,
         NULL,
         jpf_dbs_mss_register_b,
         0
     );
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_GET_GUID,
         NULL,
         jpf_dbs_mss_get_guid_b,
         0
     );
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_GET_RECORD_POLICY,
         NULL,
         jpf_dbs_mss_get_record_policy_b,
         0
     );
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_GET_ROUTE,
         NULL,
         jpf_dbs_mss_get_route_b,
         0
     );
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_GET_MDS,
         NULL,
@@ -1030,7 +1030,7 @@ jpf_mod_dbs_register_mss_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MSS_GET_MDS_IP,
         NULL,
@@ -1038,7 +1038,7 @@ jpf_mod_dbs_register_mss_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MSG_MSS_ONLINE_CHANGE,
     	 NULL,
@@ -1046,7 +1046,7 @@ jpf_mod_dbs_register_mss_msg_handler(JpfModDbs *self)
     	 0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_CHECK_MSS_STATE,
 		NULL,

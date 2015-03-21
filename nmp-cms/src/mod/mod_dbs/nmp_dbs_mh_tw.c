@@ -21,7 +21,7 @@ typedef struct
 } group_read_one_line;
 
 
-static int get_ec_url(JpfAppObj *app_obj, char *dis_guid, char *dis_domain_id,
+static int get_ec_url(NmpAppObj *app_obj, char *dis_guid, char *dis_domain_id,
 	char *ec_guid, char *ec_domain_id, char *ec_url, char *ec_dec_plug)
 {
 	G_ASSERT(app_obj != NULL && ec_url != NULL&& dis_guid != NULL
@@ -62,8 +62,8 @@ static int get_ec_url(JpfAppObj *app_obj, char *dis_guid, char *dis_domain_id,
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_dis_guid_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_dis_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -85,8 +85,8 @@ jpf_mod_dbs_get_dis_guid_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_ec_url_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_ec_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_ec_url_request *req_info;
 	tw_ec_url_response res_info;
@@ -108,7 +108,7 @@ jpf_mod_dbs_get_ec_url_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 static __inline__ void
-jpf_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
+nmp_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 	tw_tour_msg_response *tour_res)
 {
 	G_ASSERT(mysql_res != NULL);
@@ -203,7 +203,7 @@ jpf_mod_dbs_get_tour_info(JpfMysqlRes *mysql_res,
 
 
 static __inline__ tw_tour_msg_response *
-jpf_mod_dbs_get_tour(JpfMysqlRes *mysql_res, gint *size)
+nmp_mod_dbs_get_tour(JpfMysqlRes *mysql_res, gint *size)
 {
 	tw_tour_msg_response *tour_res;
 	gint row_num, len;
@@ -236,7 +236,7 @@ jpf_mod_dbs_get_tour(JpfMysqlRes *mysql_res, gint *size)
 		tour_res->step_count = row_num;
 		tour_res->result = 0;
 
-		jpf_mod_dbs_get_tour_info(mysql_res, tour_res);
+		nmp_mod_dbs_get_tour_info(mysql_res, tour_res);
 	}
 
 	*size = len;
@@ -244,8 +244,8 @@ jpf_mod_dbs_get_tour(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_tour_msg_request *req_info;
 	tw_tour_msg_response *res_info;
@@ -269,7 +269,7 @@ jpf_mod_dbs_get_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 	if (G_LIKELY(!MYSQL_RESULT_CODE(result)))	//success:0 fail:!0
 	{
-		res_info = jpf_mod_dbs_get_tour(result, &size);
+		res_info = nmp_mod_dbs_get_tour(result, &size);
 		if (G_UNLIKELY(!res_info))
 		{
 			jpf_warning("<dbs_mh_tw> alloc error");
@@ -307,7 +307,7 @@ end_get_tour:
 }
 
 
-static void jpf_mod_get_group_info(tw_group_msg_response *res_info,
+static void nmp_mod_get_group_info(tw_group_msg_response *res_info,
 	JpfMysqlRes *mysql_res)
 {
 	JpfMysqlRow mysql_row;
@@ -374,7 +374,7 @@ insert_step_num_sort(tw_group_msg_response *res_info, unsigned int step_num)
 	res_info->step_count++;
 }
 
-static void jpf_mod_get_group_info_2(tw_group_msg_response *res_info,
+static void nmp_mod_get_group_info_2(tw_group_msg_response *res_info,
 	JpfMysqlRes *mysql_res)
 {
 	JpfMysqlRow mysql_row;
@@ -417,8 +417,8 @@ static void jpf_mod_get_group_info_2(tw_group_msg_response *res_info,
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_group_msg_request *req_info;
 	tw_group_msg_response res_info;
@@ -443,7 +443,7 @@ jpf_mod_dbs_get_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 		goto sql_operate_failed;
 	}
 
-	jpf_mod_get_group_info(&res_info, result);
+	nmp_mod_get_group_info(&res_info, result);
 	jpf_sql_put_res(result, sizeof(JpfMysqlRes));
 
 	snprintf(query_buf, QUERY_STR_LEN,
@@ -459,7 +459,7 @@ jpf_mod_dbs_get_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 		goto sql_operate_failed;
 	}
 
-	jpf_mod_get_group_info_2(&res_info, result);
+	nmp_mod_get_group_info_2(&res_info, result);
 	res_info.result = 0;
 	goto end;
 
@@ -516,7 +516,7 @@ stor_group_info(tw_group_step_n_response *res, group_read_one_line *info)
 }
 
 static int
-jpf_mod_dbs_get_group_step(JpfMysqlRes *mysql_res,
+nmp_mod_dbs_get_group_step(JpfMysqlRes *mysql_res,
 	tw_group_step_n_response *res)
 {
 	G_ASSERT(mysql_res != NULL && res != NULL);
@@ -605,8 +605,8 @@ jpf_mod_dbs_get_group_step(JpfMysqlRes *mysql_res,
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_get_group_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_get_group_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_group_step_n_request *req_info;
 	tw_group_step_n_response *res_info;
@@ -684,7 +684,7 @@ jpf_mod_dbs_get_group_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	res_info->screens = (tw_group_screen_response *)((int)res_info +
 		sizeof(tw_group_step_n_response));
 
-	res_info->result = jpf_mod_dbs_get_group_step(result, res_info);
+	res_info->result = nmp_mod_dbs_get_group_step(result, res_info);
 	goto end;
 
 
@@ -709,12 +709,12 @@ end:
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_check_ec_url_update_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_check_ec_url_update_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	tw_update_url *req_info, res_info;
 	char new_url[MAX_URL_LEN] = {0};
-	JpfSysMsg *res_msg;
+	NmpSysMsg *res_msg;
 	int result;
 
 	req_info = (tw_update_url *)MSG_GET_DATA(msg);
@@ -745,7 +745,7 @@ jpf_mod_dbs_check_ec_url_update_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 			return MFR_ACCEPTED;
 		}
 		MSG_SET_DSTPOS(res_msg, BUSSLOT_POS_TW);
-		jpf_app_obj_deliver_out(app_obj, res_msg);
+		nmp_app_obj_deliver_out(app_obj, res_msg);
 		return MFR_ACCEPTED;
 	}
 
@@ -756,55 +756,55 @@ end:
 
 
 void
-jpf_mod_dbs_register_tw_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_tw_msg_handler(JpfModDbs *self)
 {
-	JpfAppMod *super_self = (JpfAppMod*)self;
+	NmpAppMod *super_self = (NmpAppMod*)self;
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_GET_DIS_GUID,
 		NULL,
-		jpf_mod_dbs_get_dis_guid_b,
+		nmp_mod_dbs_get_dis_guid_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_GET_EC_URL,
 		NULL,
-		jpf_mod_dbs_get_ec_url_b,
+		nmp_mod_dbs_get_ec_url_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_GET_TOUR,
 		NULL,
-		jpf_mod_dbs_get_tour_b,
+		nmp_mod_dbs_get_tour_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_GET_GROUP,
 		NULL,
-		jpf_mod_dbs_get_group_b,
+		nmp_mod_dbs_get_group_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_GET_GROUP_STEP_N,
 		NULL,
-		jpf_mod_dbs_get_group_step_b,
+		nmp_mod_dbs_get_group_step_b,
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MSG_TW_INFO_CHECK_EC_URL_UPDATE,
 		NULL,
-		jpf_mod_dbs_check_ec_url_update_b,
+		nmp_mod_dbs_check_ec_url_update_b,
 		0
 	);
 }

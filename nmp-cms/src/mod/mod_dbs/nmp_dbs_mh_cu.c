@@ -71,8 +71,8 @@ jpf_get_user_info(JpfMysqlRes *mysql_result, JpfMsgUserInfoRes *res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_user_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_user_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -167,8 +167,8 @@ jpf_get_user_group_info(JpfMysqlRes *mysql_result,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_user_group_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_user_group_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -268,8 +268,8 @@ jpf_get_user_login_info(JpfMysqlRes *mysql_result,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_user_login_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_user_login_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -279,7 +279,7 @@ jpf_dbs_get_user_login_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
     int code;
     JpfModDbs        *dbs_obj;
 
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
 
     if (dbs_obj->wdd_status)
     {
@@ -1963,8 +1963,8 @@ jpf_dbs_get_area_device(JpfMysqlRes *mysql_res, gint *size)
 
 
 
-JpfMsgFunRet
-jpf_dbs_get_all_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_all_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2062,8 +2062,8 @@ err_get_area:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_area_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_area_info_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2114,8 +2114,8 @@ jpf_dbs_get_area_info_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_defence_area_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_defence_area_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2222,8 +2222,8 @@ err_get_defence_area:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_defence_map_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_defence_map_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2313,8 +2313,8 @@ err_get_defence_map:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_defence_gu_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_defence_gu_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2402,8 +2402,8 @@ err_get_defence_gu:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_map_href_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_map_href_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2571,8 +2571,8 @@ jpf_get_gu_map_location(JpfMysqlRes *mysql_result, JpfGetGuMapLocationRes *res_i
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_gu_map_location_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_gu_map_location_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2610,8 +2610,8 @@ jpf_dbs_get_gu_map_location_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_tw_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_tw_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2699,8 +2699,8 @@ err_get_tw:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2793,8 +2793,8 @@ err_get_screen:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_scr_div_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_scr_div_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2880,8 +2880,8 @@ err_get_scr_div:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_scr_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_scr_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2899,8 +2899,8 @@ jpf_dbs_get_scr_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 /*
-JpfMsgFunRet
-jpf_dbs_change_div_mode_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_change_div_mode_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2919,8 +2919,8 @@ jpf_dbs_change_div_mode_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_full_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2939,8 +2939,8 @@ jpf_dbs_full_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_exit_full_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_exit_full_screen_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -2959,8 +2959,8 @@ jpf_dbs_exit_full_screen_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 */
 
-JpfMsgFunRet
-jpf_dbs_get_tour_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_tour_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3049,8 +3049,8 @@ err_get_tour:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_tour_step_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_tour_step_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3136,8 +3136,8 @@ err_get_tour_step:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_group_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_group_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3225,8 +3225,8 @@ err_get_group:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_device_list_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_device_list_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3334,8 +3334,8 @@ err_get_device_list:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_area_device_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_area_device_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3435,8 +3435,8 @@ err_get_area_device:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_mds_ip_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3473,7 +3473,7 @@ jpf_dbs_get_mds_ip_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-static __inline__ gint jpf_dbs_check_user_own_gu(JpfAppObj *app_obj,
+static __inline__ gint jpf_dbs_check_user_own_gu(NmpAppObj *app_obj,
     gchar *guid, gchar *domain_id, gchar *username)
 {
     gchar query_buf[QUERY_STR_LEN] = {0};
@@ -3499,8 +3499,8 @@ static __inline__ gint jpf_dbs_check_user_own_gu(JpfAppObj *app_obj,
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_media_url_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_media_url_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3741,8 +3741,8 @@ jpf_dbs_get_alarm(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_alarm_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3892,8 +3892,8 @@ jpf_get_alarm_state(JpfMysqlRes *mysql_result, JpfGetAlarmStateRes *res_info)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_alarm_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_alarm_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -3930,8 +3930,8 @@ jpf_dbs_get_alarm_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_deal_alarm_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_deal_alarm_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -4121,8 +4121,8 @@ jpf_dbs_get_gu_mss(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_get_gu_mss_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_get_gu_mss_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -4205,8 +4205,8 @@ err_get_gu_mss:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_cu_modify_user_pwd_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_cu_modify_user_pwd_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -4272,21 +4272,21 @@ jpf_dbs_cu_query_guid(JpfMysqlRes *result, JpfCuQueryGuidRes *res_info)
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(res_info->guid, value,
+					NMP_COPY_VAL(res_info->guid, value,
 					MAX_ID_LEN);
 			}
 			else if (!strcmp(name, "user_guid_domain"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(res_info->domain, value,
+					NMP_COPY_VAL(res_info->domain, value,
 					DOMAIN_ID_LEN);
 			}
 			else if (!strcmp(name, "gu_name"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(res_info->gu_name, value,
+					NMP_COPY_VAL(res_info->gu_name, value,
 					GU_NAME_LEN);
 			}
 			else if (!strcmp(name, "user_guid_level"))
@@ -4308,8 +4308,8 @@ jpf_dbs_cu_query_guid(JpfMysqlRes *result, JpfCuQueryGuidRes *res_info)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_cu_query_guid_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_cu_query_guid_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuQueryGuid *req_info = NULL;
@@ -4342,7 +4342,7 @@ end:
 		jpf_sql_put_res(mysql_result, sizeof(JpfMysqlRes));
 
 	SET_CODE(&res_info, ret);
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4388,8 +4388,8 @@ jpf_dbs_cu_query_screen_id(JpfMysqlRes *result, JpfCuQueryScreenIDRes *res_info)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_cu_query_screen_id_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_cu_query_screen_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuQueryScreenID *req_info = NULL;
@@ -4423,7 +4423,7 @@ end:
 		jpf_sql_put_res(mysql_result, sizeof(JpfMysqlRes));
 
 	SET_CODE(&res_info, ret);
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4461,14 +4461,14 @@ jpf_dbs_cu_query_guid_info(JpfMysqlRes *result, JpfCuQueryUserGuidsRes *query_re
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(gu->guid, value,
+					NMP_COPY_VAL(gu->guid, value,
 					MAX_ID_LEN);
 			}
 			else if (!strcmp(name, "user_guid_domain"))
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(gu->domain, value,
+					NMP_COPY_VAL(gu->domain, value,
 					DOMAIN_ID_LEN);
 			}
 			else if (!strcmp(name, "user_guid_level"))
@@ -4481,7 +4481,7 @@ jpf_dbs_cu_query_guid_info(JpfMysqlRes *result, JpfCuQueryUserGuidsRes *query_re
 			{
 				value = jpf_sql_get_field_value(mysql_row, field_i);
 				if (value)
-					JPF_COPY_VAL(gu->gu_name, value,
+					NMP_COPY_VAL(gu->gu_name, value,
 					GU_NAME_LEN);
 			}
 			else if (!strcmp(name, "user_gu_num"))
@@ -4536,8 +4536,8 @@ jpf_dbs_cu_query_user_guids(JpfMysqlRes *mysql_res, gint *size)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_cu_query_user_guids_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_cu_query_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuQueryUserGuids *req_info = NULL;
@@ -4570,7 +4570,7 @@ jpf_dbs_cu_query_user_guids_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	);
 
 	mysql_result = jpf_dbs_do_query_res(app_obj, query_buf);
-	JPF_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end);
+	NMP_DBS_CHECK_MYSQL_RESULT(mysql_result, ret, row_num, end);
 
 	res_info = jpf_dbs_cu_query_user_guids(mysql_result, &size);
 	if (G_UNLIKELY(!res_info))
@@ -4605,7 +4605,7 @@ end:
 	}
 
 	SET_CODE(res_info, ret);
-	JPF_COPY_VAL(res_info->session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info->session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg(msg, res_info, size, BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU, jpf_mem_kfree);
@@ -4614,8 +4614,8 @@ end:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_cu_set_user_guids_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_cu_set_user_guids_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuSetUserGuids *req_info = NULL;
@@ -4655,7 +4655,7 @@ jpf_dbs_cu_set_user_guids_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 			break;
 	}
 
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4664,8 +4664,8 @@ jpf_dbs_cu_set_user_guids_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_dbs_cu_set_screen_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_cu_set_screen_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuSetScreenNum *req_info = NULL;
@@ -4731,7 +4731,7 @@ jpf_dbs_cu_set_screen_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	jpf_dbs_do_query_code(app_obj, msg, query_buf, &res_info.code, &affect_num);
 
 end:
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4772,8 +4772,8 @@ jpf_dbs_cu_query_tour_id(JpfMysqlRes *result, JpfCuQueryTourIDRes *res_info)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_cu_query_tour_id_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_cu_query_tour_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuQueryTourID *req_info = NULL;
@@ -4805,7 +4805,7 @@ end:
 		jpf_sql_put_res(mysql_result, sizeof(JpfMysqlRes));
 
 	SET_CODE(&res_info, ret);
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4813,8 +4813,8 @@ end:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_cu_set_tour_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_cu_set_tour_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuSetTourNum *req_info = NULL;
@@ -4880,7 +4880,7 @@ jpf_dbs_cu_set_tour_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	jpf_dbs_do_query_code(app_obj, msg, query_buf, &res_info.code, &affect_num);
 
 end:
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4921,8 +4921,8 @@ jpf_dbs_cu_query_group_id(JpfMysqlRes *result, JpfCuQueryGroupIDRes *res_info)
 }
 
 
-static JpfMsgFunRet
-jpf_dbs_cu_query_group_id_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+static NmpMsgFunRet
+jpf_dbs_cu_query_group_id_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuQueryGroupID *req_info = NULL;
@@ -4954,7 +4954,7 @@ end:
 		jpf_sql_put_res(mysql_result, sizeof(JpfMysqlRes));
 
 	SET_CODE(&res_info, ret);
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -4962,8 +4962,8 @@ end:
 }
 
 
-JpfMsgFunRet
-jpf_dbs_cu_set_group_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_cu_set_group_num_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 	JpfCuSetGroupNum *req_info = NULL;
@@ -5029,7 +5029,7 @@ jpf_dbs_cu_set_group_num_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 	jpf_dbs_do_query_code(app_obj, msg, query_buf, &res_info.code, &affect_num);
 
 end:
-	JPF_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
+	NMP_COPY_VAL(res_info.session, req_info->session, SESSION_ID_LEN);
 
 	jpf_dbs_modify_sysmsg_2(msg, &res_info, sizeof(res_info), BUSSLOT_POS_DBS,
 		BUSSLOT_POS_CU);
@@ -5040,11 +5040,11 @@ end:
 
 
 void
-jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MSG_GET_USER_INFO,
         NULL,
@@ -5052,7 +5052,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MSG_GET_USER_GROUP_INFO,
         NULL,
@@ -5060,7 +5060,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MSG_GET_USER_LOGIN_INFO,
         NULL,
@@ -5068,7 +5068,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_ALL_AREA,
         NULL,
@@ -5076,7 +5076,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_AREA_INFO,
         NULL,
@@ -5084,7 +5084,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_DEVICE_LIST,
         NULL,
@@ -5092,7 +5092,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_AREA_DEVICE_INFO,
         NULL,
@@ -5100,7 +5100,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_MEDIA_URL,
         NULL,
@@ -5108,7 +5108,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_ALARM,
         NULL,
@@ -5116,7 +5116,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_ALARM_STATE,
         NULL,
@@ -5124,7 +5124,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_DEAL_ALARM,
         NULL,
@@ -5132,7 +5132,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_GU_MSS,
         NULL,
@@ -5140,7 +5140,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_DEFENCE_AREA,
         NULL,
@@ -5148,7 +5148,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_DEFENCE_MAP,
         NULL,
@@ -5156,7 +5156,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_DEFENCE_GU,
         NULL,
@@ -5164,7 +5164,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_MAP_HREF,
         NULL,
@@ -5172,7 +5172,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_GU_MAP_LOCATION,
         NULL,
@@ -5180,7 +5180,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_TW,
         NULL,
@@ -5188,7 +5188,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_SCREEN,
         NULL,
@@ -5196,7 +5196,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_SCR_DIV,
         NULL,
@@ -5204,7 +5204,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_SCR_STATE,
         NULL,
@@ -5212,7 +5212,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_TOUR,
         NULL,
@@ -5220,7 +5220,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_TOUR_STEP,
         NULL,
@@ -5228,7 +5228,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_GET_GROUP,
         NULL,
@@ -5236,7 +5236,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
         super_self,
         MESSAGE_CU_MODIFY_USER_PWD,
         NULL,
@@ -5244,7 +5244,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
         0
     );
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_GUID,
 		NULL,
@@ -5252,7 +5252,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_SCREEN_ID,
 		NULL,
@@ -5260,7 +5260,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_USER_GUIDS,
 		NULL,
@@ -5268,7 +5268,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_USER_GUIDS,
 		NULL,
@@ -5276,7 +5276,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_SCREEN_NUM,
 		NULL,
@@ -5284,7 +5284,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_TOUR_ID,
 		NULL,
@@ -5292,7 +5292,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_TOUR_NUM,
 		NULL,
@@ -5300,7 +5300,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_QUERY_GROUP_ID,
 		NULL,
@@ -5308,7 +5308,7 @@ jpf_mod_dbs_register_cu_msg_handler(JpfModDbs *self)
 		0
 	);
 
-	jpf_app_mod_register_msg(
+	nmp_app_mod_register_msg(
 		super_self,
 		MESSAGE_SET_GROUP_NUM,
 		NULL,

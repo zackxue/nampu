@@ -20,16 +20,16 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfEventTable JpfEventTable;
+typedef struct _NmpEventTable NmpEventTable;
 
-JpfEventTable *jpf_event_table_new(gpointer owner);
-void jpf_event_table_destroy(JpfEventTable *table);
+NmpEventTable *jpf_event_table_new(gpointer owner);
+void jpf_event_table_destroy(NmpEventTable *table);
 
 /* send request, and wait */
-gint jpf_event_request(JpfEventTable *t, JpfSysMsg **msg);
+gint jpf_event_request(NmpEventTable *t, NmpSysMsg **msg);
 
 /* invoked by response giver */
-gint jpf_event_response(JpfEventTable *table, JpfSysMsg *msg);
+gint jpf_event_response(NmpEventTable *table, NmpSysMsg *msg);
 
 G_END_DECLS
 

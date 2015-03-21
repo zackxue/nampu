@@ -77,7 +77,7 @@ jpf_get_mds_register_info(JpfMysqlRes *mysql_result, JpfMdsRegisterRes*res_info)
 }
 
 
-void jpf_insert_mds_ip(JpfAppObj *app_obj, gchar *mds_id,
+void jpf_insert_mds_ip(NmpAppObj *app_obj, gchar *mds_id,
 	gchar *cms_ip, gchar *mds_ip)
 {
     JpfMsgErrCode result;
@@ -95,7 +95,7 @@ void jpf_insert_mds_ip(JpfAppObj *app_obj, gchar *mds_id,
 }
 
 
-static void jpf_del_mds_ip(JpfAppObj *app_obj, gchar *mds_id)
+static void jpf_del_mds_ip(NmpAppObj *app_obj, gchar *mds_id)
 {
     JpfMsgErrCode result;
     char query_buf[QUERY_STR_LEN];
@@ -111,7 +111,7 @@ static void jpf_del_mds_ip(JpfAppObj *app_obj, gchar *mds_id)
 }
 
 
-static void jpf_update_mds_ip(JpfAppObj *app_obj, gchar *mds_id,
+static void jpf_update_mds_ip(NmpAppObj *app_obj, gchar *mds_id,
 	gchar *mds_ip, gchar *cms_ip, gint clear)
 {
     JpfHostIps ips;
@@ -140,8 +140,8 @@ static void jpf_update_mds_ip(JpfAppObj *app_obj, gchar *mds_id,
     }
 }
 
-JpfMsgFunRet
-jpf_dbs_mds_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mds_register_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
 	G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -188,8 +188,8 @@ jpf_dbs_mds_register_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 
-JpfMsgFunRet
-jpf_mod_dbs_change_mds_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+nmp_mod_dbs_change_mds_online_state_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -215,8 +215,8 @@ jpf_mod_dbs_change_mds_online_state_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
 
 
-JpfMsgFunRet
-jpf_dbs_mds_heart_b(JpfAppObj *app_obj, JpfSysMsg *msg)
+NmpMsgFunRet
+jpf_dbs_mds_heart_b(NmpAppObj *app_obj, NmpSysMsg *msg)
 {
     G_ASSERT(app_obj != NULL && msg != NULL);
 
@@ -231,7 +231,7 @@ jpf_dbs_mds_heart_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 
     memset(&res_info, 0, sizeof(res_info));
     strncpy(res_info.mds_id, req_info->mds_id, MDS_ID_LEN - 1);
-    dbs_obj = JPF_MODDBS(app_obj);
+    dbs_obj = NMP_MODDBS(app_obj);
 
     snprintf(
         query_buf, QUERY_STR_LEN,
@@ -254,11 +254,11 @@ jpf_dbs_mds_heart_b(JpfAppObj *app_obj, JpfSysMsg *msg)
 }
 
 void
-jpf_mod_dbs_register_mds_msg_handler(JpfModDbs *self)
+nmp_mod_dbs_register_mds_msg_handler(JpfModDbs *self)
 {
-    JpfAppMod *super_self = (JpfAppMod*)self;
+    NmpAppMod *super_self = (NmpAppMod*)self;
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
         MESSAGE_MDS_REGISTER,
         NULL,
@@ -266,15 +266,15 @@ jpf_mod_dbs_register_mds_msg_handler(JpfModDbs *self)
         0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MSG_MDS_ONLINE_CHANGE,
     	 NULL,
-    	 jpf_mod_dbs_change_mds_online_state_b,
+    	 nmp_mod_dbs_change_mds_online_state_b,
     	 0
     );
 
-    jpf_app_mod_register_msg(
+    nmp_app_mod_register_msg(
         super_self,
     	 MESSAGE_MDS_HEART,
     	 NULL,

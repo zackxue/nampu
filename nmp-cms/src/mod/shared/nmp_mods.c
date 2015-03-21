@@ -87,7 +87,7 @@ __jpf_mods_io_list_timer(JpfNewIOList *l)
 
 		io = new_io->io;
 		jpf_net_unref_io(io);	/* release list ownership */
-		jpf_mod_acc_release_io((JpfModAccess*)l->owner, io);
+		nmp_mod_acc_release_io((JpfModAccess*)l->owner, io);
 
 		g_free(new_io);
 
@@ -581,7 +581,7 @@ jpf_mods_guest_value_destroy(gpointer data)
 
 	base_obj = (JpfGuestBase*)data;
 
-	jpf_mod_acc_release_io(
+	nmp_mod_acc_release_io(
 		(JpfModAccess*)base_obj->container->owner,
 		base_obj->io
 	);
@@ -699,7 +699,7 @@ jpf_mods_container_notify_remove(JpfGuestContainer *container,
 
 
 gint
-jpf_mod_container_add_io(JpfGuestContainer *container, JpfNetIO *io)
+nmp_mod_container_add_io(JpfGuestContainer *container, JpfNetIO *io)
 {
 	gint err;
 	G_ASSERT(container != NULL && io != NULL);
@@ -719,7 +719,7 @@ jpf_mod_container_add_io(JpfGuestContainer *container, JpfNetIO *io)
 
 
 gint
-jpf_mod_container_del_io(JpfGuestContainer *container, JpfNetIO *io)
+nmp_mod_container_del_io(JpfGuestContainer *container, JpfNetIO *io)
 {
 	gint ret;
 	G_ASSERT(container != NULL && io != NULL);
@@ -878,10 +878,10 @@ jpf_mods_cmd_executer(gpointer user_data)
 
 
 gint
-jpf_cms_mod_deliver_msg(JpfAppObj *self, gint dst, gint msg_id,
+nmp_cms_mod_deliver_msg(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size, void (*destroy)(void *, gsize size))
 {
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 
 	msg = jpf_sysmsg_new(msg_id, parm, size, ++msg_seq_generator,
 		(JpfMsgPrivDes)destroy);
@@ -889,37 +889,37 @@ jpf_cms_mod_deliver_msg(JpfAppObj *self, gint dst, gint msg_id,
 		return -ENOMEM;
 
 	MSG_SET_DSTPOS(msg, dst);
-	jpf_app_obj_deliver_out(self, msg);
+	nmp_app_obj_deliver_out(self, msg);
 	return 0;
 }
 
 
 gint
-jpf_cms_mod_deliver_msg_2(JpfAppObj *self, gint dst, gint msg_id,
+nmp_cms_mod_deliver_msg_2(NmpAppObj *self, gint dst, gint msg_id,
 	void *parm, gint size)
 {
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 
 	msg = jpf_sysmsg_new_2(msg_id, parm, size, ++msg_seq_generator);
 	if (G_UNLIKELY(!msg))
 		return -ENOMEM;
 
 	MSG_SET_DSTPOS(msg, dst);
-	jpf_app_obj_deliver_out(self, msg);
+	nmp_app_obj_deliver_out(self, msg);
 	return 0;
 }
 
 gint
-jpf_cms_mod_cpy_msg(JpfAppObj *app_obj,JpfSysMsg *msg,  gint dst)
+nmp_cms_mod_cpy_msg(NmpAppObj *app_obj,NmpSysMsg *msg,  gint dst)
 {
-	JpfSysMsg *cpy_msg;
+	NmpSysMsg *cpy_msg;
 
 	cpy_msg = jpf_sysmsg_copy_one(msg);
 	if (G_UNLIKELY(!cpy_msg))
 		return -ENOMEM;
 
 	MSG_SET_DSTPOS(cpy_msg, dst);
-	jpf_app_obj_deliver_out(app_obj, cpy_msg);
+	nmp_app_obj_deliver_out(app_obj, cpy_msg);
 	return 0;
 }
 

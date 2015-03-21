@@ -27,35 +27,35 @@ extern LOG_MSG_ENABLE g_log_msg_enable[LOG_MAX_MESSAGE_NUM];
 
 #define DEFAULT_HEART_SLICE		(3)
 
-#define JPF_TYPE_MODLOG	(jpf_mod_log_get_type())
-#define JPF_IS_MODLOG(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MODLOG))
-#define JPF_IS_MODLOG_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_MODLOG))
-#define JPF_MODLOG(o) \
-	(G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MODLOG, JpfModLog))
-#define JPF_MODLOG_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_MODLOG, JpfModLogClass))
-#define JPF_MODLOG_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MODLOG, JpfModLogClass))
+#define NMP_TYPE_MODLOG	(nmp_mod_log_get_type())
+#define NMP_IS_MODLOG(o)	(G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODLOG))
+#define NMP_IS_MODLOG_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODLOG))
+#define NMP_MODLOG(o) \
+	(G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODLOG, NmpModLog))
+#define NMP_MODLOG_CLASS(c) \
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_MODLOG, NmpModLogClass))
+#define NMP_MODLOG_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODLOG, NmpModLogClass))
 
 
-typedef struct _JpfModLog JpfModLog;
-typedef struct _JpfModLogClass JpfModLogClass;
+typedef struct _NmpModLog NmpModLog;
+typedef struct _NmpModLogClass NmpModLogClass;
 
-struct _JpfModLog
+struct _NmpModLog
 {
-	JpfAppMod	parent_object;
+	NmpAppMod	parent_object;
 	db_conn_pool_conf *pool_conf;
 	db_conn_pool_info *pool_info;
 	gint del_log_flag;
 };
 
-struct _JpfModLogClass
+struct _NmpModLogClass
 {
-	JpfAppModClass	parent_class;
+	NmpAppModClass	parent_class;
 };
 
 
-GType jpf_mod_log_get_type(void);
+GType nmp_mod_log_get_type(void);
 
 
 G_END_DECLS

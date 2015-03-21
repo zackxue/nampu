@@ -201,7 +201,7 @@ jpf_create_ams_device_info_change(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	root_node = xmlNewNode(NULL, BAD_CAST ROOTNODE);
 	jpf_create_xml_type(doc, root_node, ATTRIBUTE_TYPE,sys_msg->msg_id);
 
-	JPF_XML_DEF_STR_CREATE_CHILD("amsId", tmp->ams_id, root_node);
+	NMP_XML_DEF_STR_CREATE_CHILD("amsId", tmp->ams_id, root_node);
 
 	return 0;
 }
@@ -212,13 +212,13 @@ jpf_parse_ams_get_device_info(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfAmsGetDeviceInfo tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "reqNum")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "reqNum")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -231,9 +231,9 @@ jpf_create_ams_get_device_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	JPF_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
+	NMP_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD("totalCount", tmp->total_count, root_node, str);
+	NMP_XML_DEF_VAL_CREATE_CHILD("totalCount", tmp->total_count, root_node, str);
 
 	back_count = tmp->back_count;
 	snprintf(str, INT_TO_CHAR_LEN, "%d", back_count);
@@ -248,12 +248,12 @@ jpf_create_ams_get_device_info_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 		node1 = xmlNewNode(NULL, BAD_CAST "device");
 		xmlAddChild(node, node1);
 
-		JPF_XML_DEF_STR_CREATE_CHILD("puid", dev->puid, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("domain", dev->domain, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devName", dev->dev_name, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devPasswd", dev->dev_passwd, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devIP", dev->dev_ip, node1);
-		JPF_XML_DEF_VAL_CREATE_CHILD("devPort", dev->dev_port, node1, str);
+		NMP_XML_DEF_STR_CREATE_CHILD("puid", dev->puid, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("domain", dev->domain, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devName", dev->dev_name, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devPasswd", dev->dev_passwd, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devIP", dev->dev_ip, node1);
+		NMP_XML_DEF_VAL_CREATE_CHILD("devPort", dev->dev_port, node1, str);
 
 		i++;
 	}

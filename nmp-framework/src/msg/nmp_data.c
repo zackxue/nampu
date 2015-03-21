@@ -15,7 +15,7 @@ jpf_data_init(JpfData *self)
 static void
 jpf_data_dispose(GObject *object)
 {
-	JpfData *jpf_data = JPF_DATA(object);
+	JpfData *jpf_data = NMP_DATA(object);
 
 	if (G_UNLIKELY(!jpf_data))
 		return;

@@ -391,7 +391,7 @@ jpf_create_xml_str(JpfCmdType *self,
 int
 jpf_create_xml_file(JpfCmdType *self, const char *filename, JpfMsgInfo *sys_msg);
 
-void jpf_init_cmd_id(JpfCmdType *self);
+void nmp_init_cmd_id(JpfCmdType *self);
 //for test,cms will offter
 void *jpf_get_msginfo_data(JpfMsgInfo *sys_msg);
 

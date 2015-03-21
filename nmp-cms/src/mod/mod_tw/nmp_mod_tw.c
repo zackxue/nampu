@@ -16,23 +16,23 @@
 
 pthread_t tw_tid;
 #define TW_WORK_TIME	(200)	//200 ms
-static JpfModTw *g_jpf_mod_tw;
+static JpfModTw *g_nmp_mod_tw;
 //static guint msg_seq_generator = 0;
 
 
-G_DEFINE_TYPE(JpfModTw, jpf_mod_tw, JPF_TYPE_APPMOD);
+G_DEFINE_TYPE(JpfModTw, nmp_mod_tw, NMP_TYPE_APPMOD);
 
 void
-jpf_mod_tw_register_msg_handler(JpfModTw *self);
+nmp_mod_tw_register_msg_handler(JpfModTw *self);
 
 
 JpfModTw *jpf_get_mod_tw()
 {
-	return g_jpf_mod_tw;
+	return g_nmp_mod_tw;
 }
 
 
-void *jpf_mod_tw_work(void *arg)
+void *nmp_mod_tw_work(void *arg)
 {
 	while (1)
 	{
@@ -46,49 +46,49 @@ void *jpf_mod_tw_work(void *arg)
 
 
 gint
-jpf_mod_tw_setup(JpfAppMod *am_self)
+nmp_mod_tw_setup(NmpAppMod *am_self)
 {
 	JpfModTw *self;
 	G_ASSERT(am_self != NULL);
 
 	self = (JpfModTw*)am_self;
 
-	jpf_app_mod_set_name(am_self, "MOD-TW");
-	jpf_mod_tw_register_msg_handler(self);
+	nmp_app_mod_set_name(am_self, "MOD-TW");
+	nmp_mod_tw_register_msg_handler(self);
 	return 0;
 }
 
 
 static void
-jpf_mod_tw_init(JpfModTw *self)
+nmp_mod_tw_init(JpfModTw *self)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 	int ret;
 
-	g_jpf_mod_tw = self;
-	jpf_tw_set_event_handler(jpf_mod_tw_event_handler);
-	ret = pthread_create(&tw_tid, NULL, jpf_mod_tw_work, NULL);
+	g_nmp_mod_tw = self;
+	jpf_tw_set_event_handler(nmp_mod_tw_event_handler);
+	ret = pthread_create(&tw_tid, NULL, nmp_mod_tw_work, NULL);
 	if (ret != 0)
 		jpf_warning("pthread_create failed\n");
 }
 
 
 static void
-jpf_mod_tw_class_init(JpfModTwClass *k_class)
+nmp_mod_tw_class_init(JpfModTwClass *k_class)
 {
-	JpfAppModClass *am_class = (JpfAppModClass*)k_class;
+	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
-	am_class->setup_mod	= jpf_mod_tw_setup;
+	am_class->setup_mod	= nmp_mod_tw_setup;
 }
 
 
-static gint jpf_mod_tw_get_tour(tw_tour_msg_request *in_parm,
+static gint nmp_mod_tw_get_tour(tw_tour_msg_request *in_parm,
 	tw_tour_msg_response *out_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
 	gint err = -1;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	tw_tour_msg_response *res_info;
 	G_ASSERT(out_parm);
 
@@ -98,7 +98,7 @@ static gint jpf_mod_tw_get_tour(tw_tour_msg_request *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -136,13 +136,13 @@ end:
 }
 
 
-static gint jpf_mod_tw_get_group(tw_group_msg_request *in_parm,
+static gint nmp_mod_tw_get_group(tw_group_msg_request *in_parm,
     tw_group_msg_response *out_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
 	gint err = -1;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	tw_group_msg_response *res_info;
 	G_ASSERT(out_parm);
 
@@ -152,7 +152,7 @@ static gint jpf_mod_tw_get_group(tw_group_msg_request *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -184,13 +184,13 @@ end:
 }
 
 
-static gint jpf_mod_tw_get_group_step_n(tw_group_step_n_request *in_parm,
+static gint nmp_mod_tw_get_group_step_n(tw_group_step_n_request *in_parm,
 	tw_group_step_n_response *out_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
 	gint err = -1;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	tw_group_step_n_response *res_info;
 	G_ASSERT(out_parm);
 
@@ -200,7 +200,7 @@ static gint jpf_mod_tw_get_group_step_n(tw_group_step_n_request *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -239,13 +239,13 @@ end:
 }
 
 
-static gint jpf_mod_tw_get_dis_guid(tw_dis_guid_request *in_parm,
+static gint nmp_mod_tw_get_dis_guid(tw_dis_guid_request *in_parm,
 	tw_dis_guid_response *out_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
 	gint err = -1;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	tw_dis_guid_response *res_info;
 	G_ASSERT(out_parm);
 
@@ -255,7 +255,7 @@ static gint jpf_mod_tw_get_dis_guid(tw_dis_guid_request *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -288,13 +288,13 @@ end:
 }
 
 
-static gint jpf_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
+static gint nmp_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
 	tw_ec_url_response *out_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
 	gint err = -1;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	tw_ec_url_response *res_info;
 	G_ASSERT(out_parm);
 
@@ -304,7 +304,7 @@ static gint jpf_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)jpf_get_mod_tw(), &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)jpf_get_mod_tw(), &msg);
 	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -328,7 +328,7 @@ static gint jpf_mod_tw_get_ec_url(tw_ec_url_request *in_parm,
 		err = res_info->result;
 		goto end;
 	}
-	jpf_mod_tw_log("************ get ec_url:%s ***********\n", res_info->ec_url);
+	nmp_mod_tw_log("************ get ec_url:%s ***********\n", res_info->ec_url);
 
 	memcpy(out_parm, res_info, sizeof(tw_ec_url_response));
 
@@ -338,9 +338,9 @@ end:
 }
 
 
-static gint jpf_mod_tw_query_if_update_ec_url(tw_update_url *in_parm)
+static gint nmp_mod_tw_query_if_update_ec_url(tw_update_url *in_parm)
 {
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	JpfModTw *self;
 
 	self = jpf_get_mod_tw();
@@ -353,7 +353,7 @@ static gint jpf_mod_tw_query_if_update_ec_url(tw_update_url *in_parm)
 	}
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
@@ -362,11 +362,11 @@ static gint jpf_mod_tw_query_if_update_ec_url(tw_update_url *in_parm)
 /*
  *	注意:in_parm所指向内存由本函数处理
  */
-static gint jpf_mod_tw_send_screen_to_dec(tw_screen_to_decoder_with_seq *in_parm)
+static gint nmp_mod_tw_send_screen_to_dec(tw_screen_to_decoder_with_seq *in_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	JpfModTw *self;
 
 	self = jpf_get_mod_tw();
@@ -380,17 +380,17 @@ static gint jpf_mod_tw_send_screen_to_dec(tw_screen_to_decoder_with_seq *in_parm
 	}
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_PU);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
 
 
-static gint jpf_mod_tw_send_screen_to_cu(tw_screen_to_cu *in_parm)
+static gint nmp_mod_tw_send_screen_to_cu(tw_screen_to_cu *in_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	JpfModTw *self;
 
 	self = jpf_get_mod_tw();
@@ -401,17 +401,17 @@ static gint jpf_mod_tw_send_screen_to_cu(tw_screen_to_cu *in_parm)
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
 
 
-static gint jpf_mod_tw_run_res_to_cu(tw_run_res *in_parm)
+static gint nmp_mod_tw_run_res_to_cu(tw_run_res *in_parm)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
-	JpfSysMsg *msg = NULL;
+	NmpSysMsg *msg = NULL;
 	JpfModTw *self;
 	JpfCuExecuteRes res_info;
 
@@ -438,18 +438,18 @@ static gint jpf_mod_tw_run_res_to_cu(tw_run_res *in_parm)
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
 	MSG_SET_RESPONSE(msg);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
 
 
-static gint jpf_mod_tw_operate_to_dec(tw_operate_to_decoder_with_seq *in_parm,
+static gint nmp_mod_tw_operate_to_dec(tw_operate_to_decoder_with_seq *in_parm,
 	int operate_type)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	JpfModTw *self;
 
 	self = jpf_get_mod_tw();
@@ -460,19 +460,19 @@ static gint jpf_mod_tw_operate_to_dec(tw_operate_to_decoder_with_seq *in_parm,
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_PU);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
 
 
-static gint jpf_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in_parm,
+static gint nmp_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in_parm,
 	int operate_type)
 {
-	jpf_mod_tw_func_begin("\n");
+	nmp_mod_tw_func_begin("\n");
 
-	JpfSysMsg *msg;
-	JpfSysMsg *res_msg;
+	NmpSysMsg *msg;
+	NmpSysMsg *res_msg;
 	JpfModTw *self;
 	JpfCuExecuteRes res;
 
@@ -488,7 +488,7 @@ static gint jpf_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in
 
 	MSG_SET_DSTPOS(res_msg, BUSSLOT_POS_CU);
 	MSG_SET_RESPONSE(res_msg);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, res_msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, res_msg);
 
 
 	if (in_parm->to_cu.result != 0)
@@ -504,13 +504,13 @@ static gint jpf_mod_tw_operate_result_to_cu(tw_operate_result_to_cu_with_seq *in
 		return -E_NOMEM;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_CU);
-	jpf_app_obj_deliver_out((JpfAppObj *)self, msg);
+	nmp_app_obj_deliver_out((NmpAppObj *)self, msg);
 
 	return 0;
 }
 
 
-gint jpf_mod_tw_event_handler(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
+gint nmp_mod_tw_event_handler(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
 {
 	gint err = -1;
 	G_ASSERT(jpf_get_mod_tw() != NULL);
@@ -520,105 +520,105 @@ gint jpf_mod_tw_event_handler(TW_INFO_TYPE cmd, void *in_parm, void *out_parm)
 	{
 	case TW_INFO_GET_TOUR:
 		{
-			err = jpf_mod_tw_get_tour((tw_tour_msg_request *)in_parm,
+			err = nmp_mod_tw_get_tour((tw_tour_msg_request *)in_parm,
 				(tw_tour_msg_response *)out_parm);
 			break;
 		}
 	case TW_INFO_GET_GROUP:
 		{
-			err = jpf_mod_tw_get_group((tw_group_msg_request *)in_parm,
+			err = nmp_mod_tw_get_group((tw_group_msg_request *)in_parm,
 				(tw_group_msg_response *)out_parm);
 			break;
 		}
 	case TW_INFO_GET_GROUP_STEP_N:
 		{
-			err = jpf_mod_tw_get_group_step_n((tw_group_step_n_request *)in_parm,
+			err = nmp_mod_tw_get_group_step_n((tw_group_step_n_request *)in_parm,
 				(tw_group_step_n_response *)out_parm);
 			break;
 		}
 	case TW_INFO_GET_DIS_GUID:
 		{
-			err = jpf_mod_tw_get_dis_guid((tw_dis_guid_request *)in_parm,
+			err = nmp_mod_tw_get_dis_guid((tw_dis_guid_request *)in_parm,
 				(tw_dis_guid_response *)out_parm);
 			break;
 		}
 	case TW_INFO_GET_EC_URL:
 		{
-			err = jpf_mod_tw_get_ec_url((tw_ec_url_request *)in_parm,
+			err = nmp_mod_tw_get_ec_url((tw_ec_url_request *)in_parm,
 				(tw_ec_url_response *)out_parm);
 			break;
 		}
 	case TW_INFO_QUERY_IF_UPDATE_URL:
 		{
-			err = jpf_mod_tw_query_if_update_ec_url((tw_update_url *)in_parm);
+			err = nmp_mod_tw_query_if_update_ec_url((tw_update_url *)in_parm);
 			break;
 		}
 	case TW_INFO_SEND_SCREEN_TO_DEC:
 		{
-			err = jpf_mod_tw_send_screen_to_dec((tw_screen_to_decoder_with_seq *)in_parm);
+			err = nmp_mod_tw_send_screen_to_dec((tw_screen_to_decoder_with_seq *)in_parm);
 			break;
 		}
 	case TW_INFO_SEND_SCREEN_TO_CU:
 		{
-			err = jpf_mod_tw_send_screen_to_cu((tw_screen_to_cu *)in_parm);
+			err = nmp_mod_tw_send_screen_to_cu((tw_screen_to_cu *)in_parm);
 			break;
 		}
 	case TW_INFO_SEND_CMD_RES_TO_CU:
 		{
-			err = jpf_mod_tw_run_res_to_cu((tw_run_res *)in_parm);
+			err = nmp_mod_tw_run_res_to_cu((tw_run_res *)in_parm);
 			break;
 		}
 	case TW_CLEAR_TO_DEC:
 		{
-			err = jpf_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
 				MESSAGE_TW_CLEAR_DIVISION);
 			break;
 		}
 	case TW_CLEAR_RESULT_TO_CU:
 		{
-			err = jpf_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
 				MESSAGE_TW_CLEAR_DIVISION);
 			break;
 		}
 	case TW_CHANGE_DIVISION_MODE_TO_DEC:
 		{
-			err = jpf_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
 				MESSAGE_CHANGE_DIV_MODE);
 			break;
 		}
 	case TW_CHANGE_DIVISION_MODE_RESULT_TO_CU:
 		{
-			err = jpf_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
 				MESSAGE_CHANGE_DIV_MODE);
 			break;
 		}
 	case TW_FULL_SCREEN_TO_DEC:
 		{
-			err = jpf_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
 				MESSAGE_FULL_SCREEN);
 			break;
 		}
 	case TW_FULL_SCREEN_RESULT_TO_CU:
 		{
-			err = jpf_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
 				MESSAGE_FULL_SCREEN);
 			break;
 		}
 	case TW_EXIT_FULL_SCREEN_TO_DEC:
 		{
-			err = jpf_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_to_dec((tw_operate_to_decoder_with_seq *)in_parm,
 				MESSAGE_EXIT_FULL_SCREEN);
 			break;
 		}
 	case TW_EXIT_FULL_SCREEN_RESULT_TO_CU:
 		{
-			err = jpf_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
+			err = nmp_mod_tw_operate_result_to_cu((tw_operate_result_to_cu_with_seq *)in_parm,
 				MESSAGE_EXIT_FULL_SCREEN);
 			break;
 		}
 	default:
 		{
-			jpf_mod_tw_log("error:cmd = %d\n", cmd);
+			nmp_mod_tw_log("error:cmd = %d\n", cmd);
 		}
 	}
 	return err;

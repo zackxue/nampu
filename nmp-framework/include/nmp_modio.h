@@ -16,19 +16,19 @@
 
 G_BEGIN_DECLS
 
-#define JPF_TYPE_MODIO  (jpf_mod_io_get_type())
-#define JPF_IS_MODIO(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_MODIO))
-#define JPF_IS_MODIO_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_MODIO))
-#define JPF_MODIO(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_MODIO, JpfModIO))
-#define JPF_MODIO_CLASS(c) \
-    (G_TYPE_CHECK_CLASS_CAST((c),JPF_TYPE_MODIO, JpfModIOClass))
-#define JPF_MODIO_GET_CLASS(o) \
-    (G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_MODIO, JpfModIOClass))
+#define NMP_TYPE_MODIO  (nmp_mod_io_get_type())
+#define NMP_IS_MODIO(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_MODIO))
+#define NMP_IS_MODIO_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_MODIO))
+#define NMP_MODIO(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_MODIO, NmpModIO))
+#define NMP_MODIO_CLASS(c) \
+    (G_TYPE_CHECK_CLASS_CAST((c),NMP_TYPE_MODIO, NmpModIOClass))
+#define NMP_MODIO_GET_CLASS(o) \
+    (G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_MODIO, NmpModIOClass))
 
-typedef struct _JpfModIO JpfModIO;
-typedef struct _JpfModIOClass JpfModIOClass;
+typedef struct _NmpModIO NmpModIO;
+typedef struct _NmpModIOClass NmpModIOClass;
 
-struct _JpfModIO
+struct _NmpModIO
 {
     JpfObject parent_object;
 
@@ -37,20 +37,20 @@ struct _JpfModIO
 };
 
 
-struct _JpfModIOClass	/* help to implement iSlot interface */
+struct _NmpModIOClass	/* help to implement iSlot interface */
 {
     JpfObjectClass parent_class;
 
-    gint (*slot_init)(JpfModIO *self, GValue *parm);
-    gint (*mod_snd)(JpfModIO *self, JpfSysMsg *msg);
-    gint (*mod_rcv)(JpfModIO *self, JpfSysMsg *msg);
-    gint (*connect)(JpfModIO *self, JpfISlot *i_peer);
-    gint (*disconnect)(JpfModIO *self);
-    gint (*slot_ok)(JpfModIO *self);    
+    gint (*slot_init)(NmpModIO *self, GValue *parm);
+    gint (*mod_snd)(NmpModIO *self, NmpSysMsg *msg);
+    gint (*mod_rcv)(NmpModIO *self, NmpSysMsg *msg);
+    gint (*connect)(NmpModIO *self, JpfISlot *i_peer);
+    gint (*disconnect)(NmpModIO *self);
+    gint (*slot_ok)(NmpModIO *self);    
 };
 
 
-GType jpf_mod_io_get_type( void );
+GType nmp_mod_io_get_type( void );
 
 G_BEGIN_DECLS
 

@@ -4,14 +4,14 @@
 #include "nmp_appmod.h"
 
 
-G_DEFINE_TYPE(JpfAppCore, jpf_app_core, JPF_TYPE_APPOBJ);
+G_DEFINE_TYPE(JpfAppCore, nmp_app_core, NMP_TYPE_APPOBJ);
 
 static JpfAppCore *app_core = NULL;
 
 static void
-jpf_app_core_init(JpfAppCore *self)
+nmp_app_core_init(JpfAppCore *self)
 {
-    self->p_bus = g_object_new(JPF_TYPE_MSGBUS, NULL);
+    self->p_bus = g_object_new(NMP_TYPE_MSGBUS, NULL);
     if (G_UNLIKELY(!self->p_bus))
     {
         jpf_error("<JpfAppCore> alloc bus failed!");
@@ -21,16 +21,16 @@ jpf_app_core_init(JpfAppCore *self)
 
 
 static void
-jpf_app_core_class_init(JpfAppCoreClass *c_self)
+nmp_app_core_class_init(JpfAppCoreClass *c_self)
 {
 }
 
 
 static __inline__ gint
-jpf_app_core_insert_mod(JpfAppCore *core, JpfAppMod *mod, JpfBusSlotPos pos)
+nmp_app_core_insert_mod(JpfAppCore *core, NmpAppMod *mod, JpfBusSlotPos pos)
 {
-    g_return_val_if_fail(JPF_IS_APPCORE(core), -E_INVAL);
-    g_return_val_if_fail(JPF_IS_APPMOD(mod), -E_INVAL);
+    g_return_val_if_fail(NMP_IS_APPCORE(core), -E_INVAL);
+    g_return_val_if_fail(NMP_IS_APPMOD(mod), -E_INVAL);
 
     return jpf_msg_bus_slot_link(core->p_bus, pos, mod->io_mod);
 }
@@ -41,7 +41,7 @@ jpf_afx_core_init( void )
 {
 	BUG_ON(app_core);
 
-	app_core = g_object_new(JPF_TYPE_APPCORE, NULL);
+	app_core = g_object_new(NMP_TYPE_APPCORE, NULL);
 	if (G_UNLIKELY(!app_core))
 	{
 		jpf_error("<main> alloc app core failed!");
@@ -55,7 +55,7 @@ jpf_afx_inst_init( void )
 {
 	JpfAppCore *inst;
 
-	inst = g_object_new(JPF_TYPE_APPCORE, NULL);
+	inst = g_object_new(NMP_TYPE_APPCORE, NULL);
 	if (G_UNLIKELY(!inst))
 	{
 		jpf_warning("<main> alloc app core inst failed!");
@@ -66,11 +66,11 @@ jpf_afx_inst_init( void )
 
 
 void
-jpf_afx_mod_insert(JpfBusSlotPos slot, JpfAppMod *mod)
+jpf_afx_mod_insert(JpfBusSlotPos slot, NmpAppMod *mod)
 {
 	BUG_ON(!app_core);
 
-	if (G_UNLIKELY(jpf_app_core_insert_mod(app_core, mod,
+	if (G_UNLIKELY(nmp_app_core_insert_mod(app_core, mod,
 		slot)))
 	{
 		jpf_error("<main> insert mod failed!");
@@ -90,15 +90,15 @@ jpf_afx_bus_bypass( void )
 
 gint
 jpf_afx_inst_insert_mod(JpfAfxInst inst, JpfBusSlotPos slot,
-	JpfAppMod *mod)
+	NmpAppMod *mod)
 {
 	gint err;
 	JpfAppCore *_inst = (JpfAppCore*)inst;
 
-	if (!JPF_IS_APPCORE(_inst))
+	if (!NMP_IS_APPCORE(_inst))
 		return -EINVAL;
 
-	err = jpf_app_core_insert_mod(_inst, mod, slot);
+	err = nmp_app_core_insert_mod(_inst, mod, slot);
 	return err;
 }
 
@@ -108,7 +108,7 @@ jpf_afx_inst_bus_bypass(JpfAfxInst inst)
 {
 	JpfAppCore *_inst = (JpfAppCore*)inst;
 
-	if (!JPF_IS_APPCORE(_inst))
+	if (!NMP_IS_APPCORE(_inst))
 		return;
 
 	jpf_msg_bus_set_bypass(_inst->p_bus);

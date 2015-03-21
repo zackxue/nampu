@@ -6,41 +6,41 @@
 
 G_BEGIN_DECLS
 
-#define JPF_TYPE_APPOBJ	(jpf_app_obj_get_type())
-#define JPF_IS_APPOBJ(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_APPOBJ))
-#define JPF_IS_APPOBJ_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_APPOBJ))
-#define JPF_APPOBJ(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_APPOBJ, JpfAppObj))
-#define JPF_APPOBJ_CLASS(c) \
-	(G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_APPOBJ, JpfAppObjClass))
-#define JPF_APPOBJ_GET_CLASS(o) \
-	(G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_APPOBJ, JpfAppObjClass))
+#define NMP_TYPE_APPOBJ	(nmp_app_obj_get_type())
+#define NMP_IS_APPOBJ(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_APPOBJ))
+#define NMP_IS_APPOBJ_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_APPOBJ))
+#define NMP_APPOBJ(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_APPOBJ, NmpAppObj))
+#define NMP_APPOBJ_CLASS(c) \
+	(G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_APPOBJ, NmpAppObjClass))
+#define NMP_APPOBJ_GET_CLASS(o) \
+	(G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_APPOBJ, NmpAppObjClass))
 
-typedef struct _JpfAppObj JpfAppObj;
-typedef struct _JpfAppObjClass JpfAppObjClass;
+typedef struct _NmpAppObj NmpAppObj;
+typedef struct _NmpAppObjClass NmpAppObjClass;
 
-struct _JpfAppObj
+struct _NmpAppObj
 {
 	JpfObject parent_object;
 
 };
 
 
-struct _JpfAppObjClass
+struct _NmpAppObjClass
 {
 	JpfObjectClass parent_class;
 
-	void (*deliver_in)(JpfAppObj *self, JpfSysMsg *msg);
-	void (*deliver_out)(JpfAppObj *self, JpfSysMsg *msg);
+	void (*deliver_in)(NmpAppObj *self, NmpSysMsg *msg);
+	void (*deliver_out)(NmpAppObj *self, NmpSysMsg *msg);
 
-	gint (*hook_from_bus)(JpfAppObj *self, JpfSysMsg *msg);
+	gint (*hook_from_bus)(NmpAppObj *self, NmpSysMsg *msg);
 };
 
 
-GType jpf_app_obj_get_type( void );
+GType nmp_app_obj_get_type( void );
 
-void jpf_app_obj_deliver_out(JpfAppObj *self, JpfSysMsg *msg);
-void jpf_app_obj_deliver_in(JpfAppObj *self, JpfSysMsg *msg);
-gint jpf_app_obj_hook_from_bus(JpfAppObj *self, JpfSysMsg *msg);
+void nmp_app_obj_deliver_out(NmpAppObj *self, NmpSysMsg *msg);
+void nmp_app_obj_deliver_in(NmpAppObj *self, NmpSysMsg *msg);
+gint nmp_app_obj_hook_from_bus(NmpAppObj *self, NmpSysMsg *msg);
 
 G_END_DECLS
 

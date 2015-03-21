@@ -74,10 +74,10 @@ typedef enum
 #define MSGID_USE_INTEGER	/* it works. */
 
 #ifdef MSGID_USE_INTEGER
-typedef guint JpfMsgID;
+typedef guint NmpMsgID;
 #define INIT_MSGID(id) ((id) = 0)
 #else
-#error "error!!! type: 'JpfMsgID' haven't been implemented yet!"
+#error "error!!! type: 'NmpMsgID' haven't been implemented yet!"
 #endif
 
 typedef struct _JpfBusSlots JpfBusSlots;
@@ -163,22 +163,22 @@ do {\
 #define MSG_GET_ORIGPOS(msg)   		((msg)->orig)
 #define MSG_SET_RESPONSE(msg)       ((msg)->flags |= FLG_SYSMSG_RESPONSE)
 
-#define JPF_TYPE_SYSMSG (jpf_sysmsg_get_type())
-#define JPF_IS_SYSMSG(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), JPF_TYPE_SYSMSG))
-#define JPF_IS_SYSMSG_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), JPF_TYPE_SYSMSG))
-#define JPF_SYSMSG(o) (G_TYPE_CHECK_INSTANCE_CAST((o), JPF_TYPE_SYSMSG, JpfSysMsg))
-#define JPF_SYSMSG_CLASS(c) \
-    (G_TYPE_CHECK_CLASS_CAST((c), JPF_TYPE_SYSMSG, JpfSysMsgClass))
-#define JPF_SYSMSG_GET_CLASS(o) \
-    (G_TYPE_INSTANCE_GET_CLASS((o), JPF_TYPE_SYSMSG, JpfSysMsgClass))
+#define NMP_TYPE_SYSMSG (jpf_sysmsg_get_type())
+#define NMP_IS_SYSMSG(o) (G_TYPE_CHECK_INSTANCE_TYPE((o), NMP_TYPE_SYSMSG))
+#define NMP_IS_SYSMSG_CLASS(c) (G_TYPE_CHECK_CLASS_TYPE((c), NMP_TYPE_SYSMSG))
+#define NMP_SYSMSG(o) (G_TYPE_CHECK_INSTANCE_CAST((o), NMP_TYPE_SYSMSG, NmpSysMsg))
+#define NMP_SYSMSG_CLASS(c) \
+    (G_TYPE_CHECK_CLASS_CAST((c), NMP_TYPE_SYSMSG, NmpSysMsgClass))
+#define NMP_SYSMSG_GET_CLASS(o) \
+    (G_TYPE_INSTANCE_GET_CLASS((o), NMP_TYPE_SYSMSG, NmpSysMsgClass))
 
-typedef struct _JpfSysMsg JpfSysMsg;
-typedef struct _JpfSysMsgClass JpfSysMsgClass;
+typedef struct _NmpSysMsg NmpSysMsg;
+typedef struct _NmpSysMsgClass NmpSysMsgClass;
 
 typedef void (*JpfMsgPrivDes)(gpointer priv, gsize size);
 
-typedef struct _JpfSysMsgPriv JpfSysMsgPriv;
-struct _JpfSysMsgPriv
+typedef struct _NmpSysMsgPriv NmpSysMsgPriv;
+struct _NmpSysMsgPriv
 {
     gint                ref_count;
     gpointer            priv_data;
@@ -187,7 +187,7 @@ struct _JpfSysMsgPriv
     JpfMsgPrivDes       priv_destroy;
 };
 
-struct _JpfSysMsg
+struct _NmpSysMsg
 {
     JpfData             parent_object;
 
@@ -195,7 +195,7 @@ struct _JpfSysMsg
         guint               seq;
     }packet_layer;      /* Low level layer */
 
-    JpfMsgID            msg_id;
+    NmpMsgID            msg_id;
     guint               flags;
 
     JpfNetIO            *from_io;
@@ -204,39 +204,39 @@ struct _JpfSysMsg
     JpfBusSlotPos       src;
     JpfBusSlotPos       orig;
 
-    JpfSysMsgPriv       *priv;			/* MSG data */
+    NmpSysMsgPriv       *priv;			/* MSG data */
 
     gpointer			user_data;		/* User data*/
     gsize				user_size;
 };
 
 
-struct _JpfSysMsgClass
+struct _NmpSysMsgClass
 {
     JpfDataClass parent_class;
 };
 
 GType jpf_sysmsg_get_type( void );
 
-JpfSysMsg *jpf_sysmsg_new(JpfMsgID msg_id, gpointer priv, gsize size,
+NmpSysMsg *jpf_sysmsg_new(NmpMsgID msg_id, gpointer priv, gsize size,
     guint seq, JpfMsgPrivDes priv_destroy);
 
-JpfSysMsg *jpf_sysmsg_new_2(JpfMsgID msg_id, gpointer priv, gsize size,
+NmpSysMsg *jpf_sysmsg_new_2(NmpMsgID msg_id, gpointer priv, gsize size,
     guint seq);
 
-void jpf_sysmsg_destroy(JpfSysMsg *msg);
+void jpf_sysmsg_destroy(NmpSysMsg *msg);
 
-void jpf_sysmsg_attach_io(JpfSysMsg *msg, JpfNetIO *io);
-void jpf_sysmsg_detach_io(JpfSysMsg *msg);
+void jpf_sysmsg_attach_io(NmpSysMsg *msg, JpfNetIO *io);
+void jpf_sysmsg_detach_io(NmpSysMsg *msg);
 
-void jpf_sysmsg_set_private(JpfSysMsg *msg, gpointer priv, gsize size,
+void jpf_sysmsg_set_private(NmpSysMsg *msg, gpointer priv, gsize size,
     JpfMsgPrivDes priv_destroy);
-gint jpf_sysmsg_set_private_2(JpfSysMsg *msg, gpointer priv, gsize size);
+gint jpf_sysmsg_set_private_2(NmpSysMsg *msg, gpointer priv, gsize size);
 
-JpfSysMsg *jpf_sysmsg_copy_one(JpfSysMsg *msg);
+NmpSysMsg *jpf_sysmsg_copy_one(NmpSysMsg *msg);
 
-gint jpf_sysmsg_set_userdata(JpfSysMsg *msg, gpointer data, gsize size);
-gint jpf_sysmsg_get_userdata(JpfSysMsg *msg, gpointer *pdata, gsize *psize);
+gint jpf_sysmsg_set_userdata(NmpSysMsg *msg, gpointer data, gsize size);
+gint jpf_sysmsg_get_userdata(NmpSysMsg *msg, gpointer *pdata, gsize *psize);
 
 G_END_DECLS
 

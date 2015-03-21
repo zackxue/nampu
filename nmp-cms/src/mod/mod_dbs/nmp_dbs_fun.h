@@ -21,7 +21,7 @@ typedef enum
 }JpfDevGuOverFlag;
 
 void
-jpf_dbs_modify_sysmsg(JpfSysMsg *sys_msg,
+jpf_dbs_modify_sysmsg(NmpSysMsg *sys_msg,
 					 gpointer   priv_data,
 					 gsize size,
 					 JpfBusSlotPos src_pos,
@@ -30,7 +30,7 @@ jpf_dbs_modify_sysmsg(JpfSysMsg *sys_msg,
 				     );
 
 void
-jpf_dbs_modify_sysmsg_2(JpfSysMsg *sys_msg,
+jpf_dbs_modify_sysmsg_2(NmpSysMsg *sys_msg,
 					 gpointer   priv_data,
 					 gsize size,
 					 JpfBusSlotPos src_pos,
@@ -39,40 +39,40 @@ jpf_dbs_modify_sysmsg_2(JpfSysMsg *sys_msg,
 
 gint jpf_get_mds_ip(JpfMysqlRes *mysql_result, JpfMsgGetMdsIpRes *res_info);
 
-gint jpf_dbs_get_mds_info(JpfAppObj *app_obj, gchar *cms_ip,
+gint jpf_dbs_get_mds_info(NmpAppObj *app_obj, gchar *cms_ip,
     gchar *puid, gchar *domain_id, JpfMsgGetMdsIpRes *mds_ip);
 
 gint
-jpf_get_scr_display_guid(JpfAppObj *app_obj,
+jpf_get_scr_display_guid(NmpAppObj *app_obj,
                         tw_general_guid *guid, gint screen_id, gint tw_id);
 
 JpfGetDivModeRes *
 jpf_dbs_get_div_mode(JpfMysqlRes *mysql_res, gint *size);
 
 gint
-jpf_get_pu_cms_ip(JpfAppObj *app_obj, gchar *puid,
+jpf_get_pu_cms_ip(NmpAppObj *app_obj, gchar *puid,
 	char *domain_id, gchar *cms_ip);
 
 gint
-jpf_dbs_check_gu_type_count(JpfAppObj *app_obj,
+jpf_dbs_check_gu_type_count(NmpAppObj *app_obj,
 	gint add_count, gint total_num, gchar *gu_type);
 
 gint
-jpf_dbs_get_dev_type_count(JpfAppObj *app_obj, gchar *dev_type);
+jpf_dbs_get_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
 
 gint
-jpf_dbs_get_online_dev_type_count(JpfAppObj *app_obj, gchar *dev_type);
+jpf_dbs_get_online_dev_type_count(NmpAppObj *app_obj, gchar *dev_type);
 
 gint
-jpf_dbs_get_dev_total_count(JpfAppObj *app_obj);
+jpf_dbs_get_dev_total_count(NmpAppObj *app_obj);
 
 gint
-jpf_dbs_get_online_dev_total_count(JpfAppObj *app_obj);
+jpf_dbs_get_online_dev_total_count(NmpAppObj *app_obj);
 
 gint
-jpf_dbs_get_gu_type_count(JpfAppObj *app_obj,  gchar *gu_type);
+jpf_dbs_get_gu_type_count(NmpAppObj *app_obj,  gchar *gu_type);
 
 void
-jpf_mod_dbs_deliver_out_msg(JpfAppObj *self, JpfSysMsg *msg);
+nmp_mod_dbs_deliver_out_msg(NmpAppObj *self, NmpSysMsg *msg);
 
 #endif

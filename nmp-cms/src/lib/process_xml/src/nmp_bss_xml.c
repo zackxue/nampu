@@ -16257,20 +16257,20 @@ jpf_parse_add_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfAddAms tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_name, "amsName", AMS_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.keep_alive_freq, "keepAliveTime")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_name, "amsName", AMS_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.keep_alive_freq, "keepAliveTime")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_add_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -16279,20 +16279,20 @@ jpf_parse_modify_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfModifyAms tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_name, "amsName", AMS_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.keep_alive_freq, "keepAliveTime")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_name, "amsName", AMS_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.keep_alive_freq, "keepAliveTime")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_modify_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -16301,18 +16301,18 @@ jpf_parse_del_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfDelAms tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_del_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 
 
@@ -16321,14 +16321,14 @@ jpf_parse_query_ams(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfQueryAms tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.type, "type")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "pageSize")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.type, "type")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "pageSize")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -16341,9 +16341,9 @@ jpf_create_query_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	JPF_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
+	NMP_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD("count", tmp->total_count, root_node, str);
+	NMP_XML_DEF_VAL_CREATE_CHILD("count", tmp->total_count, root_node, str);
 
 	back_count = tmp->back_count;
 	node = xmlNewNode(NULL, BAD_CAST "list");
@@ -16356,11 +16356,11 @@ jpf_create_query_ams_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 		node1 = xmlNewNode(NULL, BAD_CAST "ams");
 		xmlAddChild(node, node1);
 
-		JPF_XML_DEF_STR_CREATE_CHILD("amsId", ams->ams_id, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("amsName", ams->ams_name, node1);
-		JPF_XML_DEF_VAL_CREATE_CHILD("keepAliveTime", ams->keep_alive_freq, node1, str);
-		JPF_XML_DEF_VAL_CREATE_CHILD("amsState", ams->ams_state, node1, str);
-		JPF_XML_DEF_STR_CREATE_CHILD("amsIP", ams->ams_ip, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("amsId", ams->ams_id, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("amsName", ams->ams_name, node1);
+		NMP_XML_DEF_VAL_CREATE_CHILD("keepAliveTime", ams->keep_alive_freq, node1, str);
+		NMP_XML_DEF_VAL_CREATE_CHILD("amsState", ams->ams_state, node1, str);
+		NMP_XML_DEF_STR_CREATE_CHILD("amsIP", ams->ams_ip, node1);
 
 		i++;
 	}
@@ -16375,13 +16375,13 @@ jpf_parse_query_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfQueryAmsPu tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "pageSize")
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.ams_id, "amsId", AMS_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.req_num, "pageSize")
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.start_num, "startRow")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
@@ -16394,9 +16394,9 @@ jpf_create_query_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 	int back_count, i;
 	char str[INT_TO_CHAR_LEN] = {0};
 
-	JPF_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
+	NMP_XML_DEF_CREATE_BEGIN(tmp, str, root_node, end);
 
-	JPF_XML_DEF_VAL_CREATE_CHILD("count", tmp->total_count, root_node, str);
+	NMP_XML_DEF_VAL_CREATE_CHILD("count", tmp->total_count, root_node, str);
 
 	back_count = tmp->back_count;
 	node = xmlNewNode(NULL, BAD_CAST "list");
@@ -16409,15 +16409,15 @@ jpf_create_query_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 		node1 = xmlNewNode(NULL, BAD_CAST "device");
 		xmlAddChild(node, node1);
 
-		JPF_XML_DEF_STR_CREATE_CHILD("puid", pu->puid, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("domain", pu->domain, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("puName", pu->pu_name, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("areaName", pu->area_name, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devName", pu->dev_name, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devPasswd", pu->dev_passwd, node1);
-		JPF_XML_DEF_STR_CREATE_CHILD("devIP", pu->dev_ip, node1);
-		JPF_XML_DEF_VAL_CREATE_CHILD("devPort", pu->dev_port, node1, str);
-		JPF_XML_DEF_VAL_CREATE_CHILD("devState", pu->dev_state, node1, str);
+		NMP_XML_DEF_STR_CREATE_CHILD("puid", pu->puid, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("domain", pu->domain, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("puName", pu->pu_name, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("areaName", pu->area_name, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devName", pu->dev_name, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devPasswd", pu->dev_passwd, node1);
+		NMP_XML_DEF_STR_CREATE_CHILD("devIP", pu->dev_ip, node1);
+		NMP_XML_DEF_VAL_CREATE_CHILD("devPort", pu->dev_port, node1, str);
+		NMP_XML_DEF_VAL_CREATE_CHILD("devState", pu->dev_state, node1, str);
 
 		i++;
 	}
@@ -16432,22 +16432,22 @@ jpf_parse_modify_ams_pu(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
 	JpfModifyAmsPu tmp;
 
-	JPF_XML_DEF_PARSE_BEGIN(tmp)
+	NMP_XML_DEF_PARSE_BEGIN(tmp)
 
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.puid, "puid", MAX_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.domain, "domain", DOMAIN_ID_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.dev_name, "devName", AMS_DEV_NAME_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.dev_passwd, "devPasswd", AMS_DEV_PASSWD_LEN)
-	JPF_XML_DEF_PARSE_GET_TEXT(tmp.dev_ip, "devIP", MAX_IP_LEN)
-	JPF_XML_DEF_PARSE_GET_VALUE(&tmp.dev_port, "devPort")
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.puid, "puid", MAX_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.domain, "domain", DOMAIN_ID_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.dev_name, "devName", AMS_DEV_NAME_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.dev_passwd, "devPasswd", AMS_DEV_PASSWD_LEN)
+	NMP_XML_DEF_PARSE_GET_TEXT(tmp.dev_ip, "devIP", MAX_IP_LEN)
+	NMP_XML_DEF_PARSE_GET_VALUE(&tmp.dev_port, "devPort")
 
-	JPF_XML_DEF_PARSE_END(tmp)
+	NMP_XML_DEF_PARSE_END(tmp)
 }
 
 
 int
 jpf_create_modify_ams_pu_resp(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 {
-	JPF_XML_DEF_CREATE_JPF_RESULT();
+	NMP_XML_DEF_CREATE_NMP_RESULT();
 }
 

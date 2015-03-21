@@ -12,27 +12,27 @@
 
 USING_MSG_ID_MAP(cms);
 
-G_DEFINE_TYPE(JpfModMss, jpf_mod_mss, JPF_TYPE_MODACCESS);
+G_DEFINE_TYPE(JpfModMss, nmp_mod_mss, NMP_TYPE_MODACCESS);
 
 void
-jpf_mod_mss_register_msg_handler(JpfModMss *self);
+nmp_mod_mss_register_msg_handler(JpfModMss *self);
 
 
-#define JPF_MSS_CHECK_TIME			(60 * 1000)	//60s
+#define NMP_MSS_CHECK_TIME			(60 * 1000)	//60s
 
 
 static __inline__ void
-jpf_mod_mss_struct_init(JpfMss *mss)
+nmp_mod_mss_struct_init(JpfMss *mss)
 {
 	mss->mss_state = STAT_MSS_REGISTERING;
 }
 
 
 void
-jpf_mod_mss_change_mss_online_status(JpfAppObj *app_obj,
+nmp_mod_mss_change_mss_online_status(NmpAppObj *app_obj,
     JpfMsgMssOnlineChange notify_info)
 {
-    JpfSysMsg *msg_notify;
+    NmpSysMsg *msg_notify;
 
     msg_notify = jpf_sysmsg_new_2(MSG_MSS_ONLINE_CHANGE,
 		&notify_info, sizeof(notify_info), ++msg_seq_generator);
@@ -40,16 +40,16 @@ jpf_mod_mss_change_mss_online_status(JpfAppObj *app_obj,
         return;
 
     MSG_SET_DSTPOS(msg_notify, BUSSLOT_POS_DBS);
-    jpf_app_obj_deliver_out(app_obj, msg_notify);
+    nmp_app_obj_deliver_out(app_obj, msg_notify);
 }
 
 
 static void
-jpf_mod_mss_destroy(JpfGuestBase *obj, gpointer priv_data)
+nmp_mod_mss_destroy(JpfGuestBase *obj, gpointer priv_data)
 {
     G_ASSERT(obj != NULL);
 
-    JpfAppObj *self = JPF_APPOBJ(priv_data);
+    NmpAppObj *self = NMP_APPOBJ(priv_data);
     JpfMsgMssOnlineChange notify_info;
     JpfMss *mss = NULL;
 
@@ -59,25 +59,25 @@ jpf_mod_mss_destroy(JpfGuestBase *obj, gpointer priv_data)
 	    memset(&notify_info, 0, sizeof(notify_info));
 	    strncpy(notify_info.mss_id, ID_OF_GUEST(obj), MSS_ID_LEN - 1);
 	    notify_info.new_status = 0;
-	    jpf_mod_mss_change_mss_online_status(self, notify_info);
+	    nmp_mod_mss_change_mss_online_status(self, notify_info);
     }
 }
 
 
 
 gint
-jpf_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
+nmp_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
 	JpfID *conflict)
 {
 	JpfGuestBase *mss;
 	gint ret;
 	G_ASSERT(self != NULL && io != NULL);
 
-	mss = jpf_mods_guest_new(sizeof(JpfMss), id, jpf_mod_mss_destroy, self);
+	mss = jpf_mods_guest_new(sizeof(JpfMss), id, nmp_mod_mss_destroy, self);
 	if (G_UNLIKELY(!mss))
 		return -E_NOMEM;
 
-	jpf_mod_mss_struct_init((JpfMss*)mss);
+	nmp_mod_mss_struct_init((JpfMss*)mss);
 	jpf_mods_guest_attach_io(mss, io);
 	ret = jpf_mods_container_add_guest(self->container,
 		mss, conflict);
@@ -94,12 +94,12 @@ jpf_mod_mss_new_mss(JpfModMss *self, JpfNetIO *io, const gchar *id,
 
 
 gint
-jpf_mod_mss_sync_req(JpfModMss *self, JpfMsgID msg_id,
+nmp_mod_mss_sync_req(JpfModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size,  gpointer res, gint res_size)
 {
 	gint err = 0;
 	JpfMsgErrCode *res_info;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	G_ASSERT(self != NULL);
 
 	msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
@@ -107,7 +107,7 @@ jpf_mod_mss_sync_req(JpfModMss *self, JpfMsgID msg_id,
 		return -E_NOMEM;
 
        MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	err = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+	err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
  	if (G_UNLIKELY(err))	/* send failed */
 	{
 		jpf_warning(
@@ -139,13 +139,13 @@ jpf_mod_mss_sync_req(JpfModMss *self, JpfMsgID msg_id,
 
 
 gpointer
-jpf_mod_mss_sync_req_2(JpfModMss *self, JpfMsgID msg_id,
+nmp_mod_mss_sync_req_2(JpfModMss *self, NmpMsgID msg_id,
        gpointer req, gint req_size, gint *res_size)
 {
 	gint err = 0;
 	JpfMsgErrCode *res_info;
 	gpointer res;
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 	G_ASSERT(self != NULL);
 
 	msg = jpf_sysmsg_new_2(msg_id, req, req_size, ++msg_seq_generator);
@@ -153,7 +153,7 @@ jpf_mod_mss_sync_req_2(JpfModMss *self, JpfMsgID msg_id,
 		return NULL;
 
     MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-    err = jpf_app_mod_sync_request((JpfAppMod*)self, &msg);
+    err = nmp_app_mod_sync_request((NmpAppMod*)self, &msg);
     if (G_UNLIKELY(err))	/* send failed */
     {
         jpf_warning(
@@ -209,11 +209,11 @@ jpf_mod_mss_sync_req_2(JpfModMss *self, JpfMsgID msg_id,
 
 
 void
-jpf_mod_mss_deliver_msg(JpfModMss *self, const char *mss_id, JpfSysMsg *msg)
+nmp_mod_mss_deliver_msg(JpfModMss *self, const char *mss_id, NmpSysMsg *msg)
 {
     JpfGuestBase *mss_base;
     gint msg_id;
-    JpfSysMsg *msg_copy = NULL;
+    NmpSysMsg *msg_copy = NULL;
 
     msg_id = MSG_GETID(msg);
     msg_copy = jpf_sysmsg_copy_one(msg);
@@ -235,14 +235,14 @@ jpf_mod_mss_deliver_msg(JpfModMss *self, const char *mss_id, JpfSysMsg *msg)
         //return MFR_ACCEPTED;
     }
     jpf_sysmsg_attach_io(msg_copy, IO_OF_GUEST(mss_base));
-    jpf_app_obj_deliver_in((JpfAppObj*)self, msg_copy);
-    jpf_mod_acc_release_io((JpfModAccess*)self,  IO_OF_GUEST(mss_base));
-    jpf_mod_container_del_io(self->container,  IO_OF_GUEST(mss_base));
+    nmp_app_obj_deliver_in((NmpAppObj*)self, msg_copy);
+    nmp_mod_acc_release_io((JpfModAccess*)self,  IO_OF_GUEST(mss_base));
+    nmp_mod_container_del_io(self->container,  IO_OF_GUEST(mss_base));
     jpf_mods_container_put_guest(self->container, mss_base);
 }
 
 static void
-jpf_mod_mss_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
+nmp_mod_mss_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 {
 	gint ret;
 	JpfModMss *self;
@@ -250,7 +250,7 @@ jpf_mod_mss_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 
 	self = (JpfModMss*)s_self;
 
-	ret = jpf_mod_container_del_io(self->container, io);
+	ret = nmp_mod_container_del_io(self->container, io);
 	if (G_UNLIKELY(!ret))
 	{
 		jpf_print(
@@ -262,7 +262,7 @@ jpf_mod_mss_io_close(JpfModAccess *s_self, JpfNetIO *io, gint err)
 
 
 static gint
-jpf_mod_mss_io_init(JpfModAccess *s_self, JpfNetIO *io)
+nmp_mod_mss_io_init(JpfModAccess *s_self, JpfNetIO *io)
 {
 	gint err;
 	JpfModMss *self;
@@ -270,7 +270,7 @@ jpf_mod_mss_io_init(JpfModAccess *s_self, JpfNetIO *io)
 
 	self = (JpfModMss*)s_self;
 
-	err = jpf_mod_container_add_io(self->container, io);
+	err = nmp_mod_container_add_io(self->container, io);
 	if (err)
 	{
 		jpf_error(
@@ -286,7 +286,7 @@ jpf_mod_mss_io_init(JpfModAccess *s_self, JpfNetIO *io)
 
 
 gint
-jpf_mod_mss_setup(JpfAppMod *am_self)
+nmp_mod_mss_setup(NmpAppMod *am_self)
 {
 	gint err;
 	JpfModAccess *ma_self;
@@ -302,9 +302,9 @@ jpf_mod_mss_setup(JpfAppMod *am_self)
 	sin.sin_port = htons(JPFCMS_MSS_PORT);
 	sin.sin_addr.s_addr = INADDR_ANY;
 
-	jpf_mod_acc_init_net(ma_self, &jxj_packet_proto, &jxj_xml_proto);
+	nmp_mod_acc_init_net(ma_self, &jxj_packet_proto, &jxj_xml_proto);
 
-	self->listen_io = jpf_mod_acc_create_listen_io(
+	self->listen_io = nmp_mod_acc_create_listen_io(
 		ma_self, (struct sockaddr*)&sin, &err
 	);
 	if (!self->listen_io)
@@ -314,17 +314,17 @@ jpf_mod_mss_setup(JpfAppMod *am_self)
 	}
 
 	jpf_net_set_heavy_io_load(self->listen_io);
-	jpf_app_mod_set_name(am_self, "MOD-MSS");
-	jpf_mod_mss_register_msg_handler(self);
+	nmp_app_mod_set_name(am_self, "MOD-MSS");
+	nmp_mod_mss_register_msg_handler(self);
 
 	return 0;
 }
 
 
 static void
-jpf_mod_mss_check_mss_state(JpfAppObj *app_obj)
+nmp_mod_mss_check_mss_state(NmpAppObj *app_obj)
 {
-	JpfSysMsg *msg;
+	NmpSysMsg *msg;
 
 	msg = jpf_sysmsg_new_2(MSG_CHECK_MSS_STATE,
 		NULL, 0, ++msg_seq_generator);
@@ -332,23 +332,23 @@ jpf_mod_mss_check_mss_state(JpfAppObj *app_obj)
 		return;
 
 	MSG_SET_DSTPOS(msg, BUSSLOT_POS_DBS);
-	jpf_app_obj_deliver_out(app_obj, msg);
+	nmp_app_obj_deliver_out(app_obj, msg);
 }
 
 
 static gboolean
-jpf_mod_mss_timer(gpointer user_data)
+nmp_mod_mss_timer(gpointer user_data)
 {
 	JpfModMss * self = (JpfModMss *)user_data;
 
-	jpf_mod_mss_check_mss_state((JpfAppObj *)self);
+	nmp_mod_mss_check_mss_state((NmpAppObj *)self);
 
 	return TRUE;
 }
 
 
 static void
-jpf_mod_mss_init(JpfModMss *self)
+nmp_mod_mss_init(JpfModMss *self)
 {
 	self->container = jpf_mods_container_new(
 		self,
@@ -362,19 +362,19 @@ jpf_mod_mss_init(JpfModMss *self)
 	}
 
 	self->listen_io = NULL;
-	jpf_set_timer(JPF_MSS_CHECK_TIME, jpf_mod_mss_timer, self);
+	jpf_set_timer(NMP_MSS_CHECK_TIME, nmp_mod_mss_timer, self);
 }
 
 
 static void
-jpf_mod_mss_class_init(JpfModMssClass *k_class)
+nmp_mod_mss_class_init(JpfModMssClass *k_class)
 {
 	JpfModAccessClass *ma_class = (JpfModAccessClass*)k_class;
-	JpfAppModClass *am_class = (JpfAppModClass*)k_class;
+	NmpAppModClass *am_class = (NmpAppModClass*)k_class;
 
-	ma_class->io_close	= jpf_mod_mss_io_close;
-	ma_class->io_init	= jpf_mod_mss_io_init;
-	am_class->setup_mod	= jpf_mod_mss_setup;
+	ma_class->io_close	= nmp_mod_mss_io_close;
+	ma_class->io_init	= nmp_mod_mss_io_init;
+	am_class->setup_mod	= nmp_mod_mss_setup;
 }
 
 

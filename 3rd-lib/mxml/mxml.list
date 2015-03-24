@@ -17,11 +17,11 @@
 #
 
 # Directories...
-$prefix=/home/shiyong/usr
-$exec_prefix=/home/shiyong/usr
+$prefix=/usr/local
+$exec_prefix=/usr/local
 $bindir=${exec_prefix}/bin
 $docdir=${prefix}/share/doc/mxml
-$includedir=/home/shiyong/usr/inc
+$includedir=/usr/local/inc
 $libdir=${exec_prefix}/lib
 $mandir=${prefix}/share/man
 $srcdir=.

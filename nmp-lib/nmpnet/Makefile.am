@@ -3,8 +3,8 @@ SUBDIRS = src test
 CURRENTPATH=$(PWD)
 INCLUDES=-I$(CURRENTPATH) \
 	 -I$(CURRENTPATH)/include \
-	 -I$(HOME)/usr/include \
-	 -I$(HOME)/usr/include/nampu
+	 -I$(NMP_LIB_INSTALL)/include \
+	 -I$(NMP_LIB_INSTALL)/include/nampu
 
 export INCLUDES
 

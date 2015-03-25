@@ -21,7 +21,7 @@ PRJ_INCLUDES	+= -I${shell pkg-config --cflags ${GLIB_LIBS}}
 PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu
 
 PRJ_LIBS	+= ${shell pkg-config --libs ${GLIB_LIBS}}
-PRJ_LIBS	+= -Wl,-rpath=${HOME}/usr/lib -L${NMP_LIB_INSTALL}/lib -lnmpshare -lnmpframework
+PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib -lnmpshare -lnmpframework
 
 PRJ_LDFLASG	+= -fPIC
 

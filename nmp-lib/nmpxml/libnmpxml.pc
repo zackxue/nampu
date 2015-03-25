@@ -1,10 +1,10 @@
 # autoconfSamp pkg-config source file
 #
-prefix=/home/shiyong/usr
+prefix=/usr/local
 exec_prefix=${prefix}
 
-libdir=/home/shiyong/usr/lib
-includedir=/home/shiyong/usr/inc
+libdir=/usr/local/lib
+includedir=/usr/local/inc
 
 Name: libnmpxml
 Description: libnmpxml is a parse xml and merge xml library

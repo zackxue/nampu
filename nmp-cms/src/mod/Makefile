@@ -24,7 +24,6 @@ DEPS		= Makefile.deps
 .PHONY: all clean install uninstall
 
 all: ${C_OBJS} 
-	@echo ${C_OBJS}
 	$(AR) -r ${TARGET} ${C_OBJS}
 
 %.o: %.c ${DEPS}

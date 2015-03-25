@@ -3,7 +3,7 @@ SUBDIRS=src test
 CURRENTPATH=$(shell /bin/pwd)
 INCLUDES=-I$(CURRENTPATH) \
 	 -I$(CURRENTPATH)/include \
-	 -I$(HOME)/usr/include
+	 -I$(NMP_LIB_INSTALL)/include
 export INCLUDES
 
 ACLOCAL_AMFLAGS=-I m4

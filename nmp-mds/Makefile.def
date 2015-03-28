@@ -1,0 +1,29 @@
+# Makefile.def for nmp-cms
+
+C++	= g++
+CC 	= gcc
+AR 	= ar
+LD	= ld
+
+C_SRCS		= ${shell find . -name "*.c"}
+C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
+
+CPP_SRCS	= ${shell find . -name "*.cpp"}
+CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
+
+PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -m32
+PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -m32
+
+GLIB_VERSION := 2.0
+GLIB_LIBS := glib-${GLIB_VERSION} gobject-${GLIB_VERSION} gthread-${GLIB_VERSION}
+
+PRJ_INCLUDES	+= -I${shell pkg-config --cflags ${GLIB_LIBS}}
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmpev
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/share
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/rtsp-parser
+
+PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib -lnmpshare
+PRJ_LIBS	+= ${shell pkg-config --libs ${GLIB_LIBS}}
+
+vpath %h ${HOME}/usr/include/nampu

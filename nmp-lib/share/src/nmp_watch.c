@@ -301,7 +301,7 @@ nmp_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
     HmWatchFuncs *funcs;
     gint err;
     socklen_t len = sizeof(err);
-    HmConnection *conn;
+    NmpConnection *conn;
     HmWatch *child_watch;
 
     funcs = watch->funcs;
@@ -643,7 +643,7 @@ nmp_watch_init_time(HmWatch *watch)
  * will be added to "Event Context" for polling. 
 */ 
 __export HmWatch *
-nmp_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
+nmp_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
 {
     GSource *source;
     HmWatch *watch;
@@ -700,7 +700,7 @@ nmp_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
  * will be added to "Event Context" for polling. 
 */ 
 __export HmWatch *
-nmp_listen_watch_create(HmConnection *conn, HmWatchFuncs *funcs, gint size)
+nmp_listen_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
 {
     GSource *source;
     HmWatch *watch;

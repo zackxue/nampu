@@ -18,14 +18,13 @@ vpath %.h ../include
 vpath %.h ../../../include
 vpath %.h ../../../include/message
 
-TARGET		= libprocessxml.a
+TARGET		= ../bin/libprocessxml.a
 DEPS		= Makefile.deps
 
-.PHONY: all clean install uninstall
+.PHONY: clean install uninstall
 
-all: ${C_OBJS} 
-	$(AR) -r ${TARGET} ${C_OBJS}
-	mv ${TARGET} ../bin/
+${TARGET}: ${C_OBJS} 
+	${AR} -rs $@ ${C_OBJS}
 
 %.o: %.c ${DEPS}
 	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}

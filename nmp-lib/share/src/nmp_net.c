@@ -361,7 +361,7 @@ nmp_net_add_io(NmpNet *net, NmpNetIO *net_io, gint notify)
 
 
 __export NmpNetIO *
-nmp_net_create_io(NmpNet *net, HmConnection *conn, HmIOEst on_est,
+nmp_net_create_io(NmpNet *net, NmpConnection *conn, HmIOEst on_est,
     gint *err)
 {
     NmpNetIO *io;
@@ -393,7 +393,7 @@ nmp_net_create_io(NmpNet *net, HmConnection *conn, HmIOEst on_est,
 
 
 __export NmpNetIO *
-nmp_net_create_listen_io(NmpNet *net, HmConnection *conn,
+nmp_net_create_listen_io(NmpNet *net, NmpConnection *conn,
     gint *err)
 {
     NmpNetIO *io;
@@ -426,7 +426,7 @@ nmp_net_create_listen_io(NmpNet *net, HmConnection *conn,
 __export NmpNetIO *
 nmp_net_create_listen_io_2(NmpNet *net, struct sockaddr *sa, gint *err)
 {
-    HmConnection *conn;
+    NmpConnection *conn;
     gint rc;
 
     conn = nmp_connection_new(sa, CF_TYPE_TCP|CF_FLGS_NONBLOCK, err);

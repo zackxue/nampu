@@ -23,7 +23,7 @@ __nmp_io_finalize(HmIO *io);
 
 
 static HmWatch *
-nmp_io_create(HmWatch *w, HmConnection *conn)
+nmp_io_create(HmWatch *w, NmpConnection *conn)
 {
 	HmIOFuncs *funcs;
 	HmIO *io = (HmIO*)w;
@@ -223,7 +223,7 @@ __nmp_io_finalize(HmIO *io)
 
 
 __export HmIO *
-nmp_io_new(HmConnection *conn, NmpPacketProto *proto, 
+nmp_io_new(NmpConnection *conn, NmpPacketProto *proto, 
 	HmIOFuncs *funcs, gsize size)
 {
 	HmIO *io;
@@ -258,7 +258,7 @@ nmp_io_new(HmConnection *conn, NmpPacketProto *proto,
 
 
 __export HmIO *
-nmp_listen_io_new(HmConnection *conn, NmpPacketProto *proto,
+nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
 	HmIOFuncs *funcs, gsize size)
 {
 	HmIO *io;

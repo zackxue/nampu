@@ -17,5 +17,5 @@ libnmprtspparser_a_SOURCES=base64.c \
 libnmprtspparser_a_CFLAGS=-Wall -fno-inline -fstack-protector -fPIC
 libnmprtspparser_a_CXXFLAGS=
 
-libnmprtspparserincludedir=$(prefix)/include/nampu
+libnmprtspparserincludedir=$(prefix)/include/nampu/rtsp-parser
 libnmprtspparserinclude_HEADERS=$(top_srcdir)/include/*.h

@@ -11,14 +11,13 @@ SELF_INCLUDES	+= -I../include
 
 vpath %.h ../include
 
-TARGET		= libtvwall.a
+TARGET		= ../bin/libtvwall.a
 DEPS		= Makefile.deps
 
-.PHONY: all clean install uninstall
+.PHONY: clean install uninstall
 
-all: ${C_OBJS} 
+${TARGET}: ${C_OBJS} 
 	$(AR) -r ${TARGET} ${C_OBJS}
-	mv ${TARGET} ../bin
 
 %.o: %.c ${DEPS}
 	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}

@@ -41,7 +41,7 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/bits/sigstack.h \
  /usr/include/i386-linux-gnu/sys/ucontext.h \
  /usr/include/i386-linux-gnu/bits/sigthread.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp-server.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp-server.h \
  /home/shiyong/usr/include/netembryo/wsocket.h ../config.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/wchar.h /usr/lib/gcc/i686-linux-gnu/4.8/include/stdarg.h \
@@ -130,9 +130,9 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/deprecated/gthread.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/usr/include/nampu/rtspparse.h \
- /home/shiyong/usr/include/nampu/rtspctx.h \
- /home/shiyong/usr/include/nampu/rtspdefs.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspparse.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspctx.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspdefs.h \
  /usr/include/glib-2.0/glib-object.h \
  /usr/include/glib-2.0/gobject/gbinding.h \
  /usr/include/glib-2.0/gobject/gobject.h \
@@ -151,24 +151,24 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/gobject/gtypeplugin.h \
  /usr/include/glib-2.0/gobject/gvaluearray.h \
  /usr/include/glib-2.0/gobject/gvaluetypes.h \
- /home/shiyong/usr/include/nampu/rtspmsg.h \
- /home/shiyong/usr/include/nampu/sdp.h \
- /home/shiyong/usr/include/nampu/rtspurl.h \
- /home/shiyong/usr/include/nampu/rtsptransport.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/reverse_connector.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/evsched.h \
- /home/shiyong/usr/include/nampu/nmpevsched.h \
- /home/shiyong/usr/include/nampu/nmpev.h /home/shiyong/usr/include/ev.h \
- /usr/include/i386-linux-gnu/sys/stat.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/macros.h \
- /home/shiyong/usr/include/nampu/nmpev.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/stream_api.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rc_log.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/ports.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/bufferqueue.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/fdset.h
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspmsg.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/sdp.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspurl.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtsptransport.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/reverse_connector.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/evsched.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpevsched.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpev.h \
+ /home/shiyong/usr/include/ev.h /usr/include/i386-linux-gnu/sys/stat.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/macros.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpev.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/stream_api.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rc_log.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/ports.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/bufferqueue.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/fdset.h
 
 /usr/include/stdc-predef.h:
 
@@ -270,7 +270,7 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/sigthread.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp-server.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp-server.h:
 
 /home/shiyong/usr/include/netembryo/wsocket.h:
 
@@ -510,11 +510,11 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/usr/include/nampu/rtspparse.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspparse.h:
 
-/home/shiyong/usr/include/nampu/rtspctx.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspctx.h:
 
-/home/shiyong/usr/include/nampu/rtspdefs.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspdefs.h:
 
 /usr/include/glib-2.0/glib-object.h:
 
@@ -552,40 +552,40 @@ libnmprtspsvr_a-rtsp-server.o: rtsp-server.c /usr/include/stdc-predef.h \
 
 /usr/include/glib-2.0/gobject/gvaluetypes.h:
 
-/home/shiyong/usr/include/nampu/rtspmsg.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspmsg.h:
 
-/home/shiyong/usr/include/nampu/sdp.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/sdp.h:
 
-/home/shiyong/usr/include/nampu/rtspurl.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspurl.h:
 
-/home/shiyong/usr/include/nampu/rtsptransport.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtsptransport.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/reverse_connector.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/reverse_connector.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/evsched.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/evsched.h:
 
-/home/shiyong/usr/include/nampu/nmpevsched.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpevsched.h:
 
-/home/shiyong/usr/include/nampu/nmpev.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpev.h:
 
 /home/shiyong/usr/include/ev.h:
 
 /usr/include/i386-linux-gnu/sys/stat.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/macros.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/macros.h:
 
-/home/shiyong/usr/include/nampu/nmpev.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpev.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/stream_api.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/stream_api.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rc_log.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rc_log.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rtsp.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rtsp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/ports.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/ports.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/bufferqueue.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/bufferqueue.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/fdset.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/fdset.h:

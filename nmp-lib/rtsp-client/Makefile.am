@@ -5,8 +5,10 @@ CURRENTPATH=$(PWD)
 INCLUDES= -I$(CURRENTPATH) \
 	-I$(CURRENTPATH)/include \
 	-I$(CURRENTPATH)/src/rtsp-watch \
-	-I$(HOME)/usr/include \
-	-I$(HOME)/usr/include/nampu
+	-I$(NMP_LIB_INSTALL)/include \
+	-I$(NMP_LIB_INSTALL)/include/nampu/nmpev \
+	-I$(NMP_LIB_INSTALL)/include/nampu/rtsp-parser
+
 export INCLUDES
 
 ACLOCAL_AMFLAGS=-I m4

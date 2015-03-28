@@ -13,7 +13,7 @@
 #define DNS_BUFFER_LEN			8192
 #define DEFAULT_TIMEOUT			(10 * 1000)
 
-struct _HmConnection
+struct _NmpConnection
 {
 	gint		fd;
 	gint		timeout;	/* milli seconds, for event polling */
@@ -23,7 +23,7 @@ struct _HmConnection
 
 
 static __inline__ gint
-__nmp_connection_set_flags(HmConnection *conn, gint flgs)
+__nmp_connection_set_flags(NmpConnection *conn, gint flgs)
 {
     gint old_flgs;
 
@@ -40,10 +40,10 @@ __nmp_connection_set_flags(HmConnection *conn, gint flgs)
 }
 
 
-__export HmConnection *
+__export NmpConnection *
 nmp_connection_new(struct sockaddr *sa, guint flags, gint *errp)
 {
-	HmConnection *conn;
+	NmpConnection *conn;
 	guint mask = CF_TYPE_TCP | CF_TYPE_UDP;
 	gint err, reuse = 1;
 
@@ -54,7 +54,7 @@ nmp_connection_new(struct sockaddr *sa, guint flags, gint *errp)
 		return NULL;
 	}
 
-	conn = g_new0(HmConnection, 1);	/* glib has its own OOM facility */
+	conn = g_new0(NmpConnection, 1);	/* glib has its own OOM facility */
 	conn->flags = flags;
 	conn->timeout = DEFAULT_TIMEOUT;
 
@@ -115,7 +115,7 @@ new_conn_failed:
 
 
 __export gint
-nmp_connection_listen(HmConnection *conn)
+nmp_connection_listen(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -129,7 +129,7 @@ nmp_connection_listen(HmConnection *conn)
 
 
 __export gint
-nmp_connection_connect(HmConnection *conn, struct sockaddr *sa)
+nmp_connection_connect(NmpConnection *conn, struct sockaddr *sa)
 {
 	gint err;
 	G_ASSERT(conn != NULL);
@@ -145,7 +145,7 @@ nmp_connection_connect(HmConnection *conn, struct sockaddr *sa)
 }
 
 __export gint
-nmp_connection_get_fd(HmConnection *conn)
+nmp_connection_get_fd(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -154,7 +154,7 @@ nmp_connection_get_fd(HmConnection *conn)
 
 
 __export gint
-nmp_connection_set_flags(HmConnection *conn, guint flgs)
+nmp_connection_set_flags(NmpConnection *conn, guint flgs)
 {
 	gint ret;
 	G_ASSERT(conn != NULL);
@@ -172,7 +172,7 @@ nmp_connection_set_flags(HmConnection *conn, guint flgs)
 
 
 __export gint
-nmp_connection_is_blocked(HmConnection *conn)
+nmp_connection_is_blocked(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -180,10 +180,10 @@ nmp_connection_is_blocked(HmConnection *conn)
 }
 
 
-__export HmConnection *
-nmp_connection_accept(HmConnection *listen, gint *errp)
+__export NmpConnection *
+nmp_connection_accept(NmpConnection *listen, gint *errp)
 {
-	HmConnection *conn;
+	NmpConnection *conn;
 	gint ret;
 	G_ASSERT(listen != NULL);
 
@@ -193,7 +193,7 @@ nmp_connection_accept(HmConnection *listen, gint *errp)
 		return NULL;
 	}
 
-	conn = g_new0(HmConnection, 1);
+	conn = g_new0(NmpConnection, 1);
 	conn->fd = accept(listen->fd, NULL, NULL);
 	if (conn->fd < 0)
 	{
@@ -222,7 +222,7 @@ nmp_connection_accept(HmConnection *listen, gint *errp)
 
 
 __export gint
-nmp_connection_is_ingrogress(HmConnection *conn, int clear)
+nmp_connection_is_ingrogress(NmpConnection *conn, int clear)
 {
 	G_ASSERT(conn != NULL);
 
@@ -238,7 +238,7 @@ nmp_connection_is_ingrogress(HmConnection *conn, int clear)
 
 
 __export gint
-nmp_connection_read(HmConnection *conn, gchar buf[], gsize size)
+nmp_connection_read(NmpConnection *conn, gchar buf[], gsize size)
 {
 	gint ret;
 
@@ -262,7 +262,7 @@ nmp_connection_read(HmConnection *conn, gchar buf[], gsize size)
 
 
 __export gint
-nmp_connection_write(HmConnection *conn, gchar *buf, gsize size)
+nmp_connection_write(NmpConnection *conn, gchar *buf, gsize size)
 {
 	gsize left = size;
 	gint ret;
@@ -320,7 +320,7 @@ nmp_resolve_host(struct sockaddr_in *sin, gchar *host, gint port)
 
 
 __export void
-nmp_connection_set_buffer_size(HmConnection *conn, gint size)
+nmp_connection_set_buffer_size(NmpConnection *conn, gint size)
 {
 	G_ASSERT(conn != NULL);
 	conn->buffer_size = size;
@@ -328,7 +328,7 @@ nmp_connection_set_buffer_size(HmConnection *conn, gint size)
 
 
 __export gint
-nmp_connection_get_buffer_size(HmConnection *conn)
+nmp_connection_get_buffer_size(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 	return conn->buffer_size;
@@ -336,7 +336,7 @@ nmp_connection_get_buffer_size(HmConnection *conn)
 
 
 __export void
-nmp_connection_set_heavy(HmConnection *conn)
+nmp_connection_set_heavy(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -345,7 +345,7 @@ nmp_connection_set_heavy(HmConnection *conn)
 
 
 __export gint
-nmp_connection_is_heavy(HmConnection *conn)
+nmp_connection_is_heavy(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -354,7 +354,7 @@ nmp_connection_is_heavy(HmConnection *conn)
 
 
 __export gint
-nmp_connection_get_timeout(HmConnection *conn)
+nmp_connection_get_timeout(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -363,7 +363,7 @@ nmp_connection_get_timeout(HmConnection *conn)
 
 
 __export void
-nmp_connection_set_timeout(HmConnection *conn, gint millisec)
+nmp_connection_set_timeout(NmpConnection *conn, gint millisec)
 {
 	gint max_timeout;
 	G_ASSERT(conn != NULL);
@@ -380,7 +380,7 @@ nmp_connection_set_timeout(HmConnection *conn, gint millisec)
 
 
 __export void
-nmp_connection_close(HmConnection *conn)
+nmp_connection_close(NmpConnection *conn)
 {
 	G_ASSERT(conn != NULL);
 
@@ -392,7 +392,7 @@ nmp_connection_close(HmConnection *conn)
 
 
 __export gchar *
-nmp_connection_get_peer(HmConnection *conn)
+nmp_connection_get_peer(NmpConnection *conn)
 {
 	struct sockaddr_in addr;
 	socklen_t len;

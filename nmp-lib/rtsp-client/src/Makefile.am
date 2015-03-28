@@ -20,9 +20,10 @@ libnmprtspclient_a_SOURCES=./rtp/rtp_fake.c \
 			rtsp_client.c \
 			rtsp-watch \
 			sock.c
-#nmprtspclient_a_LIBADD=
+
 libnmprtspclient_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
-#nmprtspclient_la_CXXFLAGS=
-libnmprtspclientincludedir=$(prefix)/include/himickey
+
+libnmprtspclientincludedir=$(prefix)/include/nampu/rtsp-client
+
 libnmprtspclientinclude_HEADERS=$(top_srcdir)/include/*.h \
 				$(top_srcdir)/src/rtsp-watch/*.h

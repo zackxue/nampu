@@ -6,9 +6,9 @@
 
 G_BEGIN_DECLS
 
-typedef struct _HmConnection HmConnection;
+typedef struct _NmpConnection NmpConnection;
 
-enum _HmConnFlags
+enum _NmpConnFlags
 {
 	CF_TYPE_TCP = 0x01,
 	CF_TYPE_UDP = 0x02,
@@ -19,28 +19,28 @@ enum _HmConnFlags
 
 gint nmp_resolve_host(struct sockaddr_in *sin, gchar *host, gint port);
 
-HmConnection *nmp_connection_new(struct sockaddr *sa,
+NmpConnection *nmp_connection_new(struct sockaddr *sa,
 	guint flags, gint *errp);
 
-gint nmp_connection_listen(HmConnection *conn);
-gint nmp_connection_get_fd(HmConnection *conn);
-gint nmp_connection_set_flags(HmConnection *conn, guint flgs);
-gint nmp_connection_is_blocked(HmConnection *conn);
-HmConnection *nmp_connection_accept(HmConnection *listen, gint *errp);
-gint nmp_connection_is_ingrogress(HmConnection *conn, int clear);
-gint nmp_connection_connect(HmConnection *conn, struct sockaddr *sa);
-gint nmp_connection_read(HmConnection *conn, gchar buf[], gsize size);
-gint nmp_connection_write(HmConnection *conn, gchar *buf, gsize size);
-void nmp_connection_close(HmConnection *conn);
+gint nmp_connection_listen(NmpConnection *conn);
+gint nmp_connection_get_fd(NmpConnection *conn);
+gint nmp_connection_set_flags(NmpConnection *conn, guint flgs);
+gint nmp_connection_is_blocked(NmpConnection *conn);
+NmpConnection *nmp_connection_accept(NmpConnection *listen, gint *errp);
+gint nmp_connection_is_ingrogress(NmpConnection *conn, int clear);
+gint nmp_connection_connect(NmpConnection *conn, struct sockaddr *sa);
+gint nmp_connection_read(NmpConnection *conn, gchar buf[], gsize size);
+gint nmp_connection_write(NmpConnection *conn, gchar *buf, gsize size);
+void nmp_connection_close(NmpConnection *conn);
 
-void nmp_connection_set_buffer_size(HmConnection *conn, gint size);
-gint nmp_connection_get_buffer_size(HmConnection *conn);
-void nmp_connection_set_heavy(HmConnection *conn);
-gint nmp_connection_is_heavy(HmConnection *conn);
-gint nmp_connection_get_timeout(HmConnection *conn);
-void nmp_connection_set_timeout(HmConnection *conn, gint millisec);
+void nmp_connection_set_buffer_size(NmpConnection *conn, gint size);
+gint nmp_connection_get_buffer_size(NmpConnection *conn);
+void nmp_connection_set_heavy(NmpConnection *conn);
+gint nmp_connection_is_heavy(NmpConnection *conn);
+gint nmp_connection_get_timeout(NmpConnection *conn);
+void nmp_connection_set_timeout(NmpConnection *conn, gint millisec);
 
-gchar *nmp_connection_get_peer(HmConnection *conn);
+gchar *nmp_connection_get_peer(NmpConnection *conn);
 
 G_END_DECLS
 

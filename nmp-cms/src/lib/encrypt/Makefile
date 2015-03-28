@@ -12,15 +12,13 @@ SELF_INCLUDES	+= -I./include
 vpath %.h ../include
 vpath %.h ./include
 
-TARGET		= libencrypt.a
+TARGET		= ../bin/libencrypt.a
 DEPS		= Makefile.deps
 
-.PHONY: all clean install uninstall
+.PHONY: clean install uninstall
 
-all: ${C_OBJS} 
-	${AR} -r ${TARGET} $^
-	mv ${TARGET} ../bin/
-	cp ./src/libET199.a ../bin/
+${TARGET}: ${C_OBJS}  
+	${AR} -rs $@ $^
 
 %.o: %.c ${DEPS}
 	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}
@@ -32,9 +30,8 @@ $(DEPS): $(C_SRCS)
 
 clean:
 	@rm ${C_OBJS}
-	@rm ../bin/${TARGET}
-	@rm ../bin/libET199.a
 	@rm ${DEPS}
+	@rm ${TARGET}
 
 install:
 	@echo "Sorry, install command will be enable in the future.\n"

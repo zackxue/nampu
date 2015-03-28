@@ -2,7 +2,8 @@ SUBDIRS = src test
 CURRENTPATH=$(PWD)
 
 INCLUDES = -I$(CURRENTPATH)/include -I$(CURRENTPATH)/src/media \
-	-I$(HOME)/usr/include \
-	-I$(HOME)/usr/include/nampu
+	-I$(NMP_LIB_INSTALL)/include \
+	-I$(NMP_LIB_INSTALL)/include/nampu/nmpev \
+	-I$(NMP_LIB_INSTALL)/include/nampu/rtsp-parser
 
 export INCLUDES

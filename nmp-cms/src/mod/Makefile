@@ -21,10 +21,10 @@ vpath %.h ./include
 TARGET		= libmod.a
 DEPS		= Makefile.deps
 
-.PHONY: all clean install uninstall
+.PHONY: clean install uninstall
 
-all: ${C_OBJS} 
-	$(AR) -r ${TARGET} ${C_OBJS}
+${TARGET}: ${C_OBJS} 
+	$(AR) -r $@ ${C_OBJS}
 
 %.o: %.c ${DEPS}
 	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}

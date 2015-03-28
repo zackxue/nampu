@@ -13,7 +13,7 @@
 
 
 static HmWatch *
-nmp_hl_io_create(HmIO *io, HmConnection *conn)
+nmp_hl_io_create(HmIO *io, NmpConnection *conn)
 {
 	HmHlIO *listen_io;
 
@@ -125,7 +125,7 @@ static HmIOFuncs nmp_high_level_io_funcs =
 
 
 HmHlIO *
-nmp_hl_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto)
 {
 	HmHlIO *hl_io;
@@ -148,7 +148,7 @@ nmp_hl_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
 
 
 HmHlIO *
-nmp_hl_listen_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+nmp_hl_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto)
 {
 	HmHlIO *hl_io;

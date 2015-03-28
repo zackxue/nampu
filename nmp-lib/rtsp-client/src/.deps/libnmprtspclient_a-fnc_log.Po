@@ -1,3 +1,0 @@
-libnmprtspclient_a-fnc_log.o: fnc_log.c /usr/include/stdc-predef.h
-
-/usr/include/stdc-predef.h:

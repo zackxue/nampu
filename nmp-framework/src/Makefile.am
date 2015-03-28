@@ -23,5 +23,5 @@ libnmpframework_la_LIBFLAGS=
 
 libnmpframework_la_CFLAGS=-Wall -g -fno-inline -fstack-protector
 
-libnmpframeworkincludedir=$(prefix)/include/nampu
+libnmpframeworkincludedir=$(prefix)/include/nampu/framework
 libnmpframeworkinclude_HEADERS=$(top_srcdir)/include/*.h

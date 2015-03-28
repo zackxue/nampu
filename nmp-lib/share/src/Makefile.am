@@ -26,6 +26,6 @@ libnmpshare_la_LIBFLAGS=
 libnmpshare_la_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
 libnmpshare_la_CXXFLAGS=
 
-libnmpshareincludedir=$(prefix)/include/nampu
+libnmpshareincludedir=$(prefix)/include/nampu/share
 libnmpshareinclude_HEADERS=$(top_srcdir)/include/*.h
 

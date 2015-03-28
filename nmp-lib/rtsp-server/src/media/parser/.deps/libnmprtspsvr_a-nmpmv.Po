@@ -1,6 +1,6 @@
 media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
  /usr/include/stdc-predef.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rc_log.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rc_log.h \
  /usr/include/stdio.h /usr/include/features.h \
  /usr/include/i386-linux-gnu/sys/cdefs.h \
  /usr/include/i386-linux-gnu/bits/wordsize.h \
@@ -13,8 +13,8 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdarg.h \
  /usr/include/i386-linux-gnu/bits/stdio_lim.h \
  /usr/include/i386-linux-gnu/bits/sys_errlist.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/demuxer.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/media.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/demuxer.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/media.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h \
@@ -107,11 +107,11 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
  /usr/include/i386-linux-gnu/bits/wchar.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/bufferqueue.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/fdset.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/demuxer.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediautils.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/bufferqueue.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/fdset.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/demuxer.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediautils.h \
  /usr/include/i386-linux-gnu/sys/time.h /usr/include/ctype.h \
  /usr/include/math.h /usr/include/i386-linux-gnu/bits/huge_val.h \
  /usr/include/i386-linux-gnu/bits/huge_valf.h \
@@ -120,13 +120,13 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
  /usr/include/i386-linux-gnu/bits/nan.h \
  /usr/include/i386-linux-gnu/bits/mathdef.h \
  /usr/include/i386-linux-gnu/bits/mathcalls.h /usr/include/string.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser_module.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/stream_api.h
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser_module.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/stream_api.h
 
 /usr/include/stdc-predef.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/rc_log.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/rc_log.h:
 
 /usr/include/stdio.h:
 
@@ -158,9 +158,9 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
 
 /usr/include/i386-linux-gnu/bits/sys_errlist.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/demuxer.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/demuxer.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/media.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/media.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -390,15 +390,15 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
 
 /usr/include/i386-linux-gnu/bits/wchar.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/bufferqueue.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/bufferqueue.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/fdset.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/fdset.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/demuxer.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/demuxer.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediautils.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediautils.h:
 
 /usr/include/i386-linux-gnu/sys/time.h:
 
@@ -422,8 +422,8 @@ media/parser/libnmprtspsvr_a-nmpmv.o: media/parser/nmpmv.c \
 
 /usr/include/string.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser_module.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser_module.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/mediaparser.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/mediaparser.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-server/include/stream_api.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-server/include/stream_api.h:

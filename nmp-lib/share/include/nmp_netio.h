@@ -21,10 +21,10 @@ typedef struct _NmpNet NmpNet;
 typedef void (*HmDesFun)(void *private_data);
 typedef void (*HmIOEst)(NmpNetIO *io, void *init_data);
 
-NmpNetIO *nmp_net_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+NmpNetIO *nmp_net_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto, gint *err);
 
-NmpNetIO *nmp_net_listen_io_new(HmConnection *conn,
+NmpNetIO *nmp_net_listen_io_new(NmpConnection *conn,
 	NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto, gint *err);
 
 void nmp_net_io_attach(NmpNetIO *net_io, GMainContext *context);

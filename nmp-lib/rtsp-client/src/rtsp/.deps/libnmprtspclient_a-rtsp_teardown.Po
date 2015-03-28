@@ -1,6 +1,6 @@
 rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
  /usr/include/stdc-predef.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/media.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/media.h \
  /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h \
@@ -100,7 +100,7 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
  /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/i386-linux-gnu/bits/sched.h \
  /usr/include/i386-linux-gnu/bits/setjmp.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtp.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtp.h \
  /usr/include/linux/types.h /usr/include/i386-linux-gnu/asm/types.h \
  /usr/include/asm-generic/types.h /usr/include/asm-generic/int-ll64.h \
  /usr/include/i386-linux-gnu/asm/bitsperlong.h \
@@ -122,13 +122,13 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
  /usr/include/asm-generic/socket.h \
  /usr/include/i386-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h /usr/include/i386-linux-gnu/bits/in.h \
- /home/shiyong/usr/include/nampu/nmpevsched.h \
- /home/shiyong/usr/include/nampu/nmpev.h /home/shiyong/usr/include/ev.h \
- /usr/include/i386-linux-gnu/sys/stat.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpevsched.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpev.h \
+ /home/shiyong/usr/include/ev.h /usr/include/i386-linux-gnu/sys/stat.h \
  /usr/include/i386-linux-gnu/bits/stat.h \
- /home/shiyong/usr/include/nampu/rtspparse.h \
- /home/shiyong/usr/include/nampu/rtspctx.h \
- /home/shiyong/usr/include/nampu/rtspdefs.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspparse.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspctx.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspdefs.h \
  /usr/include/glib-2.0/glib-object.h \
  /usr/include/glib-2.0/gobject/gbinding.h \
  /usr/include/glib-2.0/gobject/gobject.h \
@@ -147,13 +147,13 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
  /usr/include/glib-2.0/gobject/gtypeplugin.h \
  /usr/include/glib-2.0/gobject/gvaluearray.h \
  /usr/include/glib-2.0/gobject/gvaluetypes.h \
- /home/shiyong/usr/include/nampu/rtspmsg.h \
- /home/shiyong/usr/include/nampu/sdp.h \
- /home/shiyong/usr/include/nampu/rtspurl.h \
- /home/shiyong/usr/include/nampu/rtsptransport.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/usrcallback.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp_client.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspmsg.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/sdp.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtspurl.h \
+ /home/shiyong/usr/include/nampu/rtsp-parser/rtsptransport.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/usrcallback.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp_client.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp.h \
  /home/shiyong/usr/include/netembryo/wsocket.h ../config.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/wchar.h /usr/include/i386-linux-gnu/bits/stdio_lim.h \
@@ -169,16 +169,16 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
  /usr/include/i386-linux-gnu/bits/confname.h /usr/include/getopt.h \
  /usr/include/netdb.h /usr/include/rpc/netdb.h \
  /usr/include/i386-linux-gnu/bits/netdb.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/src/rtsp-watch/rtspwatch.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/src/rtsp-watch/io_watch.h \
- /home/shiyong/usr/include/nampu/nmpev.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/media.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp_url.h \
- /home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/fnc_log.h
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/src/rtsp-watch/rtspwatch.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/src/rtsp-watch/io_watch.h \
+ /home/shiyong/usr/include/nampu/nmpev/nmpev.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/media.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp_url.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/fnc_log.h
 
 /usr/include/stdc-predef.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/media.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/media.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -420,7 +420,7 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
 
 /usr/include/i386-linux-gnu/bits/setjmp.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtp.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtp.h:
 
 /usr/include/linux/types.h:
 
@@ -476,9 +476,9 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
 
 /usr/include/i386-linux-gnu/bits/in.h:
 
-/home/shiyong/usr/include/nampu/nmpevsched.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpevsched.h:
 
-/home/shiyong/usr/include/nampu/nmpev.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpev.h:
 
 /home/shiyong/usr/include/ev.h:
 
@@ -486,11 +486,11 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
 
 /usr/include/i386-linux-gnu/bits/stat.h:
 
-/home/shiyong/usr/include/nampu/rtspparse.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspparse.h:
 
-/home/shiyong/usr/include/nampu/rtspctx.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspctx.h:
 
-/home/shiyong/usr/include/nampu/rtspdefs.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspdefs.h:
 
 /usr/include/glib-2.0/glib-object.h:
 
@@ -528,19 +528,19 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
 
 /usr/include/glib-2.0/gobject/gvaluetypes.h:
 
-/home/shiyong/usr/include/nampu/rtspmsg.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspmsg.h:
 
-/home/shiyong/usr/include/nampu/sdp.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/sdp.h:
 
-/home/shiyong/usr/include/nampu/rtspurl.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtspurl.h:
 
-/home/shiyong/usr/include/nampu/rtsptransport.h:
+/home/shiyong/usr/include/nampu/rtsp-parser/rtsptransport.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/usrcallback.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/usrcallback.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp_client.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp_client.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp.h:
 
 /home/shiyong/usr/include/netembryo/wsocket.h:
 
@@ -596,14 +596,14 @@ rtsp/libnmprtspclient_a-rtsp_teardown.o: rtsp/rtsp_teardown.c \
 
 /usr/include/i386-linux-gnu/bits/netdb.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/src/rtsp-watch/rtspwatch.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/src/rtsp-watch/rtspwatch.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/src/rtsp-watch/io_watch.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/src/rtsp-watch/io_watch.h:
 
-/home/shiyong/usr/include/nampu/nmpev.h:
+/home/shiyong/usr/include/nampu/nmpev/nmpev.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/media.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/media.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/rtsp_url.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/rtsp_url.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/rtsp-client/include/fnc_log.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/rtsp-client/include/fnc_log.h:

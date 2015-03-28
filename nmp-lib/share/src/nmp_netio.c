@@ -37,7 +37,7 @@ extern void nmp_net_establish_io(NmpNet *net, NmpNetIO *net_io);
 static gint total_net_io_count = 0;
 
 static __inline__ HmWatch *
-nmp_net_io_create_watch(HmConnection *conn, 
+nmp_net_io_create_watch(NmpConnection *conn, 
     NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto)
 {
     return (HmWatch*)nmp_hl_io_new(conn, ll_proto, hl_proto);
@@ -45,7 +45,7 @@ nmp_net_io_create_watch(HmConnection *conn,
 
 
 static __inline__ HmWatch *
-nmp_net_io_create_listen_watch(HmConnection *conn, 
+nmp_net_io_create_listen_watch(NmpConnection *conn, 
     NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto)
 {
     return (HmWatch*)nmp_hl_listen_io_new(conn, ll_proto, hl_proto);
@@ -166,7 +166,7 @@ nmp_net_io_async_kill(NmpNetIO *net_io, gint err)
 
 
 __export NmpNetIO *
-nmp_net_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+nmp_net_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
     NmpPayloadProto *hl_proto, gint *err)
 {
     NmpNetIO *net_io;
@@ -197,7 +197,7 @@ nmp_net_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
 
 
 __export NmpNetIO *
-nmp_net_listen_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+nmp_net_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
     NmpPayloadProto *hl_proto, gint *err)
 {
     NmpNetIO *net_io;

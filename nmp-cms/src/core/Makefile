@@ -19,18 +19,19 @@ vpath %.h ../lib/include
 vpath %.h ./include
 
 SELF_LIBS	+= -L../mod -lmod
-SELF_LIBS	+= -L../lib/bin -lprocessxml -ldbcp -lencrypt -lsearchdevice -ltvwall -lET199
+SELF_LIBS	+= -L../lib/bin -lprocessxml -ldbcp -lencrypt -lET199 -lsearchdevice -ltvwall
 SELF_LIBS	+= -L../proto -lproto
 SELF_LIBS	+= -rdynamic -ldl
 SELF_LIBS	+= ${PRJ_LIBS} -lxml2 -lmysqlclient
 
-TARGET		= nmp-cms
+TARGET		= ../../bin/nmp-cms
 DEPS		= Makefile.deps
 
-.PHONY: all clean clean_all install uninstall cms_libs cms_mods cms_proto cms_libs_clean cms_mods_clean cms_proto_clean
+.PHONY: clean cleanall install uninstall cms_libs_clean cms_mods_clean cms_proto_clean
 
-all: ${C_OBJS} cms_libs cms_mods cms_proto 
-	$(CC) -o ${TARGET} ${C_OBJS} ${SELF_LIBS}
+${TARGET}: ${C_OBJS} ../mod/libmod.a ../proto/libproto.a ../lib/bin/libdbcp.a ../lib/bin/libencrypt.a \
+	../lib/bin/libprocessxml.a ../lib/bin/libsearchdevice.a ../lib/bin/libtvwall.a
+	$(CC) -o $@ ${C_OBJS} ${SELF_LIBS}
 
 %.o: %.c ${DEPS}
 	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}
@@ -40,17 +41,25 @@ $(DEPS): $(C_SRCS)
 
 -include $(DEPS)
 
-cms_libs:
+../lib/bin/libdbcp.a:
 	make -C ../lib/db_connect_pool
+
+../lib/bin/libencrypt.a:
 	make -C ../lib/encrypt
+
+../lib/bin/libprocessxml.a:
 	make -C ../lib/process_xml
+
+../lib/bin/libsearchdevice.a:
 	make -C ../lib/search_device
+
+../lib/bin/libtvwall.a:
 	make -C ../lib/tvwall
 
-cms_mods:
+../mod/libmod.a:
 	make -C ../mod
 
-cms_proto:
+../proto/libproto.a:
 	make -C ../proto
 
 clean:
@@ -58,17 +67,13 @@ clean:
 	@rm ${TARGET}
 	@rm ${DEPS}
 
-clean_all: cms_libs_clean cms_mods_clean cms_proto_clean
+cleanall: cms_libs_clean cms_mods_clean cms_proto_clean
 	@rm ${C_OBJS}
 	@rm ${TARGET}
 	@rm ${DEPS}
 
 cms_libs_clean:
-	make -C ../lib/db_connect_pool clean
-	make -C ../lib/encrypt clean
-	make -C ../lib/process_xml clean
-	make -C ../lib/search_device clean
-	make -C ../lib/tvwall clean
+	make -C ../lib clean
 
 cms_mods_clean:
 	make -C ../mod clean

@@ -33,10 +33,10 @@ gpointer nmp_net_get_private(NmpNet *net);
 
 void nmp_net_set_funcs(NmpNet *net, HmIOInit init, HmIOFin fin);
 
-NmpNetIO *nmp_net_create_io(NmpNet *net, HmConnection *conn, HmIOEst on_est,
+NmpNetIO *nmp_net_create_io(NmpNet *net, NmpConnection *conn, HmIOEst on_est,
 	gint *err);
 
-NmpNetIO *nmp_net_create_listen_io(NmpNet *net, HmConnection *conn,
+NmpNetIO *nmp_net_create_listen_io(NmpNet *net, NmpConnection *conn,
 	gint *err);
 
 NmpNetIO *nmp_net_create_listen_io_2(NmpNet *net, struct sockaddr *sa,

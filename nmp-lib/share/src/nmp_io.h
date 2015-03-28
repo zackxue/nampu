@@ -22,7 +22,7 @@ typedef struct _HmIOFuncs HmIOFuncs;
 
 struct _HmIOFuncs
 {
-	HmWatch *(*create)(HmIO *w, HmConnection *conn);
+	HmWatch *(*create)(HmIO *w, NmpConnection *conn);
 
 	gint (*recv)(HmIO *io, gchar *start, gsize size, gpointer from_lower);
 	void (*error)(HmIO *io, gint rw, gint err);
@@ -48,10 +48,10 @@ struct _HmIO			/* basic IO, packet layer */
 };
 
 
-HmIO *nmp_io_new(HmConnection *conn, NmpPacketProto *proto,
+HmIO *nmp_io_new(NmpConnection *conn, NmpPacketProto *proto,
 	HmIOFuncs *funcs, gsize size);
 
-HmIO *nmp_listen_io_new(HmConnection *conn, NmpPacketProto *proto,
+HmIO *nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
 	HmIOFuncs *funcs, gsize size);
 
 G_END_DECLS

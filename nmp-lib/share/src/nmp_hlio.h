@@ -26,10 +26,10 @@ struct _HmHlIO		/* High level IO, payload layer, for example: XML */
 };
 
 
-HmHlIO *nmp_hl_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+HmHlIO *nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto);
 
-HmHlIO *nmp_hl_listen_io_new(HmConnection *conn, NmpPacketProto *ll_proto,
+HmHlIO *nmp_hl_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto);
 
 G_END_DECLS

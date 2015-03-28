@@ -24,7 +24,7 @@ typedef struct _HmWatchFuncs HmWatchFuncs;
 
 struct _HmWatchFuncs
 {
-    HmWatch *(*create)(HmWatch *w, HmConnection *conn);
+    HmWatch *(*create)(HmWatch *w, NmpConnection *conn);
 
     gint (*recv)(HmWatch *w, gchar *buf, gsize size);
     void (*error)(HmWatch *w, gint rw, gint err);
@@ -42,7 +42,7 @@ struct _HmWatch
     GMutex              *lock;
 
     NmpNetBuf           *buffer;
-    HmConnection       *conn;
+    NmpConnection       *conn;
     HmWatchFuncs       *funcs;
 
     GPollFD             r_fd;
@@ -62,10 +62,10 @@ struct _HmWatch
 };
 
 
-HmWatch *nmp_watch_create(HmConnection *conn,
+HmWatch *nmp_watch_create(NmpConnection *conn,
     HmWatchFuncs *funcs, gint size);
 
-HmWatch *nmp_listen_watch_create(HmConnection *conn,
+HmWatch *nmp_listen_watch_create(NmpConnection *conn,
     HmWatchFuncs *funcs, gint size);
 
 void nmp_watch_attach(HmWatch *watch, GMainContext *context);

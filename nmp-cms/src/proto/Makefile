@@ -18,9 +18,9 @@ vpath %.h ../lib/include
 TARGET		= libproto.a
 DEPS		= Makefile.deps
 
-.PHONY: all clean install uninstall
+.PHONY: clean install uninstall
 
-all: ${C_OBJS} 
+${TARGET}: ${C_OBJS} 
 	$(AR) -r ${TARGET} ${C_OBJS}
 
 %.o: %.c ${DEPS}

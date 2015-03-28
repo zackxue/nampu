@@ -23,9 +23,9 @@ typedef enum
 	CONNECTING,
 	CONNECTED,
 	DISCONNECTING
-}JpfConnState;
+}NmpConnState;
 
-struct __JpfModCms
+struct __NmpModCms
 {
 	NmpNet		*network;
 	NmpNetIO	*bridge;		/* communication bridge */
@@ -36,22 +36,22 @@ struct __JpfModCms
 	gint		pu_port;
 
 	GMutex		*lock;
-	JpfConnState state;
+	NmpConnState state;
 	guint		state_timer;
 	guint 		ttl;
 	guint 		ttd;
 	guint		hb;
 	guint 		unregistered;
 	guint		seq_generator;
-	JpfMsgTable	*msg_table;
+	NmpMsgTable	*msg_table;
 	guint		check_timer;
 };
 
 
-static __inline__ JpfConnState
-nmp_mod_cms_get_state(JpfModCms *mod, gint *timer)
+static __inline__ NmpConnState
+nmp_mod_cms_get_state(NmpModCms *mod, gint *timer)
 {
-	JpfConnState state;
+	NmpConnState state;
 
 	g_mutex_lock(mod->lock);
 	state = mod->state;
@@ -63,7 +63,7 @@ nmp_mod_cms_get_state(JpfModCms *mod, gint *timer)
 
 
 gint
-nmp_mds_cms_state(JpfModCms *mod)
+nmp_mds_cms_state(NmpModCms *mod)
 {
 	if (mod && mod->state == CONNECTED && !mod->unregistered)
 		return 0;
@@ -72,7 +72,7 @@ nmp_mds_cms_state(JpfModCms *mod)
 
 
 static __inline__ void
-__nmp_mod_cms_set_state(JpfModCms *mod, JpfConnState state)
+__nmp_mod_cms_set_state(NmpModCms *mod, NmpConnState state)
 {
 	mod->state = state;
 	mod->state_timer = 0;
@@ -80,7 +80,7 @@ __nmp_mod_cms_set_state(JpfModCms *mod, JpfConnState state)
 }
 
 static __inline__ void
-nmp_mod_cms_set_state(JpfModCms *mod, JpfConnState state)
+nmp_mod_cms_set_state(NmpModCms *mod, NmpConnState state)
 {
 	g_mutex_lock(mod->lock);
 	__nmp_mod_cms_set_state(mod, state);
@@ -89,7 +89,7 @@ nmp_mod_cms_set_state(JpfModCms *mod, JpfConnState state)
 
 
 static __inline__ void
-nmp_mod_cms_set_bridge(JpfModCms *mod, NmpNetIO *bridge)
+nmp_mod_cms_set_bridge(NmpModCms *mod, NmpNetIO *bridge)
 {
 	NmpNetIO *old_bridge;
 
@@ -113,7 +113,7 @@ nmp_mod_cms_set_bridge(JpfModCms *mod, NmpNetIO *bridge)
 
 
 static __inline__ void
-nmp_cms_bridge_disconnect(JpfModCms *mod)
+nmp_cms_bridge_disconnect(NmpModCms *mod)
 {
 	nmp_mod_cms_set_bridge(mod, NULL);
 }
@@ -122,7 +122,7 @@ nmp_cms_bridge_disconnect(JpfModCms *mod)
 static void
 jpd_mod_cms_connect_ok(NmpNetIO *bridge, void *init_data)
 {
-	JpfModCms *mod = (JpfModCms*)init_data;
+	NmpModCms *mod = (NmpModCms*)init_data;
 
 	nmp_print("Connect cms ok.");
 	nmp_mod_cms_set_state(mod, CONNECTED);
@@ -130,7 +130,7 @@ jpd_mod_cms_connect_ok(NmpNetIO *bridge, void *init_data)
 
 
 static __inline__ void
-nmp_cms_bridge_connect(JpfModCms *mod)
+nmp_cms_bridge_connect(NmpModCms *mod)
 {
 	struct sockaddr_in cms_addr;
 	gint err;
@@ -197,7 +197,7 @@ nmp_cms_bridge_connect(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_mod_cms_connect_die(JpfModCms *mod)
+nmp_mod_cms_connect_die(NmpModCms *mod)
 {
 	nmp_cms_bridge_disconnect(mod);
 	nmp_mod_cms_set_state(mod, DISCONNECTING);
@@ -205,7 +205,7 @@ nmp_mod_cms_connect_die(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_mod_cms_io_finalized(JpfModCms *mod, NmpNetIO *bridge)
+nmp_mod_cms_io_finalized(NmpModCms *mod, NmpNetIO *bridge)
 {
 	gint unrefed = 1;
 
@@ -224,7 +224,7 @@ nmp_mod_cms_io_finalized(JpfModCms *mod, NmpNetIO *bridge)
 
 
 static __inline__ gint
-nmp_mod_cms_send_msg(JpfModCms *mod, JpfMdsMsg *msg)
+nmp_mod_cms_send_msg(NmpModCms *mod, NmpMdsMsg *msg)
 {
 	NmpNetIO *bridge;
 	gint ret;
@@ -255,11 +255,11 @@ nmp_mod_cms_send_msg(JpfModCms *mod, JpfMdsMsg *msg)
 
 
 static __inline__ void
-nmp_mod_cms_make_hb_msg(JpfModCms *mod, JpfMdsMsg **msg)
+nmp_mod_cms_make_hb_msg(NmpModCms *mod, NmpMdsMsg **msg)
 {
-	JpfMediaServer *server;
+	NmpMediaServer *server;
 	gchar *server_id;
-	JpfMdsHeart hb_info;
+	NmpMdsHeart hb_info;
 
 	server = nmp_media_server_get();
 	server_id = nmp_media_server_get_id(server);
@@ -274,11 +274,11 @@ nmp_mod_cms_make_hb_msg(JpfModCms *mod, JpfMdsMsg **msg)
 
 
 static __inline__ void
-nmp_mod_cms_make_reg_msg(JpfModCms *mod, JpfMdsMsg **msg)
+nmp_mod_cms_make_reg_msg(NmpModCms *mod, NmpMdsMsg **msg)
 {
-	JpfMediaServer *server;
+	NmpMediaServer *server;
 	gchar *server_id;
-	JpfMdsRegister reg_info;
+	NmpMdsRegister reg_info;
 
 	server = nmp_media_server_get();
 	server_id = nmp_media_server_get_id(server);
@@ -286,14 +286,14 @@ nmp_mod_cms_make_reg_msg(JpfModCms *mod, JpfMdsMsg **msg)
 	memset(&reg_info, 0, sizeof(reg_info));
 	strncpy(reg_info.mds_id, server_id, MDS_ID_LEN - 1);
 	strncpy(reg_info.cms_ip, (gchar*)nmp_get_sysctl_value(SC_CMS_HOST), MAX_IP_LEN - 1);
-printf("======>sizeof(JpfMdsRegister):%d, MDS_ID_LEN:%d, MAX_IP_LEN:%d\n", sizeof(JpfMdsRegister), MDS_ID_LEN, MAX_IP_LEN);
+printf("======>sizeof(NmpMdsRegister):%d, MDS_ID_LEN:%d, MAX_IP_LEN:%d\n", sizeof(NmpMdsRegister), MDS_ID_LEN, MAX_IP_LEN);
 	*msg = nmp_alloc_msg(MESSAGE_MDU_REGISTER, &reg_info,
 		sizeof(reg_info), ++mod->seq_generator);
 }
 
 
 static __inline__ gint
-__nmp_mod_cms_check_online_state(JpfModCms *mod, JpfMdsMsg **msg)
+__nmp_mod_cms_check_online_state(NmpModCms *mod, NmpMdsMsg **msg)
 {
 	if (--mod->ttd <= 0)
 		return -1;	/* dying */
@@ -321,9 +321,9 @@ __nmp_mod_cms_check_online_state(JpfModCms *mod, JpfMdsMsg **msg)
 
 
 static __inline__ void
-nmp_mod_cms_check_online_state(JpfModCms *mod)
+nmp_mod_cms_check_online_state(NmpModCms *mod)
 {
-	JpfMdsMsg *msg;
+	NmpMdsMsg *msg;
 	gint ret;
 
 	g_mutex_lock(mod->lock);
@@ -345,7 +345,7 @@ nmp_mod_cms_check_online_state(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_mod_cms_check_state(JpfModCms *mod)
+nmp_mod_cms_check_state(NmpModCms *mod)
 {
 	gint state_timer;
 
@@ -376,7 +376,7 @@ nmp_mod_cms_check_state(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_cms_bridge_init(JpfModCms *mod)
+nmp_cms_bridge_init(NmpModCms *mod)
 {
 	nmp_cms_bridge_connect(mod);
 }
@@ -385,7 +385,7 @@ nmp_cms_bridge_init(JpfModCms *mod)
 static gboolean
 nmp_mod_cms_on_check_timer(gpointer user_data)
 {
-	JpfModCms *mod = (JpfModCms*)user_data;
+	NmpModCms *mod = (NmpModCms*)user_data;
 	G_ASSERT(mod != NULL);
 printf("ooooooooooooooooooon cms check timer!!\n");
 	nmp_mod_cms_check_state(mod);
@@ -395,7 +395,7 @@ printf("ooooooooooooooooooon cms check timer!!\n");
 
 
 static __inline__ void
-nmp_mod_cms_is_alive(JpfModCms *mod)
+nmp_mod_cms_is_alive(NmpModCms *mod)
 {
 	g_mutex_lock(mod->lock);
 	if (!mod->unregistered)
@@ -405,7 +405,7 @@ nmp_mod_cms_is_alive(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_mod_cms_set_registered(JpfModCms *mod, JpfmdsRegisterRes *res)
+nmp_mod_cms_set_registered(NmpModCms *mod, NmpmdsRegisterRes *res)
 {
 	NmpNetIO *bridge;
 
@@ -433,16 +433,16 @@ nmp_mod_cms_set_registered(JpfModCms *mod, JpfmdsRegisterRes *res)
 
 
 static void
-nmp_mod_cms_register_handler(JpfMdsMsg *msg, gpointer parm)
+nmp_mod_cms_register_handler(NmpMdsMsg *msg, gpointer parm)
 {
-	JpfModCms *mod_cms;
-	JpfmdsRegisterRes *res;
+	NmpModCms *mod_cms;
+	NmpmdsRegisterRes *res;
 	gint res_code;
-	JpfModCms *mod = (JpfModCms*)parm;
+	NmpModCms *mod = (NmpModCms*)parm;
 	G_ASSERT(parm != NULL);
 
-	mod_cms = (JpfModCms*)parm;
-	res = (JpfmdsRegisterRes*)MSG_DATA(msg);
+	mod_cms = (NmpModCms*)parm;
+	res = (NmpmdsRegisterRes*)MSG_DATA(msg);
 	BUG_ON(!res);
 
 	res_code = RES_CODE(res);
@@ -466,13 +466,13 @@ nmp_mod_cms_register_handler(JpfMdsMsg *msg, gpointer parm)
 
 
 static void
-nmp_mod_cms_heart_handler(JpfMdsMsg *msg, gpointer data)
+nmp_mod_cms_heart_handler(NmpMdsMsg *msg, gpointer data)
 {
 }
 
 
 static __inline__ void
-nmp_mod_cms_register_msg_handler(JpfModCms *mod)
+nmp_mod_cms_register_msg_handler(NmpModCms *mod)
 {
 	G_ASSERT(mod->msg_table != NULL);
 
@@ -493,11 +493,11 @@ nmp_mod_cms_register_msg_handler(JpfModCms *mod)
 static gint
 nmp_mod_cms_recv(gpointer priv_data, NmpNetIO *net_io, gpointer msg)
 {
-	JpfModCms *mod = (JpfModCms*)priv_data;
+	NmpModCms *mod = (NmpModCms*)priv_data;
 	G_ASSERT(mod != NULL);
 
 	nmp_mod_cms_is_alive(mod);
-	nmp_msg_table_call(mod->msg_table, (JpfMdsMsg*)msg, mod);
+	nmp_msg_table_call(mod->msg_table, (NmpMdsMsg*)msg, mod);
 	nmp_free_msg(msg);
 	return 0;
 }
@@ -506,16 +506,16 @@ nmp_mod_cms_recv(gpointer priv_data, NmpNetIO *net_io, gpointer msg)
 static void
 nmp_mod_cms_connect_fin(gpointer priv_data, NmpNetIO *io, gint err)
 {
-	JpfModCms *mod = (JpfModCms*)priv_data;
+	NmpModCms *mod = (NmpModCms*)priv_data;
 
 	nmp_mod_cms_io_finalized(mod, io);
 }
 
 
 static __inline__ void
-nmp_init_cms_module(JpfModCms *mod)
+nmp_init_cms_module(NmpModCms *mod)
 {
-	mod->network = nmp_net_new(&jxj_packet_proto, &jxj_xml_proto, mod);
+	mod->network = nmp_net_new(&nmp_packet_proto, &nmp_xml_proto, mod);
 	BUG_ON(!mod->network);
 	nmp_net_set_reader(mod->network, nmp_mod_cms_recv);
 	nmp_net_set_funcs(mod->network, NULL, nmp_mod_cms_connect_fin);
@@ -537,7 +537,7 @@ nmp_init_cms_module(JpfModCms *mod)
 
 
 static __inline__ void
-nmp_mod_cms_wait(JpfModCms *mod)
+nmp_mod_cms_wait(NmpModCms *mod)
 {//TODO:
 	while (1)
 	{
@@ -550,7 +550,7 @@ nmp_mod_cms_wait(JpfModCms *mod)
 
 
 gint
-nmp_mod_cms_rtsp_port(JpfModCms *mod)
+nmp_mod_cms_rtsp_port(NmpModCms *mod)
 {
 	gint port;
 	G_ASSERT(mod != NULL);
@@ -567,7 +567,7 @@ nmp_mod_cms_rtsp_port(JpfModCms *mod)
 
 
 gint
-nmp_mod_cms_pu_port(JpfModCms *mod)
+nmp_mod_cms_pu_port(NmpModCms *mod)
 {
 	gint port;
 	G_ASSERT(mod != NULL);
@@ -583,12 +583,12 @@ nmp_mod_cms_pu_port(JpfModCms *mod)
 }
 
 
-JpfModCms *
+NmpModCms *
 nmp_mod_cms_new( void )
 {
-	JpfModCms *mod;
+	NmpModCms *mod;
 
-	mod = g_new0(JpfModCms, 1);
+	mod = g_new0(NmpModCms, 1);
 	nmp_init_cms_module(mod);
 	nmp_mod_cms_wait(mod);
 

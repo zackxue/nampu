@@ -12,5 +12,5 @@ libnmpnet_a_SOURCES=nmp_conn.c \
 libnmpnet_a_CFLAGS=-fPIC
 libnmpnet_a_CXXFLAGS=
 
-libnmpnetincludedir=$(prefix)/include/nampu
+libnmpnetincludedir=$(prefix)/include/nampu/nmpnet
 libnmpnetinclude_HEADERS=$(top_srcdir)/include/*.h 

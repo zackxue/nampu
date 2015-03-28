@@ -9,13 +9,13 @@ nmp_free_mem(gpointer private, gsize size)
 	g_free(private);
 }
 
-JpfMdsMsg *
+NmpMdsMsg *
 nmp_alloc_msg(gint msg_id, gpointer data, gsize size, guint seq)
 {
-	JpfMdsMsg *msg;
+	NmpMdsMsg *msg;
 	G_ASSERT(!(data && size <= 0));
 
-	msg = g_new0(JpfMdsMsg, 1);
+	msg = g_new0(NmpMdsMsg, 1);
 	msg->msg_Id = msg_id;
 	msg->seq = seq;
 	if (data)
@@ -29,14 +29,14 @@ nmp_alloc_msg(gint msg_id, gpointer data, gsize size, guint seq)
 	return msg;
 }
 
-JpfMdsMsg *
+NmpMdsMsg *
 nmp_alloc_msg_2(gint msg_id, gpointer data, gsize size,
-	JpfMsgFin fin, guint seq)
+	NmpMsgFin fin, guint seq)
 {
-	JpfMdsMsg *msg;
+	NmpMdsMsg *msg;
 	G_ASSERT(!(data && size <= 0) && !(data && !fin));
 
-	msg = g_new0(JpfMdsMsg, 1);
+	msg = g_new0(NmpMdsMsg, 1);
 	msg->msg_Id = msg_id;
 	msg->seq = seq;
 	if (data)
@@ -49,7 +49,7 @@ nmp_alloc_msg_2(gint msg_id, gpointer data, gsize size,
 	return msg;
 }
 
-void nmp_attach_msg_io(JpfMdsMsg *msg, NmpNetIO *io)
+void nmp_attach_msg_io(NmpMdsMsg *msg, NmpNetIO *io)
 {
 	G_ASSERT(msg != NULL && io != NULL);
 
@@ -58,7 +58,7 @@ void nmp_attach_msg_io(JpfMdsMsg *msg, NmpNetIO *io)
 		msg->io = nmp_net_ref_io(io);
 }
 
-void nmp_set_msg_data(JpfMdsMsg *msg, gpointer data, gsize size)
+void nmp_set_msg_data(NmpMdsMsg *msg, gpointer data, gsize size)
 {
 	G_ASSERT(msg && !(data && size <= 0));
 
@@ -80,8 +80,8 @@ void nmp_set_msg_data(JpfMdsMsg *msg, gpointer data, gsize size)
 	}
 }
 
-void nmp_set_msg_data_2(JpfMdsMsg *msg, gpointer data, gsize size,
-	JpfMsgFin fin)
+void nmp_set_msg_data_2(NmpMdsMsg *msg, gpointer data, gsize size,
+	NmpMsgFin fin)
 {
 	G_ASSERT(!(data && size <= 0) && !(data && !fin));
 
@@ -102,7 +102,7 @@ void nmp_set_msg_data_2(JpfMdsMsg *msg, gpointer data, gsize size,
 	}
 }
 
-void nmp_free_msg(JpfMdsMsg *msg)
+void nmp_free_msg(NmpMdsMsg *msg)
 {
 	G_ASSERT(msg != NULL);
 

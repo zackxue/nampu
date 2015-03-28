@@ -16,8 +16,8 @@
 #define WRITE_ERR   (G_IO_HUP | G_IO_ERR|G_IO_NVAL)
 #define WRITE_COND  (G_IO_OUT | WRITE_ERR)
 
-typedef struct _JpfBuf JpfBuf;
-struct _JpfBuf
+typedef struct _NmpBuf NmpBuf;
+struct _NmpBuf
 {
 	gchar	*start;
 	gint	size;
@@ -28,29 +28,29 @@ struct _JpfBuf
 static void
 nmp_media_sinker_recv(gpointer data, gpointer user_data);
 static __inline__ gint
-nmp_media_sinker_recv_data(JpfSinkerWatch *sinker, gint stream,
+nmp_media_sinker_recv_data(NmpSinkerWatch *sinker, gint stream,
 	gchar *data, gsize size);
 static void
-nmp_media_sinker_detach(JpfSinkerWatch *watch);
+nmp_media_sinker_detach(NmpSinkerWatch *watch);
 
-static JpfSinkerWatchFuncs nmp_default_sinker_watch_funcs;
-static JpfSinkerWatchFuncs nmp_tcp_sinker_watch_funcs;
-static JpfSinkerWatchFuncs nmp_udp_sinker_watch_funcs;
+static NmpSinkerWatchFuncs nmp_default_sinker_watch_funcs;
+static NmpSinkerWatchFuncs nmp_tcp_sinker_watch_funcs;
+static NmpSinkerWatchFuncs nmp_udp_sinker_watch_funcs;
 
 
-JpfMediaSinkers *
+NmpMediaSinkers *
 nmp_media_sinkers_new(gpointer media, gint blockable)
 {
-	JpfMediaSinkers *sinkers;
+	NmpMediaSinkers *sinkers;
 
-	sinkers = nmp_mem_kmalloc(sizeof(JpfMediaSinkers));
+	sinkers = nmp_mem_kmalloc(sizeof(NmpMediaSinkers));
 	if (G_UNLIKELY(!sinkers))
 		return NULL;
 
 	sinkers->sinkers = g_ptr_array_new();
 	if (G_UNLIKELY(!sinkers->sinkers))
 	{
-		nmp_mem_kfree(sinkers, sizeof(JpfMediaSinkers));
+		nmp_mem_kfree(sinkers, sizeof(NmpMediaSinkers));
 		return NULL;
 	}
 
@@ -67,17 +67,17 @@ nmp_media_sinkers_new(gpointer media, gint blockable)
 static void
 nmp_media_sinkers_unref_sinker(gpointer data, gpointer user_data)
 {
-	JpfSinkerWatch *sinker;
+	NmpSinkerWatch *sinker;
 	g_assert(data != NULL);
 
-	sinker = (JpfSinkerWatch*)data;
+	sinker = (NmpSinkerWatch*)data;
 	nmp_media_sinker_detach(sinker);
 	nmp_media_sinker_unref(sinker);
 }
 
 
 static __inline__ void
-nmp_media_sinkers_release(JpfMediaSinkers *sinkers)
+nmp_media_sinkers_release(NmpMediaSinkers *sinkers)
 {
 	g_assert(sinkers != NULL);
 
@@ -92,8 +92,8 @@ nmp_media_sinkers_release(JpfMediaSinkers *sinkers)
 }
 
 
-JpfMediaSinkers *
-nmp_media_sinkers_ref(JpfMediaSinkers *sinkers)
+NmpMediaSinkers *
+nmp_media_sinkers_ref(NmpMediaSinkers *sinkers)
 {
 	g_assert(sinkers != NULL &&
 		g_atomic_int_get(&sinkers->ref_count) > 0);
@@ -103,7 +103,7 @@ nmp_media_sinkers_ref(JpfMediaSinkers *sinkers)
 
 
 void
-nmp_media_sinkers_unref(JpfMediaSinkers *sinkers)
+nmp_media_sinkers_unref(NmpMediaSinkers *sinkers)
 {
 	g_assert(sinkers != NULL &&
 		g_atomic_int_get(&sinkers->ref_count) > 0);
@@ -115,7 +115,7 @@ nmp_media_sinkers_unref(JpfMediaSinkers *sinkers)
 
 
 static __inline__ void
-__nmp_media_sinkers_add(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
+__nmp_media_sinkers_add(NmpMediaSinkers *sinkers, NmpSinkerWatch *w)
 {
 	g_ptr_array_add(sinkers->sinkers, w);
 	nmp_media_sinker_ref(w);
@@ -125,7 +125,7 @@ __nmp_media_sinkers_add(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
 
 
 void
-nmp_media_sinkers_add(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
+nmp_media_sinkers_add(NmpMediaSinkers *sinkers, NmpSinkerWatch *w)
 {
 	G_ASSERT(sinkers != NULL && w != NULL);
 	
@@ -136,7 +136,7 @@ nmp_media_sinkers_add(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
 
 
 static __inline__ gint
-__nmp_media_sinkers_del(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
+__nmp_media_sinkers_del(NmpMediaSinkers *sinkers, NmpSinkerWatch *w)
 {
 	gboolean found;
 
@@ -157,7 +157,7 @@ __nmp_media_sinkers_del(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
 
 
 gint
-nmp_media_sinkers_del(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
+nmp_media_sinkers_del(NmpMediaSinkers *sinkers, NmpSinkerWatch *w)
 {
 	gint n_sinkers;
 	G_ASSERT(sinkers != NULL && w != NULL);
@@ -171,11 +171,11 @@ nmp_media_sinkers_del(JpfMediaSinkers *sinkers, JpfSinkerWatch *w)
 
 
 static __inline__ gint
-__nmp_media_sinkers_recv_packet(JpfMediaSinkers *sinkers, gint stream,
+__nmp_media_sinkers_recv_packet(NmpMediaSinkers *sinkers, gint stream,
 	gchar *data, gsize size)
 {
-	JpfBuf buf;
-	JpfSinkerWatch *s;
+	NmpBuf buf;
+	NmpSinkerWatch *s;
 
 	buf.start = data;
 	buf.size = size;
@@ -206,7 +206,7 @@ __nmp_media_sinkers_recv_packet(JpfMediaSinkers *sinkers, gint stream,
 
 
 gint
-nmp_media_sinkers_recv_packet(JpfMediaSinkers *sinkers, gint stream,
+nmp_media_sinkers_recv_packet(NmpMediaSinkers *sinkers, gint stream,
 	gchar *data, gsize size)
 {
 	gint err = 0;
@@ -222,7 +222,7 @@ nmp_media_sinkers_recv_packet(JpfMediaSinkers *sinkers, gint stream,
 
 
 static __inline__ void
-nmp_media_sinker_init_stream_rtp_pollfd(JpfSinkerStream *stream)
+nmp_media_sinker_init_stream_rtp_pollfd(NmpSinkerStream *stream)
 {
 	stream->rtp_read.fd = stream->sock_info.rtp_sock;
 	stream->rtp_read.events = READ_COND;
@@ -237,7 +237,7 @@ nmp_media_sinker_init_stream_rtp_pollfd(JpfSinkerStream *stream)
 #ifdef CONFIG_RTCP_SUPPORT
 
 static __inline__ void
-nmp_media_sinker_init_stream_rtcp_pollfd(JpfSinkerStream *stream)
+nmp_media_sinker_init_stream_rtcp_pollfd(NmpSinkerStream *stream)
 {
 	stream->rtcp_control.rtcp_recv.fd = stream->sock_info.rtcp_sock;
 	stream->rtcp_control.rtcp_recv.events = READ_COND;
@@ -252,7 +252,7 @@ nmp_media_sinker_init_stream_rtcp_pollfd(JpfSinkerStream *stream)
 
 
 static __inline__ void
-nmp_media_sinker_init_stream_pollfd(JpfSinkerStream *stream)
+nmp_media_sinker_init_stream_pollfd(NmpSinkerStream *stream)
 {
 	nmp_media_sinker_init_stream_rtp_pollfd(stream);
 #ifdef CONFIG_RTCP_SUPPORT
@@ -262,7 +262,7 @@ nmp_media_sinker_init_stream_pollfd(JpfSinkerStream *stream)
 
 
 static __inline__ gint
-nmp_media_sinker_init_stream(JpfSinkerStream *stream,
+nmp_media_sinker_init_stream(NmpSinkerStream *stream,
 	GstRTSPLowerTrans trans, gint i_stream)
 {
 	gint err;
@@ -314,7 +314,7 @@ nmp_media_sinker_init_stream(JpfSinkerStream *stream,
 
 
 static __inline__ gint
-nmp_media_sinker_stream_set_transport(JpfSinkerStream *stream,
+nmp_media_sinker_stream_set_transport(NmpSinkerStream *stream,
 	gchar *client_Ip, GstRTSPTransport *ct, gboolean b_nat)
 {
 	gint err = 0;
@@ -348,7 +348,7 @@ nmp_media_sinker_stream_set_transport(JpfSinkerStream *stream,
 
 
 static __inline__ void
-nmp_media_sinker_destroy_stream(JpfSinkerStream *stream)
+nmp_media_sinker_destroy_stream(NmpSinkerStream *stream)
 {
 	if (!stream->rtp_over_rtsp)
 		nmp_media_sock_info_reset(&stream->sock_info);
@@ -359,7 +359,7 @@ nmp_media_sinker_destroy_stream(JpfSinkerStream *stream)
 
 
 static __inline__ void
-nmp_media_sinker_pending(JpfSinkerWatch *watch, JpfSinkerStream *stream)
+nmp_media_sinker_pending(NmpSinkerWatch *watch, NmpSinkerStream *stream)
 {
 	if (!stream->pending)
 	{
@@ -369,7 +369,7 @@ nmp_media_sinker_pending(JpfSinkerWatch *watch, JpfSinkerStream *stream)
 }
 
 static __inline__ void
-nmp_media_sinker_add_stream_rpoll(JpfSinkerWatch *watch, JpfSinkerStream *stream)
+nmp_media_sinker_add_stream_rpoll(NmpSinkerWatch *watch, NmpSinkerStream *stream)
 {
 	if (!stream->rtp_over_rtsp && !stream->connected)
 	{
@@ -382,7 +382,7 @@ nmp_media_sinker_add_stream_rpoll(JpfSinkerWatch *watch, JpfSinkerStream *stream
 
 
 static __inline__ gboolean
-nmp_media_sinker_check_stream(JpfSinkerStream *stream)
+nmp_media_sinker_check_stream(NmpSinkerStream *stream)
 {
 	if (stream->rtp_write.revents & WRITE_COND)
 		return TRUE;
@@ -391,7 +391,7 @@ nmp_media_sinker_check_stream(JpfSinkerStream *stream)
 
 
 static __inline__ gint
-nmp_media_sinker_init_streams(JpfSinkerWatch *watch, GstRTSPLowerTrans trans,
+nmp_media_sinker_init_streams(NmpSinkerWatch *watch, GstRTSPLowerTrans trans,
 	gint streams, gint *p_err)
 {
 	gint n_streams, err;
@@ -431,7 +431,7 @@ init_stream_failed:
 
 
 static __inline__ void
-nmp_media_sinker_destroy_streams(JpfSinkerWatch *sinker)
+nmp_media_sinker_destroy_streams(NmpSinkerWatch *sinker)
 {
 	gint n_streams = sinker->n_streams;
 
@@ -446,10 +446,10 @@ nmp_media_sinker_destroy_streams(JpfSinkerWatch *sinker)
 
 
 gint
-nmp_media_sinker_set_transport(JpfSinkerWatch *sinker, gint i_stream, 
+nmp_media_sinker_set_transport(NmpSinkerWatch *sinker, gint i_stream, 
 	gchar *client_Ip, GstRTSPTransport *ct, gboolean b_nat, void *p)
 {
-	JpfSinkerStream *stream;
+	NmpSinkerStream *stream;
 	gint ret;
 	g_assert(sinker != NULL && ct != NULL);
 
@@ -483,9 +483,9 @@ nmp_media_sinker_set_transport(JpfSinkerWatch *sinker, gint i_stream,
 
 
 static __inline__ gboolean
-__nmp_media_sinker_check(JpfSinkerWatch *sinker)
+__nmp_media_sinker_check(NmpSinkerWatch *sinker)
 {
-	JpfSinkerStream *stream;
+	NmpSinkerStream *stream;
 	gint n_streams = sinker->n_streams;
 
 	for (; --n_streams >= 0; )
@@ -500,7 +500,7 @@ __nmp_media_sinker_check(JpfSinkerWatch *sinker)
 
 
 static __inline__ gboolean
-nmp_media_sinker_check(JpfSinkerWatch *sinker)
+nmp_media_sinker_check(NmpSinkerWatch *sinker)
 {
 	gboolean ret;
 
@@ -513,7 +513,7 @@ nmp_media_sinker_check(JpfSinkerWatch *sinker)
 
 
 static __inline__ gint
-nmp_media_sinker_stream_pull(JpfSinkerStream *stream, gint *exit_loop)
+nmp_media_sinker_stream_pull(NmpSinkerStream *stream, gint *exit_loop)
 {
 	gint ret;
 
@@ -534,10 +534,10 @@ nmp_media_sinker_stream_pull(JpfSinkerStream *stream, gint *exit_loop)
 
 
 static __inline__ gint
-nmp_media_sinker_process_stream(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream)
+nmp_media_sinker_process_stream(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream)
 {
-	JpfSinkerWatchFuncs *funcs;
+	NmpSinkerWatchFuncs *funcs;
 
 	if (stream->state != SINKER_WATCH_STAT_PENDING)
 	{
@@ -553,9 +553,9 @@ nmp_media_sinker_process_stream(JpfSinkerWatch *sinker,
 
 
 static __inline__ gint
-__nmp_media_sinker_process(JpfSinkerWatch *sinker)
+__nmp_media_sinker_process(NmpSinkerWatch *sinker)
 {
-	JpfSinkerStream *stream;
+	NmpSinkerStream *stream;
 	gint err, n_streams = sinker->n_streams;
 
 	for (; --n_streams >= 0; )
@@ -573,7 +573,7 @@ __nmp_media_sinker_process(JpfSinkerWatch *sinker)
 
 
 static __inline__ gint
-nmp_media_sinker_process(JpfSinkerWatch *sinker)
+nmp_media_sinker_process(NmpSinkerWatch *sinker)
 {
 	gint ret;
 
@@ -586,7 +586,7 @@ nmp_media_sinker_process(JpfSinkerWatch *sinker)
 
 
 static __inline__ gint
-nmp_media_sinker_stream_udp_fill(JpfSinkerStream *stream, gchar *data,
+nmp_media_sinker_stream_udp_fill(NmpSinkerStream *stream, gchar *data,
 	gsize size)
 {
 	gchar *rtp_orig;
@@ -631,11 +631,11 @@ nmp_media_sinker_stream_udp_fill(JpfSinkerStream *stream, gchar *data,
 
 
 static __inline__ gint
-__nmp_media_sinker_recv_data(JpfSinkerWatch *sinker, gint i_stream, 
+__nmp_media_sinker_recv_data(NmpSinkerWatch *sinker, gint i_stream, 
 	gchar *data, gsize size)
 {
-	JpfSinkerWatchFuncs *funcs;
-	JpfSinkerStream *stream;
+	NmpSinkerWatchFuncs *funcs;
+	NmpSinkerStream *stream;
 
 	if (G_UNLIKELY(!sinker->sink_ready))
 		return 0;
@@ -650,7 +650,7 @@ __nmp_media_sinker_recv_data(JpfSinkerWatch *sinker, gint i_stream,
 
 
 static __inline__ gint
-nmp_media_sinker_recv_data(JpfSinkerWatch *sinker, gint stream,
+nmp_media_sinker_recv_data(NmpSinkerWatch *sinker, gint stream,
 	gchar *data, gsize size)
 {
 	gint err;
@@ -667,15 +667,15 @@ nmp_media_sinker_recv_data(JpfSinkerWatch *sinker, gint stream,
 static void
 nmp_media_sinker_recv(gpointer data, gpointer user_data)
 {
-	JpfSinkerWatch *s = (JpfSinkerWatch*)data;
-	JpfBuf *buf = (JpfBuf*)user_data;
+	NmpSinkerWatch *s = (NmpSinkerWatch*)data;
+	NmpBuf *buf = (NmpBuf*)user_data;
 
 	nmp_media_sinker_recv_data(s, buf->stream, buf->start, buf->size);
 }
 
 
 __export void
-nmp_media_sinker_ref(JpfSinkerWatch *watch)
+nmp_media_sinker_ref(NmpSinkerWatch *watch)
 {
 	G_ASSERT(watch != NULL);
 
@@ -684,7 +684,7 @@ nmp_media_sinker_ref(JpfSinkerWatch *watch)
 
 
 __export void
-nmp_media_sinker_unref(JpfSinkerWatch *watch)
+nmp_media_sinker_unref(NmpSinkerWatch *watch)
 {
 	G_ASSERT(watch != NULL);
 
@@ -693,14 +693,14 @@ nmp_media_sinker_unref(JpfSinkerWatch *watch)
 
 
 static __inline__ void
-__nmp_media_sinker_play(JpfSinkerWatch *watch)
+__nmp_media_sinker_play(NmpSinkerWatch *watch)
 {
 	watch->sink_ready = TRUE;
 }
 
 
 void
-nmp_media_sinker_play(JpfSinkerWatch *watch)
+nmp_media_sinker_play(NmpSinkerWatch *watch)
 {
 	g_assert(watch != NULL);
 
@@ -711,7 +711,7 @@ nmp_media_sinker_play(JpfSinkerWatch *watch)
 
 
 static void
-nmp_media_sinker_detach(JpfSinkerWatch *watch)
+nmp_media_sinker_detach(NmpSinkerWatch *watch)
 {
 	g_assert(watch != NULL);
 
@@ -731,7 +731,7 @@ nmp_media_sinker_watch_prepare(GSource *source, gint *timeout)
 static gboolean
 nmp_media_sinker_watch_check(GSource *__source)
 {
-	JpfSinkerWatch *sinker = (JpfSinkerWatch*)__source;
+	NmpSinkerWatch *sinker = (NmpSinkerWatch*)__source;
 
 	return nmp_media_sinker_check(sinker);
 }
@@ -741,7 +741,7 @@ static gboolean
 nmp_media_sinker_watch_dispatch(GSource *__source, 
 	GSourceFunc callback, gpointer user_data)
 {
-	JpfSinkerWatch *sinker = (JpfSinkerWatch*)__source;
+	NmpSinkerWatch *sinker = (NmpSinkerWatch*)__source;
 	gint err;
 
 	if ((err = nmp_media_sinker_process(sinker)))
@@ -759,7 +759,7 @@ nmp_media_sinker_watch_dispatch(GSource *__source,
 static void
 nmp_media_sinker_watch_finalize(GSource *__source)
 {
-	JpfSinkerWatch *sinker = (JpfSinkerWatch*)__source;
+	NmpSinkerWatch *sinker = (NmpSinkerWatch*)__source;
 
 	nmp_media_sinker_destroy_streams(sinker);
 }
@@ -774,11 +774,11 @@ static GSourceFuncs nmp_sinker_source_funcs =
 };
 
 
-JpfSinkerWatch *
+NmpSinkerWatch *
 nmp_media_sinker_create(GstRTSPLowerTrans trans, gint streams,
 	gint *err)
 {
-	JpfSinkerWatch *watch;
+	NmpSinkerWatch *watch;
 
 	if (G_UNLIKELY(streams > NSTREAMS))
 	{
@@ -789,8 +789,8 @@ nmp_media_sinker_create(GstRTSPLowerTrans trans, gint streams,
 		return NULL;
 	}
 
-	watch = (JpfSinkerWatch*)g_source_new(
-		&nmp_sinker_source_funcs, sizeof(JpfSinkerWatch));
+	watch = (NmpSinkerWatch*)g_source_new(
+		&nmp_sinker_source_funcs, sizeof(NmpSinkerWatch));
 	if (G_UNLIKELY(!watch))
 	{
 		if (err)
@@ -821,8 +821,8 @@ nmp_media_sinker_create(GstRTSPLowerTrans trans, gint streams,
 
 
 static __inline__ gint
-nmp_sinker_stream_buffer_udp_write(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream)
+nmp_sinker_stream_buffer_udp_write(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream)
 {
 	gchar *buf;
 	gsize size;
@@ -852,7 +852,7 @@ nmp_sinker_stream_buffer_udp_write(JpfSinkerWatch *sinker,
 
 
 static gint
-nmp_sinker_stream_udp_send(JpfSinkerWatch *sinker, JpfSinkerStream *stream)
+nmp_sinker_stream_udp_send(NmpSinkerWatch *sinker, NmpSinkerStream *stream)
 {
 	gint ret, exit_loop;
 
@@ -889,8 +889,8 @@ nmp_sinker_stream_udp_send(JpfSinkerWatch *sinker, JpfSinkerStream *stream)
 
 
 static gint
-nmp_sinker_stream_udp_fill(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream, gchar *data, gsize size)
+nmp_sinker_stream_udp_fill(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream, gchar *data, gsize size)
 {
 	gint err;
 
@@ -906,15 +906,15 @@ nmp_sinker_stream_udp_fill(JpfSinkerWatch *sinker,
 
 
 static gint
-nmp_sinker_stream_tcp_send(JpfSinkerWatch *sinker, JpfSinkerStream *stream)
+nmp_sinker_stream_tcp_send(NmpSinkerWatch *sinker, NmpSinkerStream *stream)
 {
 	return 0;
 }
 
 
 static gint
-nmp_sinker_stream_tcp_fill(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream, gchar *data, gsize size)
+nmp_sinker_stream_tcp_fill(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream, gchar *data, gsize size)
 {
 	extern gint nmp_rtsp_client_send_message(void *cli, GstRTSPMessage *msg);
 	extern gboolean nmp_rtsp_client_would_block(void *cli);
@@ -948,23 +948,23 @@ nmp_sinker_stream_tcp_fill(JpfSinkerWatch *sinker,
 
 
 static gint
-nmp_sinker_stream_default_send(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream)
+nmp_sinker_stream_default_send(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream)
 {
 	return -E_NOTSUPPORT;
 }
 
 
 static gint
-nmp_sinker_stream_default_fill(JpfSinkerWatch *sinker,
-	JpfSinkerStream *stream, gchar *data, gsize size)
+nmp_sinker_stream_default_fill(NmpSinkerWatch *sinker,
+	NmpSinkerStream *stream, gchar *data, gsize size)
 {
 	return -E_NOTSUPPORT;
 }
 
 
 static void 
-nmp_media_sinker_watch_error(JpfSinkerWatch *watch)
+nmp_media_sinker_watch_error(NmpSinkerWatch *watch)
 {
 	//在LOOP对此watch进行读写失败或连接关闭时调用。
 	//处理的动作为：从LOOP中删除此SOURCE，关闭session, 从media中删除此sinker, 如果需要，关闭media.
@@ -972,7 +972,7 @@ nmp_media_sinker_watch_error(JpfSinkerWatch *watch)
 }
 
 
-static JpfSinkerWatchFuncs nmp_udp_sinker_watch_funcs =		/* RTP(UDP) */
+static NmpSinkerWatchFuncs nmp_udp_sinker_watch_funcs =		/* RTP(UDP) */
 {
 	.send = nmp_sinker_stream_udp_send,
 	.fill = nmp_sinker_stream_udp_fill,
@@ -980,14 +980,14 @@ static JpfSinkerWatchFuncs nmp_udp_sinker_watch_funcs =		/* RTP(UDP) */
 };
 
 
-static JpfSinkerWatchFuncs nmp_tcp_sinker_watch_funcs =		/* RTP over RTSP */
+static NmpSinkerWatchFuncs nmp_tcp_sinker_watch_funcs =		/* RTP over RTSP */
 {
 	.send = nmp_sinker_stream_tcp_send,
 	.fill = nmp_sinker_stream_tcp_fill,
 	.error = nmp_media_sinker_watch_error
 };
 
-static JpfSinkerWatchFuncs nmp_default_sinker_watch_funcs =	/* default */
+static NmpSinkerWatchFuncs nmp_default_sinker_watch_funcs =	/* default */
 {
 	.send = nmp_sinker_stream_default_send,
 	.fill = nmp_sinker_stream_default_fill

@@ -10,12 +10,12 @@ gint
 nmp_rtp_check(b_ptr_t start, gsize size)
 {
 #ifndef NDEBUG
-	JpfRtpWrap *rtp = (JpfRtpWrap*)start;
+	NmpRtpWrap *rtp = (NmpRtpWrap*)start;
 
-	if (G_UNLIKELY(size <= sizeof(JpfRtpWrap)))
+	if (G_UNLIKELY(size <= sizeof(NmpRtpWrap)))
 		return -E_PACKET;
 	rtp->magic =  RTP_WRAP_MAGIC;
-	BUG_ON(size != rtp->length + sizeof(JpfRtpWrap));
+	BUG_ON(size != rtp->length + sizeof(NmpRtpWrap));
 #endif
 
 	return 0;
@@ -25,14 +25,14 @@ int lost;
 gint
 nmp_rtp_count(b_ptr_t start, b_ptr_t end, gsize *lp, gsize *lb)
 {
-	JpfRtpWrap *rtp;
+	NmpRtpWrap *rtp;
 
 	*lp = 0;
 	*lb = 0;
 
 	while (start < end)
 	{
-		rtp = (JpfRtpWrap*)start;
+		rtp = (NmpRtpWrap*)start;
 				
 #ifndef NDEBUG
 		if (G_UNLIKELY(rtp->magic != RTP_WRAP_MAGIC))
@@ -42,7 +42,7 @@ nmp_rtp_count(b_ptr_t start, b_ptr_t end, gsize *lp, gsize *lb)
 		*lp += 1;
 		*lb += rtp->length;
 
-		start += sizeof(JpfRtpWrap);
+		start += sizeof(NmpRtpWrap);
 		start += rtp->length;
 	}
 
@@ -54,14 +54,14 @@ gint
 nmp_rtp_drop(b_ptr_t point, b_ptr_t upper, b_ptr_t *adjust,
 	gsize *lp, gsize *lb)
 {
-	JpfRtpWrap *rtp;
+	NmpRtpWrap *rtp;
 
 	*lp = 0;
 	*lb = 0;
 
 	while (*adjust < upper)
 	{
-		rtp = (JpfRtpWrap*)*adjust;
+		rtp = (NmpRtpWrap*)*adjust;
 
 		if ((b_ptr_t)rtp > point)
 			break;
@@ -74,7 +74,7 @@ nmp_rtp_drop(b_ptr_t point, b_ptr_t upper, b_ptr_t *adjust,
 		*lp += 1;
 		*lb += rtp->length;	printf("==> y lost one %d\n" ,++lost);
 
-		*adjust += sizeof(JpfRtpWrap);
+		*adjust += sizeof(NmpRtpWrap);
 		*adjust += rtp->length;
 	}
 
@@ -84,15 +84,15 @@ nmp_rtp_drop(b_ptr_t point, b_ptr_t upper, b_ptr_t *adjust,
 gsize
 nmp_rtp_get_packet(b_ptr_t start, b_ptr_t end)
 {
-	JpfRtpWrap *rtp;
+	NmpRtpWrap *rtp;
 	gint buf_size, packet_size;
 
 	buf_size = end - start;
-	if (G_UNLIKELY(buf_size < sizeof(JpfRtpWrap)))
+	if (G_UNLIKELY(buf_size < sizeof(NmpRtpWrap)))
 		return -E_PACKET;
 
-	rtp = (JpfRtpWrap*)start;
-	packet_size = rtp->length + sizeof(JpfRtpWrap);
+	rtp = (NmpRtpWrap*)start;
+	packet_size = rtp->length + sizeof(NmpRtpWrap);
 
 	if (G_UNLIKELY(buf_size < packet_size))
 		return -E_PACKET;
@@ -101,7 +101,7 @@ nmp_rtp_get_packet(b_ptr_t start, b_ptr_t end)
 }
 
 
-JpfRingBufferOps rtp_buffer_ops =
+NmpRingBufferOps rtp_buffer_ops =
 {
 	.check = nmp_rtp_check,
 	.count = nmp_rtp_count,

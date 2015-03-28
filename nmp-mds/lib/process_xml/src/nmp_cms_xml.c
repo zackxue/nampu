@@ -29,13 +29,13 @@
  * @cur:            input, a pointer to the tree's node
  * @cmd:            input, string, indicate command id
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo *
+NmpMsgInfo *
 nmp_parse_mds_register_resp(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
 {
-    JpfmdsRegisterRes req_info;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpmdsRegisterRes req_info;
+    NmpMsgInfo *sys_msg = NULL;
     int i, code;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
@@ -89,10 +89,10 @@ nmp_parse_mds_register_resp(xmlDocPtr doc,xmlNodePtr cur, char *cmd)
  * @return:         succeed 0, else -1
  */
 int 
-nmp_create_mds_register(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_mds_register(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     xmlNodePtr root_node = NULL, node = NULL; 
-    JpfMdsRegister *res_info;
+    NmpMdsRegister *res_info;
     char str[INT_TO_CHAR_LEN] = {0};
 		
     res_info = nmp_get_msginfo_data(sys_msg); 
@@ -120,11 +120,11 @@ nmp_create_mds_register(xmlDocPtr doc, JpfMsgInfo *sys_msg)
 }
 
 
-JpfMsgInfo * 
+NmpMsgInfo * 
 nmp_parse_mds_heart_resp(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 {
-    JpfMdsHeartRes req_info;
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMdsHeartRes req_info;
+    NmpMsgInfo *sys_msg = NULL;
     int i, code;
     xmlXPathObjectPtr app_result;
     char *xpath = "/message";
@@ -163,11 +163,11 @@ nmp_parse_mds_heart_resp(xmlDocPtr doc ,xmlNodePtr cur, char *cmd)
 }
 
 int 
-nmp_create_mds_heart(xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_mds_heart(xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
     xmlNodePtr root_node = NULL; 
-    JpfMdsHeart *tmp = NULL;
+    NmpMdsHeart *tmp = NULL;
     char str[INT_TO_CHAR_LEN] = {0};
     
     tmp = nmp_get_msginfo_data(sys_msg); 

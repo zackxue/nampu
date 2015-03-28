@@ -75,55 +75,55 @@
 #define ASSERT                          assert
 #define MAX_CMD_ENTRIES                 512
 
-typedef struct _JpfXmlNodeInfo JpfXmlNodeInfo;
-typedef struct _JpfXmlNode     JpfXmlNode;
+typedef struct _NmpXmlNodeInfo NmpXmlNodeInfo;
+typedef struct _NmpXmlNode     NmpXmlNode;
 
-struct _JpfXmlNodeInfo
+struct _NmpXmlNodeInfo
 {
 	xmlChar     *node_name;
     xmlChar     *node_value;
     int          attr_flag;	
 };
 
-struct _JpfXmlNode
+struct _NmpXmlNode
 {
 	xmlNodePtr  parent_node;
 	xmlNodePtr  add_node;
 };
 
 /**
- * JpfParseXml: callback function, used to parse xml docuemnt
+ * NmpParseXml: callback function, used to parse xml docuemnt
  *
  * @doc:            input, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  */
-typedef JpfMsgInfo* (*JpfParseXml)(
+typedef NmpMsgInfo* (*NmpParseXml)(
 	xmlDocPtr doc,
 	xmlNodePtr cur, 
 	char *cmd
 );
                                
 /**
- * JpfCreateXml: callback function, used to generate xml docuemnt
+ * NmpCreateXml: callback function, used to generate xml docuemnt
  *
  * @doc:            output, pointer, containing xml document
  * @sys_msg:        input, struct of the command information
  */
-typedef int (*JpfCreateXml)(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+typedef int (*NmpCreateXml)(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 /**
- * JpfCmdType: define command set
+ * NmpCmdType: define command set
  *
  * @cmd_enties:    array, contain command id and its processing-function
  * @counts:        indicate the number of command id containing in set
  */
- typedef char JpfCmdID[MAX_CMD_ID_LEN];
-typedef struct _JpfCmdType JpfCmdType;
-struct _JpfCmdType
+ typedef char NmpCmdID[MAX_CMD_ID_LEN];
+typedef struct _NmpCmdType NmpCmdType;
+struct _NmpCmdType
 {
-	struct _JpfCmdTypeEntry {
-		JpfCmdID         cmd_id;
-		JpfParseXml      parse_xml;
-		JpfCreateXml     create_xml;
+	struct _NmpCmdTypeEntry {
+		NmpCmdID         cmd_id;
+		NmpParseXml      parse_xml;
+		NmpCreateXml     create_xml;
 	}cmd_enties[MAX_CMD_ENTRIES];
 	int counts;
 };
@@ -336,20 +336,20 @@ void nmp_deal_value(xmlDocPtr doc, xmlNodePtr cur, int *des);
  * @xml_buf:        iutput, memory address used to contain xml text
  * @xml_len:        iutput, indicate length of xmf_buf, unit bytes 
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo * 
-nmp_parse_xml_str(JpfCmdType *self, const char *xml_buff, int xml_len, unsigned int seq);
+NmpMsgInfo * 
+nmp_parse_xml_str(NmpCmdType *self, const char *xml_buff, int xml_len, unsigned int seq);
 
 /**
  * nmp_parse_xml_file: open XML file and process it
  *
  * @filename:       iutput, XML filename
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo * 
-nmp_parse_xml_file(JpfCmdType *self, char *filename, unsigned int seq);
+NmpMsgInfo * 
+nmp_parse_xml_file(NmpCmdType *self, char *filename, unsigned int seq);
 
 /**
  * nmp_create_xml_str: generate XML string according to sys_msg
@@ -359,10 +359,10 @@ nmp_parse_xml_file(JpfCmdType *self, char *filename, unsigned int seq);
  * @return:         succeed:lens of xml, else -1
  */
 int 
-nmp_create_xml_str(JpfCmdType *self, 
+nmp_create_xml_str(NmpCmdType *self, 
                   char *xml_buff, 
                   int *buff_size, 
-                  JpfMsgInfo *sys_msg);
+                  NmpMsgInfo *sys_msg);
 
 /**
  * nmp_create_xml_file: generate XML string and save to a file
@@ -374,14 +374,14 @@ nmp_create_xml_str(JpfCmdType *self,
  * @return:         succeed 0, else -1
  */
 int 
-nmp_create_xml_file(JpfCmdType *self, const char *filename, JpfMsgInfo *sys_msg);
+nmp_create_xml_file(NmpCmdType *self, const char *filename, NmpMsgInfo *sys_msg);
 
-void nmp_init_cmd_id(JpfCmdType *self);
+void nmp_init_cmd_id(NmpCmdType *self);
 //for test,cms will offter
-void *nmp_get_msginfo_data(JpfMsgInfo *sys_msg);
+void *nmp_get_msginfo_data(NmpMsgInfo *sys_msg);
 
 
 //for test,cms will offter
-JpfMsgInfo *nmp_msginfo_new(const char *msg_id, void *data, int size);    
+NmpMsgInfo *nmp_msginfo_new(const char *msg_id, void *data, int size);    
                    
 #endif

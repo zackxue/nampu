@@ -23,11 +23,11 @@
 #define MAX_LISTEN_BACKLOG				5
 
 static __inline__ void
-nmp_rtsp_client_mng_remove_death(JpfClientMng *client_mng);
+nmp_rtsp_client_mng_remove_death(NmpClientMng *client_mng);
 
 
 static __inline__ void
-nmp_rtsp_client_mng_on_timer(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_on_timer(NmpClientMng *client_mng)
 {
 	nmp_rtsp_client_mng_remove_death(client_mng);
 }
@@ -36,22 +36,22 @@ nmp_rtsp_client_mng_on_timer(JpfClientMng *client_mng)
 static gboolean
 nmp_rtsp_client_mng_timer(gpointer user_data)
 {
-	JpfClientMng *client_mng;
+	NmpClientMng *client_mng;
 	G_ASSERT(user_data != NULL);
 
-	client_mng = (JpfClientMng*)user_data;
+	client_mng = (NmpClientMng*)user_data;
 	nmp_rtsp_client_mng_on_timer(client_mng);
 
 	return TRUE;
 }
 
 
-JpfClientMng *
+NmpClientMng *
 nmp_rtsp_client_mng_new(gint service)
 {
-	JpfClientMng *client_mng;
+	NmpClientMng *client_mng;
 
-	client_mng = g_new0(JpfClientMng, 1);
+	client_mng = g_new0(NmpClientMng, 1);
 	client_mng->address = g_strdup(DEFAULT_LISTEN_ADDRESS);
 	client_mng->service = g_strdup_printf("%d", service);
 
@@ -66,22 +66,22 @@ nmp_rtsp_client_mng_new(gint service)
 }
 
 
-JpfClientMng *
-nmp_rtsp_client_mng_ref(JpfClientMng *client_mng)
+NmpClientMng *
+nmp_rtsp_client_mng_ref(NmpClientMng *client_mng)
 {
 	return client_mng;
 }
 
 
 void
-nmp_rtsp_client_mng_unref(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_unref(NmpClientMng *client_mng)
 {
 }
 
 
 static __inline__ void
-__nmp_rtsp_client_mng_add_client(JpfClientMng *client_mng, 
-	JpfRtspClient *client)
+__nmp_rtsp_client_mng_add_client(NmpClientMng *client_mng, 
+	NmpRtspClient *client)
 {
 	client_mng->clients = g_list_prepend(
 		client_mng->clients, client);
@@ -91,8 +91,8 @@ __nmp_rtsp_client_mng_add_client(JpfClientMng *client_mng,
 
 
 static __inline__ void
-nmp_rtsp_client_mng_add_client(JpfClientMng *client_mng, 
-	JpfRtspClient *client)
+nmp_rtsp_client_mng_add_client(NmpClientMng *client_mng, 
+	NmpRtspClient *client)
 {
 	g_assert(client_mng != NULL && client != NULL);
 	
@@ -103,8 +103,8 @@ nmp_rtsp_client_mng_add_client(JpfClientMng *client_mng,
 
 
 static __inline__ void
-__nmp_rtsp_client_mng_remove_client(JpfClientMng *client_mng, 
-	JpfRtspClient *client)
+__nmp_rtsp_client_mng_remove_client(NmpClientMng *client_mng, 
+	NmpRtspClient *client)
 {
 	GList *list;
 
@@ -119,8 +119,8 @@ __nmp_rtsp_client_mng_remove_client(JpfClientMng *client_mng,
 
 
 void
-nmp_rtsp_client_mng_remove_client(JpfClientMng *client_mng, 
-	JpfRtspClient *client)
+nmp_rtsp_client_mng_remove_client(NmpClientMng *client_mng, 
+	NmpRtspClient *client)
 {
 	g_assert(client_mng != NULL && client != NULL);
 	
@@ -132,7 +132,7 @@ nmp_rtsp_client_mng_remove_client(JpfClientMng *client_mng,
 
 
 static __inline__ void
-nmp_rtsp_client_to_kill(JpfRtspClient *client)	/* timeout kill */
+nmp_rtsp_client_to_kill(NmpRtspClient *client)	/* timeout kill */
 {
 	nmp_print(
 		"Cli-Timer remove client '%p' '%s:%d'.",
@@ -148,7 +148,7 @@ nmp_rtsp_client_to_kill(JpfRtspClient *client)	/* timeout kill */
 static __inline__ void
 nmp_rtsp_client_mng_remove_batch(GList *list)
 {
-	JpfRtspClient *cli;
+	NmpRtspClient *cli;
 
 	while (list)
 	{
@@ -161,7 +161,7 @@ nmp_rtsp_client_mng_remove_batch(GList *list)
 
 
 static __inline__ void
-__nmp_rtsp_client_mng_remove_death(JpfClientMng *client_mng)
+__nmp_rtsp_client_mng_remove_death(NmpClientMng *client_mng)
 {
 	GList *temp = NULL;
 	GList *list;
@@ -186,7 +186,7 @@ __nmp_rtsp_client_mng_remove_death(JpfClientMng *client_mng)
 
 
 static __inline__ void
-nmp_rtsp_client_mng_remove_death(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_remove_death(NmpClientMng *client_mng)
 {
 	g_mutex_lock(client_mng->lock);
 	__nmp_rtsp_client_mng_remove_death(client_mng);
@@ -195,7 +195,7 @@ nmp_rtsp_client_mng_remove_death(JpfClientMng *client_mng)
 
 
 static GEvent *
-nmp_rtsp_client_mng_create_listen_ev(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_create_listen_ev(NmpClientMng *client_mng)
 {
 	GEvent *e_listen;
 	gint ret, tag_onoff, sockfd = -1;
@@ -272,8 +272,8 @@ static gboolean
 nmp_rtsp_client_mng_io_func(GEvent *channel, gint revents,
 	void *user_data)
 {
-	JpfClientMng *client_mng = (JpfClientMng*)user_data;
-	JpfRtspClient *client;
+	NmpClientMng *client_mng = (NmpClientMng*)user_data;
+	NmpRtspClient *client;
 	gint err;
 
 	if (revents & EV_READ)
@@ -323,15 +323,15 @@ nmp_rtsp_client_mng_io_func(GEvent *channel, gint revents,
 static void
 nmp_rtsp_client_listen_watch_fin(GEvent *ev)
 {
-	JpfClientMng *cli_mng;
+	NmpClientMng *cli_mng;
 
-	cli_mng = (JpfClientMng*)g_event_u(ev);
+	cli_mng = (NmpClientMng*)g_event_u(ev);
 	nmp_rtsp_client_mng_unref(cli_mng);
 }
 
 
 static GEvent *
-nmp_rtsp_client_mng_create_watch(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_create_watch(NmpClientMng *client_mng)
 {
 	GEvent *e_listen;
 	g_assert(client_mng != NULL);
@@ -354,7 +354,7 @@ no_channel:
 
 
 guint
-nmp_rtsp_client_mng_attach(JpfClientMng *client_mng)
+nmp_rtsp_client_mng_attach(NmpClientMng *client_mng)
 {
 	GEvent *e_listen;
 	g_assert(client_mng != NULL);

@@ -10,8 +10,8 @@
  * 2011.06.11 - Zhang Shiyong, optimize code
  ********************************************************************/
  
-#ifndef __JPF_CMS_XML__
-#define __JPF_CMS_XML__
+#ifndef __NMP_CMS_XML__
+#define __NMP_CMS_XML__
 	
 #include "nmp_xml_fun.h"					
 
@@ -22,17 +22,17 @@
 #define MDS_HEART                               "MdsHeart"
 #define MDS_HEART_RESP                     "MdsHeartResponse"
     
-JpfMsgInfo *  
+NmpMsgInfo *  
 nmp_parse_mds_register_resp(xmlDocPtr doc,xmlNodePtr cur, char *cmd);
 
 int 
-nmp_create_mds_register(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_mds_register(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-JpfMsgInfo * 
+NmpMsgInfo * 
 nmp_parse_mds_heart_resp(xmlDocPtr doc ,xmlNodePtr cur, char *cmd);
 
 int 
-nmp_create_mds_heart(xmlDocPtr doc, JpfMsgInfo *sys_msg);
+nmp_create_mds_heart(xmlDocPtr doc, NmpMsgInfo *sys_msg);
 
-#endif	/* __JPF_CMS_XML__ */
+#endif	/* __NMP_CMS_XML__ */
 

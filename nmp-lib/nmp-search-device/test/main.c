@@ -28,8 +28,8 @@ static void *search_thread1(void *data)
 
         /*memcpy(&jpf_red.user_info, &user_info, sizeof(user_info_t));
         redirect = &jpf_red.redirect;
-        snprintf(redirect->pu_id, JPF_SEARCH_ID_LEN, "JXJ-IPC-00000001");
-        snprintf(redirect->cms_ip, JPF_SEARCH_IP_LEN, "192.168.1.12");
+        snprintf(redirect->pu_id, NMP_SEARCH_ID_LEN, "JXJ-IPC-00000001");
+        snprintf(redirect->cms_ip, NMP_SEARCH_IP_LEN, "192.168.1.12");
         redirect->cms_port = 9902;
         redirect->conn_cms = 1;
 
@@ -60,8 +60,8 @@ static void *search_thread2(void *data)
 
         memcpy(&jpf_red.user_info, &user_info, sizeof(user_info_t));
         redirect = &jpf_red.redirect;
-        snprintf(redirect->pu_id, JPF_SEARCH_ID_LEN, "JXJ-IPC-00000001");
-        snprintf(redirect->cms_ip, JPF_SEARCH_IP_LEN, "192.168.1.12");
+        snprintf(redirect->pu_id, NMP_SEARCH_ID_LEN, "JXJ-IPC-00000001");
+        snprintf(redirect->cms_ip, NMP_SEARCH_IP_LEN, "192.168.1.12");
         redirect->cms_port = 9902;
         redirect->conn_cms = 1;
 

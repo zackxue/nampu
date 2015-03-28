@@ -27,14 +27,14 @@
 #define SMALL_BUFFER_BLOCKS     1
 #define LARGE_BUFFER_BLOCKS     3
 
-typedef gboolean (*HmWatchCallback)(HmWatch *watch, 
+typedef gboolean (*NmpWatchCallback)(NmpWatch *watch, 
     gpointer user_data);
-static void nmp_watch_kill_unref(HmWatch *watch);
+static void nmp_watch_kill_unref(NmpWatch *watch);
 static gint total_watch_count = 0;
 
 
 static __inline__ void
-nmp_watch_add_child(HmWatch *watch, HmWatch *child)
+nmp_watch_add_child(NmpWatch *watch, NmpWatch *child)
 {
     NmpNetIO *net_io;
 
@@ -51,7 +51,7 @@ nmp_watch_add_child(HmWatch *watch, HmWatch *child)
 
 
 static __inline__ void
-nmp_watch_on_establish(HmWatch *watch)
+nmp_watch_on_establish(NmpWatch *watch)
 {
     NmpNetIO *net_io;
 
@@ -79,7 +79,7 @@ nmp_watch_deliver_message(gpointer to, gpointer msg)
 static gint
 nmp_watch_write_out(gchar *buf, gsize size, gpointer w)
 {
-    HmWatch *watch = (HmWatch*)w;
+    NmpWatch *watch = (NmpWatch*)w;
 
     return nmp_connection_write(watch->conn, buf, size);
 }
@@ -103,7 +103,7 @@ nmp_watch_destroy_private(gpointer priv_data)
  * #watch->lock held.
 */
 static __inline__ void
-nmp_watch_on_clear(HmWatch *watch, gint err)
+nmp_watch_on_clear(NmpWatch *watch, gint err)
 {
     NmpNetIO *net_io;
 
@@ -118,9 +118,9 @@ nmp_watch_on_clear(HmWatch *watch, gint err)
 
 
 static __inline__ void
-__nmp_watch_close(HmWatch *watch, gint async)
+__nmp_watch_close(NmpWatch *watch, gint async)
 {
-    HmWatchFuncs *funcs;
+    NmpWatchFuncs *funcs;
 
     if (watch->killed++)
         return;
@@ -141,9 +141,9 @@ __nmp_watch_close(HmWatch *watch, gint async)
 
 
 static __inline__ void
-__nmp_watch_error(HmWatch *watch, gint rw, gint err)
+__nmp_watch_error(NmpWatch *watch, gint rw, gint err)
 {
-    HmWatchFuncs *funcs;
+    NmpWatchFuncs *funcs;
 
     if (watch->killed++)
         return;
@@ -161,9 +161,9 @@ __nmp_watch_error(HmWatch *watch, gint rw, gint err)
 
 
 static gboolean
-nmp_watch_rw_dispatch(HmWatch *watch, gpointer user_data)
+nmp_watch_rw_dispatch(NmpWatch *watch, gpointer user_data)
 {
-    HmWatchFuncs *funcs;
+    NmpWatchFuncs *funcs;
     gint err = 0, timeout = 1;
     socklen_t len = sizeof(err);
     gchar buf[MAX_IO_BUFFER_SIZE];
@@ -296,13 +296,13 @@ write_error:
 
 
 static gboolean
-nmp_watch_listen_dispatch(HmWatch *watch, gpointer user_data)
+nmp_watch_listen_dispatch(NmpWatch *watch, gpointer user_data)
 {
-    HmWatchFuncs *funcs;
+    NmpWatchFuncs *funcs;
     gint err;
     socklen_t len = sizeof(err);
     NmpConnection *conn;
-    HmWatch *child_watch;
+    NmpWatch *child_watch;
 
     funcs = watch->funcs;
     BUG_ON(!funcs);
@@ -370,7 +370,7 @@ nmp_watch_time_val_diff(const GTimeVal *compare, const GTimeVal *now)
 
 
 static __inline__ void
-nmp_watch_update_time(HmWatch *watch, const GTimeVal *now)
+nmp_watch_update_time(NmpWatch *watch, const GTimeVal *now)
 {
     if (!now)
     {
@@ -388,7 +388,7 @@ nmp_watch_update_time(HmWatch *watch, const GTimeVal *now)
 
 
 static __inline__ gint
-nmp_watch_clock_timeout(HmWatch *watch, const GTimeVal *now)
+nmp_watch_clock_timeout(NmpWatch *watch, const GTimeVal *now)
 {
     glong ms;   /* millisecond */
 
@@ -402,7 +402,7 @@ nmp_watch_clock_timeout(HmWatch *watch, const GTimeVal *now)
 #ifdef USE_MONOTONIC_CLOCK
 
 static __inline__ gint
-nmp_watch_get_monotonic_sec(HmWatch *watch)
+nmp_watch_get_monotonic_sec(NmpWatch *watch)
 {
     /* g_get_monotonic_time() isn't implemented yet */
     struct timespec ts;
@@ -414,7 +414,7 @@ nmp_watch_get_monotonic_sec(HmWatch *watch)
 
 
 static __inline__ gint
-nmp_watch_time_drifted(HmWatch *watch, const GTimeVal *now)
+nmp_watch_time_drifted(NmpWatch *watch, const GTimeVal *now)
 {
     gint delta, diff;
 
@@ -442,9 +442,9 @@ nmp_watch_prepare(GSource *source, gint *timeout)
 {
     GTimeVal now;
     glong diff;
-    HmWatch *watch;
+    NmpWatch *watch;
 
-    watch = (HmWatch*)source;
+    watch = (NmpWatch*)source;
     if (!watch->buffer)
     {
         *timeout = -1;
@@ -478,11 +478,11 @@ nmp_watch_prepare(GSource *source, gint *timeout)
 static gboolean
 nmp_watch_check(GSource *source)
 {
-    HmWatch *watch;
+    NmpWatch *watch;
     GTimeVal now;
     G_ASSERT(source != NULL);
 
-    watch = (HmWatch*)source;
+    watch = (NmpWatch*)source;
 
     if (watch->r_fd.revents & READ_COND)
     {
@@ -522,12 +522,12 @@ gboolean
 nmp_watch_dispatch(GSource *source, GSourceFunc callback,
     gpointer user_data)
 {
-    HmWatchCallback dispath;
-    HmWatch *watch;
+    NmpWatchCallback dispath;
+    NmpWatch *watch;
     gboolean ret = FALSE;
 
-    watch = (HmWatch*)source;
-    dispath = (HmWatchCallback)callback;
+    watch = (NmpWatch*)source;
+    dispath = (NmpWatchCallback)callback;
 
     /* avoid race against nmp_watch_kill() and _write()*/
     g_mutex_lock(watch->lock);
@@ -550,12 +550,12 @@ nmp_watch_dispatch(GSource *source, GSourceFunc callback,
 static void
 nmp_watch_finalize(GSource *source)
 {
-    HmWatch *watch;
+    NmpWatch *watch;
     G_ASSERT(source != NULL);
 
     g_atomic_int_add(&total_watch_count, -1);
 
-    watch = (HmWatch*)source;
+    watch = (NmpWatch*)source;
 
     nmp_debug(
         "Net IO '%p' finalized. total %d left.",
@@ -597,7 +597,7 @@ static GSourceFuncs nmp_watch_funcs =
  * Set GSource dispatch callback function.
 */
 static __inline__ void
-nmp_watch_set_callback(HmWatch *watch, HmWatchCallback callback,
+nmp_watch_set_callback(NmpWatch *watch, NmpWatchCallback callback,
     gpointer user_data)
 {
     G_ASSERT(watch != NULL && callback != NULL);
@@ -614,7 +614,7 @@ nmp_watch_set_callback(HmWatch *watch, HmWatchCallback callback,
  * (2) Action of timeout can't be affected by user time setting.
 */
 static __inline__ void
-nmp_watch_init_time(HmWatch *watch)
+nmp_watch_init_time(NmpWatch *watch)
 {
     BUG_ON(!watch || !watch->conn);
 
@@ -642,15 +642,15 @@ nmp_watch_init_time(HmWatch *watch)
  * Create a event source object for connection. The object 
  * will be added to "Event Context" for polling. 
 */ 
-__export HmWatch *
-nmp_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
+__export NmpWatch *
+nmp_watch_create(NmpConnection *conn, NmpWatchFuncs *funcs, gint size)
 {
     GSource *source;
-    HmWatch *watch;
-    G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(HmWatch));
+    NmpWatch *watch;
+    G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(NmpWatch));
 
     source = g_source_new(&nmp_watch_funcs, size);
-    watch = (HmWatch*)source;
+    watch = (NmpWatch*)source;
 
     watch->buffer = nmp_net_buf_alloc(
         nmp_connection_is_heavy(conn) ? LARGE_BUFFER_BLOCKS : SMALL_BUFFER_BLOCKS,
@@ -699,15 +699,15 @@ nmp_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
  * Create a event source object for connection. The object 
  * will be added to "Event Context" for polling. 
 */ 
-__export HmWatch *
-nmp_listen_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
+__export NmpWatch *
+nmp_listen_watch_create(NmpConnection *conn, NmpWatchFuncs *funcs, gint size)
 {
     GSource *source;
-    HmWatch *watch;
-    G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(HmWatch));
+    NmpWatch *watch;
+    G_ASSERT(conn != NULL && funcs != NULL && size >= sizeof(NmpWatch));
 
     source = g_source_new(&nmp_watch_funcs, size);
-    watch = (HmWatch*)source;
+    watch = (NmpWatch*)source;
 
     watch->buffer = NULL;
 
@@ -735,7 +735,7 @@ nmp_listen_watch_create(NmpConnection *conn, HmWatchFuncs *funcs, gint size)
 
 
 __export void
-nmp_watch_attach(HmWatch *watch, GMainContext *context)
+nmp_watch_attach(NmpWatch *watch, GMainContext *context)
 {
     G_ASSERT(watch != NULL);
 
@@ -744,7 +744,7 @@ nmp_watch_attach(HmWatch *watch, GMainContext *context)
 
 
 __export void
-nmp_watch_ref(HmWatch *watch)
+nmp_watch_ref(NmpWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -753,7 +753,7 @@ nmp_watch_ref(HmWatch *watch)
 
 
 __export void
-nmp_watch_unref(HmWatch *watch)
+nmp_watch_unref(NmpWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -770,7 +770,7 @@ nmp_watch_unref(HmWatch *watch)
  * registered by net-io user will not be called.
 */
 __export void
-nmp_watch_kill(HmWatch *watch)
+nmp_watch_kill(NmpWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -784,7 +784,7 @@ nmp_watch_kill(HmWatch *watch)
 
 
 static void
-nmp_watch_kill_unref(HmWatch *watch)
+nmp_watch_kill_unref(NmpWatch *watch)
 {
     G_ASSERT(watch != NULL);
 
@@ -794,7 +794,7 @@ nmp_watch_kill_unref(HmWatch *watch)
 
 
 __export void
-nmp_watch_set_private(HmWatch *watch, gpointer priv_data)
+nmp_watch_set_private(NmpWatch *watch, gpointer priv_data)
 {
     G_ASSERT(watch != NULL);
 
@@ -806,7 +806,7 @@ nmp_watch_set_private(HmWatch *watch, gpointer priv_data)
 
 
 __export gboolean
-nmp_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
+nmp_watch_set_conn_ttd(NmpWatch *watch, gint milli_sec)
 {
     gboolean set_ok = FALSE;
 
@@ -829,7 +829,7 @@ nmp_watch_set_conn_ttd(HmWatch *watch, gint milli_sec)
  * indirectly, lock has already been held.
 */
 __export gint
-nmp_watch_recv_message(HmWatch *watch, gpointer msg)
+nmp_watch_recv_message(NmpWatch *watch, gpointer msg)
 {
     gint rc;
     G_ASSERT(watch != NULL && msg != NULL);
@@ -848,11 +848,11 @@ nmp_watch_recv_message(HmWatch *watch, gpointer msg)
 
 
 static __inline__ gint
-__nmp_watch_write_message(HmWatch *watch, gpointer msg)
+__nmp_watch_write_message(NmpWatch *watch, gpointer msg)
 {
     gchar packet[MAX_IO_BUFFER_SIZE];
     gint ret = 0, pending = 0;
-    HmWatchFuncs *funcs;
+    NmpWatchFuncs *funcs;
 
     funcs = watch->funcs;
     BUG_ON(!funcs);
@@ -914,7 +914,7 @@ __nmp_watch_write_message(HmWatch *watch, gpointer msg)
  * return the size written.
 */
 __export gint
-nmp_watch_write_message(HmWatch *watch, gpointer msg)
+nmp_watch_write_message(NmpWatch *watch, gpointer msg)
 {
     gint ret = -E_WATCHDIE;
     G_ASSERT(watch != NULL);
@@ -939,7 +939,7 @@ nmp_watch_write_message(HmWatch *watch, gpointer msg)
 
 
 static __inline__ gchar *
-__nmp_watch_get_peer(HmWatch *watch)
+__nmp_watch_get_peer(NmpWatch *watch)
 {
     if (watch->conn)
     {
@@ -951,7 +951,7 @@ __nmp_watch_get_peer(HmWatch *watch)
 
 
 __export gchar *
-nmp_watch_get_peer(HmWatch *watch)
+nmp_watch_get_peer(NmpWatch *watch)
 {
     gchar *ip = NULL;
 
@@ -967,7 +967,7 @@ nmp_watch_get_peer(HmWatch *watch)
 
 
 __export void
-nmp_watch_set_heavy_load(HmWatch *watch)
+nmp_watch_set_heavy_load(NmpWatch *watch)
 {
     g_mutex_lock(watch->lock);
     if (!watch->killed)
@@ -979,7 +979,7 @@ nmp_watch_set_heavy_load(HmWatch *watch)
 
 
 __export void
-nmp_watch_set_block_size(HmWatch *watch, gint block_size)
+nmp_watch_set_block_size(NmpWatch *watch, gint block_size)
 {
 	if (block_size < 0)
 		return;

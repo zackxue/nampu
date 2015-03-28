@@ -4,9 +4,9 @@
 #include <glib.h>
 #include "nmp_client.h"
 
-typedef struct _JpfClientMng JpfClientMng;
+typedef struct _NmpClientMng NmpClientMng;
 
-struct _JpfClientMng
+struct _NmpClientMng
 {
 	gchar			*address;	/* service ip address */
 	gchar			*service;	/* service port info */
@@ -18,12 +18,12 @@ struct _JpfClientMng
 };
 
 
-JpfClientMng *nmp_rtsp_client_mng_new(gint service);
-void nmp_rtsp_client_mng_unref(JpfClientMng *client_mng);
+NmpClientMng *nmp_rtsp_client_mng_new(gint service);
+void nmp_rtsp_client_mng_unref(NmpClientMng *client_mng);
 
-guint nmp_rtsp_client_mng_attach(JpfClientMng *client_mng);
+guint nmp_rtsp_client_mng_attach(NmpClientMng *client_mng);
 
-void nmp_rtsp_client_mng_remove_client(JpfClientMng *client_mng, 
-	JpfRtspClient *client);
+void nmp_rtsp_client_mng_remove_client(NmpClientMng *client_mng, 
+	NmpRtspClient *client);
 
 #endif	/* __NMP_CLIENT_MANAGEMENT_H__ */

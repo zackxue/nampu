@@ -8,16 +8,16 @@
 #define MESSAGE_MDU_HEART					1
 #define MESSAGE_RANGE_UPPER					16
 
-typedef struct _JpfMsgMap JpfMsgMap;
-struct _JpfMsgMap
+typedef struct _NmpMsgMap NmpMsgMap;
+struct _NmpMsgMap
 {
-	struct _JpfMsgMapEntry
+	struct _NmpMsgMapEntry
 	{
 		const gchar *msg_str;
 	}map_entries[MESSAGE_RANGE_UPPER];
 };
 
-extern JpfMsgMap g_msg_map;
+extern NmpMsgMap g_msg_map;
 
 static __inline__ gint
 nmp_message_str_2_id(const gchar *msg_str)
@@ -44,10 +44,10 @@ nmp_message_str_2_id(const gchar *msg_str)
 #define MESSAGE_STR_TO_ID(msg_str)	\
 	nmp_message_str_2_id(msg_str) 
 
-JpfMdsMsg *
+NmpMdsMsg *
 nmp_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq);
 
 gint 
-nmp_proto_create_xml_str(char *xml_buff, int *buff_size, JpfMdsMsg *sys_msg)
+nmp_proto_create_xml_str(char *xml_buff, int *buff_size, NmpMdsMsg *sys_msg)
 ;
 #endif

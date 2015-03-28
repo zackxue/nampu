@@ -6,17 +6,17 @@
 
 #define AUDIT_FREQ 	5
 
-typedef struct _JpfRateCounter JpfRateCounter;
-struct _JpfRateCounter
+typedef struct _NmpRateCounter NmpRateCounter;
+struct _NmpRateCounter
 {
 	gulong total_size;		/* rate counter v1 */
 	gulong last_total;
 };
 
-struct _JpfAuditContext
+struct _NmpAuditContext
 {
-	JpfRateCounter rate_src;
-	JpfRateCounter rate_sinker;
+	NmpRateCounter rate_src;
+	NmpRateCounter rate_sinker;
 
 	gint media_srcs;
 	gint media_sinkers;
@@ -24,21 +24,21 @@ struct _JpfAuditContext
 	gint stream_sinkers;
 };
 
-static JpfAuditContext nmp_audit_ctx;
+static NmpAuditContext nmp_audit_ctx;
 static gint audit_off = 1;
 static gint triggered = 0;
 static gint request_rti = 0;
 static FILE *rti_file = NULL;
 
 static __inline__ void
-nmp_audit_add_rate_bytes(JpfRateCounter *r, gulong size)
+nmp_audit_add_rate_bytes(NmpRateCounter *r, gulong size)
 {
 	r->total_size += size;
 }
 
 
 static __inline__ gulong
-nmp_audit_get_rate(JpfRateCounter *r, gint time_slice)
+nmp_audit_get_rate(NmpRateCounter *r, gint time_slice)
 {
 	gulong delta;
 
@@ -49,7 +49,7 @@ nmp_audit_get_rate(JpfRateCounter *r, gint time_slice)
 
 
 static __inline__ void
-__nmp_audit_inc(JpfAuditContext *ctx, JpfAuditType type, gint v)
+__nmp_audit_inc(NmpAuditContext *ctx, NmpAuditType type, gint v)
 {
 	switch (type)
 	{
@@ -84,19 +84,19 @@ __nmp_audit_inc(JpfAuditContext *ctx, JpfAuditType type, gint v)
 
 
 void
-nmp_audit_inc(JpfAuditType type, gint v)
+nmp_audit_inc(NmpAuditType type, gint v)
 {
 	__nmp_audit_inc(&nmp_audit_ctx, type, v);
 }
 
 
-void nmp_audit_dec(JpfAuditType type, gint v)
+void nmp_audit_dec(NmpAuditType type, gint v)
 {
 	__nmp_audit_inc(&nmp_audit_ctx, type, -v);	
 }
 
 
-void nmp_audit_zero(JpfAuditContext *ctx)
+void nmp_audit_zero(NmpAuditContext *ctx)
 {
 	memset(ctx, 0, sizeof(*ctx));
 }
@@ -112,7 +112,7 @@ nmp_rti_file_open( void )
 
 	rti_file_path = g_strdup_printf("%s/%s", 
 		(gchar*)nmp_get_sysctl_value(SC_LOG_PATH),
-		"Jpf-mds.inf");
+		"Nmp-mds.inf");
 	rti_file = fopen(rti_file_path, "w+");
 	if (!rti_file)
 	{
@@ -171,7 +171,7 @@ static void
 nmp_audit_output(void *parm)
 {
 	static guint freq;
-	JpfAuditContext *ctx = (JpfAuditContext*)parm;
+	NmpAuditContext *ctx = (NmpAuditContext*)parm;
 	gdouble i_rate, o_rate;
 	gint rti_state;
 
@@ -231,9 +231,9 @@ nmp_audit_output(void *parm)
 
 
 static __inline__ void
-__nmp_audit_init(JpfAuditContext *ctx)
+__nmp_audit_init(NmpAuditContext *ctx)
 {
-	static JpfTq audit_tq;
+	static NmpTq audit_tq;
 
 	TQ_INIT(&audit_tq, nmp_audit_output, ctx);
 	nmp_add_tq(&audit_tq);

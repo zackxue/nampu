@@ -10,32 +10,32 @@
 G_BEGIN_DECLS
 
 
-typedef struct _JpfMediaServer JpfMediaServer;
+typedef struct _NmpMediaServer NmpMediaServer;
 
-struct _JpfMediaServer
+struct _NmpMediaServer
 {
 	/* server id */
 	gchar			*server_id;
 
 	/* mod cms */
-	JpfModCms		*module_cms;
+	NmpModCms		*module_cms;
 
 	/* for clients management */
-	JpfClientMng	*client_mng;
+	NmpClientMng	*client_mng;
 
 	/* for devices management */
-	JpfDevMng		*device_mng;
+	NmpDevMng		*device_mng;
 
 	/* for authorising */
-	JpfAuthorise	*authorise;
+	NmpAuthorise	*authorise;
 };
 
 
 void nmp_media_server_init( void );
-JpfMediaServer *nmp_media_server_get( void );
-void nmp_media_server_set_id(JpfMediaServer *server,
+NmpMediaServer *nmp_media_server_get( void );
+void nmp_media_server_set_id(NmpMediaServer *server,
 	const gchar *id);
-gchar *nmp_media_server_get_id(JpfMediaServer *server);
+gchar *nmp_media_server_get_id(NmpMediaServer *server);
 
 G_END_DECLS
 

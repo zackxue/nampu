@@ -3,10 +3,10 @@
 
 #include <glib.h>
 
-#define WRAP_HEAD_LEN		sizeof(JpfRtpWrap)
+#define WRAP_HEAD_LEN		sizeof(NmpRtpWrap)
 
-typedef struct _JpfRtpWrap JpfRtpWrap;
-struct _JpfRtpWrap
+typedef struct _NmpRtpWrap NmpRtpWrap;
+struct _NmpRtpWrap
 {
 #ifndef NDEBUG
 	gint	magic;
@@ -15,6 +15,6 @@ struct _JpfRtpWrap
 	gchar	rtp[0];
 };
 
-extern JpfRingBufferOps rtp_buffer_ops;
+extern NmpRingBufferOps rtp_buffer_ops;
 
 #endif	//__NMP_RTP_BUFFER_H__

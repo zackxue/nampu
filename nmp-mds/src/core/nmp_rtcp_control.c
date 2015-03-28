@@ -13,10 +13,10 @@
 
 
 void
-nmp_rtcp_control_bye(JpfRtcpControl *ctl_block);
+nmp_rtcp_control_bye(NmpRtcpControl *ctl_block);
 
 gint
-nmp_rtcp_control_recv(JpfRtcpControl *ctl_block, gint tcp)
+nmp_rtcp_control_recv(NmpRtcpControl *ctl_block, gint tcp)
 {
 	struct sockaddr_in sin;
 	socklen_t len;
@@ -68,7 +68,7 @@ nmp_rtcp_control_recv(JpfRtcpControl *ctl_block, gint tcp)
 
 
 void
-nmp_rtcp_control_bye(JpfRtcpControl *ctl_block)
+nmp_rtcp_control_bye(NmpRtcpControl *ctl_block)
 {
 	rtcp_bye_header br;
 
@@ -83,7 +83,7 @@ nmp_rtcp_control_bye(JpfRtcpControl *ctl_block)
 
 
 gint
-nmp_rtcp_control_update(JpfRtcpControl *ctl_block,
+nmp_rtcp_control_update(NmpRtcpControl *ctl_block,
 	gpointer rtp_packet, gsize size)
 {
 	ctl_block->rtp_ssrc = get_rtp_ssrc(rtp_packet);

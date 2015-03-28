@@ -4,27 +4,27 @@
 
 #define MAX_ENTRIES		32
 
-typedef void (*JpfMsgFunc)(JpfMdsMsg *msg, gpointer data);
+typedef void (*NmpMsgFunc)(NmpMdsMsg *msg, gpointer data);
 
-typedef struct _JpfMsgTable JpfMsgTable;
-struct _JpfMsgTable
+typedef struct _NmpMsgTable NmpMsgTable;
+struct _NmpMsgTable
 {
 	gint entries;
 
-	struct _JpfMsgEntry {
+	struct _NmpMsgEntry {
 		gint	msg_Id;
-		JpfMsgFunc	fun;
+		NmpMsgFunc	fun;
 	}msg_entries[MAX_ENTRIES];
 };
 
-JpfMsgTable *nmp_msg_table_new( void );
+NmpMsgTable *nmp_msg_table_new( void );
 
-gint nmp_msg_table_register(JpfMsgTable *table, gint msg_Id,
-	JpfMsgFunc fun);
+gint nmp_msg_table_register(NmpMsgTable *table, gint msg_Id,
+	NmpMsgFunc fun);
 
-void nmp_msg_table_call(JpfMsgTable *table, JpfMdsMsg *msg,
+void nmp_msg_table_call(NmpMsgTable *table, NmpMdsMsg *msg,
 	gpointer data);
 
-void nmp_msg_table_release(JpfMsgTable *table);
+void nmp_msg_table_release(NmpMsgTable *table);
 
 #endif /* __NMP_MSG_TABLE_H__*/

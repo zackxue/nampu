@@ -18,9 +18,9 @@
 #define	SC_DEFAULT_CONFIG_PATH	"/etc/"
 #define SC_CONFIG_FILE_NAME		"jxj_server.conf"
 
-typedef struct _JpfSysCtl JpfSysCtl;
+typedef struct _NmpSysCtl NmpSysCtl;
 
-struct _JpfSysCtl
+struct _NmpSysCtl
 {
 	gint		base_port;			/* Platform base port */
 	gint		max_log_file_size;	/* Top log file size limit (MB) */
@@ -31,7 +31,7 @@ struct _JpfSysCtl
 };
 
 
-static JpfSysCtl nmp_mds_ctl = 
+static NmpSysCtl nmp_mds_ctl = 
 {
 	.base_port			= 9902,
 	.max_log_file_size	= 50,
@@ -43,7 +43,7 @@ static JpfSysCtl nmp_mds_ctl =
 
 
 static __inline__ void
-nmp_set_sysctl_value(JpfSysCtl *sc, JpfSCID id, gchar *value)
+nmp_set_sysctl_value(NmpSysCtl *sc, NmpSCID id, gchar *value)
 {
 	gint _value;
 
@@ -89,7 +89,7 @@ nmp_set_sysctl_value(JpfSysCtl *sc, JpfSCID id, gchar *value)
 
 
 static __inline__ void *
-__get_sysctl_value(JpfSysCtl *sc, JpfSCID id)
+__get_sysctl_value(NmpSysCtl *sc, NmpSCID id)
 {
 	void *value;
 
@@ -128,7 +128,7 @@ __get_sysctl_value(JpfSysCtl *sc, JpfSCID id)
 }
 
 
-void *nmp_get_sysctl_value(JpfSCID id)
+void *nmp_get_sysctl_value(NmpSCID id)
 {
 	return __get_sysctl_value(&nmp_mds_ctl, id);
 }
@@ -173,7 +173,7 @@ nmp_sysctl_ports_init(rw_file *conf)
 
 
 static __inline__ void
-__nmp_sysctl_init(JpfSysCtl *sc, rw_file *conf)
+__nmp_sysctl_init(NmpSysCtl *sc, rw_file *conf)
 {
 	nmp_set_sysctl_value(
 		sc,
@@ -217,7 +217,7 @@ __nmp_sysctl_init(JpfSysCtl *sc, rw_file *conf)
 
 
 static __inline__ void
-_nmp_sysctl_init(JpfSysCtl *sc, const gchar *env_name)
+_nmp_sysctl_init(NmpSysCtl *sc, const gchar *env_name)
 {
 	gchar *path, file_name[MAX_FILE_PATH];
 	rw_file *rw_f;

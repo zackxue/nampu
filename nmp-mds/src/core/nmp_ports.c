@@ -25,8 +25,8 @@ struct _BITMAP
  * 端口管理：数据结构及规则.
 */ 
 
-typedef struct _JpfPortsCtl JpfPortsCtl;
-struct _JpfPortsCtl
+typedef struct _NmpPortsCtl NmpPortsCtl;
+struct _NmpPortsCtl
 {
 	GStaticMutex lock;
 	gint		min;		/* 最小端口号 */
@@ -40,7 +40,7 @@ struct _JpfPortsCtl
 };
 
 
-static JpfPortsCtl nmp_media_ports = {
+static NmpPortsCtl nmp_media_ports = {
 	G_STATIC_MUTEX_INIT, 0, 0, 0, 0, 0, NULL
 };
 
@@ -131,7 +131,7 @@ nmp_bitmap_set_bits(BITMAP *bitmap, gint bits)
 
 /* 初始化管理结构 */
 static __inline__ void
-nmp_ports_init(JpfPortsCtl *pc)
+nmp_ports_init(NmpPortsCtl *pc)
 {
 	memset(pc, 0, sizeof(*pc));
 	g_static_mutex_init(&pc->lock);
@@ -139,7 +139,7 @@ nmp_ports_init(JpfPortsCtl *pc)
 
 
 static __inline__ gint
-__nmp_ports_set_range(JpfPortsCtl *pc, gint low, gint hi)
+__nmp_ports_set_range(NmpPortsCtl *pc, gint low, gint hi)
 {
 	gint size;
 	BITMAP *new_map = NULL;
@@ -178,7 +178,7 @@ __nmp_ports_set_range(JpfPortsCtl *pc, gint low, gint hi)
 
 /* 设置端口范围 */
 static __inline__ gint
-nmp_ports_set_range(JpfPortsCtl *pc, gint low, gint hi)
+nmp_ports_set_range(NmpPortsCtl *pc, gint low, gint hi)
 {
 	gint rc;
 	G_ASSERT(pc != NULL && hi > low && low > 0);
@@ -192,7 +192,7 @@ nmp_ports_set_range(JpfPortsCtl *pc, gint low, gint hi)
 
 
 static __inline__ void
-__nmp_ports_set_reserved(JpfPortsCtl *pc, gint port)
+__nmp_ports_set_reserved(NmpPortsCtl *pc, gint port)
 {
 	if (port >= pc->max || port < pc->min)
 		return;
@@ -207,7 +207,7 @@ __nmp_ports_set_reserved(JpfPortsCtl *pc, gint port)
 
 /* 保留一个端口 */
 static __inline__ void
-nmp_ports_set_reserved(JpfPortsCtl *pc, gint port)
+nmp_ports_set_reserved(NmpPortsCtl *pc, gint port)
 {
 	G_ASSERT(pc != NULL);
 
@@ -218,7 +218,7 @@ nmp_ports_set_reserved(JpfPortsCtl *pc, gint port)
 
 
 static __inline__ gint
-__nmp_ports_get_one(JpfPortsCtl *pc, gint *port)
+__nmp_ports_get_one(NmpPortsCtl *pc, gint *port)
 {
 	gint total;
 
@@ -256,7 +256,7 @@ __nmp_ports_get_one(JpfPortsCtl *pc, gint *port)
 
 /* 分配一个端口 */
 static __inline__ gint
-nmp_ports_get_one(JpfPortsCtl *pc, gint *port)
+nmp_ports_get_one(NmpPortsCtl *pc, gint *port)
 {
 	gint rc;
 	G_ASSERT(pc != NULL && port != NULL);
@@ -270,7 +270,7 @@ nmp_ports_get_one(JpfPortsCtl *pc, gint *port)
 
 
 static __inline__ void
-__nmp_ports_put_one(JpfPortsCtl *pc, gint port)
+__nmp_ports_put_one(NmpPortsCtl *pc, gint port)
 {
 	if (port >= pc->max || port < pc->min)
 	{
@@ -290,7 +290,7 @@ __nmp_ports_put_one(JpfPortsCtl *pc, gint port)
 
 /* 释放一个端口 */
 static __inline__ void
-nmp_ports_put_one(JpfPortsCtl *pc, gint port)
+nmp_ports_put_one(NmpPortsCtl *pc, gint port)
 {
 	G_ASSERT(pc != NULL);
 
@@ -301,7 +301,7 @@ nmp_ports_put_one(JpfPortsCtl *pc, gint port)
 
 
 static __inline__ gint
-__nmp_ports_get_pair(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
+__nmp_ports_get_pair(NmpPortsCtl *pc, gint *p_low, gint *p_hi)
 {
 	gint low, hi, total;
 
@@ -370,7 +370,7 @@ __nmp_ports_get_pair(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
 
 /* 获得一对端口: n(偶数), n+1 */
 static __inline__ gint
-nmp_ports_get_pair(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
+nmp_ports_get_pair(NmpPortsCtl *pc, gint *p_low, gint *p_hi)
 {
 	gint rc;
 	G_ASSERT(pc != NULL && p_low != NULL && p_hi != NULL);
@@ -384,7 +384,7 @@ nmp_ports_get_pair(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
 
 
 static __inline__ void
-__nmp_ports_put_pair(JpfPortsCtl *pc, gint low, gint hi)
+__nmp_ports_put_pair(NmpPortsCtl *pc, gint low, gint hi)
 {
 	__nmp_ports_put_one(pc, low);
 	__nmp_ports_put_one(pc, hi);
@@ -393,7 +393,7 @@ __nmp_ports_put_pair(JpfPortsCtl *pc, gint low, gint hi)
 
 /* 释放一对端口 */
 static __inline__ void
-nmp_ports_put_pair(JpfPortsCtl *pc, gint low, gint hi)
+nmp_ports_put_pair(NmpPortsCtl *pc, gint low, gint hi)
 {
 	G_ASSERT(pc != NULL);
 
@@ -404,7 +404,7 @@ nmp_ports_put_pair(JpfPortsCtl *pc, gint low, gint hi)
 
 
 static __inline__ gint
-__nmp_ports_get_range(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
+__nmp_ports_get_range(NmpPortsCtl *pc, gint *p_low, gint *p_hi)
 {
 	if (pc->min >= pc->max)
 		return -E_OUTOFPORTS;
@@ -418,7 +418,7 @@ __nmp_ports_get_range(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
 
 /* 获得端口范围 */
 static __inline__ gint
-nmp_ports_get_range(JpfPortsCtl *pc, gint *p_low, gint *p_hi)
+nmp_ports_get_range(NmpPortsCtl *pc, gint *p_low, gint *p_hi)
 {
 	gint rc;
 	G_ASSERT(pc != NULL && p_low != NULL && p_hi != NULL);

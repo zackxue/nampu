@@ -10,20 +10,20 @@
 #define nmp_mem_kzalloc(size)	g_malloc0(size)
 #define nmp_mem_kfree(ptr, size)	g_free(ptr)
 
-JpfRingBuffer *
-nmp_ring_buffer_new(JpfRingBufferOps *data_ops, gsize buff_size)
+NmpRingBuffer *
+nmp_ring_buffer_new(NmpRingBufferOps *data_ops, gsize buff_size)
 {
-	JpfRingBuffer *rb;
+	NmpRingBuffer *rb;
 	G_ASSERT(data_ops != NULL);
 
-	rb = nmp_mem_kmalloc(sizeof(JpfRingBuffer));
+	rb = nmp_mem_kmalloc(sizeof(NmpRingBuffer));
 	if (G_UNLIKELY(!rb))
 		return NULL;
 	
 	rb->buff_start = nmp_mem_kmalloc(buff_size);
 	if (G_UNLIKELY(!rb->buff_start))
 	{
-		nmp_mem_kfree(rb, sizeof(JpfRingBuffer));
+		nmp_mem_kfree(rb, sizeof(NmpRingBuffer));
 		return NULL;
 	}
 
@@ -41,7 +41,7 @@ nmp_ring_buffer_new(JpfRingBufferOps *data_ops, gsize buff_size)
 
 
 void
-nmp_ring_buffer_release(JpfRingBuffer *rb)
+nmp_ring_buffer_release(NmpRingBuffer *rb)
 {
 	g_assert(rb != NULL);
 
@@ -52,7 +52,7 @@ nmp_ring_buffer_release(JpfRingBuffer *rb)
 
 
 static __inline__ void
-nmp_ring_buffer_reset(JpfRingBuffer *rb)
+nmp_ring_buffer_reset(NmpRingBuffer *rb)
 {
 	rb->p_reader = rb->buff_start;
 	rb->p_writer = rb->buff_start;
@@ -60,7 +60,7 @@ nmp_ring_buffer_reset(JpfRingBuffer *rb)
 
 
 static __inline__ void
-nmp_ring_buffer_adjust_wr(JpfRingBuffer *rb, gsize size)
+nmp_ring_buffer_adjust_wr(NmpRingBuffer *rb, gsize size)
 {
 	b_ptr_t w;
 	gint err;
@@ -162,7 +162,7 @@ nmp_ring_buffer_adjust_wr(JpfRingBuffer *rb, gsize size)
 
 
 static __inline__ void
-nmp_ring_buffer_adjust_rw(JpfRingBuffer *rb, gsize size)
+nmp_ring_buffer_adjust_rw(NmpRingBuffer *rb, gsize size)
 {
 	gsize lost_packets, lost_bytes;
 	gint err;
@@ -226,7 +226,7 @@ nmp_ring_buffer_adjust_rw(JpfRingBuffer *rb, gsize size)
 
 
 static __inline__ void
-nmp_ring_buffer_write(JpfRingBuffer *rb, b_ptr_t buf, gsize size)
+nmp_ring_buffer_write(NmpRingBuffer *rb, b_ptr_t buf, gsize size)
 {
 	memcpy(rb->p_writer, buf, size);
 	rb->p_writer += size;
@@ -236,7 +236,7 @@ nmp_ring_buffer_write(JpfRingBuffer *rb, b_ptr_t buf, gsize size)
 
 
 static __inline__ void
-nmp_ring_buffer_adjust_pointer(JpfRingBuffer *rb, gsize size)
+nmp_ring_buffer_adjust_pointer(NmpRingBuffer *rb, gsize size)
 {
 	gint relative_pos;
 
@@ -266,7 +266,7 @@ nmp_ring_buffer_adjust_pointer(JpfRingBuffer *rb, gsize size)
 
 
 static __inline__ gint
-__nmp_ring_buffer_fill_data(JpfRingBuffer *rb, gchar *data, gsize size)
+__nmp_ring_buffer_fill_data(NmpRingBuffer *rb, gchar *data, gsize size)
 {
 	gsize buff_size;
 	
@@ -282,7 +282,7 @@ __nmp_ring_buffer_fill_data(JpfRingBuffer *rb, gchar *data, gsize size)
 
 
 static __inline__ gint
-__nmp_ring_buffer_get_data(JpfRingBuffer *rb, b_ptr_t buf, gsize size,
+__nmp_ring_buffer_get_data(NmpRingBuffer *rb, b_ptr_t buf, gsize size,
 	gint *empty)
 {
 	gsize pack_size;
@@ -325,7 +325,7 @@ __nmp_ring_buffer_get_data(JpfRingBuffer *rb, b_ptr_t buf, gsize size,
 
 
 __export gint
-nmp_ring_buffer_fill_data(JpfRingBuffer *rb, gchar *data, gsize size)
+nmp_ring_buffer_fill_data(NmpRingBuffer *rb, gchar *data, gsize size)
 {
 	gint err;
 	G_ASSERT(rb != NULL && data != NULL);
@@ -343,7 +343,7 @@ nmp_ring_buffer_fill_data(JpfRingBuffer *rb, gchar *data, gsize size)
 
 
 __export gint
-nmp_ring_buffer_get_data(JpfRingBuffer *rb, b_ptr_t buf, gsize size,
+nmp_ring_buffer_get_data(NmpRingBuffer *rb, b_ptr_t buf, gsize size,
 	gint *empty)
 {
 	gint ret;

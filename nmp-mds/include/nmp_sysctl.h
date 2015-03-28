@@ -11,9 +11,9 @@ typedef enum
 	SC_MDS_ID,
 	SC_CMS_HOST,
 	SC_TIMEZONE
-}JpfSCID;
+}NmpSCID;
 
 void nmp_sysctl_init( void );
-void *nmp_get_sysctl_value(JpfSCID id);
+void *nmp_get_sysctl_value(NmpSCID id);
 
 #endif	//__NMP_SYSCTL_H__

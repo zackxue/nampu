@@ -15,18 +15,18 @@
 
 
 static __inline__ gint
-nmp_io_recv_packet(HmIO *io, gchar *buf, gsize size);
+nmp_io_recv_packet(NmpIO *io, gchar *buf, gsize size);
 
 
 static __inline__ void
-__nmp_io_finalize(HmIO *io);
+__nmp_io_finalize(NmpIO *io);
 
 
-static HmWatch *
-nmp_io_create(HmWatch *w, NmpConnection *conn)
+static NmpWatch *
+nmp_io_create(NmpWatch *w, NmpConnection *conn)
 {
-	HmIOFuncs *funcs;
-	HmIO *io = (HmIO*)w;
+	NmpIOFuncs *funcs;
+	NmpIO *io = (NmpIO*)w;
 
 	funcs = io->funcs;
 	BUG_ON(!funcs);
@@ -42,10 +42,10 @@ nmp_io_create(HmWatch *w, NmpConnection *conn)
 
 
 static void
-nmp_io_on_listen_error(HmWatch *w, gint rw, gint why)
+nmp_io_on_listen_error(NmpWatch *w, gint rw, gint why)
 {
-	HmIOFuncs *funcs;
-	HmIO *io = (HmIO*)w;
+	NmpIOFuncs *funcs;
+	NmpIO *io = (NmpIO*)w;
 
 	funcs = io->funcs;
 	BUG_ON(!funcs);
@@ -58,9 +58,9 @@ nmp_io_on_listen_error(HmWatch *w, gint rw, gint why)
 
 
 static void
-nmp_io_finalize(HmWatch *w)
+nmp_io_finalize(NmpWatch *w)
 {
-	HmIO *io = (HmIO*)w;
+	NmpIO *io = (NmpIO*)w;
 
 	if (io->funcs && io->funcs->finalize)
 	{
@@ -71,7 +71,7 @@ nmp_io_finalize(HmWatch *w)
 }
 
 
-static HmWatchFuncs nmp_listen_io_watch_funcs =
+static NmpWatchFuncs nmp_listen_io_watch_funcs =
 {
 	.create		= nmp_io_create,
 	.error		= nmp_io_on_listen_error,
@@ -80,22 +80,22 @@ static HmWatchFuncs nmp_listen_io_watch_funcs =
 
 
 static gint
-nmp_io_recv_data(HmWatch *w, gchar *buf, gsize size)
+nmp_io_recv_data(NmpWatch *w, gchar *buf, gsize size)
 {
-	HmIO *io = (HmIO*)w;
+	NmpIO *io = (NmpIO*)w;
 
 	return nmp_io_recv_packet(io, buf, size);
 }
 
 
 static gint
-nmp_io_format_data(HmWatch *w, gpointer msg, gchar buf[],
+nmp_io_format_data(NmpWatch *w, gpointer msg, gchar buf[],
 	gsize size)
 {
-	HmIOFuncs *funcs;
+	NmpIOFuncs *funcs;
 	NmpPacketProto *proto;
 	gint pack_head_len, phl, payload_len = 0;
-	HmIO *io = (HmIO*)w;
+	NmpIO *io = (NmpIO*)w;
 
 	proto = io->proto;
 	BUG_ON(!proto);
@@ -136,14 +136,14 @@ nmp_io_format_data(HmWatch *w, gpointer msg, gchar buf[],
 
 
 static void
-nmp_io_on_error(HmWatch *w, gint rw, gint why)
+nmp_io_on_error(NmpWatch *w, gint rw, gint why)
 {
-	HmIO *io;
-	HmIOFuncs *funcs;
+	NmpIO *io;
+	NmpIOFuncs *funcs;
 
 	G_ASSERT(w != NULL);
 
-	io = (HmIO*)w;
+	io = (NmpIO*)w;
 	funcs = io->funcs;
 	BUG_ON(!funcs);
 
@@ -155,14 +155,14 @@ nmp_io_on_error(HmWatch *w, gint rw, gint why)
 
 
 static void
-nmp_io_on_close(HmWatch *w, gint async)
+nmp_io_on_close(NmpWatch *w, gint async)
 {
-	HmIO *io;
-	HmIOFuncs *funcs;
+	NmpIO *io;
+	NmpIOFuncs *funcs;
 
 	G_ASSERT(w != NULL);
 
-	io = (HmIO*)w;
+	io = (NmpIO*)w;
 	funcs = io->funcs;
 	BUG_ON(!funcs);
 
@@ -173,7 +173,7 @@ nmp_io_on_close(HmWatch *w, gint async)
 }
 
 
-static HmWatchFuncs nmp_io_watch_funcs =
+static NmpWatchFuncs nmp_io_watch_funcs =
 {
 	.recv		= nmp_io_recv_data,
 	.format		= nmp_io_format_data,
@@ -184,10 +184,10 @@ static HmWatchFuncs nmp_io_watch_funcs =
 
 
 static __inline__ gint
-nmp_io_initialize(HmIO *io, gint listen)
+nmp_io_initialize(NmpIO *io, gint listen)
 {
 	gint buffer_size;
-	HmWatch *watch = (HmWatch*)io;
+	NmpWatch *watch = (NmpWatch*)io;
 
 	if (listen)
 	{
@@ -212,7 +212,7 @@ nmp_io_initialize(HmIO *io, gint listen)
 
 
 static __inline__ void
-__nmp_io_finalize(HmIO *io)
+__nmp_io_finalize(NmpIO *io)
 {
 	if (io->buffer)
 	{
@@ -222,11 +222,11 @@ __nmp_io_finalize(HmIO *io)
 };
 
 
-__export HmIO *
+__export NmpIO *
 nmp_io_new(NmpConnection *conn, NmpPacketProto *proto, 
-	HmIOFuncs *funcs, gsize size)
+	NmpIOFuncs *funcs, gsize size)
 {
-	HmIO *io;
+	NmpIO *io;
 	G_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
 	if (nmp_connection_is_blocked(conn))
@@ -238,7 +238,7 @@ nmp_io_new(NmpConnection *conn, NmpPacketProto *proto,
 		return NULL;		
 	}
 
-	io = (HmIO*)nmp_watch_create(
+	io = (NmpIO*)nmp_watch_create(
 		conn, &nmp_io_watch_funcs, size);
 	if (!io)
 	{
@@ -257,14 +257,14 @@ nmp_io_new(NmpConnection *conn, NmpPacketProto *proto,
 }
 
 
-__export HmIO *
+__export NmpIO *
 nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
-	HmIOFuncs *funcs, gsize size)
+	NmpIOFuncs *funcs, gsize size)
 {
-	HmIO *io;
+	NmpIO *io;
 	G_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
-	io = (HmIO*)nmp_listen_watch_create(
+	io = (NmpIO*)nmp_listen_watch_create(
 		conn, &nmp_listen_io_watch_funcs, size);
 	if (!io)
 	{
@@ -284,12 +284,12 @@ nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
 
 
 static __inline__ gint
-nmp_io_packet_proto_check(HmIO *io)
+nmp_io_packet_proto_check(NmpIO *io)
 {
 	NmpPacketProto *proto;
 	gint effective, ret;
     NmpNetPackInfo payload_raw, *npi;
-    HmIOFuncs *funcs;
+    NmpIOFuncs *funcs;
 
 	proto = io->proto;
 	BUG_ON(!proto);
@@ -387,7 +387,7 @@ nmp_io_packet_proto_check(HmIO *io)
 
 
 static __inline__ gint
-nmp_io_recv_packet(HmIO *io, gchar *buf, gsize size)
+nmp_io_recv_packet(NmpIO *io, gchar *buf, gsize size)
 {
 	gint ret, left;
 

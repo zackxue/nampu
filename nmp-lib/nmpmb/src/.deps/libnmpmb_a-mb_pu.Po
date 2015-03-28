@@ -1,6 +1,6 @@
 libnmpmb_a-mb_pu.o: mb_pu.c /usr/include/stdc-predef.h \
- /home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_pu.h \
- /home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_basic.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_pu.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_basic.h \
  /usr/include/stdio.h /usr/include/features.h \
  /usr/include/i386-linux-gnu/sys/cdefs.h \
  /usr/include/i386-linux-gnu/bits/wordsize.h \
@@ -95,15 +95,15 @@ libnmpmb_a-mb_pu.o: mb_pu.c /usr/include/stdc-predef.h \
  /usr/include/i386-linux-gnu/asm/unistd.h \
  /usr/include/i386-linux-gnu/asm/unistd_32.h \
  /usr/include/i386-linux-gnu/bits/syscall.h \
- /home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/list.h \
- /home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_api.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/list.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_api.h \
  /home/shiyong/usr/include/nampu/nmp_sdk.h
 
 /usr/include/stdc-predef.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_pu.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_pu.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_basic.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_basic.h:
 
 /usr/include/stdio.h:
 
@@ -359,8 +359,8 @@ libnmpmb_a-mb_pu.o: mb_pu.c /usr/include/stdc-predef.h \
 
 /usr/include/i386-linux-gnu/bits/syscall.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/list.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/list.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_api.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_api.h:
 
 /home/shiyong/usr/include/nampu/nmp_sdk.h:

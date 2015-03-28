@@ -16,20 +16,20 @@
 
 G_BEGIN_DECLS
 
-typedef struct _HmHlIO HmHlIO;
+typedef struct _NmpHlIO NmpHlIO;
 
-struct _HmHlIO		/* High level IO, payload layer, for example: XML */
+struct _NmpHlIO		/* High level IO, payload layer, for example: XML */
 {
-	HmIO			io;
+	NmpIO			io;
 
 	NmpPayloadProto	*proto;
 };
 
 
-HmHlIO *nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
+NmpHlIO *nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto);
 
-HmHlIO *nmp_hl_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
+NmpHlIO *nmp_hl_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto);
 
 G_END_DECLS

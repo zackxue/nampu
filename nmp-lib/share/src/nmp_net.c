@@ -49,9 +49,9 @@ struct _NmpNet
     NmpPacketProto  *ll_proto;  /* Low Level: packet proto */
     NmpPayloadProto *hl_proto;  /* High Level: payload proto */
 
-    HmIOInit       on_init;
-    HmIOFin        on_fin;
-    HmIOReader     on_read;
+    NmpIOInit       on_init;
+    NmpIOFin        on_fin;
+    NmpIOReader     on_read;
     gpointer        priv_data;
 };
 
@@ -285,7 +285,7 @@ nmp_net_release(NmpNet *net)
 
 
 __export void
-nmp_net_set_reader(NmpNet *net, HmIOReader reader)
+nmp_net_set_reader(NmpNet *net, NmpIOReader reader)
 {
     G_ASSERT(net != NULL);
 
@@ -303,7 +303,7 @@ nmp_net_get_private(NmpNet *net)
 
 
 __export void 
-nmp_net_set_funcs(NmpNet *net, HmIOInit init, HmIOFin fin)
+nmp_net_set_funcs(NmpNet *net, NmpIOInit init, NmpIOFin fin)
 {
     G_ASSERT(net != NULL);
 
@@ -361,7 +361,7 @@ nmp_net_add_io(NmpNet *net, NmpNetIO *net_io, gint notify)
 
 
 __export NmpNetIO *
-nmp_net_create_io(NmpNet *net, NmpConnection *conn, HmIOEst on_est,
+nmp_net_create_io(NmpNet *net, NmpConnection *conn, NmpIOEst on_est,
     gint *err)
 {
     NmpNetIO *io;
@@ -471,7 +471,7 @@ nmp_net_unref_io(NmpNetIO *net_io)
 
 __export void
 nmp_net_set_io_private(NmpNetIO *net_io, gpointer priv_data,
-    HmDesFun des)
+    NmpDesFun des)
 {
     nmp_net_io_set_private(net_io, priv_data, des);
 }

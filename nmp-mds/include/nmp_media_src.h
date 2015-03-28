@@ -19,26 +19,26 @@
 G_BEGIN_DECLS
 
 
-typedef gint (*JpfMediaRecvFunc)(gpointer media, gint stream, gchar *buf, gint size);
+typedef gint (*NmpMediaRecvFunc)(gpointer media, gint stream, gchar *buf, gint size);
 
-typedef struct _JpfMediaSource JpfMediaSource;
-typedef struct _JpfMediaSourceFuncs JpfMediaSourceFuncs;
-struct _JpfMediaSourceFuncs
+typedef struct _NmpMediaSource NmpMediaSource;
+typedef struct _NmpMediaSourceFuncs NmpMediaSourceFuncs;
+struct _NmpMediaSourceFuncs
 {
-	gint (*recv)(JpfMediaSource *source);
-	void (*error)(JpfMediaSource *source);
+	gint (*recv)(NmpMediaSource *source);
+	void (*error)(NmpMediaSource *source);
 };
 
 
-typedef struct _JpfStreamSource JpfStreamSource;
-struct _JpfStreamSource
+typedef struct _NmpStreamSource NmpStreamSource;
+struct _NmpStreamSource
 {
-	JpfMediaSocket		sock_info;			/* stream socket infomation, including rtp/rtcp */
+	NmpMediaSocket		sock_info;			/* stream socket infomation, including rtp/rtcp */
 
 	GPollFD				rtp_read;			/* for rtp recving */
 	gboolean			gpfd_added;			/* &rtp_read already added to source */
 
-	JpfSmartBuffer		rtp_buffer;			/* for rtp packet buffering */
+	NmpSmartBuffer		rtp_buffer;			/* for rtp packet buffering */
 	gboolean			rtp_connected;		/* tcp connected? */
 	gboolean			rtp_said_bye;		/* already bye ? */
 
@@ -50,20 +50,20 @@ struct _JpfStreamSource
 #endif
 
 #ifdef CONFIG_RTCP_SUPPORT
-	JpfRtcpControl		rtcp_control;		/* rtcp control block */
+	NmpRtcpControl		rtcp_control;		/* rtcp control block */
 	gboolean			rtcp_fd_added;		/* added to source */
 	gboolean			rtcp_connected;		/* tcp connected? */
 #endif
 };
 
 
-struct _JpfMediaSource
+struct _NmpMediaSource
 {
 	GSource				parent_object;		/* GSource parent object */
-	JpfStreamSource		streams[N_STREAMS];	/* stream source */
+	NmpStreamSource		streams[N_STREAMS];	/* stream source */
 
 	gint				n_streams;			/* media streams count */
-	JpfMediaSourceFuncs *funcs;				/* operations */
+	NmpMediaSourceFuncs *funcs;				/* operations */
 
 	gint64				last_check;			/* for timeout */
 	gint				err_code;			/* error code */
@@ -72,24 +72,24 @@ struct _JpfMediaSource
 	gint				blocking;			/* is blocking */
 
 	gpointer			media;				/* point back to media object */
-	JpfMediaRecvFunc	func_recv;			/* media receiving function registered */
+	NmpMediaRecvFunc	func_recv;			/* media receiving function registered */
 	gpointer			user_data;
 };
 
 
-JpfMediaSource *nmp_media_src_create_source(gpointer media, gint streams,
-	JpfMediaTrans transport, gint blockable);
+NmpMediaSource *nmp_media_src_create_source(gpointer media, gint streams,
+	NmpMediaTrans transport, gint blockable);
 
-void nmp_media_src_attach(JpfMediaSource *source);
+void nmp_media_src_attach(NmpMediaSource *source);
 
-gint nmp_media_src_get_rtp_port(JpfMediaSource *source, gint stream, gint *rtp);
+gint nmp_media_src_get_rtp_port(NmpMediaSource *source, gint stream, gint *rtp);
 
 #ifdef CONFIG_RTCP_SUPPORT
-gint nmp_media_src_get_rtcp_port(JpfMediaSource *source, gint stream, gint *rtcp);
+gint nmp_media_src_get_rtcp_port(NmpMediaSource *source, gint stream, gint *rtcp);
 #endif
 
-void nmp_media_src_set_recv_fun(JpfMediaSource *source,
-	JpfMediaRecvFunc function);
+void nmp_media_src_set_recv_fun(NmpMediaSource *source,
+	NmpMediaRecvFunc function);
 
 G_END_DECLS
 

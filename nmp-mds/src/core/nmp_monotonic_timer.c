@@ -12,7 +12,7 @@ nmp_monotonic_timer_inc(void *parm)
 
 void nmp_monotonic_timer_init( void )
 {
-	static JpfTq mon_timer_tq;
+	static NmpTq mon_timer_tq;
 
 	TQ_INIT(&mon_timer_tq, nmp_monotonic_timer_inc, NULL);
 	nmp_add_tq(&mon_timer_tq);	

@@ -40,7 +40,7 @@
 #define CMD_ID_LEN              32
 #define NODE_VALUE_LEN          64
 
-JpfCmdType nmp_cmd_sets;
+NmpCmdType nmp_cmd_sets;
 
 /**
  * nmp_cmd_type_register: Register a new command type in platform
@@ -53,10 +53,10 @@ JpfCmdType nmp_cmd_sets;
  */
 int
 nmp_cmd_type_register(
-	JpfCmdType      *self,
-    JpfCmdID        id, 
-	JpfParseXml     p_xml, 
-    JpfCreateXml    c_xml
+	NmpCmdType      *self,
+    NmpCmdID        id, 
+	NmpParseXml     p_xml, 
+    NmpCreateXml    c_xml
 )
 {
 	if (self->counts >= MAX_CMD_ENTRIES)
@@ -84,9 +84,9 @@ nmp_cmd_type_register(
  * @return none
  */
 void
-nmp_init_cmd_id(JpfCmdType *self)
+nmp_init_cmd_id(NmpCmdType *self)
 {
-	//memset(self, 0 ,sizeof(JpfCmdType));
+	//memset(self, 0 ,sizeof(NmpCmdType));
 
 	 nmp_cmd_type_register(self,
         MDS_REGISTER_CMS, 

@@ -1,19 +1,19 @@
 #include "nmp_msg_table.h"
 #include "nmp_debug.h"
 
-JpfMsgTable *
+NmpMsgTable *
 nmp_msg_table_new( void )
 {
-	JpfMsgTable *table;
+	NmpMsgTable *table;
 
-	table = g_new0(JpfMsgTable, 1);
+	table = g_new0(NmpMsgTable, 1);
 	return table;
 }
 
 
 gint
-nmp_msg_table_register(JpfMsgTable *table, gint msg_Id,
-	JpfMsgFunc fun)
+nmp_msg_table_register(NmpMsgTable *table, gint msg_Id,
+	NmpMsgFunc fun)
 {
 	G_ASSERT(table != NULL);
 
@@ -30,7 +30,7 @@ nmp_msg_table_register(JpfMsgTable *table, gint msg_Id,
 
 
 void
-nmp_msg_table_call(JpfMsgTable *table, JpfMdsMsg *msg,
+nmp_msg_table_call(NmpMsgTable *table, NmpMdsMsg *msg,
 	gpointer data)
 {
 	gint index;
@@ -45,7 +45,7 @@ nmp_msg_table_call(JpfMsgTable *table, JpfMdsMsg *msg,
 
 
 void
-nmp_msg_table_release(JpfMsgTable *table)
+nmp_msg_table_release(NmpMsgTable *table)
 {
 	G_ASSERT(table != NULL);
 

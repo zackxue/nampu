@@ -13,8 +13,8 @@ do {\
 
 typedef void (*tq_func)(void *parm);
 
-typedef struct _JpfTq JpfTq;
-struct _JpfTq
+typedef struct _NmpTq NmpTq;
+struct _NmpTq
 {
 	LIST_HEAD list;
 	tq_func fun;
@@ -22,6 +22,6 @@ struct _JpfTq
 };
 
 void nmp_init_tq( void );
-void nmp_add_tq(JpfTq *tq);
+void nmp_add_tq(NmpTq *tq);
 
 #endif 	/* __NMP_TQ_H__ */

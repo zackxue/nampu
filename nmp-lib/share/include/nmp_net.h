@@ -15,9 +15,9 @@
 
 G_BEGIN_DECLS
 
-typedef void (*HmIOFin)(gpointer priv_data, NmpNetIO *io, gint err);
-typedef gint (*HmIOInit)(gpointer priv_data, NmpNetIO *io);
-typedef gint (*HmIOReader)(gpointer priv_data, NmpNetIO *net_io, gpointer msg);
+typedef void (*NmpIOFin)(gpointer priv_data, NmpNetIO *io, gint err);
+typedef gint (*NmpIOInit)(gpointer priv_data, NmpNetIO *io);
+typedef gint (*NmpIOReader)(gpointer priv_data, NmpNetIO *net_io, gpointer msg);
 
 NmpNet *nmp_net_new(NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto, gpointer priv_data);
@@ -27,13 +27,13 @@ NmpNet *nmp_net_new_full(guint nloops, gboolean gather,
 
 void nmp_net_release(NmpNet *net);
 
-void nmp_net_set_reader(NmpNet *net, HmIOReader reader);
+void nmp_net_set_reader(NmpNet *net, NmpIOReader reader);
 
 gpointer nmp_net_get_private(NmpNet *net);
 
-void nmp_net_set_funcs(NmpNet *net, HmIOInit init, HmIOFin fin);
+void nmp_net_set_funcs(NmpNet *net, NmpIOInit init, NmpIOFin fin);
 
-NmpNetIO *nmp_net_create_io(NmpNet *net, NmpConnection *conn, HmIOEst on_est,
+NmpNetIO *nmp_net_create_io(NmpNet *net, NmpConnection *conn, NmpIOEst on_est,
 	gint *err);
 
 NmpNetIO *nmp_net_create_listen_io(NmpNet *net, NmpConnection *conn,
@@ -47,7 +47,7 @@ gint nmp_net_write_io(NmpNetIO *net_io, gpointer msg);
 NmpNetIO *nmp_net_ref_io(NmpNetIO *net_io);
 void nmp_net_unref_io(NmpNetIO *net_io);
 
-void nmp_net_set_io_private(NmpNetIO *net_io, gpointer priv_data, HmDesFun des);
+void nmp_net_set_io_private(NmpNetIO *net_io, gpointer priv_data, NmpDesFun des);
 gpointer nmp_net_get_io_private(NmpNetIO *net_io);
 
 gboolean nmp_net_set_io_ttd(NmpNetIO *net_io, gint milli_sec);

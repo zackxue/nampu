@@ -73,7 +73,7 @@
 #define ECODE_UFT8      "UTF-8"
 #define XML_VER         "1.0"
 
-extern JpfCmdType nmp_cmd_sets;
+extern NmpCmdType nmp_cmd_sets;
 
 /**
  * nmp_get_message_type: parse an XML in-memory document and build a tree.
@@ -357,7 +357,7 @@ nmp_add_new_node(
 
 
 int
-nmp_add_xml_node(JpfXmlNode *xml_node, JpfXmlNodeInfo *node_info)
+nmp_add_xml_node(NmpXmlNode *xml_node, NmpXmlNodeInfo *node_info)
 {
     if (node_info->attr_flag == 0)
         xml_node->add_node = xmlNewChild(
@@ -567,15 +567,15 @@ nmp_modify_attr_value(
  * @param:  parameter used during command parsing
  * @return: succeed 0, else -1
  */
-JpfMsgInfo *  
-nmp_deal_cmd(JpfCmdType *self, 
+NmpMsgInfo *  
+nmp_deal_cmd(NmpCmdType *self, 
              xmlDocPtr doc, 
              xmlNodePtr cur, 
              char *cmd, 
              uint seq
 )
 {
-    JpfParseXml parse_xml;
+    NmpParseXml parse_xml;
     int i;
     
     for (i = 0; i < CMD_TYPE_COUNTS(self); i++)
@@ -598,16 +598,16 @@ nmp_deal_cmd(JpfCmdType *self,
  *
  * @doc:            iutput, XML document tree
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo *  
-nmp_parse_xml(JpfCmdType *self, xmlDocPtr doc, unsigned int seq)
+NmpMsgInfo *  
+nmp_parse_xml(NmpCmdType *self, xmlDocPtr doc, unsigned int seq)
 {
     xmlNodePtr    cur;
     char       *cmd;
     char  msg_id[MAX_CMD_ID_LEN]={0};
-    JpfParseXml   parse_xml;
-    JpfMsgInfo     *sys_msg;
+    NmpParseXml   parse_xml;
+    NmpMsgInfo     *sys_msg;
     int i;
     
     cur = xmlDocGetRootElement(doc); //确定文档根元素   
@@ -665,14 +665,14 @@ nmp_parse_xml(JpfCmdType *self, xmlDocPtr doc, unsigned int seq)
  * @xml_buf:        iutput, memory address used to contain xml text
  * @xml_len:        iutput, indicate length of xmf_buf, unit bytes 
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo * 
-nmp_parse_xml_str(JpfCmdType *self, const char *xml_buff, int xml_len,
+NmpMsgInfo * 
+nmp_parse_xml_str(NmpCmdType *self, const char *xml_buff, int xml_len,
     unsigned int seq)
 {
     xmlDocPtr doc; 
-    JpfMsgInfo *sys_msg; 
+    NmpMsgInfo *sys_msg; 
    // xml_error("--------------=======xml_buff=%s\n",xml_buff);   
     doc = xmlParseMemory(xml_buff, xml_len);
     if (doc == NULL ) 
@@ -693,7 +693,7 @@ nmp_parse_xml_str(JpfCmdType *self, const char *xml_buff, int xml_len,
 }
 
 
-JpfMsgInfo * 
+NmpMsgInfo * 
 nmp_parse_str_xml(const char *xml_buff, int xml_len, unsigned int seq)
 {
     ASSERT(xml_buff != NULL);
@@ -707,13 +707,13 @@ nmp_parse_str_xml(const char *xml_buff, int xml_len, unsigned int seq)
  *
  * @filename:       iutput, XML filename
  * @seq:            input, sequence of message
- * @return:         succeed JpfMsgInfo, else NULL
+ * @return:         succeed NmpMsgInfo, else NULL
  */
-JpfMsgInfo * 
-nmp_parse_xml_file(JpfCmdType *self, char *filename, unsigned int seq)
+NmpMsgInfo * 
+nmp_parse_xml_file(NmpCmdType *self, char *filename, unsigned int seq)
 {
     xmlDocPtr doc; 
-    JpfMsgInfo *sys_msg; 
+    NmpMsgInfo *sys_msg; 
     
     doc = xmlReadFile(filename,"UTF-8",XML_PARSE_NOBLANKS);
     //doc = xmlParseFile(filename);
@@ -744,9 +744,9 @@ nmp_parse_xml_file(JpfCmdType *self, char *filename, unsigned int seq)
  * @return:         succeed 0, else -1
  */
 int 
-nmp_create_xml(JpfCmdType *self, xmlDocPtr doc, JpfMsgInfo *sys_msg)
+nmp_create_xml(NmpCmdType *self, xmlDocPtr doc, NmpMsgInfo *sys_msg)
 {
-    JpfCreateXml create_xml;
+    NmpCreateXml create_xml;
     int i,ret;
     printf("enter nmp_create_xml cmd num=%d\n",CMD_TYPE_COUNTS(self));
     for (i = 0; i < CMD_TYPE_COUNTS(self); i++)
@@ -780,8 +780,8 @@ nmp_create_xml(JpfCmdType *self, xmlDocPtr doc, JpfMsgInfo *sys_msg)
  * @return:         succeed:lens of xml, else -1
  */
 int 
-nmp_create_xml_str(JpfCmdType *self, char *xml_buff,
-        int *buff_size, JpfMsgInfo *sys_msg)
+nmp_create_xml_str(NmpCmdType *self, char *xml_buff,
+        int *buff_size, NmpMsgInfo *sys_msg)
 {
     ASSERT(self != NULL && xml_buff != NULL && buff_size != NULL &&
 		sys_msg != NULL);
@@ -822,7 +822,7 @@ nmp_create_xml_str(JpfCmdType *self, char *xml_buff,
 
 
 int 
-nmp_create_str_xml(char *xml_buff, int *buff_size, JpfMsgInfo *sys_msg)
+nmp_create_str_xml(char *xml_buff, int *buff_size, NmpMsgInfo *sys_msg)
 {
     ASSERT(xml_buff != NULL &&  buff_size != NULL && sys_msg != NULL);
     return nmp_create_xml_str(&nmp_cmd_sets, xml_buff, buff_size, sys_msg);
@@ -836,7 +836,7 @@ nmp_create_str_xml(char *xml_buff, int *buff_size, JpfMsgInfo *sys_msg)
  * @return:         succeed 0, else -1
  */
 int 
-nmp_create_xml_file(JpfCmdType *self, const char *filename, JpfMsgInfo *sys_msg)
+nmp_create_xml_file(NmpCmdType *self, const char *filename, NmpMsgInfo *sys_msg)
 {
     ASSERT(filename != NULL && sys_msg != NULL);
     xmlDocPtr doc = NULL; 
@@ -941,7 +941,7 @@ void nmp_deal_value(xmlDocPtr doc, xmlNodePtr cur, int *des)
 
 
 void *
-nmp_get_msginfo_data(JpfMsgInfo *sys_msg)
+nmp_get_msginfo_data(NmpMsgInfo *sys_msg)
 {
     return sys_msg->private_data;
 }
@@ -955,13 +955,13 @@ nmp_free_mem(void *data, int size)
 	free(data);
 }
 
-JpfMsgInfo*
+NmpMsgInfo*
 nmp_msginfo_new(const char *msg_id, void *data, int size)
 {
-    JpfMsgInfo *sys_msg = NULL;
+    NmpMsgInfo *sys_msg = NULL;
     ASSERT(msg_id != NULL);
        
-    sys_msg = malloc(sizeof(JpfMsgInfo));
+    sys_msg = malloc(sizeof(NmpMsgInfo));
     if (!sys_msg)
         return NULL;
 
@@ -987,7 +987,7 @@ nmp_msginfo_new(const char *msg_id, void *data, int size)
 
 
 void
-nmp_free_msginfo(JpfMsgInfo *sys_msg)
+nmp_free_msginfo(NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
 
@@ -1001,7 +1001,7 @@ nmp_free_msginfo(JpfMsgInfo *sys_msg)
 
 
 void
-nmp_free_msginfo_head(JpfMsgInfo *sys_msg)
+nmp_free_msginfo_head(NmpMsgInfo *sys_msg)
 {
     ASSERT(sys_msg != NULL);
 

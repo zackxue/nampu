@@ -3,7 +3,7 @@
 #include "nmp_msg_translate.h"
 
 
-JpfMsgMap g_msg_map =
+NmpMsgMap g_msg_map =
 {
 	{
 		{"MdsRegister"},	/* 0 */
@@ -13,11 +13,11 @@ JpfMsgMap g_msg_map =
 };
 
 
-JpfMdsMsg * 
+NmpMdsMsg * 
 nmp_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
 {
-	JpfMsgInfo *msg_info; 
-	JpfMdsMsg  *sys_msg;
+	NmpMsgInfo *msg_info; 
+	NmpMdsMsg  *sys_msg;
 	gchar       cmd[MAX_CMD_ID_LEN] = {0};
 	gint        msg_id;
 	gint        cmd_len;	
@@ -46,7 +46,7 @@ nmp_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
     sys_msg = nmp_alloc_msg_2(msg_id,
     	 msg_info->private_data,
     	 msg_info->private_size,
-    	 (JpfMsgFin)msg_info->priv_destroy,
+    	 (NmpMsgFin)msg_info->priv_destroy,
     	 seq);
     nmp_free_msginfo_head(msg_info);
 
@@ -55,9 +55,9 @@ nmp_get_sysmsg_from_xml(char *xml_buff, gint xml_len, guint seq)
 
 
 gint 
-nmp_proto_create_xml_str(char *xml_buff, int *buff_size, JpfMdsMsg *sys_msg)
+nmp_proto_create_xml_str(char *xml_buff, int *buff_size, NmpMdsMsg *sys_msg)
 {
-	JpfMsgInfo  msg_info; 
+	NmpMsgInfo  msg_info; 
 	gint        msg_id;
 	gint        ret;
 

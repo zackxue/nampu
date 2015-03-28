@@ -6,31 +6,31 @@
 G_BEGIN_DECLS
 
 typedef gpointer PQN_DATA_T;
-typedef void (*JpfPQNFunc)(PQN_DATA_T data_1, PQN_DATA_T data_2, PQN_DATA_T data_3);
+typedef void (*NmpPQNFunc)(PQN_DATA_T data_1, PQN_DATA_T data_2, PQN_DATA_T data_3);
 
-typedef struct _JpfPQNode JpfPQNode;
-struct _JpfPQNode
+typedef struct _NmpPQNode NmpPQNode;
+struct _NmpPQNode
 {
 	PQN_DATA_T		data_1;
 	PQN_DATA_T		data_2;
 	PQN_DATA_T		data_3;
 
-	JpfPQNFunc		func;
+	NmpPQNFunc		func;
 };
 
 
-typedef struct _JpfPendingQueue JpfPendingQueue;
-struct _JpfPendingQueue
+typedef struct _NmpPendingQueue NmpPendingQueue;
+struct _NmpPendingQueue
 {
 	GList			*list;
 };
 
 
-void nmp_pq_init(JpfPendingQueue *pq);
-gint nmp_pq_pending(JpfPendingQueue *pq, PQN_DATA_T data_1, 
-	PQN_DATA_T data_2, PQN_DATA_T data_3, JpfPQNFunc fun);
-void nmp_pq_graft(JpfPendingQueue *src, JpfPendingQueue *dst);
-void nmp_pq_call_and_free(JpfPendingQueue *pq);
+void nmp_pq_init(NmpPendingQueue *pq);
+gint nmp_pq_pending(NmpPendingQueue *pq, PQN_DATA_T data_1, 
+	PQN_DATA_T data_2, PQN_DATA_T data_3, NmpPQNFunc fun);
+void nmp_pq_graft(NmpPendingQueue *src, NmpPendingQueue *dst);
+void nmp_pq_call_and_free(NmpPendingQueue *pq);
 
 
 G_END_DECLS

@@ -236,7 +236,7 @@ static int create_xml_file_from_buffer(const char *buffer, size_t buf_size, cons
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	Request *request = NULL;
 	
 	request = (Request*)j_xml_alloc(sizeof(*request));
@@ -263,7 +263,7 @@ static void test_set_result(int cmd_type, const char *path)
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	Result *result = NULL;
 	
 	result = (Result*)j_xml_alloc(sizeof(*result));
@@ -294,7 +294,7 @@ static void test_register_request()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	RegisterRequestPacket *reg_request = NULL;
 		
 	memset(buf, 0, sizeof(buf));
@@ -330,7 +330,7 @@ static void test_register_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	RegisterResponsePacket *reg_response = NULL;
 	
 	reg_response = (RegisterResponsePacket*)j_xml_alloc(sizeof(*reg_response));
@@ -360,7 +360,7 @@ static void test_heart_beat_request()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HeartBeatRequestPacket *pu_heart = NULL;
 	
 	pu_heart = (HeartBeatRequestPacket*)j_xml_alloc(sizeof(*pu_heart));
@@ -385,7 +385,7 @@ static void test_heart_beat_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HeartBeatResponsePacket *hrt_beat_resp = NULL;
 	
 	hrt_beat_resp = (HeartBeatResponsePacket*)j_xml_alloc(sizeof(*hrt_beat_resp));
@@ -411,7 +411,7 @@ static void test_change_dispatch_request()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	ChangeDispatchPacket *change_disp = NULL;
 	
 	change_disp = (ChangeDispatchPacket*)j_xml_alloc(sizeof(*change_disp));
@@ -448,7 +448,7 @@ static void test_device_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	Request *request = NULL;
 	DeviceInfoPacket *dev_info = NULL;
 	
@@ -493,7 +493,7 @@ static void test_device_ntp_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DeviceNTPInfo dev_ntp_info;
 	DeviceNTPInfoPacket *ntp_info = NULL;
 	
@@ -544,7 +544,7 @@ static void test_set_device_ntp_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DeviceNTPInfoPacket *ntp_info = NULL;
 	
 	ntp_info = (DeviceNTPInfoPacket*)j_xml_alloc(sizeof(*ntp_info));
@@ -583,7 +583,7 @@ static void test_set_device_time()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DeviceTimePacket *dev_time = NULL;
 	
 	dev_time = (DeviceTimePacket*)j_xml_alloc(sizeof(*dev_time));
@@ -622,7 +622,7 @@ static void test_platform_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PlatformInfoPacket *pltf_info = NULL;
 	
 	pltf_info = (PlatformInfoPacket*)j_xml_alloc(sizeof(*pltf_info));
@@ -656,7 +656,7 @@ static void test_set_platform_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PlatformInfoPacket *pltf_info = NULL;
 	
 	pltf_info = (PlatformInfoPacket*)j_xml_alloc(sizeof(*pltf_info));
@@ -698,7 +698,7 @@ static void test_network_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	NetworkInfoPacket *net_info = NULL;
 	
 	net_info = (NetworkInfoPacket*)j_xml_alloc(sizeof(*net_info));
@@ -742,7 +742,7 @@ static void test_set_network_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	NetworkInfoPacket *net_info = NULL;
 	
 	net_info = (NetworkInfoPacket*)j_xml_alloc(sizeof(*net_info));
@@ -825,7 +825,7 @@ static void test_pppoe_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PPPOEInfoPacket *pppoe_info = NULL;
 	
 	pppoe_info = (PPPOEInfoPacket*)j_xml_alloc(sizeof(*pppoe_info));
@@ -856,7 +856,7 @@ static void test_set_pppoe_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PPPOEInfoPacket *pppoe_info = NULL;
 	
 	pppoe_info = (PPPOEInfoPacket*)j_xml_alloc(sizeof(*pppoe_info));
@@ -913,7 +913,7 @@ static void test_encode_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;	
+	NmpXmlMsg *msg = NULL;	
 	Request *request = NULL;
 	EncodeParameterPacket *encode_para = NULL;
 	
@@ -938,7 +938,7 @@ static void test_set_encode_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	EncodeParameterPacket *encode_para = NULL;
 	
 	encode_para = (EncodeParameterPacket*)j_xml_alloc(sizeof(*encode_para));
@@ -982,7 +982,7 @@ static void test_display_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DisplayParameterPacket *display_para = NULL;
 	
 	display_para = (DisplayParameterPacket*)j_xml_alloc(sizeof(*display_para));
@@ -1006,7 +1006,7 @@ static void test_set_display_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DisplayParameterPacket *display_para = NULL;
 	
 	display_para = (DisplayParameterPacket*)j_xml_alloc(sizeof(*display_para));
@@ -1072,7 +1072,7 @@ static void test_record_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	RecordParameterPacket *record = NULL;
 	RecordParameterPacket *record_para = NULL;
 	
@@ -1124,7 +1124,7 @@ static void test_set_record_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	RecordParameterPacket *record_para = NULL;
 	
 	record_para = (RecordParameterPacket*)j_xml_alloc(sizeof(*record_para));
@@ -1166,7 +1166,7 @@ static void test_hide_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HideParameterPacket *hide_para = NULL;
 	
 	hide_para = (HideParameterPacket*)j_xml_alloc(sizeof(*hide_para));
@@ -1190,7 +1190,7 @@ static void test_set_hide_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HideParameterPacket *hide_para = NULL;
 	
 	hide_para = (HideParameterPacket*)j_xml_alloc(sizeof(*hide_para));
@@ -1234,7 +1234,7 @@ static void test_serial_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	SerialParameterPacket *serial_para = NULL;
 	
 	serial_para = (SerialParameterPacket*)j_xml_alloc(sizeof(*serial_para));
@@ -1258,7 +1258,7 @@ static void test_set_serial_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	SerialParameterPacket *serial_para = NULL;
 	
 	serial_para = (SerialParameterPacket*)j_xml_alloc(sizeof(*serial_para));
@@ -1305,7 +1305,7 @@ static void test_osd_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	OSDParameterPacket *osd_para = NULL;
 	
 	osd_para = (OSDParameterPacket*)j_xml_alloc(sizeof(*osd_para));
@@ -1329,7 +1329,7 @@ static void test_set_osd_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	OSDParameterPacket *osd_para = NULL;
 	
 	osd_para = (OSDParameterPacket*)j_xml_alloc(sizeof(*osd_para));
@@ -1371,7 +1371,7 @@ static void test_ptz_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PTZParameterPacket *ptz_para = NULL;
 	
 	ptz_para = (PTZParameterPacket*)j_xml_alloc(sizeof(*ptz_para));
@@ -1395,7 +1395,7 @@ static void test_set_ptz_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	PTZParameterPacket *ptz_para = NULL;
 	
 	ptz_para = (PTZParameterPacket*)j_xml_alloc(sizeof(*ptz_para));
@@ -1439,7 +1439,7 @@ static void test_ftp_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	FTPParameterPacket *ftp_para = NULL;
 	
 	ftp_para = (FTPParameterPacket*)j_xml_alloc(sizeof(*ftp_para));
@@ -1463,7 +1463,7 @@ static void test_set_ftp_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	FTPParameterPacket *ftp_para = NULL;
 	
 	ftp_para = (FTPParameterPacket*)j_xml_alloc(sizeof(*ftp_para));
@@ -1510,7 +1510,7 @@ static void test_smtp_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	SMTPParameterPacket *smtp_para = NULL;
 	
 	smtp_para = (SMTPParameterPacket*)j_xml_alloc(sizeof(*smtp_para));
@@ -1534,7 +1534,7 @@ static void test_set_smtp_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	SMTPParameterPacket *smtp_para = NULL;
 	
 	smtp_para = (SMTPParameterPacket*)j_xml_alloc(sizeof(*smtp_para));
@@ -1582,7 +1582,7 @@ static void test_upnp_parameter_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	UPNPParameterPacket *upnp_para = NULL;
 	
 	upnp_para = (UPNPParameterPacket*)j_xml_alloc(sizeof(*upnp_para));
@@ -1606,7 +1606,7 @@ static void test_set_upnp_parameter()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	UPNPParameterPacket *upnp_para = NULL;
 	
 	upnp_para = (UPNPParameterPacket*)j_xml_alloc(sizeof(*upnp_para));
@@ -1638,7 +1638,7 @@ static void test_disk_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	DeviceDiskInfoPacket *disk_info = NULL;
 	
 	disk_info = (DeviceDiskInfoPacket*)j_xml_alloc(sizeof(*disk_info));
@@ -1688,7 +1688,7 @@ static void test_format_disk_request()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	FormatDiskPacket *format_disk = NULL;
 	
 	format_disk = (FormatDiskPacket*)j_xml_alloc(sizeof(*format_disk));
@@ -1720,7 +1720,7 @@ static void test_format_progress_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	FormatDiskPacket *format_disk = NULL;
 	
 	format_disk = (FormatDiskPacket*)j_xml_alloc(sizeof(*format_disk));
@@ -1762,7 +1762,7 @@ static void test_move_alarm_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	MoveAlarmPacket *move_alarm = NULL;
 	
 	/*move_alarm = (MoveAlarmPacket*)j_xml_alloc(sizeof(*move_alarm));
@@ -1787,7 +1787,7 @@ static void test_set_move_alarm_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	MoveAlarmPacket *move_alarm = NULL;
 	
 	move_alarm = (MoveAlarmPacket*)j_xml_alloc(sizeof(*move_alarm));
@@ -1831,7 +1831,7 @@ static void test_lost_alarm_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	LostAlarmPacket *lost_alarm = NULL;
 	
 	lost_alarm = (LostAlarmPacket*)j_xml_alloc(sizeof(*lost_alarm));
@@ -1855,7 +1855,7 @@ static void test_set_lost_alarm_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	LostAlarmPacket *lost_alarm = NULL;
 	
 	lost_alarm = (LostAlarmPacket*)j_xml_alloc(sizeof(*lost_alarm));
@@ -1902,7 +1902,7 @@ static void test_hide_alarm_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HideAlarmPacket *hide_alarm = NULL;
 	
 	hide_alarm = (HideAlarmPacket*)j_xml_alloc(sizeof(*hide_alarm));
@@ -1926,7 +1926,7 @@ static void test_set_hide_alarm_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	HideAlarmPacket *hide_alarm = NULL;
 	
 	hide_alarm = (HideAlarmPacket*)j_xml_alloc(sizeof(*hide_alarm));
@@ -1970,7 +1970,7 @@ static void test_io_alarm_info_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	IoAlarmPacket *io_alarm = NULL;
 	
 	io_alarm = (IoAlarmPacket*)j_xml_alloc(sizeof(*io_alarm));
@@ -1994,7 +1994,7 @@ static void test_set_io_alarm_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	IoAlarmPacket *io_alarm = NULL;
 	
 	io_alarm = (IoAlarmPacket*)j_xml_alloc(sizeof(*io_alarm));
@@ -2022,7 +2022,7 @@ static void test_submit_alarm_request()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	SubmitAlarmPacket *sub_alarm = NULL;
 	
 	sub_alarm = (SubmitAlarmPacket*)j_xml_alloc(sizeof(*sub_alarm));
@@ -2061,7 +2061,7 @@ static void test_get_media_url_response()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	MediaUrlPacket *media_url;
 	
 	media_url = (MediaUrlPacket*)j_xml_alloc(sizeof(*media_url));
@@ -2191,7 +2191,7 @@ static void test_user_login_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	struct __UserInfo login_info;
 
 	snprintf(login_info.username, sizeof(login_info.username), "%s", "JXJ-USER-NAME");
@@ -2214,7 +2214,7 @@ static void test_user_login_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
 	msg = jpf_xml_msg_new_2(USER_LONGI_RESULT_ID, (void*)&result, sizeof(result));	
@@ -2236,7 +2236,7 @@ static void test_add_user_info_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
 	msg = jpf_xml_msg_new_2(ADD_USER_RESULT_ID, (void*)&result, sizeof(result));	
@@ -2258,7 +2258,7 @@ static void test_proxy_heart_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	struct __UserHeart heart;
 	
 	msg = jpf_xml_msg_new_2(USER_HEART_REQUEST_ID, &heart, sizeof(struct __UserHeart));	
@@ -2278,7 +2278,7 @@ static void test_proxy_heart_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	struct __UserHeart heart;
 	
 	get_local_time(&(heart.server_time));
@@ -2302,7 +2302,7 @@ static void test_user_list_info()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	struct _prx_user_st user_list;
 	struct __UserInfo *user_info;
@@ -2346,7 +2346,7 @@ static void test_device_list_info()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	struct _prx_device_st device_list;
 	struct _prx_device_info *dev_info;
@@ -2404,7 +2404,7 @@ static void test_factory_list_info()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	struct _prx_factory_list fct_list;
 	struct _prx_factory_info *fct_info;
@@ -2473,7 +2473,7 @@ static void test_fuzzy_find_user_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	struct __UserInfo user_info;
 
@@ -2502,7 +2502,7 @@ static void test_fuzzy_find_user_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	struct _prx_user_st user_list;
 	struct __UserInfo *user_info;
@@ -2541,7 +2541,7 @@ static void test_modify_password_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	struct _prx_modify_pwd modify_pwd;
 
@@ -2574,7 +2574,7 @@ static void test_modify_password_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
 	msg = jpf_xml_msg_new_2(MODIFY_PASSWORD_RESULT_ID, (void*)&result, sizeof(int));	
@@ -2596,7 +2596,7 @@ static void test_add_device_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	prx_device_info dev_info;
 
 	dev_info.device_id = 0;
@@ -2629,7 +2629,7 @@ static void test_add_device_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
 	msg = jpf_xml_msg_new_2(ADD_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
@@ -2651,7 +2651,7 @@ static void test_del_device_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
 	msg = jpf_xml_msg_new_2(DEL_DEVICE_REQUEST_ID, (void*)&device_id, sizeof(int));	
@@ -2673,7 +2673,7 @@ static void test_del_device_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
 	msg = jpf_xml_msg_new_2(DEL_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
@@ -2695,7 +2695,7 @@ static void test_get_device_info_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	/*int device_id = 1;
 	
 	msg = jpf_xml_msg_new_2(GET_DEVICE_INFO_REQUEST_ID, (void*)&device_id, sizeof(int));	
@@ -2724,7 +2724,7 @@ static void test_get_device_info_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	struct _prx_page_device page_dev;
 	struct _prx_device_info *dev_info;
@@ -2785,7 +2785,7 @@ static void test_set_device_info_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	prx_device_info dev_info;
 
 	dev_info.device_id = 1;
@@ -2817,7 +2817,7 @@ static void test_set_device_info_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
 	msg = jpf_xml_msg_new_2(SET_DEVICE_INFO_RESULT_ID, (void*)&device_id, sizeof(int));	
@@ -2839,7 +2839,7 @@ static void test_get_all_device_id_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
 	msg = jpf_xml_msg_new_2(GET_ALL_DEVICE_ID_REQUEST_ID, (void*)&device_id, sizeof(int));	
@@ -2862,7 +2862,7 @@ static void test_get_all_device_id_result()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	struct _prx_device_id_st id_list;
 	
 	id_list.count = 2;
@@ -2889,7 +2889,7 @@ static void test_get_page_user_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	//struct _prx_page_user page_user;
 	struct _prx_page_user *one_page_user;
 
@@ -2921,7 +2921,7 @@ static void test_get_page_user_response()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	struct _prx_page_user page_user;
 	struct __UserInfo *user_info;
 
@@ -2973,7 +2973,7 @@ static int test_store_log_request()
   int ret = -1;
   
   char buf[MAX_XML_LEN];
-  JpfXmlMsg *msg = NULL;
+  NmpXmlMsg *msg = NULL;
   char time_buffer[J_SDK_MAX_TIME_LEN];
   struct __StoreLogPacket *store_log_packet;
   
@@ -3040,7 +3040,7 @@ static int test_store_log_result()
  
 	char buf[MAX_XML_LEN];
 	char time_buffer[J_SDK_MAX_TIME_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	struct __StoreLogPacket *store_log_info;    
     store_log_info = (struct __StoreLogPacket *)j_xml_alloc(sizeof(struct __StoreLogPacket));   
@@ -3111,7 +3111,7 @@ static int test_firmware_upgrade_request()
 	int ret = -1;
 
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 
 	FirmwareUpgradePacket *upgrade_info;
 
@@ -3161,7 +3161,7 @@ static void test_factory_list_info()
 	int ret = -1;
 	
 	char buf[MAX_XML_LEN];
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	struct _prx_factory_list fct_list;
 	struct _prx_factory_info *fct_info;
@@ -3233,7 +3233,7 @@ int main(int argc, char *argv[])
 
 	///////////////////////////////////////////////////////////////////////////
 	/*int err;
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	MoveAlarmPacket *move_alarm;
 
 	char buffer[4096*2];

@@ -25,7 +25,7 @@ nmp_mds_log_facility_init( void )
 {//TODO: PATH
 	nmp_debug_log_facility_init(
 		(gchar*)nmp_get_sysctl_value(SC_LOG_PATH),
-		"Jpf-mds.log"
+		"Nmp-mds.log"
 	);
 }
 

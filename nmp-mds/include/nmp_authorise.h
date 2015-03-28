@@ -6,9 +6,9 @@
 G_BEGIN_DECLS
 
 
-typedef struct _JpfAuthorise JpfAuthorise;
+typedef struct _NmpAuthorise NmpAuthorise;
 
-struct _JpfAuthorise
+struct _NmpAuthorise
 {
 };
 

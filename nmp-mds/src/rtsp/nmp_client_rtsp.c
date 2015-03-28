@@ -26,7 +26,7 @@ typedef enum
 
 
 static __inline__ gint
-nmp_rtsp_parse_device(const gchar *uri, JpfMediaUri *media_uri)
+nmp_rtsp_parse_device(const gchar *uri, NmpMediaUri *media_uri)
 {
 	gint err = -E_RTSPURL;
 	gchar *dev, *p;
@@ -53,7 +53,7 @@ nmp_rtsp_parse_device(const gchar *uri, JpfMediaUri *media_uri)
 
 
 static __inline__ gchar *
-nmp_rtsp_parse_media_mrl(const gchar *uri, JpfMediaUri *media_uri)
+nmp_rtsp_parse_media_mrl(const gchar *uri, NmpMediaUri *media_uri)
 {
 	gchar *m, *p;
 
@@ -77,7 +77,7 @@ nmp_rtsp_parse_media_mrl(const gchar *uri, JpfMediaUri *media_uri)
 
 
 static __inline__ gint
-nmp_rtsp_parse_media_type(const gchar *uri, JpfMediaUri *media_uri,
+nmp_rtsp_parse_media_type(const gchar *uri, NmpMediaUri *media_uri,
 	void *tags)
 {
 	gint err = -E_RTSPURL;
@@ -105,7 +105,7 @@ nmp_rtsp_parse_media_type(const gchar *uri, JpfMediaUri *media_uri,
 
 
 static __inline__ gint
-nmp_rtsp_parse_channel(const gchar *uri, JpfMediaUri *media_uri)
+nmp_rtsp_parse_channel(const gchar *uri, NmpMediaUri *media_uri)
 {
 	gint err = -E_RTSPURL;
 	gchar *ch, *le;
@@ -142,7 +142,7 @@ nmp_rtsp_parse_channel(const gchar *uri, JpfMediaUri *media_uri)
 
 
 static __inline__ gint
-nmp_rtsp_parse_track(const gchar *uri, JpfMediaTrack *track)
+nmp_rtsp_parse_track(const gchar *uri, NmpMediaTrack *track)
 {
 	const gchar *s_start, *s_end;
 
@@ -170,8 +170,8 @@ nmp_rtsp_parse_track(const gchar *uri, JpfMediaTrack *track)
 
 
 static __inline__ gint
-nmp_rtsp_parse_uri(const gchar *uri, JpfMediaUri *media_uri,
-	JpfMediaTrack *track, void *tags)
+nmp_rtsp_parse_uri(const gchar *uri, NmpMediaUri *media_uri,
+	NmpMediaTrack *track, void *tags)
 {
 	g_assert(media_uri != NULL);
 
@@ -271,8 +271,8 @@ nmp_rtsp_message_dup_request(GstRTSPMessage *request)
 
 
 static __inline__ void
-nmp_rtsp_client_send_generic_response(JpfRtspClient *client,
-	GstRTSPStatusCode code, JpfRtspState *state)
+nmp_rtsp_client_send_generic_response(NmpRtspClient *client,
+	GstRTSPStatusCode code, NmpRtspState *state)
 {
 	gst_rtsp_message_init_response(state->response, code,
 		gst_rtsp_status_as_text(code), state->request);
@@ -417,15 +417,15 @@ nmp_rtsp_init_desc_response(GstRTSPMessage *response, GstRTSPUrl *url,
 static void 
 nmp_rtsp_do_pending_desc(gpointer __media, gpointer __client, gpointer __msg)
 {
-	JpfRtspMedia *media = (JpfRtspMedia*)__media;
-	JpfRtspClient *client = (JpfRtspClient*)__client;
+	NmpRtspMedia *media = (NmpRtspMedia*)__media;
+	NmpRtspClient *client = (NmpRtspClient*)__client;
 	GstRTSPMessage *msg = (GstRTSPMessage*)__msg;
 	GstRTSPMethod method;
 	GstRTSPVersion version;
 	const gchar *url_str = NULL;
 	GstRTSPUrl *url = NULL;
 	GstRTSPMessage response = { 0 };
-	JpfRtspState state = { NULL };
+	NmpRtspState state = { NULL };
 
 	guint8 *sdp_info = NULL;
 	guint sdp_size;
@@ -491,8 +491,8 @@ do_desc_pending_out:
 static void 
 nmp_rtsp_do_pending_setup(gpointer __media, gpointer __client, gpointer __msg)
 {
-	JpfRtspMedia *media = (JpfRtspMedia*)__media;
-	JpfRtspClient *client = (JpfRtspClient*)__client;
+	NmpRtspMedia *media = (NmpRtspMedia*)__media;
+	NmpRtspClient *client = (NmpRtspClient*)__client;
 	GstRTSPMessage *msg = (GstRTSPMessage*)__msg;
 	GstRTSPMethod method;
 	GstRTSPVersion version;
@@ -502,10 +502,10 @@ nmp_rtsp_do_pending_setup(gpointer __media, gpointer __client, gpointer __msg)
 	gchar *transport, *trans_string, *sid;
 	GstRTSPTransport *ct;
 	GstRTSPMessage response = { 0 };
-	JpfRtspState state = { NULL };
-	JpfRtspSession *session;
-	JpfMediaUri media_uri;
-	JpfMediaTrack track;
+	NmpRtspState state = { NULL };
+	NmpRtspSession *session;
+	NmpMediaUri media_uri;
+	NmpMediaTrack track;
 
 	state.request = msg;
 	state.response = &response;
@@ -645,22 +645,22 @@ do_setup_pending_out:
 
 
 static __inline__ gint
-nmp_rtsp_media_pending_request(JpfRtspMedia *media, JpfRtspClient *client,
-	GstRTSPMessage *request, JpfMediaState state)
+nmp_rtsp_media_pending_request(NmpRtspMedia *media, NmpRtspClient *client,
+	GstRTSPMessage *request, NmpMediaState state)
 {
-	JpfPQNFunc cfun = NULL;	/* callback function */
+	NmpPQNFunc cfun = NULL;	/* callback function */
 	GstRTSPMessage *msg;
 	gint ret;
 	gchar *r_msg;
 
 	switch (state)
 	{
-	case JPF_SESSION_DESCRIBE:
+	case NMP_SESSION_DESCRIBE:
 		cfun = nmp_rtsp_do_pending_desc;
 		r_msg = "DESCRIBE";
 		break;
 
-	case JPF_SESSION_SETUP:
+	case NMP_SESSION_SETUP:
 		cfun = nmp_rtsp_do_pending_setup;
 		r_msg = "SETUP";
 		break;
@@ -705,7 +705,7 @@ nmp_rtsp_media_pending_request(JpfRtspMedia *media, JpfRtspClient *client,
 
 
 gint
-nmp_rtsp_play_session(JpfRtspClient *client, gchar *session)
+nmp_rtsp_play_session(NmpRtspClient *client, gchar *session)
 {
 	g_assert(client != NULL && session != NULL);
 
@@ -714,7 +714,7 @@ nmp_rtsp_play_session(JpfRtspClient *client, gchar *session)
 
 
 static gint
-nmp_rtsp_teardown_session(JpfRtspClient *client, gchar *session)
+nmp_rtsp_teardown_session(NmpRtspClient *client, gchar *session)
 {
 	g_assert(client != NULL && session != NULL);
 
@@ -723,8 +723,8 @@ nmp_rtsp_teardown_session(JpfRtspClient *client, gchar *session)
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_options_request(JpfRtspClient *client, 
-	JpfRtspState *state)
+nmp_rtsp_handle_options_request(NmpRtspClient *client, 
+	NmpRtspState *state)
 {
 	GstRTSPMethod options;
 	gchar *str;
@@ -754,12 +754,12 @@ nmp_rtsp_handle_options_request(JpfRtspClient *client,
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_describe_request(JpfRtspClient *client, JpfRtspState *state)
+nmp_rtsp_handle_describe_request(NmpRtspClient *client, NmpRtspState *state)
 {
-	JpfMediaUri media_uri;
-	JpfMediaServer *server;
-	JpfMediaDevice *device;
-	JpfRtspMedia *media;
+	NmpMediaUri media_uri;
+	NmpMediaServer *server;
+	NmpMediaDevice *device;
+	NmpRtspMedia *media;
 	guint8 *sdp_info;
 	gint rc, have_a_try = 1;
 	guint sdp_size;
@@ -828,7 +828,7 @@ try_it_again:
 	else
 	{
 		rc = nmp_rtsp_media_pending_request(
-			media, client, state->request, JPF_SESSION_DESCRIBE);
+			media, client, state->request, NMP_SESSION_DESCRIBE);
 		if (rc)
 		{
 			if (rc == -E_NOPENDING && have_a_try)
@@ -866,18 +866,18 @@ try_it_again:
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_setup_request(JpfRtspClient *client, JpfRtspState *state)
+nmp_rtsp_handle_setup_request(NmpRtspClient *client, NmpRtspState *state)
 {
-	JpfMediaUri media_uri;
+	NmpMediaUri media_uri;
 	GstRTSPResult res;
 	gchar *transport, *trans_string, *sid;
 	GstRTSPTransport *ct;
-	JpfMediaDevice *device;
-	JpfRtspMedia *media;
-	JpfRtspSession *session;
+	NmpMediaDevice *device;
+	NmpRtspMedia *media;
+	NmpRtspSession *session;
 	gint rc;
 	GstRTSPStatusCode rtsp_result;
-	JpfMediaTrack track;
+	NmpMediaTrack track;
 
 	if (nmp_rtsp_parse_uri(state->url->abspath, &media_uri,
 		&track, client))
@@ -950,7 +950,7 @@ nmp_rtsp_handle_setup_request(JpfRtspClient *client, JpfRtspState *state)
 	rtsp_result = GST_RTSP_STS_OK;
 
 	rc = nmp_rtsp_media_pending_request(
-		media, client, state->request, JPF_SESSION_SETUP
+		media, client, state->request, NMP_SESSION_SETUP
 	);
 	if (!rc)
 	{
@@ -1051,7 +1051,7 @@ do_setup_finish:
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_play_request(JpfRtspClient *client,  JpfRtspState *state)
+nmp_rtsp_handle_play_request(NmpRtspClient *client,  NmpRtspState *state)
 {
 	gchar *session;
 	GstRTSPResult res;
@@ -1099,8 +1099,8 @@ nmp_rtsp_handle_play_request(JpfRtspClient *client,  JpfRtspState *state)
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_teardown_request(JpfRtspClient *client, 
-	JpfRtspState *state)
+nmp_rtsp_handle_teardown_request(NmpRtspClient *client, 
+	NmpRtspState *state)
 {
 	gchar *session;
 	GstRTSPResult res;
@@ -1141,8 +1141,8 @@ nmp_rtsp_handle_teardown_request(JpfRtspClient *client,
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_parameter_request(JpfRtspClient *client, 
-	JpfRtspState *state)
+nmp_rtsp_handle_parameter_request(NmpRtspClient *client, 
+	NmpRtspState *state)
 {
 	nmp_rtsp_client_send_generic_response(
 		client,
@@ -1155,13 +1155,13 @@ nmp_rtsp_handle_parameter_request(JpfRtspClient *client,
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_request(JpfRtspClient *client, GstRTSPMessage *request)
+nmp_rtsp_handle_request(NmpRtspClient *client, GstRTSPMessage *request)
 {
 	GstRTSPMethod method;
 	GstRTSPVersion version;
 	const gchar *url_str;
 	GstRTSPUrl *url;
-	JpfRtspState state = { NULL };
+	NmpRtspState state = { NULL };
 	GstRTSPMessage response = { 0 };
 	GstRTSPStatusCode rtsp_code = GST_RTSP_STS_OK;
 
@@ -1255,7 +1255,7 @@ nmp_rtsp_message_received(GstRtspWatch *watch,
 	GstRTSPMessage *message, gpointer user_data)	//user_data => client
 {
 	GstRTSPResult result = GST_RTSP_OK;
-	JpfRtspClient *client = (JpfRtspClient*)user_data;
+	NmpRtspClient *client = (NmpRtspClient*)user_data;
 
 	switch (message->type)
 	{
@@ -1290,8 +1290,8 @@ nmp_rtsp_message_sent(GstRtspWatch *watch, guint cseq,
 static GstRTSPResult
 nmp_rtsp_conn_closed(GstRtspWatch *watch, gpointer user_data)
 {
-	JpfRtspClient *client = (JpfRtspClient*)user_data;
-	JpfClientMng *client_mng = client->client_mng;
+	NmpRtspClient *client = (NmpRtspClient*)user_data;
+	NmpClientMng *client_mng = client->client_mng;
 
 	nmp_print(
 		"Client '%p' '%s:%d' reset connection.",
@@ -1312,8 +1312,8 @@ static GstRTSPResult
 nmp_rtsp_conn_error(GstRtspWatch *watch, GstRTSPResult result,
 	gpointer user_data)
 {
-	JpfRtspClient *client = (JpfRtspClient*)user_data;
-	JpfClientMng *client_mng = client->client_mng;
+	NmpRtspClient *client = (NmpRtspClient*)user_data;
+	NmpClientMng *client_mng = client->client_mng;
 	gchar *err_string = gst_rtsp_strresult(result);
 
 	nmp_print(

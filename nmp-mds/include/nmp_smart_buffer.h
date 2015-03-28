@@ -11,8 +11,8 @@
 
 #define SMART_BUFFER_SIZE		(16*1024)
 
-typedef struct _JpfSmartBuffer JpfSmartBuffer;
-struct _JpfSmartBuffer
+typedef struct _NmpSmartBuffer NmpSmartBuffer;
+struct _NmpSmartBuffer
 {
 	gchar	buffer[SMART_BUFFER_SIZE];	/* buffer for recving/sending packet */
 	gint	offset;		/* last recv/send mark */

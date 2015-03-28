@@ -18,8 +18,8 @@
 #define MAX_DEFRAG_TIMEOUT_S            10
 #define MAX_DEFRAG_TIMEOUT_M            (MAX_DEFRAG_TIMEOUT_S * 1000)
 
-typedef struct _HmPacketFrags HmPacketFrags;
-struct _HmPacketFrags
+typedef struct _NmpPacketFrags NmpPacketFrags;
+struct _NmpPacketFrags
 {
     gpointer            packet_identity;    /* packet seq num */
     guint               total;              /* total packets */
@@ -32,8 +32,8 @@ struct _HmPacketFrags
 };
 
 
-typedef struct _HmDefrags HmDefrags;
-struct _HmDefrags
+typedef struct _NmpDefrags NmpDefrags;
+struct _NmpDefrags
 {
     GList               *pl;                /* packet frags list */
     GStaticMutex        lock;               /* lock */
@@ -41,10 +41,10 @@ struct _HmDefrags
 
 
 static __inline__ void
-nmp_net_packet_release_frags(HmPacketFrags *frags);
+nmp_net_packet_release_frags(NmpPacketFrags *frags);
 
 
-static HmDefrags packet_fragments = 
+static NmpDefrags packet_fragments = 
 {
     NULL,
     G_STATIC_MUTEX_INIT
@@ -52,8 +52,8 @@ static HmDefrags packet_fragments =
 
 
 static __inline__ gboolean
-__nmp_net_packet_del_frags(HmDefrags *fragments, 
-    HmPacketFrags *frags)
+__nmp_net_packet_del_frags(NmpDefrags *fragments, 
+    NmpPacketFrags *frags)
 {
     GList *list;
 
@@ -70,8 +70,8 @@ __nmp_net_packet_del_frags(HmDefrags *fragments,
 
 
 static __inline__ gboolean
-nmp_net_packet_del_frags(HmDefrags *fragments, 
-    HmPacketFrags *frags)
+nmp_net_packet_del_frags(NmpDefrags *fragments, 
+    NmpPacketFrags *frags)
 {
     gboolean ret;
     G_ASSERT(fragments != NULL && frags != NULL);
@@ -87,7 +87,7 @@ nmp_net_packet_del_frags(HmDefrags *fragments,
 static gboolean
 nmp_net_packet_defrag_timer(gpointer user_data)
 {
-    HmPacketFrags *frags = (HmPacketFrags*)user_data;
+    NmpPacketFrags *frags = (NmpPacketFrags*)user_data;
 
     nmp_net_packet_del_frags(&packet_fragments, frags); 
     return FALSE;
@@ -95,7 +95,7 @@ nmp_net_packet_defrag_timer(gpointer user_data)
 
 
 static __inline__ gint
-nmp_net_packet_sanity_test(HmPacketFrags *frags)
+nmp_net_packet_sanity_test(NmpPacketFrags *frags)
 {
     NmpNetPackInfo *npi;
     GList *list;
@@ -173,12 +173,12 @@ nmp_net_packet_release_npi(NmpNetPackInfo *npi)
 }
 
 
-static __inline__ HmPacketFrags *
+static __inline__ NmpPacketFrags *
 nmp_net_packet_new_frags(gpointer identity, guint total_packet)
 {
-    HmPacketFrags *frags;
+    NmpPacketFrags *frags;
 
-    frags = g_new0(HmPacketFrags, 1);
+    frags = g_new0(NmpPacketFrags, 1);
     if (G_UNLIKELY(!frags))
         return NULL;
 
@@ -195,7 +195,7 @@ nmp_net_packet_new_frags(gpointer identity, guint total_packet)
 
 
 static __inline__ void
-nmp_net_packet_release_frags(HmPacketFrags *frags)
+nmp_net_packet_release_frags(NmpPacketFrags *frags)
 {
     GList *list;
     G_ASSERT(frags != NULL);
@@ -216,7 +216,7 @@ nmp_net_packet_release_frags(HmPacketFrags *frags)
 
 
 static __inline__ NmpNetPackInfo *
-nmp_net_packet_linearize(HmPacketFrags *frags)
+nmp_net_packet_linearize(NmpPacketFrags *frags)
 {
     gint pos = 0;
     GList *list;
@@ -269,7 +269,7 @@ nmp_net_packet_find_next_one(gconstpointer a, gconstpointer b)
 
 
 static __inline__ NmpNetPackInfo *
-nmp_net_packet_enqueue(HmPacketFrags *frags, NmpNetPackInfo *np)
+nmp_net_packet_enqueue(NmpPacketFrags *frags, NmpNetPackInfo *np)
 {
     NmpNetPackInfo *np_copy, *np_ret;
     GList *next;
@@ -324,7 +324,7 @@ nmp_net_packet_enqueue(HmPacketFrags *frags, NmpNetPackInfo *np)
 static gint
 nmp_net_packet_find_frags(gconstpointer a, gconstpointer b)
 {
-    HmPacketFrags *frags = (HmPacketFrags*)a;
+    NmpPacketFrags *frags = (NmpPacketFrags*)a;
 
     if (frags->packet_identity == b)
         return 0;
@@ -334,11 +334,11 @@ nmp_net_packet_find_frags(gconstpointer a, gconstpointer b)
 
 
 static __inline__ NmpNetPackInfo *
-__nmp_net_packet_cached(HmDefrags *fragments, NmpNetPackInfo *net_pack)
+__nmp_net_packet_cached(NmpDefrags *fragments, NmpNetPackInfo *net_pack)
 {
     NmpNetPackInfo *np;
     GList *list;
-    HmPacketFrags *frags;
+    NmpPacketFrags *frags;
     
     list = g_list_find_custom(
         fragments->pl,
@@ -348,7 +348,7 @@ __nmp_net_packet_cached(HmDefrags *fragments, NmpNetPackInfo *net_pack)
 
     if (list)
     {
-        frags = (HmPacketFrags*)list->data;
+        frags = (NmpPacketFrags*)list->data;
         np = nmp_net_packet_enqueue(frags, net_pack);
         if (np)
         {
@@ -419,7 +419,7 @@ __nmp_net_packet_cached(HmDefrags *fragments, NmpNetPackInfo *net_pack)
 
 
 static __inline__ NmpNetPackInfo *
-nmp_net_packet_cached(HmDefrags *fragments, NmpNetPackInfo *net_pack)
+nmp_net_packet_cached(NmpDefrags *fragments, NmpNetPackInfo *net_pack)
 {
     NmpNetPackInfo *pack;
 

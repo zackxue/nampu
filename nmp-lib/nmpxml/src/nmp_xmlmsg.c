@@ -18,7 +18,7 @@ extern char *parse_xml_cmd_by_mxml(const char *xml_buf,
 				char cmd_buf[], size_t size);
 
 
-static __inline__ void jpf_xml_msg_init(JpfXmlMsg *self)
+static __inline__ void jpf_xml_msg_init(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 
@@ -1124,15 +1124,15 @@ static __inline__ void jpf_priv_obj_destroy(void *priv, size_t size)
 	return j_xml_dealloc(priv, size);
 }
 
-static __inline__ JpfXmlMsg* 
+static __inline__ NmpXmlMsg* 
 __jpf_xml_msg_new(xmlid_t id, void *priv_obj, 
-		size_t priv_size, JpfXmlMsgDes destroy)
+		size_t priv_size, NmpXmlMsgDes destroy)
 {
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	J_ASSERT(priv_obj && priv_size && destroy);
 	
-	msg = j_xml_alloc(sizeof(JpfXmlMsg));
+	msg = j_xml_alloc(sizeof(NmpXmlMsg));
 	jpf_xml_msg_init(msg);
 	
 	msg->id = id;
@@ -1143,10 +1143,10 @@ __jpf_xml_msg_new(xmlid_t id, void *priv_obj,
 	return msg;
 }
 
-JpfXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
+NmpXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
 {
 	void *copy_obj = NULL;
-	JpfXmlMsgDes destroy = NULL;
+	NmpXmlMsgDes destroy = NULL;
 	
 	if (priv_obj && priv_size)
 	{
@@ -1158,30 +1158,30 @@ JpfXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
 	return __jpf_xml_msg_new(id, copy_obj, priv_size, destroy);
 }
 
-JpfXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, 
-		size_t priv_size, JpfXmlMsgDes destroy)
+NmpXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, 
+		size_t priv_size, NmpXmlMsgDes destroy)
 {
 	return __jpf_xml_msg_new(id, priv_obj, priv_size, destroy);
 }
 
-void jpf_xml_msg_destroy(JpfXmlMsg *self)
+void jpf_xml_msg_destroy(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 
 	if (self->destroy)
 		(*self->destroy)(XML_MSG_DATA(self), XML_MSG_DATA_SIZE(self));
 	
-	return j_xml_dealloc(self, sizeof(JpfXmlMsg));
+	return j_xml_dealloc(self, sizeof(NmpXmlMsg));
 }
 
-void jpf_xml_msg_destroy_2(JpfXmlMsg *self)
+void jpf_xml_msg_destroy_2(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 
-	return j_xml_dealloc(self, sizeof(JpfXmlMsg));
+	return j_xml_dealloc(self, sizeof(NmpXmlMsg));
 }
 
-int create_xml(JpfXmlMsg *msg, char buf[], 
+int create_xml(NmpXmlMsg *msg, char buf[], 
 			size_t size, unsigned int flags)
 {
 	XmlTable *table = NULL;
@@ -1252,7 +1252,7 @@ get_msg_cmd_type(XmlTable *table, const char *command)
 	return -1;
 }
 
-JpfXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags)
 {
 	xmlid_t id = -1;
 	XmlTable *table = NULL;
@@ -1271,7 +1271,7 @@ JpfXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags)
 		
 		if (COMMAND_ID_NONE<(int)id && MAX_COMMAND_ID_SIZE>(int)id)
 		{
-			return (JpfXmlMsg*)xml_table_parse(table, id, buf, size, err, flags);
+			return (NmpXmlMsg*)xml_table_parse(table, id, buf, size, err, flags);
 		}
         else
             *err = -E_COMMAND_INVALID;

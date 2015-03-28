@@ -17,28 +17,28 @@
 
 G_BEGIN_DECLS
 
-typedef struct _HmIO HmIO;
-typedef struct _HmIOFuncs HmIOFuncs;
+typedef struct _NmpIO NmpIO;
+typedef struct _NmpIOFuncs NmpIOFuncs;
 
-struct _HmIOFuncs
+struct _NmpIOFuncs
 {
-	HmWatch *(*create)(HmIO *w, NmpConnection *conn);
+	NmpWatch *(*create)(NmpIO *w, NmpConnection *conn);
 
-	gint (*recv)(HmIO *io, gchar *start, gsize size, gpointer from_lower);
-	void (*error)(HmIO *io, gint rw, gint err);
-	void (*close)(HmIO *io, gint async);
+	gint (*recv)(NmpIO *io, gchar *start, gsize size, gpointer from_lower);
+	void (*error)(NmpIO *io, gint rw, gint err);
+	void (*close)(NmpIO *io, gint async);
 
-	gint (*format)(HmIO *io, gpointer msg, gchar buf[], gsize size);
-	void (*finalize)(HmIO *io);
+	gint (*format)(NmpIO *io, gpointer msg, gchar buf[], gsize size);
+	void (*finalize)(NmpIO *io);
 };
 
 
-struct _HmIO			/* basic IO, packet layer */
+struct _NmpIO			/* basic IO, packet layer */
 {
-	HmWatch		watch;
+	NmpWatch		watch;
 
 	NmpPacketProto	*proto;
-	HmIOFuncs		*funcs;
+	NmpIOFuncs		*funcs;
 
 	gchar			*buffer;
 
@@ -48,11 +48,11 @@ struct _HmIO			/* basic IO, packet layer */
 };
 
 
-HmIO *nmp_io_new(NmpConnection *conn, NmpPacketProto *proto,
-	HmIOFuncs *funcs, gsize size);
+NmpIO *nmp_io_new(NmpConnection *conn, NmpPacketProto *proto,
+	NmpIOFuncs *funcs, gsize size);
 
-HmIO *nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
-	HmIOFuncs *funcs, gsize size);
+NmpIO *nmp_listen_io_new(NmpConnection *conn, NmpPacketProto *proto,
+	NmpIOFuncs *funcs, gsize size);
 
 G_END_DECLS
 

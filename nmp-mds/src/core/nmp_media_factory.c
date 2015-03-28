@@ -1,17 +1,17 @@
 #include "nmp_debug.h"
 #include "nmp_media_factory.h"
 
-G_DEFINE_TYPE (JpfRtspMediaFactory, nmp_rtsp_media_factory,
+G_DEFINE_TYPE (NmpRtspMediaFactory, nmp_rtsp_media_factory,
     G_TYPE_OBJECT);
 
-static JpfRtspMedia* 
-nmp_rtsp_default_create_media(JpfRtspMediaFactory *factory, 
-	const JpfMediaUri *media_uri);
+static NmpRtspMedia* 
+nmp_rtsp_default_create_media(NmpRtspMediaFactory *factory, 
+	const NmpMediaUri *media_uri);
 
-JpfRtspMediaFactory *jxj_device_factory = NULL;
+NmpRtspMediaFactory *jxj_device_factory = NULL;
 
 static void
-nmp_rtsp_media_factory_init(JpfRtspMediaFactory *factory)
+nmp_rtsp_media_factory_init(NmpRtspMediaFactory *factory)
 {
 }
 
@@ -19,13 +19,13 @@ nmp_rtsp_media_factory_init(JpfRtspMediaFactory *factory)
 static void
 nmp_rtsp_media_factory_finalize(GObject *obj)
 {
-/*	JpfRtspMediaFactory *factory = JPF_RTSP_MEDIA_FACTORY(obj); */
+/*	NmpRtspMediaFactory *factory = NMP_RTSP_MEDIA_FACTORY(obj); */
 	G_OBJECT_CLASS(nmp_rtsp_media_factory_parent_class)->finalize(obj);
 }
 
 
 static void
-nmp_rtsp_media_factory_class_init(JpfRtspMediaFactoryClass *klass)
+nmp_rtsp_media_factory_class_init(NmpRtspMediaFactoryClass *klass)
 {
 	GObjectClass *gobject_class;
 
@@ -34,12 +34,12 @@ nmp_rtsp_media_factory_class_init(JpfRtspMediaFactoryClass *klass)
 }
 
 
-JpfRtspMediaFactory *
+NmpRtspMediaFactory *
 nmp_rtsp_media_factory_new( void )
 {
-	JpfRtspMediaFactory *result;
+	NmpRtspMediaFactory *result;
 
-	result = g_object_new(JPF_TYPE_RTSP_MEDIA_FACTORY, NULL);
+	result = g_object_new(NMP_TYPE_RTSP_MEDIA_FACTORY, NULL);
 	return result;	
 }
 
@@ -52,11 +52,11 @@ nmp_rtsp_media_factory_jxj_init( void )
 }
 
 
-static JpfRtspMedia* 
-nmp_rtsp_default_create_media(JpfRtspMediaFactory *factory, 
-	const JpfMediaUri *media_uri)
+static NmpRtspMedia* 
+nmp_rtsp_default_create_media(NmpRtspMediaFactory *factory, 
+	const NmpMediaUri *media_uri)
 {
-	JpfRtspMedia *media;
+	NmpRtspMedia *media;
 
 	media = nmp_rtsp_media_new();
 	media->media_uri = nmp_rtsp_media_uri_dup(media_uri);
@@ -74,14 +74,14 @@ nmp_rtsp_default_create_media(JpfRtspMediaFactory *factory,
 }
 
 
-JpfRtspMedia *
-nmp_rtsp_media_factory_create_media(JpfRtspMediaFactory *factory,
-	const JpfMediaUri *media_uri)
+NmpRtspMedia *
+nmp_rtsp_media_factory_create_media(NmpRtspMediaFactory *factory,
+	const NmpMediaUri *media_uri)
 {
-	g_return_val_if_fail(JPF_IS_RTSP_MEDIA_FACTORY(factory), NULL);
+	g_return_val_if_fail(NMP_IS_RTSP_MEDIA_FACTORY(factory), NULL);
 	g_return_val_if_fail(media_uri != NULL, NULL);
 
-	return JPF_RTSP_MEDIA_FACTORY_GET_CLASS(factory)->create_media(
+	return NMP_RTSP_MEDIA_FACTORY_GET_CLASS(factory)->create_media(
 		factory, media_uri);
 }
 

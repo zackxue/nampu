@@ -26,10 +26,10 @@ static void
 nmp_rtsp_device_1s_elapsed(gpointer key, gpointer value,
 	gpointer user_data)
 {
-	JpfMediaDevice *device;
+	NmpMediaDevice *device;
 	G_ASSERT(value != NULL);
 
-	device = (JpfMediaDevice*)value;
+	device = (NmpMediaDevice*)value;
 	--device->ttd;
 }
 
@@ -38,10 +38,10 @@ static gboolean
 nmp_rtsp_device_timeout(gpointer key, gpointer value,
 	gpointer user_data)
 {
-	JpfMediaDevice *device;
+	NmpMediaDevice *device;
 	G_ASSERT(value != NULL);
 
-	device = (JpfMediaDevice*)value;
+	device = (NmpMediaDevice*)value;
 	if (device->ttd >= 0)
 		return FALSE;
 
@@ -50,9 +50,9 @@ nmp_rtsp_device_timeout(gpointer key, gpointer value,
 
 
 static __inline__ void
-__nmp_rtsp_device_pool_on_timer(JpfDevicePool *dev_pool)
+__nmp_rtsp_device_pool_on_timer(NmpDevicePool *dev_pool)
 {
-	JpfMediaDevice *device;
+	NmpMediaDevice *device;
 
 	g_hash_table_foreach(
 		dev_pool->table_devices,
@@ -98,7 +98,7 @@ __nmp_rtsp_device_pool_on_timer(JpfDevicePool *dev_pool)
 
 
 static __inline__ void
-nmp_rtsp_device_pool_on_timer(JpfDevicePool *dev_pool)
+nmp_rtsp_device_pool_on_timer(NmpDevicePool *dev_pool)
 {
 	g_mutex_lock(dev_pool->table_lock);
 	__nmp_rtsp_device_pool_on_timer(dev_pool);
@@ -109,22 +109,22 @@ nmp_rtsp_device_pool_on_timer(JpfDevicePool *dev_pool)
 static gboolean
 nmp_rtsp_device_pool_timer(gpointer user_data)
 {
-	JpfDevicePool *dev_pool;
+	NmpDevicePool *dev_pool;
 	G_ASSERT(user_data != NULL);
 
-	dev_pool = (JpfDevicePool*)user_data;
+	dev_pool = (NmpDevicePool*)user_data;
 	nmp_rtsp_device_pool_on_timer(dev_pool);
 
 	return TRUE;
 }
 
 
-static __inline__ JpfDevicePool *
+static __inline__ NmpDevicePool *
 nmp_rtsp_device_pool_new( void )
 {
-	JpfDevicePool *dev_pool;
+	NmpDevicePool *dev_pool;
 
-	dev_pool = g_new0(JpfDevicePool, 1);
+	dev_pool = g_new0(NmpDevicePool, 1);
 	dev_pool->device_count = 0;
 	dev_pool->table_lock = g_mutex_new();
 	dev_pool->table_devices = g_hash_table_new_full(
@@ -145,10 +145,10 @@ nmp_rtsp_device_pool_new( void )
 
 
 static __inline__ gint
-__nmp_rtsp_device_pool_add_dev(JpfDevicePool *dev_pool, 
-	JpfMediaDevice *device, gchar old_ip[])
+__nmp_rtsp_device_pool_add_dev(NmpDevicePool *dev_pool, 
+	NmpMediaDevice *device, gchar old_ip[])
 {
-	JpfMediaDevice *old_dev;
+	NmpMediaDevice *old_dev;
 
 	old_dev = g_hash_table_lookup(
 		dev_pool->table_devices, device->id
@@ -179,8 +179,8 @@ __nmp_rtsp_device_pool_add_dev(JpfDevicePool *dev_pool,
 
 
 static __inline__ gint
-nmp_rtsp_device_pool_add_dev(JpfDevicePool *dev_pool,
-	JpfMediaDevice *device, gchar old_ip[])
+nmp_rtsp_device_pool_add_dev(NmpDevicePool *dev_pool,
+	NmpMediaDevice *device, gchar old_ip[])
 {
 	gint err;
 	g_assert(dev_pool != NULL && device != NULL);
@@ -194,8 +194,8 @@ nmp_rtsp_device_pool_add_dev(JpfDevicePool *dev_pool,
 
 
 static __inline__ void
-nmp_rtsp_device_pool_remove_dev(JpfDevicePool *dev_pool, 
-	JpfMediaDevice *device)
+nmp_rtsp_device_pool_remove_dev(NmpDevicePool *dev_pool, 
+	NmpMediaDevice *device)
 {
 	g_mutex_lock(dev_pool->table_lock);
 
@@ -207,11 +207,11 @@ nmp_rtsp_device_pool_remove_dev(JpfDevicePool *dev_pool,
 }
 
 
-static __inline__ JpfMediaDevice *
-__nmp_rtsp_device_pool_find_and_get_dev(JpfDevicePool *dev_pool,
+static __inline__ NmpMediaDevice *
+__nmp_rtsp_device_pool_find_and_get_dev(NmpDevicePool *dev_pool,
 	const gchar *id)
 {
-	JpfMediaDevice *dev;
+	NmpMediaDevice *dev;
 
 	dev = g_hash_table_lookup(dev_pool->table_devices, id);
 	if (dev)
@@ -223,11 +223,11 @@ __nmp_rtsp_device_pool_find_and_get_dev(JpfDevicePool *dev_pool,
 }
 
 
-static __inline__ JpfMediaDevice *
-nmp_rtsp_device_pool_find_and_get_dev(JpfDevicePool *dev_pool, 
+static __inline__ NmpMediaDevice *
+nmp_rtsp_device_pool_find_and_get_dev(NmpDevicePool *dev_pool, 
 	const gchar *id)
 {
-	JpfMediaDevice *dev;
+	NmpMediaDevice *dev;
 	g_assert(dev_pool != NULL);
 	
 	g_mutex_lock(dev_pool->table_lock);
@@ -248,10 +248,10 @@ nmp_rtsp_device_pool_find_and_get_dev(JpfDevicePool *dev_pool,
 static gint
 nmp_accept_dev_timeout(gconstpointer a, gconstpointer null)
 {
-	JpfMediaDevice *dev;
+	NmpMediaDevice *dev;
 	G_ASSERT(a != NULL);
 
-	dev = (JpfMediaDevice*)a;
+	dev = (NmpMediaDevice*)a;
 	return dev->ttd >= 0 ? 1 : 0;
 }
 
@@ -259,18 +259,18 @@ nmp_accept_dev_timeout(gconstpointer a, gconstpointer null)
 static void
 nmp_accept_dev_1s_elapsed(gpointer data, gpointer null)
 {
-	JpfMediaDevice *dev;
+	NmpMediaDevice *dev;
 	G_ASSERT(data != NULL);
 
-	dev = (JpfMediaDevice*)data;
+	dev = (NmpMediaDevice*)data;
 	--dev->ttd;
 }
 
 
 static __inline__ void
-__nmp_accept_dev_mng_timer(JpfAcceptDevMng *dev_mng)
+__nmp_accept_dev_mng_timer(NmpAcceptDevMng *dev_mng)
 {
-	JpfMediaDevice *dev;
+	NmpMediaDevice *dev;
 	GList *list;
 
 	g_list_foreach(
@@ -290,7 +290,7 @@ __nmp_accept_dev_mng_timer(JpfAcceptDevMng *dev_mng)
 		if (!list)
 			break;
 
-		dev = (JpfMediaDevice*)list->data;
+		dev = (NmpMediaDevice*)list->data;
 
 		dev_mng->devices = g_list_delete_link(
 			dev_mng->devices,
@@ -314,8 +314,8 @@ __nmp_accept_dev_mng_timer(JpfAcceptDevMng *dev_mng)
 static gboolean
 nmp_accept_dev_mng_timer(gpointer user_data)
 {
-	JpfAcceptDevMng *dev_mng;
-	dev_mng = (JpfAcceptDevMng*)user_data;
+	NmpAcceptDevMng *dev_mng;
+	dev_mng = (NmpAcceptDevMng*)user_data;
 
 	g_mutex_lock(dev_mng->lock);
 	__nmp_accept_dev_mng_timer(dev_mng);
@@ -325,12 +325,12 @@ nmp_accept_dev_mng_timer(gpointer user_data)
 }
 
 
-static __inline__ JpfAcceptDevMng *
+static __inline__ NmpAcceptDevMng *
 nmp_accept_dev_mng_new( void )
 {
-	JpfAcceptDevMng *dev_mng;
+	NmpAcceptDevMng *dev_mng;
 
-	dev_mng = g_new0(JpfAcceptDevMng, 1);
+	dev_mng = g_new0(NmpAcceptDevMng, 1);
 	dev_mng->lock = g_mutex_new();
 
 	dev_mng->timer = nmp_set_timer(
@@ -344,8 +344,8 @@ nmp_accept_dev_mng_new( void )
 
 
 static __inline__ void
-__nmp_accept_dev_mng_add(JpfAcceptDevMng *dev_mng,
-	JpfMediaDevice *device)
+__nmp_accept_dev_mng_add(NmpAcceptDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	BUG_ON(g_list_find(dev_mng->devices, device));
 
@@ -358,8 +358,8 @@ __nmp_accept_dev_mng_add(JpfAcceptDevMng *dev_mng,
 
 
 static __inline__ void
-nmp_accept_dev_mng_add(JpfAcceptDevMng *dev_mng,
-	JpfMediaDevice *device)
+nmp_accept_dev_mng_add(NmpAcceptDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	g_mutex_lock(dev_mng->lock);
 	__nmp_accept_dev_mng_add(dev_mng, device);
@@ -368,8 +368,8 @@ nmp_accept_dev_mng_add(JpfAcceptDevMng *dev_mng,
 
 
 static __inline__ gboolean
-__nmp_accept_dev_mng_remove(JpfAcceptDevMng *dev_mng,
-	JpfMediaDevice *device)
+__nmp_accept_dev_mng_remove(NmpAcceptDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	GList *list;
 
@@ -388,8 +388,8 @@ __nmp_accept_dev_mng_remove(JpfAcceptDevMng *dev_mng,
 
 
 static __inline__ gboolean
-nmp_accept_dev_mng_remove(JpfAcceptDevMng *dev_mng,
-	JpfMediaDevice *device)
+nmp_accept_dev_mng_remove(NmpAcceptDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	gboolean in_list;
 
@@ -404,8 +404,8 @@ nmp_accept_dev_mng_remove(JpfAcceptDevMng *dev_mng,
 
 
 static __inline__ gboolean
-nmp_accept_dev_mng_accepted(JpfAcceptDevMng *dev_mng,
-	JpfMediaDevice *device)
+nmp_accept_dev_mng_accepted(NmpAcceptDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	return nmp_accept_dev_mng_remove(
 		dev_mng, device
@@ -413,12 +413,12 @@ nmp_accept_dev_mng_accepted(JpfAcceptDevMng *dev_mng,
 }
 
 
-JpfDevMng *
+NmpDevMng *
 nmp_rtsp_device_mng_new(gint service)
 {
-	JpfDevMng *dev_mng;
+	NmpDevMng *dev_mng;
 
-	dev_mng = g_new0(JpfDevMng, 1);
+	dev_mng = g_new0(NmpDevMng, 1);
 	dev_mng->ref_count = 1;
 	dev_mng->dev_pool = nmp_rtsp_device_pool_new();
 	dev_mng->address = g_strdup(DEFAULT_LISTEN_ADDRESS);
@@ -430,7 +430,7 @@ nmp_rtsp_device_mng_new(gint service)
 
 
 void
-nmp_rtsp_device_mng_unref(JpfDevMng *dev_mng)
+nmp_rtsp_device_mng_unref(NmpDevMng *dev_mng)
 {
 	nmp_error(
 		"Global object 'dev_mng' is unrefed by mistake!"
@@ -440,14 +440,14 @@ nmp_rtsp_device_mng_unref(JpfDevMng *dev_mng)
 
 
 void
-nmp_rtsp_device_mng_ref(JpfDevMng *dev_mng)
+nmp_rtsp_device_mng_ref(NmpDevMng *dev_mng)
 {//@{Nothing to do}
 }
 
 
 gint
-nmp_rtsp_device_mng_add_dev(JpfDevMng *dev_mng, 
-	JpfMediaDevice *device, gchar old_ip[])
+nmp_rtsp_device_mng_add_dev(NmpDevMng *dev_mng, 
+	NmpMediaDevice *device, gchar old_ip[])
 {
 	g_assert(dev_mng != NULL && device != NULL);
 
@@ -458,8 +458,8 @@ nmp_rtsp_device_mng_add_dev(JpfDevMng *dev_mng,
 
 
 static __inline__ void
-nmp_rtsp_device_mng_remove_dev(JpfDevMng *dev_mng, 
-	JpfMediaDevice *device)
+nmp_rtsp_device_mng_remove_dev(NmpDevMng *dev_mng, 
+	NmpMediaDevice *device)
 {
 	g_assert(dev_mng != NULL && device != NULL);
 
@@ -474,8 +474,8 @@ nmp_rtsp_device_mng_remove_dev(JpfDevMng *dev_mng,
 
 
 static void
-nmp_rtsp_device_mng_accept_link(JpfDevMng *dev_mng, 
-	JpfMediaDevice *device)
+nmp_rtsp_device_mng_accept_link(NmpDevMng *dev_mng, 
+	NmpMediaDevice *device)
 {
 	nmp_accept_dev_mng_add(
 		dev_mng->dev_unrecognized,
@@ -485,8 +485,8 @@ nmp_rtsp_device_mng_accept_link(JpfDevMng *dev_mng,
 
 
 gboolean
-nmp_rtsp_device_mng_accepted(JpfDevMng *dev_mng,
-	JpfMediaDevice *device)
+nmp_rtsp_device_mng_accepted(NmpDevMng *dev_mng,
+	NmpMediaDevice *device)
 {
 	G_ASSERT(dev_mng != NULL && device != NULL);
 
@@ -500,8 +500,8 @@ nmp_rtsp_device_mng_accepted(JpfDevMng *dev_mng,
 gboolean
 nmp_rtsp_device_mng_io_func(GEvent *e_listen, gint revents, void *user_data)
 {
-	JpfDevMng *dev_mng = (JpfDevMng*)user_data;
-	JpfMediaDevice *device;
+	NmpDevMng *dev_mng = (NmpDevMng*)user_data;
+	NmpMediaDevice *device;
 	gint err;
 
 	if (revents & EV_READ)
@@ -548,7 +548,7 @@ nmp_rtsp_device_mng_io_func(GEvent *e_listen, gint revents, void *user_data)
 
 
 static GEvent *
-nmp_rtsp_dev_mng_create_listen_ev(JpfDevMng *dev_mng)
+nmp_rtsp_dev_mng_create_listen_ev(NmpDevMng *dev_mng)
 {
 	GEvent *e_listen;
 	gint ret, tag_onoff, sockfd = -1;
@@ -627,15 +627,15 @@ close_error:
 static void
 nmp_rtsp_device_listen_watch_fin(GEvent *ev)
 {
-	JpfDevMng *dev_mng;
+	NmpDevMng *dev_mng;
 
-	dev_mng = (JpfDevMng*)g_event_u(ev);
+	dev_mng = (NmpDevMng*)g_event_u(ev);
 	nmp_rtsp_device_mng_unref(dev_mng);
 }
 
 
 static GEvent *
-nmp_rtsp_device_mng_create_watch(JpfDevMng *dev_mng)
+nmp_rtsp_device_mng_create_watch(NmpDevMng *dev_mng)
 {
 	GEvent *e_listen;
 	g_assert(dev_mng != NULL);
@@ -658,17 +658,17 @@ no_channel:
 
 
 void
-nmp_rtsp_device_mng_remove(JpfMediaDevice *device)
+nmp_rtsp_device_mng_remove(NmpMediaDevice *device)
 {
 	g_assert(device != NULL);
-	JpfDevMng *mng = device->private_data;
+	NmpDevMng *mng = device->private_data;
 
 	nmp_rtsp_device_mng_remove_dev(mng, device);
 }
 
 
 guint
-nmp_rtsp_device_mng_attach(JpfDevMng *dev_mng)
+nmp_rtsp_device_mng_attach(NmpDevMng *dev_mng)
 {
 	GEvent *e_listen;
 	g_assert(dev_mng != NULL);
@@ -684,8 +684,8 @@ nmp_rtsp_device_mng_attach(JpfDevMng *dev_mng)
 }
 
 
-JpfMediaDevice *
-nmp_rtsp_device_mng_find_and_get_dev(JpfDevMng *dev_mng,
+NmpMediaDevice *
+nmp_rtsp_device_mng_find_and_get_dev(NmpDevMng *dev_mng,
 	const gchar *id)
 {
 	g_assert(dev_mng != NULL && id != NULL);

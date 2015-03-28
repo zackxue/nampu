@@ -4,8 +4,8 @@
 #define DEFAULT_LOOP_COUNT		2
 
 
-typedef struct _JpfLoop JpfLoop;
-struct _JpfLoop
+typedef struct _NmpLoop NmpLoop;
+struct _NmpLoop
 {
 	guint			weight;
 
@@ -14,20 +14,20 @@ struct _JpfLoop
 	GThread			*loop_thread;
 };
 
-typedef struct _JpfSrcWeight JpfSrcWeight;
-struct _JpfSrcWeight
+typedef struct _NmpSrcWeight NmpSrcWeight;
+struct _NmpSrcWeight
 {
 	guint		w;		/* ШЈжи */
 
 	GSource		*src;
-	JpfLoop		*loop;
+	NmpLoop		*loop;
 };
 
 
-typedef struct _JpfLoopScher JpfLoopScher;
-struct _JpfLoopScher
+typedef struct _NmpLoopScher NmpLoopScher;
+struct _NmpLoopScher
 {
-	JpfLoop			*loops;
+	NmpLoop			*loops;
 	GMutex			*lock;
 
 	guint			count;
@@ -36,10 +36,10 @@ struct _JpfLoopScher
 };
 
 
-static JpfLoopScher *scheduler;
+static NmpLoopScher *scheduler;
 
 static gpointer
-nmp_loop_thread_fun(JpfLoop *loop)
+nmp_loop_thread_fun(NmpLoop *loop)
 {
 	g_main_loop_run(loop->loop);
 	return NULL;
@@ -47,7 +47,7 @@ nmp_loop_thread_fun(JpfLoop *loop)
 
 
 static __inline__ void
-nmp_loop_init(JpfLoop *loop)
+nmp_loop_init(NmpLoop *loop)
 {
 	GError *error = NULL;
 
@@ -70,7 +70,7 @@ nmp_loop_init(JpfLoop *loop)
 
 
 static __inline__ void
-nmp_loop_add_source(JpfLoop *loop, GSource *src, guint weight)
+nmp_loop_add_source(NmpLoop *loop, GSource *src, guint weight)
 {
 	g_source_attach(src, loop->loop_context);
 	loop->weight += weight;
@@ -78,17 +78,17 @@ nmp_loop_add_source(JpfLoop *loop, GSource *src, guint weight)
 
 
 static __inline__ void
-nmp_loop_del_source(JpfLoop *loop, GSource *src, guint weight)
+nmp_loop_del_source(NmpLoop *loop, GSource *src, guint weight)
 {
 	g_source_destroy(src);
 	loop->weight -= weight;
 }
 
 
-JpfLoopScher*
+NmpLoopScher*
 nmp_loop_scheduler_new(gint loops)
 {
-	JpfLoopScher *sched;
+	NmpLoopScher *sched;
 	gsize size;
 
 	if (loops > MAX_LOOP_COUNT)
@@ -97,9 +97,9 @@ nmp_loop_scheduler_new(gint loops)
 	if (loops <= 0)
 		loops = 1;	/* At least one loop */
 
-	size = loops * sizeof(JpfLoop);
-	sched = g_new0(JpfLoopScher, 1);
-	sched->loops = (JpfLoop*)g_malloc0(size);
+	size = loops * sizeof(NmpLoop);
+	sched = g_new0(NmpLoopScher, 1);
+	sched->loops = (NmpLoop*)g_malloc0(size);
 	sched->lock = g_mutex_new();
 	sched->count = loops;
 	sched->total_weight = 0;
@@ -114,8 +114,8 @@ nmp_loop_scheduler_new(gint loops)
 }
 
 
-static __inline__ JpfLoop *
-nmp_find_best_loop(JpfLoopScher *sched)
+static __inline__ NmpLoop *
+nmp_find_best_loop(NmpLoopScher *sched)
 {
 	guint w, best_w = sched->total_weight;
 	gint best_i = 0, idx = 0;
@@ -135,12 +135,12 @@ printf("==========================================> best loop: %d\n", best_i);
 
 
 static __inline__ void
-nmp_loop_scheduler_add_weight(JpfLoopScher *sched, JpfLoop *loop,
+nmp_loop_scheduler_add_weight(NmpLoopScher *sched, NmpLoop *loop,
 	GSource *src, guint weight)
 {
-	JpfSrcWeight *sw;
+	NmpSrcWeight *sw;
 
-	sw = g_new0(JpfSrcWeight, 1);
+	sw = g_new0(NmpSrcWeight, 1);
 	sw->w = weight;
 	sw->src = src;
 	sw->loop = loop;
@@ -153,7 +153,7 @@ nmp_loop_scheduler_add_weight(JpfLoopScher *sched, JpfLoop *loop,
 static gint
 nmp_loop_find_sw(gconstpointer a, gconstpointer src)
 {
-	JpfSrcWeight *sw = (JpfSrcWeight*)a;
+	NmpSrcWeight *sw = (NmpSrcWeight*)a;
 
 	if (sw->src == (GSource*)src)
 		return 0;
@@ -162,15 +162,15 @@ nmp_loop_find_sw(gconstpointer a, gconstpointer src)
 
                                                  
 static __inline__ void
-nmp_loop_scheduler_del_weight(JpfLoopScher *sched, GSource *src)
+nmp_loop_scheduler_del_weight(NmpLoopScher *sched, GSource *src)
 {
-	JpfSrcWeight *sw;
+	NmpSrcWeight *sw;
 	GList *list;
 
 	list = g_list_find_custom(sched->w_list, src, nmp_loop_find_sw);
 	if (list)
 	{
-		sw = (JpfSrcWeight*)list->data;
+		sw = (NmpSrcWeight*)list->data;
 		sched->total_weight -= sw->w;
 		sched->w_list = g_list_delete_link(sched->w_list, list);
 		nmp_loop_del_source(sw->loop, src, sw->w);
@@ -185,17 +185,17 @@ nmp_loop_scheduler_del_weight(JpfLoopScher *sched, GSource *src)
 
 
 static __inline__ void
-__nmp_loop_schedule_source(JpfLoopScher *sched, GSource *src,
+__nmp_loop_schedule_source(NmpLoopScher *sched, GSource *src,
 	guint weight)
 {
-	JpfLoop *loop = nmp_find_best_loop(sched);
+	NmpLoop *loop = nmp_find_best_loop(sched);
 	nmp_loop_add_source(loop, src, weight);
 	nmp_loop_scheduler_add_weight(sched, loop, src, weight);
 }
 
 
 static __inline__ void
-nmp_loop_schedule_source(JpfLoopScher *sched, GSource *src,
+nmp_loop_schedule_source(NmpLoopScher *sched, GSource *src,
 	guint weight)
 {
 	G_ASSERT(sched != NULL);
@@ -207,7 +207,7 @@ nmp_loop_schedule_source(JpfLoopScher *sched, GSource *src,
 
 
 static __inline__ void
-nmp_loop_remove_source(JpfLoopScher *sched, GSource *src)
+nmp_loop_remove_source(NmpLoopScher *sched, GSource *src)
 {
 	G_ASSERT(sched != NULL);
 

@@ -10,18 +10,18 @@ static gint
 nmp_proto_private_check(gchar *start, gchar *end)
 {
 	gint packet_size;
-	JpfProtoHead *head;
+	NmpProtoHead *head;
 	G_ASSERT(start != NULL && end != NULL);
 
-	if (G_UNLIKELY(end - start <= sizeof(JpfProtoHead)))
+	if (G_UNLIKELY(end - start <= sizeof(NmpProtoHead)))
 		return 0;
 
-	head = (JpfProtoHead*)start;
+	head = (NmpProtoHead*)start;
 
 	if (!VALID_PROTO_HEAD(head))
 		return -E_PACKET;
 
-	packet_size = GET_PROTO_HEAD_L(head) + sizeof(JpfProtoHead);
+	packet_size = GET_PROTO_HEAD_L(head) + sizeof(NmpProtoHead);
 
 	if (end - start >= packet_size)
 		return packet_size;
@@ -33,13 +33,13 @@ nmp_proto_private_check(gchar *start, gchar *end)
 static gint
 nmp_proto_private_unpack(gchar *start, gchar *end, NmpNetPackInfo *info)
 {
-	JpfProtoHead *head;
+	NmpProtoHead *head;
 	G_ASSERT(start != NULL && end != NULL && info != NULL);
 
-	head = (JpfProtoHead*)start;
+	head = (NmpProtoHead*)start;
 	info->total_packets = GET_PROTO_PACKETS(head);
 	info->packet_no = GET_PROTO_PACKNO(head);
-	info->start = start + sizeof(JpfProtoHead);
+	info->start = start + sizeof(NmpProtoHead);
 	info->size = GET_PROTO_HEAD_L(head);
 	info->private_from_low_layer = (void*)GET_PROTO_HEAD_S(head);
 
@@ -51,16 +51,16 @@ static gint
 nmp_proto_private_pack(gpointer pack_data, gsize payload_len,
     gchar buff[], gsize buff_size)
 {
-	JpfMdsMsg *sysmsg;
-	JpfProtoHead *head;
+	NmpMdsMsg *sysmsg;
+	NmpProtoHead *head;
 	guint seq;
 	G_ASSERT(pack_data != NULL && buff != NULL);
 
-	if (G_UNLIKELY(buff_size < sizeof(JpfProtoHead)))
+	if (G_UNLIKELY(buff_size < sizeof(NmpProtoHead)))
 		return -E_BUFFSIZE;
 
-	head = (JpfProtoHead*)buff;
-	sysmsg = (JpfMdsMsg*)pack_data;	
+	head = (NmpProtoHead*)buff;
+	sysmsg = (NmpMdsMsg*)pack_data;	
 	seq = MSG_SEQ(sysmsg);
 
 	SET_PROTO_HEAD_M(head);
@@ -69,14 +69,14 @@ nmp_proto_private_pack(gpointer pack_data, gsize payload_len,
     SET_PROTO_HEAD_P(head, 1);
     SET_PROTO_HEAD_N(head, 1);
 
-	return sizeof(JpfProtoHead);
+	return sizeof(NmpProtoHead);
 }
 
 
 static gpointer
 nmp_proto_xml_get_payload(gchar *start, gsize size, gpointer from_lower)
 {
-	JpfMdsMsg *packet;
+	NmpMdsMsg *packet;
 
 	packet = nmp_get_sysmsg_from_xml(start, size, (guint)from_lower);
 	if (G_UNLIKELY(!packet))
@@ -92,19 +92,19 @@ nmp_proto_xml_put_payload(gpointer pack_data,  gchar buf[], gsize size)
 	gint buff_size = (gint)size;
 	G_ASSERT(pack_data != NULL && buf != NULL);
 
-	return nmp_proto_create_xml_str(buf, &buff_size, (JpfMdsMsg*)pack_data);
+	return nmp_proto_create_xml_str(buf, &buff_size, (NmpMdsMsg*)pack_data);
 }
 
 
 static void
 nmp_proto_xml_destroy_msg(gpointer msg, gint err)
 {
-	nmp_free_msg((JpfMdsMsg*)msg);
+	nmp_free_msg((NmpMdsMsg*)msg);
 }
 
 
 
-NmpPacketProto jxj_packet_proto =
+NmpPacketProto nmp_packet_proto =
 {
 	.check		= nmp_proto_private_check,
 	.unpack		= nmp_proto_private_unpack,
@@ -112,7 +112,7 @@ NmpPacketProto jxj_packet_proto =
 };
 
 
-NmpPayloadProto jxj_xml_proto =
+NmpPayloadProto nmp_xml_proto =
 {
 	.get_payload	= nmp_proto_xml_get_payload,
 	.put_payload	= nmp_proto_xml_put_payload,

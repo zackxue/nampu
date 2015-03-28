@@ -6,8 +6,8 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfDevicePool JpfDevicePool;
-struct _JpfDevicePool {	/* 设备池/哈希表 */
+typedef struct _NmpDevicePool NmpDevicePool;
+struct _NmpDevicePool {	/* 设备池/哈希表 */
 	guint			device_count;	/* 已连接上的设备数 */
 
 	GMutex			*table_lock;
@@ -17,8 +17,8 @@ struct _JpfDevicePool {	/* 设备池/哈希表 */
 };
 
 
-typedef struct _JpfAcceptDevMng JpfAcceptDevMng;
-struct _JpfAcceptDevMng
+typedef struct _NmpAcceptDevMng NmpAcceptDevMng;
+struct _NmpAcceptDevMng
 {
 	GList 			*devices;
 	GMutex			*lock;
@@ -27,29 +27,29 @@ struct _JpfAcceptDevMng
 };
 
 
-typedef struct _JpfDevMng JpfDevMng;
-struct _JpfDevMng {
+typedef struct _NmpDevMng NmpDevMng;
+struct _NmpDevMng {
 	gint			ref_count;	/* 引用计数 */
-	JpfDevicePool	*dev_pool;	/* 设备池 */
+	NmpDevicePool	*dev_pool;	/* 设备池 */
 	gchar			*address;	/* 服务IP */
 	gchar			*service;	/* 服务端口 */
 
-	JpfAcceptDevMng *dev_unrecognized;	/* ACCEPT设备*/
+	NmpAcceptDevMng *dev_unrecognized;	/* ACCEPT设备*/
 };
 
 
-JpfDevMng *nmp_rtsp_device_mng_new(gint service);
-void nmp_rtsp_device_mng_unref(JpfDevMng *dev_mng);
-guint nmp_rtsp_device_mng_attach(JpfDevMng *dev_mng);
+NmpDevMng *nmp_rtsp_device_mng_new(gint service);
+void nmp_rtsp_device_mng_unref(NmpDevMng *dev_mng);
+guint nmp_rtsp_device_mng_attach(NmpDevMng *dev_mng);
 
-gboolean nmp_rtsp_device_mng_accepted(JpfDevMng *dev_mng, 
-	JpfMediaDevice *device);
+gboolean nmp_rtsp_device_mng_accepted(NmpDevMng *dev_mng, 
+	NmpMediaDevice *device);
 
-gint nmp_rtsp_device_mng_add_dev(JpfDevMng *dev_mng,
-	JpfMediaDevice *device, gchar old_ip[]);
-void nmp_rtsp_device_mng_remove(JpfMediaDevice *device);
+gint nmp_rtsp_device_mng_add_dev(NmpDevMng *dev_mng,
+	NmpMediaDevice *device, gchar old_ip[]);
+void nmp_rtsp_device_mng_remove(NmpMediaDevice *device);
 
-JpfMediaDevice *nmp_rtsp_device_mng_find_and_get_dev(JpfDevMng *dev_mng, 
+NmpMediaDevice *nmp_rtsp_device_mng_find_and_get_dev(NmpDevMng *dev_mng, 
 	const gchar *id);
 
 G_END_DECLS

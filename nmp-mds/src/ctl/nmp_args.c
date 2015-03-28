@@ -20,12 +20,12 @@ static __inline__ void
 nmp_mds_print_version( void )
 {
 	printf(
-		JPF_MEDIA_SERVER_LOGO
+		NMP_MEDIA_SERVER_LOGO
 		"\nVersion %d.%d.%d.%d\n",
-		(JPF_MDS_VERSION_NUMBER & 0xff000000) >> 24,
-		(JPF_MDS_VERSION_NUMBER & 0x00ff0000) >> 16,
-		(JPF_MDS_VERSION_NUMBER & 0x0000ff00) >> 8,
-		(JPF_MDS_VERSION_NUMBER & 0x000000ff)
+		(NMP_MDS_VERSION_NUMBER & 0xff000000) >> 24,
+		(NMP_MDS_VERSION_NUMBER & 0x00ff0000) >> 16,
+		(NMP_MDS_VERSION_NUMBER & 0x0000ff00) >> 8,
+		(NMP_MDS_VERSION_NUMBER & 0x000000ff)
 	);
 }
 

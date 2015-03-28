@@ -10,16 +10,16 @@
 
 typedef enum
 {
-	JPF_RTSP_STAT_NORMAL,
-	JPF_RTSP_STAT_KILLED
-}JpfClientState;
+	NMP_RTSP_STAT_NORMAL,
+	NMP_RTSP_STAT_KILLED
+}NmpClientState;
 
 
-typedef struct _JpfRtspClient JpfRtspClient;
-struct _JpfRtspClient
+typedef struct _NmpRtspClient NmpRtspClient;
+struct _NmpRtspClient
 {
 	gint					 ref_count;
-	JpfClientState			 state;
+	NmpClientState			 state;
 
 	GstRtspWatch			*watch;			/* RTSP watch , gst component */
 
@@ -35,52 +35,52 @@ struct _JpfRtspClient
 };
 
 
-typedef struct _JpfRtspSession JpfRtspSession;
-struct _JpfRtspSession
+typedef struct _NmpRtspSession NmpRtspSession;
+struct _NmpRtspSession
 {
 	gchar					sid[CLIENT_SESSION_ID_LEN];
 	gint					timeout;
 
-	JpfRtspMedia			*media;
-	JpfSinkerWatch			*sinker;
+	NmpRtspMedia			*media;
+	NmpSinkerWatch			*sinker;
 };
 
 
-JpfRtspSession *nmp_rtsp_create_session(JpfRtspClient *client, 
-	JpfRtspMedia *media, GstRTSPTransport *ct);
+NmpRtspSession *nmp_rtsp_create_session(NmpRtspClient *client, 
+	NmpRtspMedia *media, GstRTSPTransport *ct);
 
-JpfRtspClient *nmp_rtsp_client_new( void );
+NmpRtspClient *nmp_rtsp_client_new( void );
 
-void nmp_rtsp_client_attach(JpfRtspClient *client, void *context);
-gboolean nmp_rtsp_client_accept(JpfRtspClient *client,
+void nmp_rtsp_client_attach(NmpRtspClient *client, void *context);
+gboolean nmp_rtsp_client_accept(NmpRtspClient *client,
 	GEvent *e_listen, gint *errp);
 
-JpfRtspClient *nmp_rtsp_client_ref(JpfRtspClient *client);
-void nmp_rtsp_client_unref(JpfRtspClient *client);
+NmpRtspClient *nmp_rtsp_client_ref(NmpRtspClient *client);
+void nmp_rtsp_client_unref(NmpRtspClient *client);
 
-void nmp_rtsp_client_send_response(JpfRtspClient *client,
-	JpfRtspSession *session, GstRTSPMessage *response);
+void nmp_rtsp_client_send_response(NmpRtspClient *client,
+	NmpRtspSession *session, GstRTSPMessage *response);
 
-gint nmp_rtsp_session_attach_media(JpfRtspSession *s, 
-	JpfRtspMedia *media, JpfSinkerWatch *w);
+gint nmp_rtsp_session_attach_media(NmpRtspSession *s, 
+	NmpRtspMedia *media, NmpSinkerWatch *w);
 
-JpfRtspSession *nmp_rtsp_client_find_session(JpfRtspClient *client, 
+NmpRtspSession *nmp_rtsp_client_find_session(NmpRtspClient *client, 
 	gchar *session_id);
 
-gint nmp_rtsp_client_play_failed(JpfRtspClient *client, 
+gint nmp_rtsp_client_play_failed(NmpRtspClient *client, 
 	gchar *session_id);
 
-gint nmp_rtsp_client_play_session(JpfRtspClient *client, 
+gint nmp_rtsp_client_play_session(NmpRtspClient *client, 
 	gchar *session_id);
 
-gint nmp_rtsp_client_delete_session(JpfRtspClient *client, 
+gint nmp_rtsp_client_delete_session(NmpRtspClient *client, 
 	gchar *session_id);
 
-void nmp_rtsp_client_set_illegal(JpfRtspClient *client);
+void nmp_rtsp_client_set_illegal(NmpRtspClient *client);
 
 gint nmp_rtsp_client_timeout(gconstpointer c, gconstpointer  u);
 
-void nmp_rtsp_client_alive(JpfRtspClient *client);
+void nmp_rtsp_client_alive(NmpRtspClient *client);
 
 gint nmp_rtsp_client_send_message(void *cli, GstRTSPMessage *msg);
 

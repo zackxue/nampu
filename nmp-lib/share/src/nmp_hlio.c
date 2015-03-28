@@ -12,13 +12,13 @@
 #include "nmp_errno.h"
 
 
-static HmWatch *
-nmp_hl_io_create(HmIO *io, NmpConnection *conn)
+static NmpWatch *
+nmp_hl_io_create(NmpIO *io, NmpConnection *conn)
 {
-	HmHlIO *listen_io;
+	NmpHlIO *listen_io;
 
-	listen_io = (HmHlIO*)io;
-	return (HmWatch*)nmp_hl_io_new(
+	listen_io = (NmpHlIO*)io;
+	return (NmpWatch*)nmp_hl_io_new(
 		conn,
 		io->proto,
 		listen_io->proto
@@ -27,7 +27,7 @@ nmp_hl_io_create(HmIO *io, NmpConnection *conn)
 
 
 static void
-nmp_hl_listen_io_on_error(HmIO *io, gint rw, gint why)
+nmp_hl_listen_io_on_error(NmpIO *io, gint rw, gint why)
 {
 	nmp_error(
 		"Net Listen IO '%p' error, Err: '%d'.", NET_IO(io), why
@@ -37,7 +37,7 @@ nmp_hl_listen_io_on_error(HmIO *io, gint rw, gint why)
 }
 
 
-static HmIOFuncs nmp_high_level_listen_io_funcs =
+static NmpIOFuncs nmp_high_level_listen_io_funcs =
 {
 	.create		= nmp_hl_io_create,
 	.error		= nmp_hl_listen_io_on_error
@@ -45,15 +45,15 @@ static HmIOFuncs nmp_high_level_listen_io_funcs =
 
 
 static gint
-nmp_hl_io_recv(HmIO *io, gchar *start, gsize size,
+nmp_hl_io_recv(NmpIO *io, gchar *start, gsize size,
 	gpointer from_lower)
 {
 	gint rc;
 	NmpPayloadProto *proto;
-	HmHlIO *hl_io;
+	NmpHlIO *hl_io;
 	gpointer msg;
 
-	hl_io = (HmHlIO*)io;
+	hl_io = (NmpHlIO*)io;
 	proto = hl_io->proto;
 	BUG_ON(!proto);
 
@@ -62,7 +62,7 @@ nmp_hl_io_recv(HmIO *io, gchar *start, gsize size,
 
 	if ((msg = (*proto->get_payload)(start, size, from_lower)))
 	{
-		rc = nmp_watch_recv_message((HmWatch*)hl_io, msg);
+		rc = nmp_watch_recv_message((NmpWatch*)hl_io, msg);
 		if (rc)
 		{
 			BUG_ON(!proto->destroy_pointer);
@@ -75,13 +75,13 @@ nmp_hl_io_recv(HmIO *io, gchar *start, gsize size,
 
 
 static gint
-nmp_hl_io_format(HmIO *io, gpointer msg, gchar buf[],
+nmp_hl_io_format(NmpIO *io, gpointer msg, gchar buf[],
 	gsize size)
 {
 	NmpPayloadProto *proto;
-	HmHlIO *hl_io;
+	NmpHlIO *hl_io;
 
-	hl_io = (HmHlIO*)io;
+	hl_io = (NmpHlIO*)io;
 	proto = hl_io->proto;
 
 	BUG_ON(!proto);
@@ -96,7 +96,7 @@ nmp_hl_io_format(HmIO *io, gpointer msg, gchar buf[],
 
 
 static void
-nmp_hl_io_on_error(HmIO *io, gint rw, gint why)
+nmp_hl_io_on_error(NmpIO *io, gint rw, gint why)
 {
 	nmp_warning(
 		"Net IO '%p' %s error, Err: '%d', report from hl layer.",
@@ -106,7 +106,7 @@ nmp_hl_io_on_error(HmIO *io, gint rw, gint why)
 
 
 static void
-nmp_hl_io_on_close(HmIO *io, gint async)
+nmp_hl_io_on_close(NmpIO *io, gint async)
 {
 	nmp_print(
 		"Net IO '%p' closed%s, report from hl layer.",
@@ -115,7 +115,7 @@ nmp_hl_io_on_close(HmIO *io, gint async)
 }
 
 
-static HmIOFuncs nmp_high_level_io_funcs =
+static NmpIOFuncs nmp_high_level_io_funcs =
 {
 	.recv		= nmp_hl_io_recv,
 	.format		= nmp_hl_io_format,
@@ -124,18 +124,18 @@ static HmIOFuncs nmp_high_level_io_funcs =
 };
 
 
-HmHlIO *
+NmpHlIO *
 nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto)
 {
-	HmHlIO *hl_io;
+	NmpHlIO *hl_io;
 	G_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
 
-	hl_io = (HmHlIO*)nmp_io_new(
+	hl_io = (NmpHlIO*)nmp_io_new(
 		conn,
 		ll_proto,
 		&nmp_high_level_io_funcs,
-		sizeof(HmHlIO)
+		sizeof(NmpHlIO)
 	);
 
 	if (hl_io)
@@ -147,18 +147,18 @@ nmp_hl_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 }
 
 
-HmHlIO *
+NmpHlIO *
 nmp_hl_listen_io_new(NmpConnection *conn, NmpPacketProto *ll_proto,
 	NmpPayloadProto *hl_proto)
 {
-	HmHlIO *hl_io;
+	NmpHlIO *hl_io;
 	G_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
 
-	hl_io = (HmHlIO*)nmp_listen_io_new(
+	hl_io = (NmpHlIO*)nmp_listen_io_new(
 		conn,
 		ll_proto,
 		&nmp_high_level_listen_io_funcs,
-		sizeof(HmHlIO)
+		sizeof(NmpHlIO)
 	);
 
 	if (hl_io)

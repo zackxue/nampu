@@ -5,8 +5,8 @@
 
 G_BEGIN_DECLS
 
-typedef struct _JpfRtspState JpfRtspState;
-struct _JpfRtspState
+typedef struct _NmpRtspState NmpRtspState;
+struct _NmpRtspState
 {
 	GstRTSPMessage      *request;
 	GstRTSPMethod        method;

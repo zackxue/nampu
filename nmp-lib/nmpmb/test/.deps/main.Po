@@ -10,7 +10,7 @@ main.o: main.c /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdarg.h \
  /usr/include/i386-linux-gnu/bits/stdio_lim.h \
  /usr/include/i386-linux-gnu/bits/sys_errlist.h \
- /home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_api.h \
+ /home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_api.h \
  /home/shiyong/usr/include/nampu/nmp_sdk.h \
  /usr/lib/gcc/i686-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
  /usr/include/i386-linux-gnu/bits/wchar.h
@@ -47,7 +47,7 @@ main.o: main.c /usr/include/stdc-predef.h /usr/include/stdio.h \
 
 /usr/include/i386-linux-gnu/bits/sys_errlist.h:
 
-/home/shiyong/workroom/nampu/nmp-lib/nmpmb/include/mb_api.h:
+/home/shiyong/workroom/github.com/nampu/nmp-lib/nmpmb/include/mb_api.h:
 
 /home/shiyong/usr/include/nampu/nmp_sdk.h:
 

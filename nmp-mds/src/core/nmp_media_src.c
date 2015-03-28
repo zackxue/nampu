@@ -26,17 +26,17 @@
 
 
 static __inline__ void
-nmp_media_src_destroy_streams(JpfMediaSource *stream);
+nmp_media_src_destroy_streams(NmpMediaSource *stream);
 static __inline__ void
-nmp_media_src_recycle_socket(JpfMediaSource *source);
+nmp_media_src_recycle_socket(NmpMediaSource *source);
 static __inline__ void
-nmp_media_src_add_streams_poll(JpfMediaSource *source, gint rtcp);
+nmp_media_src_add_streams_poll(NmpMediaSource *source, gint rtcp);
 static __inline__ void
-nmp_media_src_remove_streams_poll(JpfMediaSource *source, gint rtcp);
+nmp_media_src_remove_streams_poll(NmpMediaSource *source, gint rtcp);
 
 
 static __inline__ gint64
-nmp_media_src_get_time(JpfMediaSource *source)
+nmp_media_src_get_time(NmpMediaSource *source)
 {
 	gint64 ts;
 	GTimeVal tv;
@@ -49,7 +49,7 @@ nmp_media_src_get_time(JpfMediaSource *source)
 
 
 static __inline__ gint64
-nmp_media_src_cal_timeout_delta(JpfMediaSource *source)
+nmp_media_src_cal_timeout_delta(NmpMediaSource *source)
 {
 	gint64 now, timeout_point;
 
@@ -60,7 +60,7 @@ nmp_media_src_cal_timeout_delta(JpfMediaSource *source)
 
 
 static __inline__ gint64
-nmp_media_src_cal_sleeping_timeout_delta(JpfMediaSource *source)
+nmp_media_src_cal_sleeping_timeout_delta(NmpMediaSource *source)
 {
 	gint64 now, timeout_point;
 
@@ -71,7 +71,7 @@ nmp_media_src_cal_sleeping_timeout_delta(JpfMediaSource *source)
 
 
 static __inline__ void
-nmp_media_src_sync_time(JpfMediaSource *source)
+nmp_media_src_sync_time(NmpMediaSource *source)
 {
 	if (!source->blockable)
 		source->last_check = nmp_get_monotonic_time();
@@ -81,7 +81,7 @@ nmp_media_src_sync_time(JpfMediaSource *source)
 
 
 static __inline__ gint
-nmp_media_src_might_sleep(JpfMediaSource *source)
+nmp_media_src_might_sleep(NmpMediaSource *source)
 {
 	gint err;
 
@@ -107,7 +107,7 @@ nmp_media_src_might_sleep(JpfMediaSource *source)
 
 
 static __inline__ void
-nmp_media_src_woken_up(JpfMediaSource *source)
+nmp_media_src_woken_up(NmpMediaSource *source)
 {
 	if (source->blocking)
 	{
@@ -118,7 +118,7 @@ nmp_media_src_woken_up(JpfMediaSource *source)
 
 
 static __inline__ gboolean
-nmp_media_src_check_rtp(JpfStreamSource *stream)
+nmp_media_src_check_rtp(NmpStreamSource *stream)
 {
 	if (stream->rtp_read.revents & READ_COND)
 		return TRUE;
@@ -127,7 +127,7 @@ nmp_media_src_check_rtp(JpfStreamSource *stream)
 
 
 static __inline__ void
-nmp_media_src_init_rtp_pollfd(GPollFD *fd, JpfMediaSocket *ssock)
+nmp_media_src_init_rtp_pollfd(GPollFD *fd, NmpMediaSocket *ssock)
 {
 	fd->fd = ssock->rtp_sock;
 	fd->events = READ_COND;
@@ -136,16 +136,16 @@ nmp_media_src_init_rtp_pollfd(GPollFD *fd, JpfMediaSocket *ssock)
 
 
 static __inline__ gint
-nmp_media_src_recv_udp_stream_rtp(JpfMediaSource *source, gint i_stream,
-	JpfStreamSource *stream)
+nmp_media_src_recv_udp_stream_rtp(NmpMediaSource *source, gint i_stream,
+	NmpStreamSource *stream)
 {
-	JpfRtpWrap *wrap_rtp;
+	NmpRtpWrap *wrap_rtp;
 	gint rtp_size, buf_size, err;
 
 	if (!(stream->rtp_read.revents & READ_COND))
 		return 0;
 
-	wrap_rtp = (JpfRtpWrap*)stream->rtp_buffer.buffer;
+	wrap_rtp = (NmpRtpWrap*)stream->rtp_buffer.buffer;
 	buf_size = sizeof(stream->rtp_buffer.buffer) - WRAP_HEAD_LEN;
 
 	while ((rtp_size = recvfrom(stream->rtp_read.fd, 
@@ -185,7 +185,7 @@ nmp_media_src_recv_udp_stream_rtp(JpfMediaSource *source, gint i_stream,
 
 
 static __inline__ gint
-nmp_media_src_tcp_est_rtp(JpfMediaSource *source, JpfStreamSource *stream)
+nmp_media_src_tcp_est_rtp(NmpMediaSource *source, NmpStreamSource *stream)
 {
 	gint err;
 
@@ -209,7 +209,7 @@ nmp_media_src_tcp_est_rtp(JpfMediaSource *source, JpfStreamSource *stream)
 
 
 static __inline__ gint
-nmp_media_src_recv_tcp(JpfMediaSource *source, JpfStreamSource *stream,
+nmp_media_src_recv_tcp(NmpMediaSource *source, NmpStreamSource *stream,
 	gchar buf[], gsize size)
 {
 	gint ret;
@@ -255,13 +255,13 @@ copy_it:
 
 
 static __inline__ gint
-nmp_media_src_recv_tcp_stream_rtp(JpfMediaSource *source, gint i_stream,
-	JpfStreamSource *stream)
+nmp_media_src_recv_tcp_stream_rtp(NmpMediaSource *source, gint i_stream,
+	NmpStreamSource *stream)
 {
-	JpfRtpWrap *wrap_rtp;
+	NmpRtpWrap *wrap_rtp;
 	gint to_recv, nr;
 	gsize rtp_size, trivial_size;
-	JpfSmartBuffer *sb;
+	NmpSmartBuffer *sb;
 
 	if (!(stream->rtp_read.revents & READ_COND))
 		return 0;
@@ -345,7 +345,7 @@ nmp_media_src_recv_tcp_stream_rtp(JpfMediaSource *source, gint i_stream,
 
 		if (sb->bytes > trivial_size)
 		{
-			wrap_rtp = (JpfRtpWrap*)(sb->buffer + trivial_size - WRAP_HEAD_LEN);
+			wrap_rtp = (NmpRtpWrap*)(sb->buffer + trivial_size - WRAP_HEAD_LEN);
 			wrap_rtp->length = rtp_size;
 
 			nmp_audit_inc(AUDIT_BRATE_SRC, rtp_size);
@@ -372,7 +372,7 @@ nmp_media_src_recv_tcp_stream_rtp(JpfMediaSource *source, gint i_stream,
 
 
 static __inline__ gint
-nmp_media_src_recv_udp_rtp(JpfMediaSource *source)
+nmp_media_src_recv_udp_rtp(NmpMediaSource *source)
 {
 	gint err, n_streams;
 
@@ -394,7 +394,7 @@ nmp_media_src_recv_udp_rtp(JpfMediaSource *source)
 
 
 static __inline__ gint
-nmp_media_src_recv_tcp_rtp(JpfMediaSource *source)
+nmp_media_src_recv_tcp_rtp(NmpMediaSource *source)
 {
 	gint err, n_streams;
 
@@ -418,8 +418,8 @@ nmp_media_src_recv_tcp_rtp(JpfMediaSource *source)
 #ifdef CONFIG_RTCP_SUPPORT
 
 static __inline__  void
-nmp_media_src_init_rtcp_cb(JpfRtcpControl *rtcp_control, 
-	JpfMediaSocket *ssock)
+nmp_media_src_init_rtcp_cb(NmpRtcpControl *rtcp_control, 
+	NmpMediaSocket *ssock)
 {
 	rtcp_control->rtcp_recv.fd = ssock->rtcp_sock;
 	rtcp_control->rtcp_send.fd = ssock->rtcp_sock;
@@ -430,23 +430,23 @@ nmp_media_src_init_rtcp_cb(JpfRtcpControl *rtcp_control,
 
 
 static __inline__ void
-nmp_media_src_add_poll_rtcp(JpfMediaSource *source, 
-	JpfRtcpControl *rtcp_control)
+nmp_media_src_add_poll_rtcp(NmpMediaSource *source, 
+	NmpRtcpControl *rtcp_control)
 {
 	g_source_add_poll((GSource*)source, &rtcp_control->rtcp_recv);
 }
 
 
 static __inline__ void
-nmp_media_src_remove_poll_rtcp(JpfMediaSource *source, 
-	JpfRtcpControl *rtcp_control)
+nmp_media_src_remove_poll_rtcp(NmpMediaSource *source, 
+	NmpRtcpControl *rtcp_control)
 {
 	g_source_remove_poll((GSource*)source, &rtcp_control->rtcp_recv);
 }
 
 
 gint
-nmp_media_src_get_rtcp_port(JpfMediaSource *source, gint stream, gint *rtcp)
+nmp_media_src_get_rtcp_port(NmpMediaSource *source, gint stream, gint *rtcp)
 {
 	g_assert(source && rtcp);
 	
@@ -459,11 +459,11 @@ nmp_media_src_get_rtcp_port(JpfMediaSource *source, gint stream, gint *rtcp)
 
 
 static __inline__ gboolean
-nmp_media_src_check_rtcp(JpfStreamSource *stream)
+nmp_media_src_check_rtcp(NmpStreamSource *stream)
 {
-	JpfRtcpControl *control;
+	NmpRtcpControl *control;
 
-	control = (JpfRtcpControl*)&stream->rtcp_control;
+	control = (NmpRtcpControl*)&stream->rtcp_control;
 	if (control->rtcp_recv.revents & READ_COND)
 		return TRUE;
 
@@ -475,13 +475,13 @@ nmp_media_src_check_rtcp(JpfStreamSource *stream)
 
 
 static __inline__ gint
-nmp_media_src_recv_udp_stream_rtcp(JpfMediaSource *source,
-	gint i_stream, JpfStreamSource *stream)
+nmp_media_src_recv_udp_stream_rtcp(NmpMediaSource *source,
+	gint i_stream, NmpStreamSource *stream)
 {
-	JpfRtcpControl *control;
+	NmpRtcpControl *control;
 	gint err;
 
-	control = (JpfRtcpControl*)&stream->rtcp_control;
+	control = (NmpRtcpControl*)&stream->rtcp_control;
 	if (!(control->rtcp_recv.revents & READ_COND))
 		return 0;
 
@@ -500,7 +500,7 @@ nmp_media_src_recv_udp_stream_rtcp(JpfMediaSource *source,
 
 
 static __inline__ gint
-nmp_media_src_tcp_est_rtcp(JpfMediaSource *source, JpfStreamSource *stream)
+nmp_media_src_tcp_est_rtcp(NmpMediaSource *source, NmpStreamSource *stream)
 {
 	gint err;
 
@@ -524,13 +524,13 @@ nmp_media_src_tcp_est_rtcp(JpfMediaSource *source, JpfStreamSource *stream)
 
 
 static __inline__ gint
-nmp_media_src_recv_tcp_stream_rtcp(JpfMediaSource *source,
-	gint i_stream, JpfStreamSource *stream)
+nmp_media_src_recv_tcp_stream_rtcp(NmpMediaSource *source,
+	gint i_stream, NmpStreamSource *stream)
 {
-	JpfRtcpControl *control;
+	NmpRtcpControl *control;
 	gint err;
 
-	control = (JpfRtcpControl*)&stream->rtcp_control;
+	control = (NmpRtcpControl*)&stream->rtcp_control;
 	if (!(control->rtcp_recv.revents & READ_COND))
 		return 0;
 
@@ -554,7 +554,7 @@ nmp_media_src_recv_tcp_stream_rtcp(JpfMediaSource *source,
 
 
 static __inline__ gint
-nmp_media_src_recv_udp_rtcp(JpfMediaSource *source)
+nmp_media_src_recv_udp_rtcp(NmpMediaSource *source)
 {
 	gint err, n_streams;
 
@@ -576,7 +576,7 @@ nmp_media_src_recv_udp_rtcp(JpfMediaSource *source)
 
 
 static __inline__ gint
-nmp_media_src_recv_tcp_rtcp(JpfMediaSource *source)
+nmp_media_src_recv_tcp_rtcp(NmpMediaSource *source)
 {
 	gint err, n_streams;
 
@@ -601,7 +601,7 @@ nmp_media_src_recv_tcp_rtcp(JpfMediaSource *source)
 
 
 static __inline__ gboolean
-nmp_media_src_check_stream(JpfMediaSource *source, JpfStreamSource *stream)
+nmp_media_src_check_stream(NmpMediaSource *source, NmpStreamSource *stream)
 {
 	if (nmp_media_src_check_rtp(stream))
 	{
@@ -622,7 +622,7 @@ static gboolean
 nmp_media_src_watch_prepare(GSource *source, gint *timeout)
 {
 	gint64 delta;
-	JpfMediaSource *src = (JpfMediaSource*)source;
+	NmpMediaSource *src = (NmpMediaSource*)source;
 
 	if (!src->blockable)
 	{
@@ -659,8 +659,8 @@ static gboolean
 nmp_media_src_watch_check(GSource *__source)
 {
 	gint n_streams = 0;
-    JpfMediaSource *source;
-    source = (JpfMediaSource*)__source;
+    NmpMediaSource *source;
+    source = (NmpMediaSource*)__source;
 
     while (n_streams < source->n_streams)
     {
@@ -677,8 +677,8 @@ static gboolean
 nmp_media_src_watch_dispatch(GSource *__source, GSourceFunc callback,
     gpointer user_data)
 {
-    JpfMediaSource *source = (JpfMediaSource*)__source;
-    JpfMediaSourceFuncs *funcs = source->funcs;
+    NmpMediaSource *source = (NmpMediaSource*)__source;
+    NmpMediaSourceFuncs *funcs = source->funcs;
 
 	if (source->err_code == -E_TIMEOUT)
 	{
@@ -714,7 +714,7 @@ nmp_media_src_watch_dispatch(GSource *__source, GSourceFunc callback,
 static void
 nmp_media_src_watch_finalize(GSource *__source)
 {
-	JpfMediaSource *source = (JpfMediaSource*)__source;
+	NmpMediaSource *source = (NmpMediaSource*)__source;
 
 	if (source->media)
 	{
@@ -740,7 +740,7 @@ static GSourceFuncs nmp_media_src_source_funcs =
 
 
 static gint 
-nmp_media_src_recv_udp_packet(JpfMediaSource *source)
+nmp_media_src_recv_udp_packet(NmpMediaSource *source)
 {
 	gint err;
 
@@ -755,7 +755,7 @@ nmp_media_src_recv_udp_packet(JpfMediaSource *source)
 
 
 static gint 
-nmp_media_src_recv_tcp_packet(JpfMediaSource *source)
+nmp_media_src_recv_tcp_packet(NmpMediaSource *source)
 {
 	gint err;
 
@@ -770,7 +770,7 @@ nmp_media_src_recv_tcp_packet(JpfMediaSource *source)
 
 
 static void 
-nmp_media_src_error(JpfMediaSource *source)
+nmp_media_src_error(NmpMediaSource *source)
 {
 	extern void nmp_rtsp_media_zombie_it(void *media);
 
@@ -785,14 +785,14 @@ nmp_media_src_error(JpfMediaSource *source)
 }
 
 
-static JpfMediaSourceFuncs nmp_media_src_udp_watch_ops =
+static NmpMediaSourceFuncs nmp_media_src_udp_watch_ops =
 {
 	.recv			= nmp_media_src_recv_udp_packet,
 	.error			= nmp_media_src_error
 };
 
 
-static JpfMediaSourceFuncs nmp_media_src_tcp_watch_ops =
+static NmpMediaSourceFuncs nmp_media_src_tcp_watch_ops =
 {
 	.recv			= nmp_media_src_recv_tcp_packet,
 	.error			= nmp_media_src_error
@@ -800,8 +800,8 @@ static JpfMediaSourceFuncs nmp_media_src_tcp_watch_ops =
 
 
 void
-nmp_media_src_set_recv_fun(JpfMediaSource *source, 
-	JpfMediaRecvFunc function)
+nmp_media_src_set_recv_fun(NmpMediaSource *source, 
+	NmpMediaRecvFunc function)
 {
 	g_assert(source != NULL);
 	source->func_recv = function;
@@ -809,7 +809,7 @@ nmp_media_src_set_recv_fun(JpfMediaSource *source,
 
 
 static __inline__ gint
-nmp_media_src_init_stream(JpfStreamSource *stream, JpfMediaTrans transport)
+nmp_media_src_init_stream(NmpStreamSource *stream, NmpMediaTrans transport)
 {
 	gint err;
 
@@ -836,7 +836,7 @@ nmp_media_src_init_stream(JpfStreamSource *stream, JpfMediaTrans transport)
 
 
 static __inline__ void
-nmp_media_src_stream_say_bye(JpfStreamSource *stream)
+nmp_media_src_stream_say_bye(NmpStreamSource *stream)
 {
 	if (stream->rtp_said_bye)
 		return;
@@ -849,7 +849,7 @@ nmp_media_src_stream_say_bye(JpfStreamSource *stream)
 
 
 static __inline__ void
-nmp_media_src_recycle_stream_sock(JpfStreamSource *stream)
+nmp_media_src_recycle_stream_sock(NmpStreamSource *stream)
 {
 	nmp_media_src_stream_say_bye(stream);
 	nmp_media_sock_info_reset(&stream->sock_info);
@@ -857,7 +857,7 @@ nmp_media_src_recycle_stream_sock(JpfStreamSource *stream)
 
 
 static __inline__ void
-nmp_media_src_destroy_stream(JpfStreamSource *stream)
+nmp_media_src_destroy_stream(NmpStreamSource *stream)
 {
 	nmp_media_src_recycle_stream_sock(stream);
 
@@ -872,7 +872,7 @@ nmp_media_src_destroy_stream(JpfStreamSource *stream)
 
 
 static __inline__ void
-nmp_media_src_destroy_streams(JpfMediaSource *source)
+nmp_media_src_destroy_streams(NmpMediaSource *source)
 {
 	gint n_streams = source->n_streams;
 
@@ -887,7 +887,7 @@ nmp_media_src_destroy_streams(JpfMediaSource *source)
 
 
 static __inline__ void
-nmp_media_src_recycle_socket(JpfMediaSource *source)
+nmp_media_src_recycle_socket(NmpMediaSource *source)
 {
 	gint n_streams = source->n_streams;
 
@@ -899,8 +899,8 @@ nmp_media_src_recycle_socket(JpfMediaSource *source)
 
 
 static __inline__ gint
-nmp_media_src_init_streams(JpfMediaSource *source, gint streams,
-	JpfMediaTrans transport)
+nmp_media_src_init_streams(NmpMediaSource *source, gint streams,
+	NmpMediaTrans transport)
 {
 	gint n_streams, err;
 
@@ -927,7 +927,7 @@ init_stream_failed:
 
 
 static __inline__ void
-nmp_media_src_add_stream_poll(JpfMediaSource *source, JpfStreamSource *stream,
+nmp_media_src_add_stream_poll(NmpMediaSource *source, NmpStreamSource *stream,
 	gint rtcp)
 {
 	if (!stream->gpfd_added)
@@ -950,7 +950,7 @@ nmp_media_src_add_stream_poll(JpfMediaSource *source, JpfStreamSource *stream,
 
 
 static __inline__ void
-nmp_media_src_remove_stream_poll(JpfMediaSource *source, JpfStreamSource *stream,
+nmp_media_src_remove_stream_poll(NmpMediaSource *source, NmpStreamSource *stream,
 	gint rtcp)
 {
 	if (stream->gpfd_added)
@@ -973,7 +973,7 @@ nmp_media_src_remove_stream_poll(JpfMediaSource *source, JpfStreamSource *stream
 
 
 static __inline__ void
-nmp_media_src_add_streams_poll(JpfMediaSource *source, gint rtcp)
+nmp_media_src_add_streams_poll(NmpMediaSource *source, gint rtcp)
 {
 	gint n_streams = 0;
 
@@ -983,7 +983,7 @@ nmp_media_src_add_streams_poll(JpfMediaSource *source, gint rtcp)
 
 
 static __inline__ void
-nmp_media_src_remove_streams_poll(JpfMediaSource *source, gint rtcp)
+nmp_media_src_remove_streams_poll(NmpMediaSource *source, gint rtcp)
 {
 	gint n_streams = 0;
 
@@ -992,11 +992,11 @@ nmp_media_src_remove_streams_poll(JpfMediaSource *source, gint rtcp)
 }
 
 
-JpfMediaSource *
+NmpMediaSource *
 nmp_media_src_create_source(gpointer media, gint streams, 
-	JpfMediaTrans transport, gint blockable)
+	NmpMediaTrans transport, gint blockable)
 {
-	JpfMediaSource *source;
+	NmpMediaSource *source;
 
 	if (G_UNLIKELY(streams > N_STREAMS))
 	{
@@ -1007,8 +1007,8 @@ nmp_media_src_create_source(gpointer media, gint streams,
 		return NULL;
 	}
 
-	source = (JpfMediaSource*)g_source_new(
-		&nmp_media_src_source_funcs, sizeof(JpfMediaSource));
+	source = (NmpMediaSource*)g_source_new(
+		&nmp_media_src_source_funcs, sizeof(NmpMediaSource));
 	source->media = NULL;
 
 	if (nmp_media_src_init_streams(source, streams, transport))
@@ -1041,7 +1041,7 @@ nmp_media_src_create_source(gpointer media, gint streams,
 
 
 void
-nmp_media_src_attach(JpfMediaSource *source)
+nmp_media_src_attach(NmpMediaSource *source)
 {
 	G_ASSERT(source != NULL);
 
@@ -1051,7 +1051,7 @@ nmp_media_src_attach(JpfMediaSource *source)
 
 
 gint
-nmp_media_src_get_rtp_port(JpfMediaSource *source, gint stream, gint *rtp)
+nmp_media_src_get_rtp_port(NmpMediaSource *source, gint stream, gint *rtp)
 {
 	g_assert(source && rtp);
 

@@ -30,7 +30,7 @@ nmp_media_sock_set_opt(gint fd)
 
 
 static __inline__ gint
-nmp_media_sock_get_fd(JpfMediaTrans trans, gint *port)
+nmp_media_sock_get_fd(NmpMediaTrans trans, gint *port)
 {
 	struct sockaddr_in sin;
 	socklen_t len = sizeof(sin);
@@ -94,7 +94,7 @@ nmp_media_sock_get_fd(JpfMediaTrans trans, gint *port)
 
 
 __export gint
-nmp_media_sock_info_init(JpfMediaSocket *sk_info, JpfMediaTrans trans)
+nmp_media_sock_info_init(NmpMediaSocket *sk_info, NmpMediaTrans trans)
 {
 	gint low = 0, hi = 0;
 	G_ASSERT(trans == MEDIA_TRANS_UDP || trans == MEDIA_TRANS_TCP);
@@ -254,7 +254,7 @@ nmp_media_sock_connect_one(gint sock, gchar *Ip, gint port)
 
 
 gint
-nmp_media_sock_connect(JpfMediaSocket *sk_info, gchar *remote_Ip,
+nmp_media_sock_connect(NmpMediaSocket *sk_info, gchar *remote_Ip,
 	GstRTSPTransport *ct)
 {
 	gint err;
@@ -287,7 +287,7 @@ nmp_media_sock_connect(JpfMediaSocket *sk_info, gchar *remote_Ip,
 
 
 void
-nmp_media_sock_get_server_ports(JpfMediaSocket *sk_info, 
+nmp_media_sock_get_server_ports(NmpMediaSocket *sk_info, 
 	GstRTSPTransport *ct)
 {
 	g_assert(sk_info != NULL && ct != NULL);
@@ -303,7 +303,7 @@ nmp_media_sock_get_server_ports(JpfMediaSocket *sk_info,
 
 
 gint
-nmp_media_sock_est_rtp_sock(JpfMediaSocket *sk_info)
+nmp_media_sock_est_rtp_sock(NmpMediaSocket *sk_info)
 {
 	gint sock;
 
@@ -323,7 +323,7 @@ nmp_media_sock_est_rtp_sock(JpfMediaSocket *sk_info)
 
 
 gint
-nmp_media_sock_est_rtcp_sock(JpfMediaSocket *sk_info)
+nmp_media_sock_est_rtcp_sock(NmpMediaSocket *sk_info)
 {
 #ifdef CONFIG_RTCP_SUPPORT
 	gint sock;
@@ -344,7 +344,7 @@ nmp_media_sock_est_rtcp_sock(JpfMediaSocket *sk_info)
 }
 
 void
-nmp_media_sock_info_reset(JpfMediaSocket *sk_info)
+nmp_media_sock_info_reset(NmpMediaSocket *sk_info)
 {
 	if (sk_info->rtp_sock > 0)
 	{

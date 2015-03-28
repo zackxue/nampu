@@ -11,7 +11,7 @@ static void
 nmp_run_tq( void )
 {
 	LIST_HEAD tmp, *l;
-	JpfTq *tq;
+	NmpTq *tq;
 
 	g_static_mutex_lock(&tq_mutex);
 	list_add(&tmp, &tq_list);
@@ -23,7 +23,7 @@ nmp_run_tq( void )
 		l = tmp.next;
 		list_del(l);
 
-		tq = list_entry(l, JpfTq, list);
+		tq = list_entry(l, NmpTq, list);
 		if (tq->fun)
 		{
 			(*tq->fun)(tq->data);
@@ -37,7 +37,7 @@ nmp_run_tq( void )
 
 
 void
-nmp_add_tq(JpfTq *tq)
+nmp_add_tq(NmpTq *tq)
 {
 	g_static_mutex_lock(&tq_mutex);
 	list_add(&tq->list, &tq_list);

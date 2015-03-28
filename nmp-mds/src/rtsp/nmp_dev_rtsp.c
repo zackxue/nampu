@@ -13,8 +13,8 @@
 #define L4_REGEX "l4proto=\\d+"
 
 
-typedef struct _JpfDeviceReg JpfDeviceReg;
-struct _JpfDeviceReg		/* 设备注册所携带的信息 */
+typedef struct _NmpDeviceReg NmpDeviceReg;
+struct _NmpDeviceReg		/* 设备注册所携带的信息 */
 {
 	gchar		id[MAX_DEVICE_ID_LEN];	/* 设备ID */
 	gchar		ip[__MAX_IP_LEN];
@@ -24,7 +24,7 @@ struct _JpfDeviceReg		/* 设备注册所携带的信息 */
 
 
 static __inline__ gint
-nmp_rtsp_parse_abspath(const gchar *path, JpfDeviceReg *reg)
+nmp_rtsp_parse_abspath(const gchar *path, NmpDeviceReg *reg)
 {
 	gchar *id, *ka, *l4;
 	gint ka_int = 0;
@@ -74,7 +74,7 @@ nmp_rtsp_parse_abspath(const gchar *path, JpfDeviceReg *reg)
 
 
 static __inline__ void
-nmp_rtsp_parse_host(const gchar *host, JpfDeviceReg *reg)
+nmp_rtsp_parse_host(const gchar *host, NmpDeviceReg *reg)
 {
 	char *ip;
 
@@ -94,8 +94,8 @@ nmp_rtsp_parse_host(const gchar *host, JpfDeviceReg *reg)
 
 
 static __inline__ void
-nmp_rtsp_device_send_generic_response(JpfMediaDevice *device,
-	GstRTSPStatusCode code, JpfRtspState *state)
+nmp_rtsp_device_send_generic_response(NmpMediaDevice *device,
+	GstRTSPStatusCode code, NmpRtspState *state)
 {
 	gst_rtsp_message_init_response(state->response, code,
 		gst_rtsp_status_as_text(code), state->request);
@@ -105,9 +105,9 @@ nmp_rtsp_device_send_generic_response(JpfMediaDevice *device,
 
 
 static __inline__ gint
-nmp_rtsp_do_device_opt(JpfMediaDevice *device, JpfDeviceReg *reg)
+nmp_rtsp_do_device_opt(NmpMediaDevice *device, NmpDeviceReg *reg)
 {
-	JpfDeviceMediaType mt;
+	NmpDeviceMediaType mt;
 	gchar conflict_ip[__MAX_IP_LEN];
 
 	if (G_UNLIKELY(nmp_rtsp_device_is_new(device)))
@@ -115,11 +115,11 @@ nmp_rtsp_do_device_opt(JpfMediaDevice *device, JpfDeviceReg *reg)
 		nmp_rtsp_device_set_info(device, reg->id, reg->ip,
 			KEEP_ALIVE_CHECK_TIMES * reg->keep_alive_time);
 
-		mt = reg->l4_proto == 0 ?  JPF_MT_TCP : JPF_MT_UDP;
+		mt = reg->l4_proto == 0 ?  NMP_MT_TCP : NMP_MT_UDP;
 		nmp_rtsp_device_set_media_type(device, mt);
 
 		if (!nmp_rtsp_device_mng_accepted(
-			(JpfDevMng*)device->private_data, device))
+			(NmpDevMng*)device->private_data, device))
 		{
 			nmp_print(
 				"Device '%p', ID:'%s' register timeout.",
@@ -131,7 +131,7 @@ nmp_rtsp_do_device_opt(JpfMediaDevice *device, JpfDeviceReg *reg)
 		nmp_rtsp_device_set_registered(device);
 
 		if (nmp_rtsp_device_mng_add_dev(
-			(JpfDevMng*)device->private_data, device, conflict_ip))
+			(NmpDevMng*)device->private_data, device, conflict_ip))
 		{
 			nmp_print(
 				"Refuse device '%p', ID:'%s' is already used by '%s'.", 
@@ -169,9 +169,9 @@ nmp_rtsp_do_device_opt(JpfMediaDevice *device, JpfDeviceReg *reg)
 
 
 static __inline__ GstRTSPStatusCode
-nmp_rtsp_do_options_request(JpfMediaDevice *device, GstRTSPUrl *url)
+nmp_rtsp_do_options_request(NmpMediaDevice *device, GstRTSPUrl *url)
 {
-	JpfDeviceReg reg_info;
+	NmpDeviceReg reg_info;
 
 	if (G_UNLIKELY(nmp_rtsp_parse_abspath(url->abspath, &reg_info)))
 	{
@@ -196,8 +196,8 @@ nmp_rtsp_do_options_request(JpfMediaDevice *device, GstRTSPUrl *url)
 
 
 static __inline__ void
-nmp_rtsp_give_options_response(JpfMediaDevice *device, 
-	JpfRtspState *state, GstRTSPStatusCode code)
+nmp_rtsp_give_options_response(NmpMediaDevice *device, 
+	NmpRtspState *state, GstRTSPStatusCode code)
 {
 	GstRTSPMethod options;
 	gchar *str;
@@ -220,8 +220,8 @@ nmp_rtsp_give_options_response(JpfMediaDevice *device,
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_options_request(JpfMediaDevice *device, 
-	JpfRtspState *state)
+nmp_rtsp_handle_options_request(NmpMediaDevice *device, 
+	NmpRtspState *state)
 {
 	GstRTSPStatusCode rtsp_code;
 
@@ -232,13 +232,13 @@ nmp_rtsp_handle_options_request(JpfMediaDevice *device,
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_request(JpfMediaDevice *device, GstRTSPMessage *request)
+nmp_rtsp_handle_request(NmpMediaDevice *device, GstRTSPMessage *request)
 {
 	GstRTSPMethod method;
 	GstRTSPVersion version;
 	const gchar *url_str;
 	GstRTSPUrl *url;
-	JpfRtspState state = { NULL };
+	NmpRtspState state = { NULL };
 	GstRTSPMessage response = { 0 };
 	GstRTSPStatusCode rtsp_code = GST_RTSP_STS_OK;
 
@@ -301,15 +301,15 @@ nmp_rtsp_handle_request(JpfMediaDevice *device, GstRTSPMessage *request)
 
 
 static GstRTSPStatusCode
-nmp_rtsp_handle_response(JpfMediaDevice *device, GstRTSPMessage *response)
+nmp_rtsp_handle_response(NmpMediaDevice *device, GstRTSPMessage *response)
 {
 	GstRTSPStatusCode res_code;
 	GstRTSPVersion version;
 	const gchar *reason = NULL;
 	gchar *sessid = NULL, *cseq = NULL, *content_base = NULL;
 	GstRTSPResult ret;
-	JpfRtspMedia *media = NULL;
-	JpfSessionState s_state;
+	NmpRtspMedia *media = NULL;
+	NmpSessionState s_state;
 	GstSDPMessage *sdp = NULL;
 	guint8 *sdp_body = NULL;
 	guint sdp_size, seq;
@@ -343,7 +343,7 @@ nmp_rtsp_handle_response(JpfMediaDevice *device, GstRTSPMessage *response)
 	}
 
 	s_state = nmp_rtsp_media_get_session_state(media);
-	if (s_state == JPF_SESSION_TEARDOWN)
+	if (s_state == NMP_SESSION_TEARDOWN)
 	{
 		nmp_print(
 			"Response _After_ TEARDOWN ?? seq:'%s'", cseq
@@ -361,7 +361,7 @@ nmp_rtsp_handle_response(JpfMediaDevice *device, GstRTSPMessage *response)
 	if (ret != GST_RTSP_OK)
 	{
 		//只有DESCRIBE消息没有SESSION域
-		if (s_state != JPF_SESSION_DESCRIBE)
+		if (s_state != NMP_SESSION_DESCRIBE)
 		{
 			nmp_warning("Device RTSP response, No 'Session:' field");
 			goto handle_response_failed;
@@ -394,11 +394,11 @@ nmp_rtsp_handle_response(JpfMediaDevice *device, GstRTSPMessage *response)
 	}
 	else
 	{
-		if (s_state == JPF_SESSION_SETUP)
+		if (s_state == NMP_SESSION_SETUP)
 			nmp_rtsp_media_set_session_id(media, sessid);
 	}
 
-	if (nmp_rtsp_media_session_state_next(media) == JPF_SESSION_PLAY)
+	if (nmp_rtsp_media_session_state_next(media) == NMP_SESSION_PLAY)
 		nmp_rtsp_media_deal_pending_request(media);
 
 	if (nmp_rtsp_device_request(device, media))
@@ -427,7 +427,7 @@ nmp_rtsp_message_received(GstRtspWatch *watch,
 	GstRTSPMessage *message, gpointer user_data)	//user_data => device
 {
 	GstRTSPResult result = GST_RTSP_OK;
-	JpfMediaDevice *device = (JpfMediaDevice*)user_data;
+	NmpMediaDevice *device = (NmpMediaDevice*)user_data;
 
 	nmp_rtsp_device_update_ttd(device);
 
@@ -463,7 +463,7 @@ nmp_rtsp_message_sent(GstRtspWatch *watch, guint cseq,
 static GstRTSPResult
 nmp_rtsp_conn_closed(GstRtspWatch *watch, gpointer user_data)
 {
-	JpfMediaDevice *device = (JpfMediaDevice*)user_data;
+	NmpMediaDevice *device = (NmpMediaDevice*)user_data;
 
 	nmp_print(
 		"Device '%p', ID: '%s' reset connection.",
@@ -481,7 +481,7 @@ static GstRTSPResult
 nmp_rtsp_conn_error(GstRtspWatch *watch, GstRTSPResult result,
 	gpointer user_data)
 {
-	JpfMediaDevice *device = (JpfMediaDevice*)user_data;
+	NmpMediaDevice *device = (NmpMediaDevice*)user_data;
 	gchar *err_string = gst_rtsp_strresult(result);
 
 	nmp_print(

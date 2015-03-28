@@ -11,13 +11,13 @@ typedef enum
 	AUDIT_CNT_MEDIA_SNK,
 	AUDIT_CNT_STREAM_SRC,
 	AUDIT_CNT_STREAM_SNK
-}JpfAuditType;
+}NmpAuditType;
 
-typedef struct _JpfAuditContext JpfAuditContext;
+typedef struct _NmpAuditContext NmpAuditContext;
 
 void nmp_audit_init( void );
-void nmp_audit_inc(JpfAuditType type, gint v);
-void nmp_audit_dec(JpfAuditType type, gint v);
-void nmp_audit_zero(JpfAuditContext *ctx);
+void nmp_audit_inc(NmpAuditType type, gint v);
+void nmp_audit_dec(NmpAuditType type, gint v);
+void nmp_audit_zero(NmpAuditContext *ctx);
 
 #endif	/* __NMP_AUDIT_H__ */

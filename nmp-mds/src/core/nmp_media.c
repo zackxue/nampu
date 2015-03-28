@@ -12,15 +12,15 @@
 #define MIN_MEDIA_PERMANET			10
 #define RTSP_STEP_TIMEOUT			30	/* Never work */
 
-static void nmp_media_on_timer(JpfRtspMedia *media);
-static void nmp_rtsp_media_request_iframe(JpfRtspMedia *media,
-	JpfMediaDevice *device);
+static void nmp_media_on_timer(NmpRtspMedia *media);
+static void nmp_rtsp_media_request_iframe(NmpRtspMedia *media,
+	NmpMediaDevice *device);
 
 static gint total_media_objects = 0;
 
 
 static __inline__ void
-nmp_rtsp_media_uri_free(JpfMediaUri *uri_info)
+nmp_rtsp_media_uri_free(NmpMediaUri *uri_info)
 {
 	g_free(uri_info->media_base);
 	g_free(uri_info);
@@ -30,37 +30,37 @@ nmp_rtsp_media_uri_free(JpfMediaUri *uri_info)
 static gboolean
 nmp_media_timer(gpointer user_data)
 {
-	JpfRtspMedia *media;
+	NmpRtspMedia *media;
 	G_ASSERT(user_data != NULL);
 
-	media = (JpfRtspMedia*)user_data;
+	media = (NmpRtspMedia*)user_data;
 	nmp_media_on_timer(media);
 	return FALSE;
 }
 
 
-static __inline__ JpfMediaSession *
+static __inline__ NmpMediaSession *
 nmp_rtsp_media_session_new( void )
 {
-	JpfMediaSession *s;
+	NmpMediaSession *s;
 
-	s = g_new0(JpfMediaSession, 1);
+	s = g_new0(NmpMediaSession, 1);
 	s->cseq = 0;
 	s->stream = 0;
-	s->state = JPF_SESSION_DESCRIBE;
+	s->state = NMP_SESSION_DESCRIBE;
 
 	return s;
 }
 
 
 static __inline__ gint
-nmp_rtsp_media_init(JpfRtspMedia *self)
+nmp_rtsp_media_init(NmpRtspMedia *self)
 {
 	int index;
 
 	self->ref_count = 2;	/* Timer and us*/
 	self->lock = g_mutex_new();
-	self->state = JPF_MEDIA_STAT_NEW;
+	self->state = NMP_MEDIA_STAT_NEW;
 	self->media_uri = NULL;
 	self->session = nmp_rtsp_media_session_new();
 	self->sink = NULL;
@@ -90,7 +90,7 @@ nmp_rtsp_media_init(JpfRtspMedia *self)
 
 
 static void
-nmp_rtsp_media_finalize(JpfRtspMedia *media)
+nmp_rtsp_media_finalize(NmpRtspMedia *media)
 {
 	g_atomic_int_add(&total_media_objects, -1);
 
@@ -116,20 +116,20 @@ nmp_rtsp_media_finalize(JpfRtspMedia *media)
 
 
 static __inline__ gboolean
-__nmp_rtsp_media_killed(JpfRtspMedia *media)
+__nmp_rtsp_media_killed(NmpRtspMedia *media)
 {
-	return media->state == JPF_MEDIA_STAT_NULL;
+	return media->state == NMP_MEDIA_STAT_NULL;
 }
 
 
 __export gboolean
-nmp_rtsp_media_destroyed(JpfRtspMedia *media)
+nmp_rtsp_media_destroyed(NmpRtspMedia *media)
 {
 	gboolean destroyed;
 	G_ASSERT(media != NULL);
 	
 	g_mutex_lock(media->lock);
-	destroyed = (media->state == JPF_MEDIA_STAT_NULL);
+	destroyed = (media->state == NMP_MEDIA_STAT_NULL);
 	g_mutex_unlock(media->lock);
 
 	return destroyed;
@@ -137,7 +137,7 @@ nmp_rtsp_media_destroyed(JpfRtspMedia *media)
 
 
 static __inline__ gint
-nmp_media_blockable(JpfRtspMedia *media)
+nmp_media_blockable(NmpRtspMedia *media)
 {
 	BUG_ON(!media || !media->media_uri);
 
@@ -146,7 +146,7 @@ nmp_media_blockable(JpfRtspMedia *media)
 
 
 static __inline__ gint
-nmp_media_get_track_index(JpfRtspMedia *media, JpfMediaTrack *track)
+nmp_media_get_track_index(NmpRtspMedia *media, NmpMediaTrack *track)
 {
 	gint index;
 
@@ -165,7 +165,7 @@ nmp_media_get_track_index(JpfRtspMedia *media, JpfMediaTrack *track)
 
 
 static __inline__ void
-nmp_rtsp_media_map_track(JpfRtspMedia *media)
+nmp_rtsp_media_map_track(NmpRtspMedia *media)
 {
 	const GstSDPMedia *m;
 	const gchar *val;
@@ -177,7 +177,7 @@ nmp_rtsp_media_map_track(JpfRtspMedia *media)
 		val = gst_sdp_media_get_attribute_val(m, "control");
 		if (val)
 		{
-			memset(&media->track_map[idx], 0, sizeof(JpfMediaTrack));
+			memset(&media->track_map[idx], 0, sizeof(NmpMediaTrack));
 			strncpy(media->track_map[idx].name, val, MAX_TRACK_NAME_LEN - 1);
 		}
 
@@ -192,13 +192,13 @@ nmp_rtsp_media_map_track(JpfRtspMedia *media)
 
 
 static __inline__ void
-__nmp_rtsp_media_set_sdp_info(JpfRtspMedia *media, GstSDPMessage *sdp)
+__nmp_rtsp_media_set_sdp_info(NmpRtspMedia *media, GstSDPMessage *sdp)
 {
 	if (media->sdp)
 		gst_sdp_message_free(media->sdp);
 
-	gst_sdp_message_set_session_name(sdp, JPF_MEDIA_SESS_IN_SDP);
-	gst_sdp_message_set_information (sdp, JPF_MEDIA_INFO_IN_SDP);
+	gst_sdp_message_set_session_name(sdp, NMP_MEDIA_SESS_IN_SDP);
+	gst_sdp_message_set_information (sdp, NMP_MEDIA_INFO_IN_SDP);
 
 	media->sdp = sdp;
 	media->streams = gst_sdp_message_medias_len(sdp);
@@ -219,7 +219,7 @@ __nmp_rtsp_media_set_sdp_info(JpfRtspMedia *media, GstSDPMessage *sdp)
 
 
 __export void
-nmp_rtsp_media_set_sdp_info(JpfRtspMedia *media, GstSDPMessage *sdp)
+nmp_rtsp_media_set_sdp_info(NmpRtspMedia *media, GstSDPMessage *sdp)
 {
 	G_ASSERT(media != NULL);
 	
@@ -230,7 +230,7 @@ nmp_rtsp_media_set_sdp_info(JpfRtspMedia *media, GstSDPMessage *sdp)
 
 
 static __inline__ void
-__nmp_rtsp_media_get_sdp_info(JpfRtspMedia *media, guint8 **sdp, guint *size)
+__nmp_rtsp_media_get_sdp_info(NmpRtspMedia *media, guint8 **sdp, guint *size)
 {
 	gchar *sdp_string;
 	gsize sdp_size;
@@ -264,7 +264,7 @@ __nmp_rtsp_media_get_sdp_info(JpfRtspMedia *media, guint8 **sdp, guint *size)
 
 
 __export void
-nmp_rtsp_media_get_sdp_info(JpfRtspMedia *media, guint8 **sdp, guint *size)
+nmp_rtsp_media_get_sdp_info(NmpRtspMedia *media, guint8 **sdp, guint *size)
 {
 	G_ASSERT(media != NULL);
 
@@ -275,10 +275,10 @@ nmp_rtsp_media_get_sdp_info(JpfRtspMedia *media, guint8 **sdp, guint *size)
 
 
 __export void
-nmp_rtsp_media_set_session_id(JpfRtspMedia *media, gchar *sid)
+nmp_rtsp_media_set_session_id(NmpRtspMedia *media, gchar *sid)
 {
 	G_ASSERT(media != NULL && sid != NULL);
-	G_ASSERT(media->session->state == JPF_SESSION_SETUP);
+	G_ASSERT(media->session->state == NMP_SESSION_SETUP);
 
 	BUG_ON(!media->session);
 	if (!media->session->sid[0])
@@ -290,7 +290,7 @@ nmp_rtsp_media_set_session_id(JpfRtspMedia *media, gchar *sid)
 
 
 __export void
-nmp_rtsp_media_set_session_seq(JpfRtspMedia *media, gint seq)
+nmp_rtsp_media_set_session_seq(NmpRtspMedia *media, gint seq)
 {
 	G_ASSERT(media != NULL && media->session != NULL);
 
@@ -299,8 +299,8 @@ nmp_rtsp_media_set_session_seq(JpfRtspMedia *media, gint seq)
 }
 
 
-__export JpfSessionState
-nmp_rtsp_media_get_session_state(JpfRtspMedia *media)
+__export NmpSessionState
+nmp_rtsp_media_get_session_state(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL);
 
@@ -310,9 +310,9 @@ nmp_rtsp_media_get_session_state(JpfRtspMedia *media)
 
 
 __export gint
-nmp_rtsp_media_session_expire(JpfRtspMedia *media)
+nmp_rtsp_media_session_expire(NmpRtspMedia *media)
 {
-	if (nmp_rtsp_media_get_session_state(media) != JPF_SESSION_DESCRIBE)
+	if (nmp_rtsp_media_get_session_state(media) != NMP_SESSION_DESCRIBE)
 		return 0;
 
 	if (nmp_get_monotonic_time() >= media->session->expire)
@@ -322,14 +322,14 @@ nmp_rtsp_media_session_expire(JpfRtspMedia *media)
 }
 
 
-__export JpfSessionState
-nmp_rtsp_media_session_state_next(JpfRtspMedia *media)
+__export NmpSessionState
+nmp_rtsp_media_session_state_next(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL);
 
-	if (media->session->state < JPF_SESSION_OPTIONS)
+	if (media->session->state < NMP_SESSION_OPTIONS)
 	{
-		if (media->session->state == JPF_SESSION_SETUP &&
+		if (media->session->state == NMP_SESSION_SETUP &&
 			media->session->stream < media->streams - 1)
 		{
 			++media->session->stream;
@@ -343,26 +343,26 @@ nmp_rtsp_media_session_state_next(JpfRtspMedia *media)
 
 
 static __inline__ void
-nmp_rtsp_media_set_teardown(JpfRtspMedia *media)
+nmp_rtsp_media_set_teardown(NmpRtspMedia *media)
 {
-	media->session->state = JPF_SESSION_TEARDOWN;
+	media->session->state = NMP_SESSION_TEARDOWN;
 }
 
 
 __export gboolean
-nmp_rtsp_media_has_teardown(JpfRtspMedia *media)
+nmp_rtsp_media_has_teardown(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL);
 
 	BUG_ON(!media->session);
-	return media->session->state == JPF_SESSION_TEARDOWN;
+	return media->session->state == NMP_SESSION_TEARDOWN;
 }
 
 
 __export void
 nmp_rtsp_media_zombie_it(void *media)
 {
-	JpfRtspMedia *m = (JpfRtspMedia*)media;
+	NmpRtspMedia *m = (NmpRtspMedia*)media;
 	G_ASSERT(m != NULL);
 
 	m->zombie = 1;	/* may be seen later by reader */
@@ -370,7 +370,7 @@ nmp_rtsp_media_zombie_it(void *media)
 
 
 __export gint
-nmp_rtsp_media_play_waiting(JpfRtspMedia *media)
+nmp_rtsp_media_play_waiting(NmpRtspMedia *media)
 {
 	gint wait = 0;
 	G_ASSERT(media != NULL);
@@ -378,7 +378,7 @@ nmp_rtsp_media_play_waiting(JpfRtspMedia *media)
 	g_mutex_lock(media->lock);
 	if (!__nmp_rtsp_media_killed(media))
 	{
-		if (media->session->state == JPF_SESSION_PLAY &&
+		if (media->session->state == NMP_SESSION_PLAY &&
 			!media->ready_to_play)
 		{
 			wait = 1;
@@ -394,8 +394,8 @@ static gint
 nmp_rtsp_media_recv_packet(gpointer _media, gint stream, gchar *buf, gint size)
 {
 	gint err = -EINVAL;
-	JpfRtspMedia *media = (JpfRtspMedia*)_media;
-	JpfMediaSinkers *sinkers = NULL;
+	NmpRtspMedia *media = (NmpRtspMedia*)_media;
+	NmpMediaSinkers *sinkers = NULL;
 
 	g_mutex_lock(media->lock);
 	if (!__nmp_rtsp_media_killed(media))
@@ -418,16 +418,16 @@ nmp_rtsp_media_recv_packet(gpointer _media, gint stream, gchar *buf, gint size)
 
 
 static __inline__ gint
-nmp_rtsp_media_set_state(JpfRtspMedia *media, JpfMediaState state)
+nmp_rtsp_media_set_state(NmpRtspMedia *media, NmpMediaState state)
 {
-	JpfMediaSource *src = NULL;
-	JpfPendingQueue pq;
+	NmpMediaSource *src = NULL;
+	NmpPendingQueue pq;
 	gint blockable;
 
 	if (media->state == state)
 		return 0;
 
-	if (media->state == JPF_MEDIA_STAT_NULL)
+	if (media->state == NMP_MEDIA_STAT_NULL)
 	{
 		nmp_warning(
 			"Change 'NULL' state media '%p'", media
@@ -435,7 +435,7 @@ nmp_rtsp_media_set_state(JpfRtspMedia *media, JpfMediaState state)
 		return -1;	/* can't be changed */
 	}
 
-	if (state == JPF_MEDIA_STAT_READY)
+	if (state == NMP_MEDIA_STAT_READY)
 	{
 		blockable = nmp_media_blockable(media);
 
@@ -446,7 +446,7 @@ nmp_rtsp_media_set_state(JpfRtspMedia *media, JpfMediaState state)
 		media->src = nmp_media_src_create_source(
 			media,
 			media->streams,
-			media->mt == JPF_MT_UDP ? MEDIA_TRANS_UDP : MEDIA_TRANS_TCP,
+			media->mt == NMP_MT_UDP ? MEDIA_TRANS_UDP : MEDIA_TRANS_TCP,
 			blockable
 		);
 		if (G_UNLIKELY(!media->src))
@@ -466,7 +466,7 @@ nmp_rtsp_media_set_state(JpfRtspMedia *media, JpfMediaState state)
 		return 0;
 	}
 
-	if (state == JPF_MEDIA_STAT_NULL)
+	if (state == NMP_MEDIA_STAT_NULL)
 	{
 		if (media->sink)
 		{
@@ -501,14 +501,14 @@ nmp_rtsp_media_set_state(JpfRtspMedia *media, JpfMediaState state)
 
 
 __export gint
-nmp_rtsp_media_prepare(JpfRtspMedia *media, JpfDeviceMediaType mt)
+nmp_rtsp_media_prepare(NmpRtspMedia *media, NmpDeviceMediaType mt)
 {
 	gint ret;
 	G_ASSERT(media != NULL);
 
 	g_mutex_lock(media->lock);
 	media->mt = mt;
-	ret = nmp_rtsp_media_set_state(media, JPF_MEDIA_STAT_READY);
+	ret = nmp_rtsp_media_set_state(media, NMP_MEDIA_STAT_READY);
 	g_mutex_unlock(media->lock);
 
 	return ret;
@@ -516,25 +516,25 @@ nmp_rtsp_media_prepare(JpfRtspMedia *media, JpfDeviceMediaType mt)
 
 
 static __inline__ gint
-nmp_rtsp_media_kill(JpfRtspMedia *media)
+nmp_rtsp_media_kill(NmpRtspMedia *media)
 {
 	gint ret;
 	G_ASSERT(media != NULL);
 
 	g_mutex_lock(media->lock);
-	ret = nmp_rtsp_media_set_state(media, JPF_MEDIA_STAT_NULL);
+	ret = nmp_rtsp_media_set_state(media, NMP_MEDIA_STAT_NULL);
 	g_mutex_unlock(media->lock);
 
 	return ret;
 }
 
 
-JpfRtspMedia *
+NmpRtspMedia *
 nmp_rtsp_media_new( void )
 {
-	JpfRtspMedia *media;
+	NmpRtspMedia *media;
 
-	media = g_new0(JpfRtspMedia, 1);
+	media = g_new0(NmpRtspMedia, 1);
 	if (nmp_rtsp_media_init(media))
 	{
 		g_free(media);
@@ -546,7 +546,7 @@ nmp_rtsp_media_new( void )
 
 
 void
-nmp_rtsp_media_ref(JpfRtspMedia *media)
+nmp_rtsp_media_ref(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL &&
 		g_atomic_int_get(&media->ref_count) > 0);
@@ -556,7 +556,7 @@ nmp_rtsp_media_ref(JpfRtspMedia *media)
 
 
 void
-nmp_rtsp_media_unref(JpfRtspMedia *media)
+nmp_rtsp_media_unref(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL &&
 		g_atomic_int_get(&media->ref_count) > 0);
@@ -570,7 +570,7 @@ nmp_rtsp_media_unref(JpfRtspMedia *media)
 
 
 __export void
-nmp_rtsp_media_kill_unref(JpfRtspMedia *media)
+nmp_rtsp_media_kill_unref(NmpRtspMedia *media)
 {
 	G_ASSERT(media != NULL);
 
@@ -580,7 +580,7 @@ nmp_rtsp_media_kill_unref(JpfRtspMedia *media)
 
 
 __export void
-nmp_rtsp_media_attach_device(JpfRtspMedia *media, 
+nmp_rtsp_media_attach_device(NmpRtspMedia *media, 
 	gpointer device)
 {
 	G_ASSERT(media != NULL && device != NULL);
@@ -589,14 +589,14 @@ nmp_rtsp_media_attach_device(JpfRtspMedia *media,
 
 	BUG_ON(media->device);
 	media->device = device;
-	nmp_rtsp_device_ref((JpfMediaDevice*)device);
+	nmp_rtsp_device_ref((NmpMediaDevice*)device);
 
 	g_mutex_unlock(media->lock);
 }
 
 
 __export void
-nmp_rtsp_media_detach_device(JpfRtspMedia *media, 
+nmp_rtsp_media_detach_device(NmpRtspMedia *media, 
 	gpointer device)
 {
 	G_ASSERT(media != NULL && device != NULL);
@@ -609,16 +609,16 @@ nmp_rtsp_media_detach_device(JpfRtspMedia *media,
 
 	g_mutex_unlock(media->lock);
 
-	nmp_rtsp_device_unref((JpfMediaDevice*)device);
+	nmp_rtsp_device_unref((NmpMediaDevice*)device);
 }
 
 
-JpfMediaUri*
-nmp_rtsp_media_uri_dup(const JpfMediaUri *uri)
+NmpMediaUri*
+nmp_rtsp_media_uri_dup(const NmpMediaUri *uri)
 {
-	JpfMediaUri *media_uri;
+	NmpMediaUri *media_uri;
 
-	media_uri = g_new0(JpfMediaUri, 1);
+	media_uri = g_new0(NmpMediaUri, 1);
 	memcpy(media_uri, uri, sizeof(*uri));
 	media_uri->media_base = g_strdup(uri->media_base);
 
@@ -650,7 +650,7 @@ nmp_rtsp_media_uri_dup(const JpfMediaUri *uri)
 
 
 static __inline__ gint
-nmp_rtsp_media_get_rtp_port(JpfRtspMedia *media, gint stream, gint *rtp)
+nmp_rtsp_media_get_rtp_port(NmpRtspMedia *media, gint stream, gint *rtp)
 {
 	G_ASSERT(media != NULL);
 
@@ -661,7 +661,7 @@ nmp_rtsp_media_get_rtp_port(JpfRtspMedia *media, gint stream, gint *rtp)
 #ifdef CONFIG_RTCP_SUPPORT
 
 static __inline__ gint
-nmp_rtsp_media_get_rtcp_port(JpfRtspMedia *media, gint stream, gint *rtcp)
+nmp_rtsp_media_get_rtcp_port(NmpRtspMedia *media, gint stream, gint *rtcp)
 {
 	G_ASSERT(media != NULL);
 
@@ -671,11 +671,11 @@ nmp_rtsp_media_get_rtcp_port(JpfRtspMedia *media, gint stream, gint *rtcp)
 #endif
 
 
-JpfSinkerWatch *
-nmp_media_create_sinker(JpfRtspMedia *media, GstRTSPLowerTrans trans,
+NmpSinkerWatch *
+nmp_media_create_sinker(NmpRtspMedia *media, GstRTSPLowerTrans trans,
 	gint *err)
 {
-	JpfSinkerWatch *sinker;
+	NmpSinkerWatch *sinker;
 	G_ASSERT(media != NULL);
 
 	sinker = nmp_media_sinker_create(trans, media->streams, err);
@@ -691,8 +691,8 @@ nmp_media_create_sinker(JpfRtspMedia *media, GstRTSPLowerTrans trans,
 
 
 gint
-nmp_media_set_sinker_transport(JpfRtspMedia *media, JpfSinkerWatch *sinker,
-	JpfMediaTrack *track, gchar *client_Ip, GstRTSPTransport *ct, gboolean b_nat, void *p)
+nmp_media_set_sinker_transport(NmpRtspMedia *media, NmpSinkerWatch *sinker,
+	NmpMediaTrack *track, gchar *client_Ip, GstRTSPTransport *ct, gboolean b_nat, void *p)
 {
 	gint ret = -1, i_stream;
 	G_ASSERT(media != NULL && sinker != NULL && ct != NULL);
@@ -711,7 +711,7 @@ nmp_media_set_sinker_transport(JpfRtspMedia *media, JpfSinkerWatch *sinker,
 
 
 static __inline__ gint
-__nmp_rtsp_media_add_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
+__nmp_rtsp_media_add_sinker(NmpRtspMedia *media, NmpSinkerWatch *sinker)
 {
 	if (__nmp_rtsp_media_killed(media))
 		return -E_MKILLED;
@@ -730,7 +730,7 @@ __nmp_rtsp_media_add_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
 
 
 gint
-nmp_rtsp_media_add_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
+nmp_rtsp_media_add_sinker(NmpRtspMedia *media, NmpSinkerWatch *sinker)
 {
 	gint ret;
 	G_ASSERT(media != NULL && sinker != NULL);
@@ -744,8 +744,8 @@ nmp_rtsp_media_add_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
 
 
 static __inline__ gboolean
-__nmp_rtsp_media_del_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker,
-	JpfMediaDevice **devp)
+__nmp_rtsp_media_del_sinker(NmpRtspMedia *media, NmpSinkerWatch *sinker,
+	NmpMediaDevice **devp)
 {
 	gint left_sinkers;
 
@@ -757,7 +757,7 @@ __nmp_rtsp_media_del_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker,
 		left_sinkers = nmp_media_sinkers_del(media->sink, sinker);
 		if (left_sinkers == 0)
 		{
-			nmp_rtsp_media_set_state(media, JPF_MEDIA_STAT_NULL);
+			nmp_rtsp_media_set_state(media, NMP_MEDIA_STAT_NULL);
 			if (media->device)
 			{
 				*devp = media->device;
@@ -773,10 +773,10 @@ __nmp_rtsp_media_del_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker,
 
 
 void
-nmp_rtsp_media_del_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
+nmp_rtsp_media_del_sinker(NmpRtspMedia *media, NmpSinkerWatch *sinker)
 {
 	gboolean need_teardown;
-	JpfMediaDevice *device;
+	NmpMediaDevice *device;
 	G_ASSERT(media != NULL && sinker != NULL);
 
 	g_mutex_lock(media->lock);
@@ -793,9 +793,9 @@ nmp_rtsp_media_del_sinker(JpfRtspMedia *media, JpfSinkerWatch *sinker)
 
 
 __export gint
-nmp_rtsp_media_sinker_play(JpfRtspMedia *media, JpfSinkerWatch *sinker)
+nmp_rtsp_media_sinker_play(NmpRtspMedia *media, NmpSinkerWatch *sinker)
 {
-	JpfMediaDevice *device = NULL;
+	NmpMediaDevice *device = NULL;
 	gint rc = -E_MKILLED, fist_playing = 0;
 	G_ASSERT(media != NULL && sinker != NULL);
 
@@ -808,7 +808,7 @@ nmp_rtsp_media_sinker_play(JpfRtspMedia *media, JpfSinkerWatch *sinker)
 		fist_playing = !media->ready_to_play;
 		media->ready_to_play = 1;
 
-		device = (JpfMediaDevice*)media->device;
+		device = (NmpMediaDevice*)media->device;
 		if (device)
 		{
 			nmp_rtsp_device_ref(device);
@@ -831,9 +831,9 @@ nmp_rtsp_media_sinker_play(JpfRtspMedia *media, JpfSinkerWatch *sinker)
 
 
 static void
-nmp_media_on_timer(JpfRtspMedia *media)
+nmp_media_on_timer(NmpRtspMedia *media)
 {
-	JpfMediaDevice *device = NULL;
+	NmpMediaDevice *device = NULL;
 
 	g_mutex_lock(media->lock);
 
@@ -846,8 +846,8 @@ nmp_media_on_timer(JpfRtspMedia *media)
 				media, MIN_MEDIA_PERMANET
 			);
 
-			nmp_rtsp_media_set_state(media, JPF_MEDIA_STAT_NULL);
-			device = (JpfMediaDevice*)media->device;
+			nmp_rtsp_media_set_state(media, NMP_MEDIA_STAT_NULL);
+			device = (NmpMediaDevice*)media->device;
 			if (device)
 			{
 				nmp_rtsp_device_ref(device);
@@ -869,7 +869,7 @@ nmp_media_on_timer(JpfRtspMedia *media)
 
 
 static __inline__ gchar*
-nmp_rtsp_media_localhost(JpfRtspMedia *media)
+nmp_rtsp_media_localhost(NmpRtspMedia *media)
 {
 	gchar *local_ip = NULL;
 
@@ -885,7 +885,7 @@ nmp_rtsp_media_localhost(JpfRtspMedia *media)
 
 static __inline__ gint
 nmp_rtsp_media_make_describe_request(GstRTSPMessage **request,
-	JpfRtspMedia *media)
+	NmpRtspMedia *media)
 {
 	GstRTSPResult res;
 
@@ -913,7 +913,7 @@ no_describe_message:
 
 static __inline__ gint
 nmp_rtsp_media_make_setup_request(GstRTSPMessage **request,
-	JpfRtspMedia *media)
+	NmpRtspMedia *media)
 {
 	gint rtp_port, rtcp_port;
 	GstRTSPResult res;
@@ -948,7 +948,7 @@ nmp_rtsp_media_make_setup_request(GstRTSPMessage **request,
 
 	localhost = nmp_rtsp_media_localhost(media);
 
-	if (media->mt == JPF_MT_UDP)
+	if (media->mt == NMP_MT_UDP)
 	{
 		transport = g_strdup_printf(
 			"RTP/AVP;unicast;client_port=%d-%d;destination=%s",
@@ -1002,7 +1002,7 @@ no_setup_message:
 
 static __inline__ gint
 nmp_rtsp_media_make_play_request(GstRTSPMessage **request,
-	JpfRtspMedia *media)
+	NmpRtspMedia *media)
 {
 	gchar *url;
 	GstRTSPResult res;
@@ -1046,7 +1046,7 @@ no_play_message:
 
 static __inline__ gint
 nmp_rtsp_media_make_option_request(GstRTSPMessage **request,
-	JpfRtspMedia *media)
+	NmpRtspMedia *media)
 {
 	gchar *url;
 	GstRTSPResult res;
@@ -1078,7 +1078,7 @@ no_option_message:
 
 static __inline__ gint
 nmp_rtsp_media_make_teardown_request(GstRTSPMessage **request,
-	JpfRtspMedia *media)
+	NmpRtspMedia *media)
 {
 	gchar *url;
 	GstRTSPResult res;
@@ -1110,13 +1110,13 @@ no_teardown_message:
 
 static __inline__ gint
 nmp_rtsp_media_make_setparam_request(GstRTSPMessage **request,
-	JpfRtspMedia *media, gint name, gpointer value)
+	NmpRtspMedia *media, gint name, gpointer value)
 {
-	JpfSessionState state;
+	NmpSessionState state;
 	GstRTSPResult res;
 
 	state = nmp_rtsp_media_get_session_state(media);
-	if (state <= JPF_SESSION_PLAY)
+	if (state <= NMP_SESSION_PLAY)
 		return -1;
 
 	GST_RTSP_CHECK(
@@ -1131,7 +1131,7 @@ nmp_rtsp_media_make_setparam_request(GstRTSPMessage **request,
 	gst_rtsp_message_add_header(
 		*request,
 		GST_RTSP_HDR_USER_AGENT,
-		JPF_MEDIA_SERVER_AGENT
+		NMP_MEDIA_SERVER_AGENT
 	);
 
 	if (G_LIKELY(strlen(media->session->sid)))
@@ -1151,44 +1151,44 @@ no_setparam_message:
 
 
 static __inline__ gint
-__nmp_rtsp_media_make_request(JpfRtspMedia *media,
+__nmp_rtsp_media_make_request(NmpRtspMedia *media,
 	GstRTSPMessage **request)
 {
 	gint ret = -1;
-	JpfSessionState state;
+	NmpSessionState state;
 	G_ASSERT(media != NULL && request != NULL);
 
 	state = nmp_rtsp_media_get_session_state(media);
 	switch (state) {
-	case JPF_SESSION_DESCRIBE:
+	case NMP_SESSION_DESCRIBE:
 		ret = nmp_rtsp_media_make_describe_request(
 			request,
 			media
 		);
 		break;
 
-	case JPF_SESSION_SETUP:
+	case NMP_SESSION_SETUP:
 		ret = nmp_rtsp_media_make_setup_request(
 			request,
 			media
 		);
 		break;
 
-	case JPF_SESSION_PLAY:
+	case NMP_SESSION_PLAY:
 		ret = nmp_rtsp_media_make_play_request(
 			request,
 			media
 		);
 		break;
 
-	case JPF_SESSION_OPTIONS:
+	case NMP_SESSION_OPTIONS:
 		ret = nmp_rtsp_media_make_option_request(
 			request,
 			media
 		);
 		break;
 
-	case JPF_SESSION_TEARDOWN:
+	case NMP_SESSION_TEARDOWN:
 		ret = nmp_rtsp_media_make_teardown_request(
 			request,
 			media
@@ -1204,7 +1204,7 @@ __nmp_rtsp_media_make_request(JpfRtspMedia *media,
 		gst_rtsp_message_add_header(
 			*request, 
 			GST_RTSP_HDR_USER_AGENT,
-			JPF_MEDIA_SERVER_AGENT
+			NMP_MEDIA_SERVER_AGENT
 		);
 	}
 
@@ -1213,7 +1213,7 @@ __nmp_rtsp_media_make_request(JpfRtspMedia *media,
 
 
 gint
-nmp_rtsp_media_make_request(JpfRtspMedia *media,
+nmp_rtsp_media_make_request(NmpRtspMedia *media,
 	GstRTSPMessage **request)
 {
 	gint err;
@@ -1228,7 +1228,7 @@ nmp_rtsp_media_make_request(JpfRtspMedia *media,
 
 
 __export gint
-nmp_rtsp_media_make_param_request(JpfRtspMedia *media,
+nmp_rtsp_media_make_param_request(NmpRtspMedia *media,
 	GstRTSPMessage **request, gint name, gpointer value)
 {
 	gint err = -E_MKILLED;
@@ -1247,7 +1247,7 @@ nmp_rtsp_media_make_param_request(JpfRtspMedia *media,
 
 
 __export void
-nmp_rtsp_media_die_announce(JpfRtspMedia *media,
+nmp_rtsp_media_die_announce(NmpRtspMedia *media,
 	gpointer device)
 {
 	G_ASSERT(media != NULL && device != NULL);
@@ -1256,7 +1256,7 @@ nmp_rtsp_media_die_announce(JpfRtspMedia *media,
 	{
 		nmp_rtsp_media_set_teardown(media);
 		nmp_rtsp_device_request(
-			(JpfMediaDevice*)device, media
+			(NmpMediaDevice*)device, media
 		);
 
 		nmp_print(
@@ -1275,8 +1275,8 @@ nmp_rtsp_media_die_announce(JpfRtspMedia *media,
 
 
 static __inline__ void
-nmp_rtsp_media_request_iframe(JpfRtspMedia *media,
-	JpfMediaDevice *device)
+nmp_rtsp_media_request_iframe(NmpRtspMedia *media,
+	NmpMediaDevice *device)
 {
 	nmp_rtsp_device_extend_request(
 		device, media, REQUEST_DEVICE_IFRAME, NULL
@@ -1285,8 +1285,8 @@ nmp_rtsp_media_request_iframe(JpfRtspMedia *media,
 
 
 static __inline__ gint
-nmp_rtsp_media_pending_request(JpfRtspMedia *media, PQN_DATA_T data_1, 
-	PQN_DATA_T data_2, PQN_DATA_T data_3, JpfPQNFunc fun)
+nmp_rtsp_media_pending_request(NmpRtspMedia *media, PQN_DATA_T data_1, 
+	PQN_DATA_T data_2, PQN_DATA_T data_3, NmpPQNFunc fun)
 {
 	return nmp_pq_pending(
 		&media->r_pending, data_1, data_2, data_3, fun
@@ -1295,8 +1295,8 @@ nmp_rtsp_media_pending_request(JpfRtspMedia *media, PQN_DATA_T data_1,
 
 
 gint
-nmp_rtsp_media_pending_request_state(JpfRtspMedia *media, JpfMediaState s,
-	PQN_DATA_T data_1, PQN_DATA_T data_2, PQN_DATA_T data_3, JpfPQNFunc fun)
+nmp_rtsp_media_pending_request_state(NmpRtspMedia *media, NmpMediaState s,
+	PQN_DATA_T data_1, PQN_DATA_T data_2, PQN_DATA_T data_3, NmpPQNFunc fun)
 {
 	gint ret = -E_MKILLED;	/* not needed */
 	G_ASSERT(media != NULL);
@@ -1325,9 +1325,9 @@ nmp_rtsp_media_pending_request_state(JpfRtspMedia *media, JpfMediaState s,
 
 
 void
-nmp_rtsp_media_deal_pending_request(JpfRtspMedia *media)
+nmp_rtsp_media_deal_pending_request(NmpRtspMedia *media)
 {
-	JpfPendingQueue pq;
+	NmpPendingQueue pq;
 	G_ASSERT(media != NULL);
 
 	g_mutex_lock(media->lock);

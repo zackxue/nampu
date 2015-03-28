@@ -5,8 +5,8 @@
 
 typedef gchar*	b_ptr_t;
 
-typedef struct _JpfRingBufferOps JpfRingBufferOps;
-struct _JpfRingBufferOps
+typedef struct _NmpRingBufferOps NmpRingBufferOps;
+struct _NmpRingBufferOps
 {
 	gint (*check)(b_ptr_t start, gsize size);	/* sanity check */
 	gint (*count)(b_ptr_t start, b_ptr_t end, gsize *lp, gsize *lb);	/* get the count of packets */
@@ -17,8 +17,8 @@ struct _JpfRingBufferOps
 };
 
 
-typedef struct _JpfRingBuffer JpfRingBuffer;
-struct _JpfRingBuffer
+typedef struct _NmpRingBuffer NmpRingBuffer;
+struct _NmpRingBuffer
 {
 	b_ptr_t			buff_start;		/* buffer start */
 	b_ptr_t			buff_end;		/* buffer end */
@@ -32,15 +32,15 @@ struct _JpfRingBuffer
 	gsize			total_bytes;	/* total bytes received */
 	gsize			total_packets;	/* total packets received */
 
-	JpfRingBufferOps *data_ops;		/* hooks to handle data */
+	NmpRingBufferOps *data_ops;		/* hooks to handle data */
 
 	GStaticMutex	lock;			/* protect read/writer pointer */
 };
 
 
-JpfRingBuffer *nmp_ring_buffer_new(JpfRingBufferOps *data_ops, gsize buff_size);
-void nmp_ring_buffer_release(JpfRingBuffer *rb);
-gint nmp_ring_buffer_fill_data(JpfRingBuffer *rb, gchar *data, gsize size);
-gint nmp_ring_buffer_get_data(JpfRingBuffer *rb, b_ptr_t buf, gsize size, gint *empty);
+NmpRingBuffer *nmp_ring_buffer_new(NmpRingBufferOps *data_ops, gsize buff_size);
+void nmp_ring_buffer_release(NmpRingBuffer *rb);
+gint nmp_ring_buffer_fill_data(NmpRingBuffer *rb, gchar *data, gsize size);
+gint nmp_ring_buffer_get_data(NmpRingBuffer *rb, b_ptr_t buf, gsize size, gint *empty);
 
 #endif	//__NMP_RING_BUFFER_H__

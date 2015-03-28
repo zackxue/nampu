@@ -16,14 +16,14 @@ struct _NmpNetIO
 {
     gint        ref_count;
 
-    HmWatch    *io_watch;
+    NmpWatch    *io_watch;
     NmpNet      *net;
     GMutex      *lock;
 
-	HmIOEst	on_est;		/* On established, after connect. */
+	NmpIOEst	on_est;		/* On established, after connect. */
 
 	gpointer    priv_data;
-	HmDesFun   priv_destroy;
+	NmpDesFun   priv_destroy;
 };
 
 extern gint nmp_net_recv_message(NmpNet *net, NmpNetIO *net_io, gpointer msg);
@@ -36,19 +36,19 @@ extern void nmp_net_establish_io(NmpNet *net, NmpNetIO *net_io);
 
 static gint total_net_io_count = 0;
 
-static __inline__ HmWatch *
+static __inline__ NmpWatch *
 nmp_net_io_create_watch(NmpConnection *conn, 
     NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto)
 {
-    return (HmWatch*)nmp_hl_io_new(conn, ll_proto, hl_proto);
+    return (NmpWatch*)nmp_hl_io_new(conn, ll_proto, hl_proto);
 }
 
 
-static __inline__ HmWatch *
+static __inline__ NmpWatch *
 nmp_net_io_create_listen_watch(NmpConnection *conn, 
     NmpPacketProto *ll_proto, NmpPayloadProto *hl_proto)
 {
-    return (HmWatch*)nmp_hl_listen_io_new(conn, ll_proto, hl_proto);
+    return (NmpWatch*)nmp_hl_listen_io_new(conn, ll_proto, hl_proto);
 }
 
 
@@ -110,7 +110,7 @@ nmp_net_io_unref(NmpNetIO *net_io)
 __export void
 nmp_net_io_kill(NmpNetIO *net_io)
 {
-    HmWatch *watch;
+    NmpWatch *watch;
     NmpNet *net;
     G_ASSERT(net_io != NULL);
 
@@ -139,7 +139,7 @@ nmp_net_io_kill(NmpNetIO *net_io)
 __export void
 nmp_net_io_async_kill(NmpNetIO *net_io, gint err)
 {
-    HmWatch *watch;
+    NmpWatch *watch;
     NmpNet *net;
     G_ASSERT(net_io != NULL);
 
@@ -255,7 +255,7 @@ nmp_net_io_set_owner(NmpNetIO *net_io, gpointer owner)
 
 __export void
 nmp_net_io_set_private(NmpNetIO *net_io, gpointer priv_data,
-	HmDesFun priv_destroy)
+	NmpDesFun priv_destroy)
 {
 	G_ASSERT(net_io != NULL);
 
@@ -300,7 +300,7 @@ nmp_net_io_read_message(NmpNetIO *net_io, gpointer msg)
 __export gint
 nmp_net_io_write_message(NmpNetIO *net_io, gpointer msg)
 {
-    HmWatch *watch;
+    NmpWatch *watch;
     gint rc = 0;
     G_ASSERT(net_io != NULL);
 
@@ -357,7 +357,7 @@ nmp_net_io_add_child_watch(NmpNetIO *net_io, gpointer watch)
 
     new_io = g_new0(NmpNetIO, 1);
     new_io->ref_count = 1;  /* 1 returned to user */
-    new_io->io_watch = (HmWatch*)watch;
+    new_io->io_watch = (NmpWatch*)watch;
     new_io->net = NULL;
     new_io->lock = g_mutex_new();
 
@@ -414,7 +414,7 @@ nmp_net_io_set_ttd(NmpNetIO *net_io, gint milli_secs)
 {
     gboolean set_ok = FALSE;
     NmpNet *net = NULL;
-    HmWatch *watch;
+    NmpWatch *watch;
     G_ASSERT(net_io != NULL);
 
     g_mutex_lock(net_io->lock);
@@ -450,7 +450,7 @@ nmp_net_io_set_ttd(NmpNetIO *net_io, gint milli_secs)
 
 
 __export void
-nmp_net_io_set_ester(NmpNetIO *net_io, HmIOEst on_est)
+nmp_net_io_set_ester(NmpNetIO *net_io, NmpIOEst on_est)
 {
 	G_ASSERT(net_io != NULL);
 
@@ -462,7 +462,7 @@ __export gchar *
 nmp_net_io_get_peer(NmpNetIO *net_io)
 {
 	gchar *ip = NULL;
-	HmWatch *watch;
+	NmpWatch *watch;
 	G_ASSERT(net_io != NULL);
 
 	g_mutex_lock(net_io->lock);
@@ -488,7 +488,7 @@ nmp_net_io_get_peer(NmpNetIO *net_io)
 __export void
 nmp_net_io_set_heavy_load(NmpNetIO *net_io)
 {
-	HmWatch *watch;
+	NmpWatch *watch;
 	G_ASSERT(net_io != NULL);
 
 	g_mutex_lock(net_io->lock);
@@ -512,7 +512,7 @@ nmp_net_io_set_heavy_load(NmpNetIO *net_io)
 __export void
 nmp_net_io_set_block_size(NmpNetIO *net_io, gint size)
 {
-	HmWatch *watch;
+	NmpWatch *watch;
 	G_ASSERT(net_io != NULL);
 
 	g_mutex_lock(net_io->lock);

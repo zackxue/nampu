@@ -3,7 +3,7 @@
 
 #include <errno.h>
 
-#define EBASE           255         /* Base number of Jpf errno */
+#define EBASE           255         /* Base number of Nmp errno */
 
 #define E_INVAL         EINVAL      /* Invalid argument */
 #define E_NOMEM         ENOMEM      /* Out of memory */

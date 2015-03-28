@@ -2,16 +2,16 @@
 #include "nmp_debug.h"
 #include "nmp_sysctl.h"
 
-static JpfMediaServer glb_server;
+static NmpMediaServer glb_server;
 
-JpfMediaServer *
+NmpMediaServer *
 nmp_media_server_get( void )
 {
 	return &glb_server;
 }
 
 static __inline__ void
-__nmp_media_server_init(JpfMediaServer *server)
+__nmp_media_server_init(NmpMediaServer *server)
 {
 	server->module_cms = nmp_mod_cms_new();
 
@@ -42,7 +42,7 @@ __nmp_media_server_init(JpfMediaServer *server)
 
 
 static __inline__ void
-nmp_media_server_attach(JpfMediaServer *server)
+nmp_media_server_attach(NmpMediaServer *server)
 {
 	G_ASSERT(server != NULL);
 
@@ -63,7 +63,7 @@ nmp_media_server_attach(JpfMediaServer *server)
 void
 nmp_media_server_init( void )
 {
-	JpfMediaServer *server;
+	NmpMediaServer *server;
 
 	server = nmp_media_server_get();
 	__nmp_media_server_init(server);
@@ -72,7 +72,7 @@ nmp_media_server_init( void )
 
 
 gchar *
-nmp_media_server_get_id(JpfMediaServer *server)
+nmp_media_server_get_id(NmpMediaServer *server)
 {
 	G_ASSERT(server != NULL);
 
@@ -83,7 +83,7 @@ nmp_media_server_get_id(JpfMediaServer *server)
 gint
 nmp_media_server_state( void )
 {
-	JpfMediaServer *svr = nmp_media_server_get();
+	NmpMediaServer *svr = nmp_media_server_get();
 
 	return nmp_mds_cms_state(svr->module_cms);
 }

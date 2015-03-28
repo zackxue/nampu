@@ -17,7 +17,7 @@ XmlTable *get_xml_table()
 }
 
 int register_xml_table(XmlTable *table, xmlid_t id, char *command, 
-		JpfCreateXml func_c, JpfParseXml func_p, unsigned int flags)
+		NmpCreateXml func_c, NmpParseXml func_p, unsigned int flags)
 {
   
 	int cmd_size;
@@ -69,7 +69,7 @@ int register_xml_table(XmlTable *table, xmlid_t id, char *command,
 	return 0;
 }
 
-int xml_table_create(XmlTable *table, JpfXmlMsg *msg, 
+int xml_table_create(XmlTable *table, NmpXmlMsg *msg, 
 		char buf[], size_t size, unsigned int flags)
 {
 	int index = 0;
@@ -93,7 +93,7 @@ void *xml_table_parse(XmlTable *table, xmlid_t id,
 		char buf[], size_t size, int *err, unsigned int flags)
 {
 	int index;
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	
 	J_ASSERT(table);
 
@@ -166,7 +166,7 @@ static __inline__ int get_xml_buf(char **ptr, char page[],
 
 typedef int (*parse_func)(void *pvalue, const char *buffer);
 
-static __inline__ JpfXmlMsg *
+static __inline__ NmpXmlMsg *
 create_xml_msg(char buf[], size_t buf_size, 
 	int data_id, size_t data_size, parse_func func)
 {
@@ -175,7 +175,7 @@ create_xml_msg(char buf[], size_t buf_size,
 	char *new_buf = NULL;
 	char page_buf[J_SDK_MAX_PAGE_SIZE];
 	
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	void *pri_data = NULL;
 	
 	flag = get_xml_buf(&new_buf, page_buf, buf, buf_size);
@@ -195,16 +195,16 @@ create_xml_msg(char buf[], size_t buf_size,
 	return msg;
 }
 
-static __inline__ JpfXmlMsg *
+static __inline__ NmpXmlMsg *
 create_xml_msg_2(char buf[], size_t buf_size, 
-	int data_id, size_t data_size, parse_func func, JpfXmlMsgDes fin)
+	int data_id, size_t data_size, parse_func func, NmpXmlMsgDes fin)
 {
 	int ret = -1;
 	int flag = -1;
 	char *new_buf = NULL;
 	char page_buf[J_SDK_MAX_PAGE_SIZE];
 	
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	void *xml_data = NULL;
 	
 	flag = get_xml_buf(&new_buf, page_buf, buf, buf_size);
@@ -225,28 +225,28 @@ create_xml_msg_2(char buf[], size_t buf_size,
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-int create_get_css_request(JpfXmlMsg *msg, char buf[], 
+int create_get_css_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_css_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_css_response(JpfXmlMsg *msg, char buf[], 
+int create_get_css_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_css_response_xml(msg->priv_obj, buf, size);
 }
-int create_pu_register_css(JpfXmlMsg *msg, char buf[], 
+int create_pu_register_css(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_pu_register_css_xml(msg->priv_obj, buf, size);
 }
-int create_register_css_response(JpfXmlMsg *msg, char buf[], 
+int create_register_css_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -255,7 +255,7 @@ int create_register_css_response(JpfXmlMsg *msg, char buf[],
 }
 
 
-int create_register_request(JpfXmlMsg *msg, char buf[], 
+int create_register_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -263,7 +263,7 @@ int create_register_request(JpfXmlMsg *msg, char buf[],
 	return merge_register_request_xml(msg->priv_obj, buf, size);
 }
 
-int create_register_response(JpfXmlMsg *msg, char buf[], 
+int create_register_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -271,7 +271,7 @@ int create_register_response(JpfXmlMsg *msg, char buf[],
 	return merge_register_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_heart_beat_request(JpfXmlMsg *msg, char buf[], 
+int create_heart_beat_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 { 
 	J_ASSERT(msg && size);
@@ -279,7 +279,7 @@ int create_heart_beat_request(JpfXmlMsg *msg, char buf[],
 	return merge_heart_beat_request_xml(msg->priv_obj, buf, size);
 }
 
-int create_heart_beat_response(JpfXmlMsg *msg, char buf[], 
+int create_heart_beat_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -287,7 +287,7 @@ int create_heart_beat_response(JpfXmlMsg *msg, char buf[],
 	return merge_heart_beat_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_mds_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_mds_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -295,7 +295,7 @@ int create_get_mds_info_request(JpfXmlMsg *msg, char buf[],
 	return merge_get_mds_info_request_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_mds_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_mds_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -303,7 +303,7 @@ int create_get_mds_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_mds_info_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_change_dispatch_request(JpfXmlMsg *msg, char buf[], 
+int create_change_dispatch_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -311,7 +311,7 @@ int create_change_dispatch_request(JpfXmlMsg *msg, char buf[],
 	return merge_change_dispatch_request_xml(msg->priv_obj, buf, size);
 }
 
-int create_change_dispatch_result(JpfXmlMsg *msg, char buf[], 
+int create_change_dispatch_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -319,7 +319,7 @@ int create_change_dispatch_result(JpfXmlMsg *msg, char buf[],
 	return merge_change_dispatch_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_device_info(JpfXmlMsg *msg, char buf[], 
+int create_get_device_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -327,7 +327,7 @@ int create_get_device_info(JpfXmlMsg *msg, char buf[],
 	return merge_get_device_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_device_info_response(JpfXmlMsg *msg, char buf[], 
+int create_device_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -335,7 +335,7 @@ int create_device_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_device_info_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_device_ntp_info(JpfXmlMsg *msg, char buf[], 
+int create_get_device_ntp_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -343,7 +343,7 @@ int create_get_device_ntp_info(JpfXmlMsg *msg, char buf[],
 	return merge_get_device_ntp_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_device_ntp_info_response(JpfXmlMsg *msg, char buf[], 
+int create_device_ntp_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -351,7 +351,7 @@ int create_device_ntp_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_device_ntp_info_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_set_device_ntp_info(JpfXmlMsg *msg, char buf[], 
+int create_set_device_ntp_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -359,7 +359,7 @@ int create_set_device_ntp_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_device_ntp_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_device_ntp_info_result(JpfXmlMsg *msg, char buf[], 
+int create_device_ntp_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -367,7 +367,7 @@ int create_device_ntp_info_result(JpfXmlMsg *msg, char buf[],
 	return merge_device_ntp_info_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_device_time(JpfXmlMsg *msg, char buf[], 
+int create_get_device_time(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -375,7 +375,7 @@ int create_get_device_time(JpfXmlMsg *msg, char buf[],
 	return merge_get_device_time_xml(msg->priv_obj, buf, size);
 }
 
-int create_device_time_response(JpfXmlMsg *msg, char buf[], 
+int create_device_time_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -383,7 +383,7 @@ int create_device_time_response(JpfXmlMsg *msg, char buf[],
 	return merge_device_time_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_set_device_time(JpfXmlMsg *msg, char buf[], 
+int create_set_device_time(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -391,7 +391,7 @@ int create_set_device_time(JpfXmlMsg *msg, char buf[],
 	return merge_set_device_time_xml(msg->priv_obj, buf, size);
 }
 
-int create_device_time_result(JpfXmlMsg *msg, char buf[], 
+int create_device_time_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -399,7 +399,7 @@ int create_device_time_result(JpfXmlMsg *msg, char buf[],
 	return merge_device_time_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_platform_info(JpfXmlMsg *msg, char buf[], 
+int create_get_platform_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -407,7 +407,7 @@ int create_get_platform_info(JpfXmlMsg *msg, char buf[],
 	return merge_get_platform_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_platform_info_response(JpfXmlMsg *msg, char buf[], 
+int create_platform_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -415,7 +415,7 @@ int create_platform_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_platform_info_response_xml(msg->priv_obj, buf, size);
 }
 	
-int create_set_platform_info(JpfXmlMsg *msg, char buf[], 
+int create_set_platform_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -423,7 +423,7 @@ int create_set_platform_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_platform_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_platform_info_result(JpfXmlMsg *msg, char buf[], 
+int create_platform_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -432,28 +432,28 @@ int create_platform_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //network_info
-int create_get_network_info(JpfXmlMsg *msg, char buf[], 
+int create_get_network_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_network_info_xml(msg->priv_obj, buf, size);
 }										
-int create_network_info_response(JpfXmlMsg *msg, char buf[], 
+int create_network_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_network_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_network_info(JpfXmlMsg *msg, char buf[], 
+int create_set_network_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_network_info_xml(msg->priv_obj, buf, size);
 }
-int create_network_info_result(JpfXmlMsg *msg, char buf[], 
+int create_network_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -461,21 +461,21 @@ int create_network_info_result(JpfXmlMsg *msg, char buf[],
 	return merge_network_info_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_pppoe_info(JpfXmlMsg *msg, char buf[], 
+int create_get_pppoe_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_pppoe_info_xml(msg->priv_obj, buf, size);
 }
-int create_pppoe_info_response(JpfXmlMsg *msg, char buf[], 
+int create_pppoe_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_pppoe_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_pppoe_info(JpfXmlMsg *msg, char buf[], 
+int create_set_pppoe_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -483,7 +483,7 @@ int create_set_pppoe_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_pppoe_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_pppoe_info_result(JpfXmlMsg *msg, char buf[], 
+int create_pppoe_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -492,21 +492,21 @@ int create_pppoe_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //encode_para
-int create_get_encode_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_encode_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_encode_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_encode_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_encode_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_encode_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_encode_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_encode_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -514,7 +514,7 @@ int create_set_encode_parameter(JpfXmlMsg *msg, char buf[],
 	return merge_set_encode_parameter_xml(msg->priv_obj, buf, size);
 }
 											
-int create_encode_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_encode_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -523,28 +523,28 @@ int create_encode_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //display_para
-int create_get_display_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_display_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_display_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_display_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_display_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_display_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_display_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_display_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_display_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_display_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_display_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -553,28 +553,28 @@ int create_display_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //record_para
-int create_get_record_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_record_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_record_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_record_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_record_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_record_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_record_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_record_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_record_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_record_parameter_result(JpfXmlMsg *msg, char buf[],
+int create_record_parameter_result(NmpXmlMsg *msg, char buf[],
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -583,28 +583,28 @@ int create_record_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //hide_para
-int create_get_hide_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_hide_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_hide_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_hide_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_hide_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_hide_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_hide_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_hide_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_hide_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_hide_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_hide_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -613,28 +613,28 @@ int create_hide_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //serial_para
-int create_get_serial_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_serial_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_serial_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_serial_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_serial_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_serial_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_serial_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_serial_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_serial_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_serial_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_serial_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -643,28 +643,28 @@ int create_serial_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //osd_para
-int create_get_osd_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_osd_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_osd_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_osd_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_osd_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_osd_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_osd_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_osd_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_osd_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_osd_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_osd_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -673,28 +673,28 @@ int create_osd_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //ptz_para
-int create_get_ptz_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_ptz_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ptz_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_ptz_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_ptz_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_ptz_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_ptz_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_ptz_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_ptz_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_ptz_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_ptz_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -703,28 +703,28 @@ int create_ptz_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //ftp_para
-int create_get_ftp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_ftp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ftp_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_ftp_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_ftp_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_ftp_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_ftp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_ftp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_ftp_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_ftp_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_ftp_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -733,28 +733,28 @@ int create_ftp_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //smtp_para 
-int create_get_smtp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_smtp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_smtp_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_smtp_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_smtp_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_smtp_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_smtp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_smtp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_smtp_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_smtp_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_smtp_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -763,28 +763,28 @@ int create_smtp_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //upnp_para
-int create_get_upnp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_get_upnp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_upnp_parameter_xml(msg->priv_obj, buf, size);
 }	
-int create_upnp_parameter_response(JpfXmlMsg *msg, char buf[], 
+int create_upnp_parameter_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_upnp_parameter_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_upnp_parameter(JpfXmlMsg *msg, char buf[], 
+int create_set_upnp_parameter(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_upnp_parameter_xml(msg->priv_obj, buf, size);
 }
-int create_upnp_parameter_result(JpfXmlMsg *msg, char buf[], 
+int create_upnp_parameter_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -793,14 +793,14 @@ int create_upnp_parameter_result(JpfXmlMsg *msg, char buf[],
 }
 
 //disk_info
-int create_get_device_disk_info(JpfXmlMsg *msg, char buf[], 
+int create_get_device_disk_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_device_disk_info_xml(msg->priv_obj, buf, size);
 }
-int create_device_disk_info_response(JpfXmlMsg *msg, char buf[], 
+int create_device_disk_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -809,21 +809,21 @@ int create_device_disk_info_response(JpfXmlMsg *msg, char buf[],
 }
 
 //format_disk
-int create_format_disk_request(JpfXmlMsg *msg, char buf[], 
+int create_format_disk_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_format_disk_request_xml(msg->priv_obj, buf, size);
 }
-int create_format_disk_result(JpfXmlMsg *msg, char buf[], 
+int create_format_disk_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_format_disk_result_xml(msg->priv_obj, buf, size);
 }
-int create_submit_format_progress(JpfXmlMsg *msg, char buf[], 
+int create_submit_format_progress(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -832,14 +832,14 @@ int create_submit_format_progress(JpfXmlMsg *msg, char buf[],
 }
 
 //move_alarm
-int create_get_move_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_get_move_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_move_alarm_info_xml(msg->priv_obj, buf, size);
 }
-int create_move_alarm_info_response(JpfXmlMsg *msg, char buf[], 
+int create_move_alarm_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -847,7 +847,7 @@ int create_move_alarm_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_move_alarm_info_response_xml(msg->priv_obj, buf, size);
 }
 											
-int create_set_move_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_set_move_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -855,7 +855,7 @@ int create_set_move_alarm_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_move_alarm_info_xml(msg->priv_obj, buf, size);
 }
 											
-int create_move_alarm_info_result(JpfXmlMsg *msg, char buf[], 
+int create_move_alarm_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -864,14 +864,14 @@ int create_move_alarm_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //lost_alarm
-int create_get_lost_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_get_lost_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_lost_alarm_info_xml(msg->priv_obj, buf, size);
 }
-int create_lost_alarm_info_response(JpfXmlMsg *msg, char buf[], 
+int create_lost_alarm_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -879,7 +879,7 @@ int create_lost_alarm_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_lost_alarm_info_response_xml(msg->priv_obj, buf, size);
 }
 												
-int create_set_lost_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_set_lost_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -887,7 +887,7 @@ int create_set_lost_alarm_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_lost_alarm_info_xml(msg->priv_obj, buf, size);
 }
 										
-int create_lost_alarm_info_result(JpfXmlMsg *msg, char buf[], 
+int create_lost_alarm_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -896,14 +896,14 @@ int create_lost_alarm_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //hide_alarm
-int create_get_hide_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_get_hide_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_hide_alarm_info_xml(msg->priv_obj, buf, size);
 }
-int create_hide_alarm_info_response(JpfXmlMsg *msg, char buf[], 
+int create_hide_alarm_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -911,7 +911,7 @@ int create_hide_alarm_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_hide_alarm_info_response_xml(msg->priv_obj, buf, size);
 }
 												
-int create_set_hide_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_set_hide_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -919,7 +919,7 @@ int create_set_hide_alarm_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_hide_alarm_info_xml(msg->priv_obj, buf, size);
 }
 											
-int create_hide_alarm_info_result(JpfXmlMsg *msg, char buf[], 
+int create_hide_alarm_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -928,14 +928,14 @@ int create_hide_alarm_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //io_alarm
-int create_get_io_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_get_io_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_io_alarm_info_xml(msg->priv_obj, buf, size);
 }
-int create_io_alarm_info_response(JpfXmlMsg *msg, char buf[], 
+int create_io_alarm_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -943,7 +943,7 @@ int create_io_alarm_info_response(JpfXmlMsg *msg, char buf[],
 	return merge_io_alarm_info_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_set_io_alarm_info(JpfXmlMsg *msg, char buf[], 
+int create_set_io_alarm_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -951,7 +951,7 @@ int create_set_io_alarm_info(JpfXmlMsg *msg, char buf[],
 	return merge_set_io_alarm_info_xml(msg->priv_obj, buf, size);
 }
 
-int create_io_alarm_info_result(JpfXmlMsg *msg, char buf[], 
+int create_io_alarm_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -960,28 +960,28 @@ int create_io_alarm_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //joint_action
-int create_get_joint_action_info(JpfXmlMsg *msg, char buf[], 
+int create_get_joint_action_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_joint_action_info_xml(msg->priv_obj, buf, size);
 }
-int create_joint_action_info_response(JpfXmlMsg *msg, char buf[], 
+int create_joint_action_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_joint_action_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_joint_action_info(JpfXmlMsg *msg, char buf[], 
+int create_set_joint_action_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_joint_action_info_xml(msg->priv_obj, buf, size);
 }
-int create_joint_action_info_result(JpfXmlMsg *msg, char buf[], 
+int create_joint_action_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -990,77 +990,77 @@ int create_joint_action_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //control_ptz
-int create_control_ptz_cmd(JpfXmlMsg *msg, char buf[], 
+int create_control_ptz_cmd(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_control_ptz_cmd_xml(msg->priv_obj, buf, size);
 }
-int create_ptz_cmd_result(JpfXmlMsg *msg, char buf[], 
+int create_ptz_cmd_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_ptz_cmd_result_xml(msg->priv_obj, buf, size);
 }
-int create_submit_alarm_request(JpfXmlMsg *msg, char buf[], 
+int create_submit_alarm_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_submit_alarm_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_media_url_request(JpfXmlMsg *msg, char buf[], 
+int create_get_media_url_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_media_url_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_media_url_response(JpfXmlMsg *msg, char buf[], 
+int create_get_media_url_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_media_url_response_xml(msg->priv_obj, buf, size);
 }
-int create_get_store_log_request(JpfXmlMsg *msg, char buf[], 
+int create_get_store_log_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_store_log_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_store_log_response(JpfXmlMsg *msg, char buf[], 
+int create_get_store_log_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 
  	return merge_get_store_log_response_xml(msg->priv_obj, buf, size);
 }
-int create_user_login_request(JpfXmlMsg *msg, char buf[], 
+int create_user_login_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_user_login_request_xml(msg->priv_obj, buf, size);
 }
-int create_user_login_result(JpfXmlMsg *msg, char buf[], 
+int create_user_login_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_user_login_result_xml(msg->priv_obj, buf, size);
 }
-int create_user_heart_request(JpfXmlMsg *msg, char buf[], 
+int create_user_heart_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {	
 	J_ASSERT(msg && size);
 	
 	return merge_user_heart_request_xml(msg->priv_obj, buf, size);
 }
-int create_user_heart_response(JpfXmlMsg *msg, char buf[], 
+int create_user_heart_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -1068,21 +1068,21 @@ int create_user_heart_response(JpfXmlMsg *msg, char buf[],
 	return merge_user_heart_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_firmware_upgrade_request(JpfXmlMsg *msg, char buf[], 
+int create_firmware_upgrade_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_firmware_upgrade_request_xml(msg->priv_obj, buf, size);
 }
-int create_firmware_upgrade_response(JpfXmlMsg *msg, char buf[], 
+int create_firmware_upgrade_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_firmware_upgrade_response_xml(msg->priv_obj, buf, size);
 }
-int create_submit_upgrade_progress(JpfXmlMsg *msg, char buf[], 
+int create_submit_upgrade_progress(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1092,7 +1092,7 @@ int create_submit_upgrade_progress(JpfXmlMsg *msg, char buf[],
 
 //################################################################################
 
-static __inline__ JpfXmlMsg *
+static __inline__ NmpXmlMsg *
 parse_get_info(ParseRequestFunc request_func, 
 	xmlid_t id, char buf[], size_t size, int *err, unsigned int flags)
 {
@@ -1100,7 +1100,7 @@ parse_get_info(ParseRequestFunc request_func,
 	char *new_buf = NULL;
 	char page_buf[J_SDK_MAX_PAGE_SIZE];
 	
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	XmlData *xml_data = NULL;
 	
 	J_ASSERT(buf && size);
@@ -1119,7 +1119,7 @@ parse_get_info(ParseRequestFunc request_func,
 	return msg;
 }
 
-static __inline__ JpfXmlMsg *
+static __inline__ NmpXmlMsg *
 	parse_set_result(ParseResultFunc result_func, 
 						xmlid_t id, char buf[], 
 						size_t size, int *err, unsigned int flags)
@@ -1128,7 +1128,7 @@ static __inline__ JpfXmlMsg *
 	char *new_buf = NULL;
 	char page_buf[J_SDK_MAX_PAGE_SIZE];
 	
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	XmlData *xml_data = NULL;
 	
 	J_ASSERT(buf && size);
@@ -1147,21 +1147,21 @@ static __inline__ JpfXmlMsg *
 	return msg;
 }
 
-JpfXmlMsg *parse_get_css_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_css_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, PU_GET_CSS_REQUEST_ID, 
 			sizeof(PuGetCssPacket), parse_get_css_request_xml);
 }
-JpfXmlMsg *parse_get_css_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_css_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, PU_GET_CSS_RESPONSE_ID, 
 			sizeof(PuGetCssPacket), parse_get_css_response_xml);
 }
-JpfXmlMsg *parse_pu_register_css(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_pu_register_css(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1169,7 +1169,7 @@ JpfXmlMsg *parse_pu_register_css(char buf[], size_t size, int *err, unsigned int
 			sizeof(PuRegisterCssPacket), parse_pu_register_css_xml);
 }
 
-JpfXmlMsg *parse_register_css_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_register_css_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1177,7 +1177,7 @@ JpfXmlMsg *parse_register_css_response(char buf[], size_t size, int *err, unsign
 			sizeof(RegisterResponsePacket), parse_register_response_xml);
 }
 
-JpfXmlMsg *parse_register_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_register_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1185,7 +1185,7 @@ JpfXmlMsg *parse_register_request(char buf[], size_t size, int *err, unsigned in
 			sizeof(RegisterRequestPacket), parse_register_request_xml);
 }
 
-JpfXmlMsg *parse_register_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_register_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1193,7 +1193,7 @@ JpfXmlMsg *parse_register_response(char buf[], size_t size, int *err, unsigned i
 			sizeof(RegisterResponsePacket), parse_register_response_xml);
 }
 
-JpfXmlMsg *parse_heart_beat_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_heart_beat_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1201,7 +1201,7 @@ JpfXmlMsg *parse_heart_beat_request(char buf[], size_t size, int *err, unsigned 
 			sizeof(HeartBeatRequestPacket), parse_heart_beat_request_xml);
 }
 
-JpfXmlMsg *parse_heart_beat_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_heart_beat_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1209,7 +1209,7 @@ JpfXmlMsg *parse_heart_beat_response(char buf[], size_t size, int *err, unsigned
 			sizeof(HeartBeatResponsePacket), parse_heart_beat_response_xml);
 }
 
-JpfXmlMsg *parse_get_mds_info_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_mds_info_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1217,7 +1217,7 @@ JpfXmlMsg *parse_get_mds_info_request(char buf[], size_t size, int *err, unsigne
 			sizeof(MdsInfoPacket), parse_get_mds_info_request_xml);
 }
 
-JpfXmlMsg *parse_get_mds_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_mds_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1225,7 +1225,7 @@ JpfXmlMsg *parse_get_mds_info_response(char buf[], size_t size, int *err, unsign
 			sizeof(MdsInfoPacket), parse_get_mds_info_response_xml);
 }
 
-JpfXmlMsg *parse_change_dispatch_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_change_dispatch_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1233,19 +1233,19 @@ JpfXmlMsg *parse_change_dispatch_request(char buf[], size_t size, int *err, unsi
 			sizeof(ChangeDispatchPacket), parse_change_dispatch_request_xml);
 }
 
-JpfXmlMsg *parse_change_dispatch_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_change_dispatch_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_change_dispatch_result_xml, CHANGE_DISPATCH_RESULT_ID, 
 							buf, size, err, flags);
 }
 
-JpfXmlMsg *parse_get_device_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_device_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_device_info_xml, GET_DEVICE_INFO_ID, 
 							buf, size, err, flags);
 }
 
-JpfXmlMsg *parse_device_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1253,19 +1253,19 @@ JpfXmlMsg *parse_device_info_response(char buf[], size_t size, int *err, unsigne
 			sizeof(DeviceInfoPacket), parse_device_info_response_xml);
 }
 
-JpfXmlMsg *parse_get_device_ntp_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_device_ntp_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_device_ntp_info_xml, GET_DEVICE_NTP_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_device_ntp_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_ntp_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, DEVICE_NTP_INFO_RESPONSE_ID, 
 			sizeof(DeviceNTPInfoPacket), parse_device_ntp_info_response_xml);
 }
-JpfXmlMsg *parse_set_device_ntp_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_device_ntp_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
@@ -1273,526 +1273,526 @@ JpfXmlMsg *parse_set_device_ntp_info(char buf[], size_t size, int *err, unsigned
 			sizeof(DeviceNTPInfoPacket), parse_set_device_ntp_info_xml);
 }
 
-JpfXmlMsg *parse_device_ntp_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_ntp_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_device_ntp_info_result_xml, DEVICE_NTP_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
 
-JpfXmlMsg *parse_get_device_time(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_device_time(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, GET_DEVICE_TIME_ID, 
 			sizeof(DeviceTimePacket), parse_get_device_time_xml);
 }
-JpfXmlMsg *parse_device_time_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_time_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_device_time_response_xml, DEVICE_TIME_RESPONSE_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_set_device_time(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_device_time(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_DEVICE_TIME_ID, 
 			sizeof(DeviceTimePacket), parse_set_device_time_xml);
 }
-JpfXmlMsg *parse_device_time_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_time_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_device_time_result_xml, DEVICE_TIME_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_platform_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_platform_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_platform_info_xml, GET_PLATFORM_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_platform_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_platform_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, PLATFORM_INFO_RESPONSE_ID, 
 			sizeof(PlatformInfoPacket), parse_platform_info_response_xml);
 }
-JpfXmlMsg *parse_set_platform_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_platform_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_PLATFORM_INFO_ID, 
 			sizeof(PlatformInfoPacket), parse_set_platform_info_xml);
 }
-JpfXmlMsg *parse_platform_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_platform_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_platform_info_result_xml, PLATFORM_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_network_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_network_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_network_info_xml, GET_NETWORK_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_network_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_network_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, NETWORK_INFO_RESPONSE_ID, 
 			sizeof(NetworkInfoPacket), parse_network_info_response_xml);
 }
-JpfXmlMsg *parse_set_network_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_network_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_NETWORK_INFO_ID, 
 			sizeof(NetworkInfoPacket), parse_set_network_info_xml);
 }
-JpfXmlMsg *parse_network_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_network_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_network_info_result_xml, NETWORK_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_pppoe_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_pppoe_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_pppoe_info_xml, GET_PPPOE_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_pppoe_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_pppoe_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, PPPOE_INFO_RESPONSE_ID, 
 			sizeof(PPPOEInfoPacket), parse_pppoe_info_response_xml);
 }
-JpfXmlMsg *parse_set_pppoe_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_pppoe_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_PPPOE_INFO_ID, 
 			sizeof(PPPOEInfoPacket), parse_set_pppoe_info_xml);
 }
-JpfXmlMsg *parse_pppoe_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_pppoe_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_pppoe_info_result_xml, PPPOE_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_encode_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_encode_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_encode_parameter_xml, GET_ENCODE_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_encode_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_encode_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, ENCODE_PARAMETER_RESPONSE_ID, 
 			sizeof(EncodeParameterPacket), parse_encode_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_encode_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_encode_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_ENCODE_PARAMETER_ID, 
 			sizeof(EncodeParameterPacket), parse_set_encode_parameter_xml);
 }
-JpfXmlMsg *parse_encode_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_encode_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_encode_parameter_result_xml, ENCODE_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_display_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_display_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_display_parameter_xml, GET_DISPLAY_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_display_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_display_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, DISPLAY_PARAMETER_RESPONSE_ID, 
 			sizeof(DisplayParameterPacket), parse_display_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_display_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_display_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_DISPLAY_PARAMETER_ID, 
 			sizeof(DisplayParameterPacket), parse_set_display_parameter_xml);
 }
-JpfXmlMsg *parse_display_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_display_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_display_parameter_result_xml, DISPLAY_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_record_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_record_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_record_parameter_xml, GET_RECORD_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_record_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_record_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, RECORD_PARAMETER_RESPONSE_ID, 
 			sizeof(RecordParameterPacket), parse_record_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_record_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_record_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_RECORD_PARAMETER_ID, 
 			sizeof(RecordParameterPacket), parse_set_record_parameter_xml);
 }
-JpfXmlMsg *parse_record_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_record_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_record_parameter_result_xml, RECORD_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_hide_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_hide_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_hide_parameter_xml, GET_HIDE_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_hide_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_hide_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, HIDE_PARAMETER_RESPONSE_ID, 
 			sizeof(HideParameterPacket), parse_hide_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_hide_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_hide_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_HIDE_PARAMETER_ID, 
 			sizeof(HideParameterPacket), parse_set_hide_parameter_xml);
 }
-JpfXmlMsg *parse_hide_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_hide_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_hide_parameter_result_xml, HIDE_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_serial_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_serial_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_serial_parameter_xml, GET_SERIAL_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_serial_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_serial_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SERIAL_PARAMETER_RESPONSE_ID, 
 			sizeof(SerialParameterPacket), parse_serial_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_serial_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_serial_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_SERIAL_PARAMETER_ID, 
 			sizeof(SerialParameterPacket), parse_set_serial_parameter_xml);
 }
-JpfXmlMsg *parse_serial_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_serial_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_serial_parameter_result_xml, SERIAL_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_osd_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_osd_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_osd_parameter_xml, GET_OSD_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_osd_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_osd_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, OSD_PARAMETER_RESPONSE_ID, 
 			sizeof(OSDParameterPacket), parse_osd_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_osd_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_osd_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_OSD_PARAMETER_ID, 
 			sizeof(OSDParameterPacket), parse_set_osd_parameter_xml);
 }
-JpfXmlMsg *parse_osd_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_osd_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_osd_parameter_result_xml, OSD_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_ptz_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_ptz_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_ptz_parameter_xml, GET_PTZ_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_ptz_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_ptz_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, PTZ_PARAMETER_RESPONSE_ID, 
 			sizeof(PTZParameterPacket), parse_ptz_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_ptz_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_ptz_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_PTZ_PARAMETER_ID, 
 			sizeof(PTZParameterPacket), parse_set_ptz_parameter_xml);
 }
-JpfXmlMsg *parse_ptz_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_ptz_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_ptz_parameter_result_xml, PTZ_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_ftp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_ftp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_ftp_parameter_xml, GET_FTP_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_ftp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_ftp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, FTP_PARAMETER_RESPONSE_ID, 
 			sizeof(FTPParameterPacket), parse_ftp_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_ftp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_ftp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_FTP_PARAMETER_ID, 
 			sizeof(FTPParameterPacket), parse_set_ftp_parameter_xml);
 }
-JpfXmlMsg *parse_ftp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_ftp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_ftp_parameter_result_xml, FTP_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_smtp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_smtp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_smtp_parameter_xml, GET_SMTP_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_smtp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_smtp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SMTP_PARAMETER_RESPONSE_ID, 
 			sizeof(SMTPParameterPacket), parse_smtp_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_smtp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_smtp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_SMTP_PARAMETER_ID, 
 			sizeof(SMTPParameterPacket), parse_set_smtp_parameter_xml);
 }
-JpfXmlMsg *parse_smtp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_smtp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_smtp_parameter_result_xml, SMTP_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_upnp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_upnp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_upnp_parameter_xml, GET_UPNP_PARAMETER_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_upnp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_upnp_parameter_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, UPNP_PARAMETER_RESPONSE_ID, 
 			sizeof(UPNPParameterPacket), parse_upnp_parameter_response_xml);
 }
-JpfXmlMsg *parse_set_upnp_parameter(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_upnp_parameter(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_UPNP_PARAMETER_ID, 
 			sizeof(UPNPParameterPacket), parse_set_upnp_parameter_xml);
 }
-JpfXmlMsg *parse_upnp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_upnp_parameter_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_upnp_parameter_result_xml, UPNP_PARAMETER_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_device_disk_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_device_disk_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_device_disk_info_xml, GET_DEVICE_DISK_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_device_disk_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_device_disk_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, DEVICE_DISK_INFO_RESPONSE_ID, 
 			sizeof(DeviceDiskInfoPacket), parse_device_disk_info_response_xml);
 }
-JpfXmlMsg *parse_format_disk_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_format_disk_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, FORMAT_DISK_REQUEST_ID, 
 			sizeof(FormatDiskPacket), parse_format_disk_request_xml);
 }
-JpfXmlMsg *parse_format_disk_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_format_disk_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_format_disk_result_xml, FORMAT_DISK_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_submit_format_progress(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_submit_format_progress(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return create_xml_msg(buf, size, SUBMIT_FORMAT_PROGRESS_ID, 
 			sizeof(FormatProgressPacket), parse_submit_format_progress_xml);
 }
 	
-JpfXmlMsg *parse_get_move_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_move_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_move_alarm_info_xml, GET_MOVE_ALARM_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_move_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_move_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, MOVE_ALARM_INFO_RESPONSE_ID, 
 			sizeof(MoveAlarmPacket), parse_move_alarm_info_response_xml);
 }
-JpfXmlMsg *parse_set_move_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_move_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_MOVE_ALARM_INFO_ID, 
 			sizeof(MoveAlarmPacket), parse_set_move_alarm_info_xml);
 }
-JpfXmlMsg *parse_move_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_move_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_move_alarm_info_result_xml, MOVE_ALARM_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_lost_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_lost_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_lost_alarm_info_xml, GET_LOST_ALARM_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_lost_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_lost_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, LOST_ALARM_INFO_RESPONSE_ID, 
 			sizeof(LostAlarmPacket), parse_lost_alarm_info_response_xml);
 }
-JpfXmlMsg *parse_set_lost_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_lost_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_LOST_ALARM_INFO_ID, 
 			sizeof(LostAlarmPacket), parse_set_lost_alarm_info_xml);
 }
-JpfXmlMsg *parse_lost_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_lost_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_lost_alarm_info_result_xml, LOST_ALARM_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_hide_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_hide_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_hide_alarm_info_xml, GET_HIDE_ALARM_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_hide_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_hide_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, HIDE_ALARM_INFO_RESPONSE_ID, 
 			sizeof(HideAlarmPacket), parse_hide_alarm_info_response_xml);
 }
-JpfXmlMsg *parse_set_hide_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_hide_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_HIDE_ALARM_INFO_ID, 
 			sizeof(HideAlarmPacket), parse_set_hide_alarm_info_xml);
 }
-JpfXmlMsg *parse_hide_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_hide_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_hide_alarm_info_result_xml, HIDE_ALARM_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_io_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_io_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_io_alarm_info_xml, GET_IO_ALARM_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_io_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_io_alarm_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, IO_ALARM_INFO_RESPONSE_ID, 
 			sizeof(IoAlarmPacket), parse_io_alarm_info_response_xml);
 }
-JpfXmlMsg *parse_set_io_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_io_alarm_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_IO_ALARM_INFO_ID, 
 			sizeof(IoAlarmPacket), parse_set_io_alarm_info_xml);
 }
-JpfXmlMsg *parse_io_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_io_alarm_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_io_alarm_info_result_xml, IO_ALARM_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
-JpfXmlMsg *parse_get_joint_action_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_joint_action_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_joint_action_info_xml, GET_JOINT_ACTION_INFO_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_joint_action_info_response(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_joint_action_info_response(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, JOINT_ACTION_INFO_RESPONSE_ID, 
 			sizeof(JointActionPacket), parse_joint_action_info_response_xml);
 }
-JpfXmlMsg *parse_set_joint_action_info(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_set_joint_action_info(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SET_JOINT_ACTION_INFO_ID, 
 			sizeof(JointActionPacket), parse_set_joint_action_info_xml);
 }
-JpfXmlMsg *parse_joint_action_info_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_joint_action_info_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_joint_action_info_result_xml, JOINT_ACTION_INFO_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_control_ptz_cmd(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_control_ptz_cmd(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, CONTROL_PTZ_COMMAND_ID, 
 			sizeof(PTZControlPacket), parse_control_ptz_cmd_xml);
 }
-JpfXmlMsg *parse_ptz_cmd_result(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_ptz_cmd_result(char buf[], size_t size, int *err, unsigned int flags)
 {
 	return parse_set_result(parse_ptz_cmd_response_xml, PTZ_COMMAND_RESULT_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_submit_alarm_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_submit_alarm_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, SUBMIT_ALARM_REQUEST_ID, 
 			sizeof(SubmitAlarmPacket), parse_submit_alarm_request_xml);
 }
-JpfXmlMsg *parse_get_media_url_request(char buf[], size_t size, int *err, unsigned int flags)
+NmpXmlMsg *parse_get_media_url_request(char buf[], size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return create_xml_msg(buf, size, GET_MEDIA_URL_REQUEST_ID, 
 			sizeof(MediaUrlPacket), parse_get_media_url_request_xml);
 }
-JpfXmlMsg *parse_get_media_url_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_media_url_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1801,7 +1801,7 @@ JpfXmlMsg *parse_get_media_url_response(char buf[], size_t size,
 			sizeof(MediaUrlPacket), parse_get_media_url_response_xml);
 }
 
-JpfXmlMsg *parse_get_store_log_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_store_log_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1809,7 +1809,7 @@ JpfXmlMsg *parse_get_store_log_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_STORE_LOG_REQUEST_ID, 
 			sizeof(struct __StoreLogPacket), parse_get_store_log_request_xml);
 }
-JpfXmlMsg *parse_get_store_log_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_store_log_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1817,7 +1817,7 @@ JpfXmlMsg *parse_get_store_log_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_STORE_LOG_RESPONSE_ID, 
 			sizeof(struct __StoreLogPacket), parse_get_store_log_response_xml);
 }
-JpfXmlMsg *parse_user_login_request(char buf[], size_t size, 
+NmpXmlMsg *parse_user_login_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1825,14 +1825,14 @@ JpfXmlMsg *parse_user_login_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, USER_LONGI_REQUEST_ID, 
 			sizeof(struct __UserInfo), parse_user_login_request_xml);
 }
-JpfXmlMsg *parse_user_login_result(char buf[], size_t size, 
+NmpXmlMsg *parse_user_login_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	return create_xml_msg(buf, size, USER_LONGI_RESULT_ID, 
 			sizeof(int), parse_user_login_result_xml);
 }
-JpfXmlMsg *parse_user_heart_request(char buf[], size_t size, 
+NmpXmlMsg *parse_user_heart_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1840,7 +1840,7 @@ JpfXmlMsg *parse_user_heart_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, USER_HEART_REQUEST_ID, 
 			sizeof(struct __UserHeart), parse_user_heart_request_xml);
 }
-JpfXmlMsg *parse_user_heart_response(char buf[], size_t size, 
+NmpXmlMsg *parse_user_heart_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1849,7 +1849,7 @@ JpfXmlMsg *parse_user_heart_response(char buf[], size_t size,
 			sizeof(struct __UserHeart), parse_user_heart_response_xml);
 }
 
-JpfXmlMsg *parse_firmware_upgrade_request(char buf[], size_t size, 
+NmpXmlMsg *parse_firmware_upgrade_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1857,7 +1857,7 @@ JpfXmlMsg *parse_firmware_upgrade_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, FIRMWARE_UPGRADE_REQUEST_ID, 
 			sizeof(FirmwareUpgradePacket), parse_firmware_upgrade_request_xml);
 }
-JpfXmlMsg *parse_firmware_upgrade_response(char buf[], size_t size, 
+NmpXmlMsg *parse_firmware_upgrade_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1865,7 +1865,7 @@ JpfXmlMsg *parse_firmware_upgrade_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, FIRMWARE_UPGRADE_RESPONSE_ID, 
 			sizeof(FirmwareUpgradePacket), parse_firmware_upgrade_response_xml);
 }
-JpfXmlMsg *parse_submit_upgrade_progress(char buf[], size_t size, 
+NmpXmlMsg *parse_submit_upgrade_progress(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1877,7 +1877,7 @@ JpfXmlMsg *parse_submit_upgrade_progress(char buf[], size_t size,
 
 //####################################################################
 # ifdef HAVE_PROXY_INFO
-JpfXmlMsg *parse_add_user_request(char buf[], size_t size, 
+NmpXmlMsg *parse_add_user_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1885,7 +1885,7 @@ JpfXmlMsg *parse_add_user_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, ADD_USER_REQUEST_ID, 
 			sizeof(struct __UserInfo), parse_add_user_request_xml);
 }
-JpfXmlMsg *parse_add_user_result(char buf[], size_t size, 
+NmpXmlMsg *parse_add_user_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1893,7 +1893,7 @@ JpfXmlMsg *parse_add_user_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, ADD_USER_RESULT_ID, 
 			sizeof(int), parse_add_user_result_xml);
 }
-JpfXmlMsg *parse_del_user_request(char buf[], size_t size, 
+NmpXmlMsg *parse_del_user_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1901,7 +1901,7 @@ JpfXmlMsg *parse_del_user_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, DEL_USER_REQUEST_ID, 
 			sizeof(struct __UserInfo), parse_del_user_request_xml);
 }
-JpfXmlMsg *parse_del_user_result(char buf[], size_t size, 
+NmpXmlMsg *parse_del_user_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1925,7 +1925,7 @@ static void destory_user_list_info(void *pri_data, size_t pri_size)
 	
 	return ;
 }
-JpfXmlMsg *parse_user_list_info(char buf[], size_t size, 
+NmpXmlMsg *parse_user_list_info(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1949,7 +1949,7 @@ static void destory_device_list_info(void *pri_data, size_t pri_size)
 	
 	return ;
 }
-JpfXmlMsg *parse_device_list_info(char buf[], size_t size, 
+NmpXmlMsg *parse_device_list_info(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1973,7 +1973,7 @@ static void destory_factory_list_info(void *pri_data, size_t pri_size)
 	
 	return ;
 }
-JpfXmlMsg *parse_factory_list_info(char buf[], size_t size, 
+NmpXmlMsg *parse_factory_list_info(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1981,7 +1981,7 @@ JpfXmlMsg *parse_factory_list_info(char buf[], size_t size,
 	return create_xml_msg_2(buf, size, FACTORY_LIST_INFO_ID, sizeof(prx_factory_list), 
 			parse_proxy_factory_list_xml, destory_factory_list_info);
 }
-JpfXmlMsg *parse_get_factory_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_factory_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1989,7 +1989,7 @@ JpfXmlMsg *parse_get_factory_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_FACTORY_REQUEST_ID, 
 			sizeof(prx_factory_list), parse_get_factory_info_request_xml);
 }
-JpfXmlMsg *parse_get_factory_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_factory_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -1997,7 +1997,7 @@ JpfXmlMsg *parse_get_factory_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_FACTORY_RESPONSE_ID, 
 			sizeof(prx_factory_list), parse_get_factory_info_response_xml);
 }
-JpfXmlMsg *parse_fuzzy_find_user_request(char buf[], 
+NmpXmlMsg *parse_fuzzy_find_user_request(char buf[], 
 			size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2005,7 +2005,7 @@ JpfXmlMsg *parse_fuzzy_find_user_request(char buf[],
 	return create_xml_msg(buf, size, FUZZY_FIND_USER_REQUEST_ID, 
 			sizeof(struct __UserInfo), parse_fuzzy_find_user_request_xml);
 }
-JpfXmlMsg *parse_fuzzy_find_user_result(char buf[], 
+NmpXmlMsg *parse_fuzzy_find_user_result(char buf[], 
 			size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2013,7 +2013,7 @@ JpfXmlMsg *parse_fuzzy_find_user_result(char buf[],
 	return create_xml_msg(buf, size, FUZZY_FIND_USER_RESULT_ID, 
 			sizeof(prx_user_st), parse_fuzzy_find_user_result_xml);
 }
-JpfXmlMsg *parse_modify_password_request(char buf[], 
+NmpXmlMsg *parse_modify_password_request(char buf[], 
 			size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2021,7 +2021,7 @@ JpfXmlMsg *parse_modify_password_request(char buf[],
 	return create_xml_msg(buf, size, MODIFY_PASSWORD_REQUEST_ID, 
 			sizeof(prx_modify_pwd), parse_modify_password_request_xml);
 }
-JpfXmlMsg *parse_modify_password_result(char buf[], 
+NmpXmlMsg *parse_modify_password_result(char buf[], 
 			size_t size, int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2029,7 +2029,7 @@ JpfXmlMsg *parse_modify_password_result(char buf[],
 	return create_xml_msg(buf, size, MODIFY_PASSWORD_RESULT_ID, 
 			sizeof(int), parse_modify_password_result_xml);
 }
-JpfXmlMsg *parse_add_device_request(char buf[], size_t size, 
+NmpXmlMsg *parse_add_device_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2037,7 +2037,7 @@ JpfXmlMsg *parse_add_device_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, ADD_DEVICE_REQUEST_ID, 
 			sizeof(prx_device_info), parse_add_device_request_xml);
 }
-JpfXmlMsg *parse_add_device_result(char buf[], size_t size, 
+NmpXmlMsg *parse_add_device_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2045,7 +2045,7 @@ JpfXmlMsg *parse_add_device_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, ADD_DEVICE_RESULT_ID, 
 			sizeof(int), parse_add_device_result_xml);
 }
-JpfXmlMsg *parse_del_device_request(char buf[], size_t size, 
+NmpXmlMsg *parse_del_device_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2053,7 +2053,7 @@ JpfXmlMsg *parse_del_device_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, DEL_DEVICE_REQUEST_ID, 
 			sizeof(int), parse_del_device_request_xml);
 }
-JpfXmlMsg *parse_del_device_result(char buf[], size_t size, 
+NmpXmlMsg *parse_del_device_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2061,7 +2061,7 @@ JpfXmlMsg *parse_del_device_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, DEL_DEVICE_RESULT_ID, 
 			sizeof(int), parse_del_device_result_xml);
 }
-JpfXmlMsg *parse_get_device_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_device_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2069,7 +2069,7 @@ JpfXmlMsg *parse_get_device_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_DEVICE_INFO_REQUEST_ID, 
 			sizeof(struct _prx_page_device), parse_get_device_info_request_xml);
 }
-JpfXmlMsg *parse_get_device_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_get_device_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2077,7 +2077,7 @@ JpfXmlMsg *parse_get_device_info_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_DEVICE_INFO_RESULT_ID, 
 			sizeof(prx_device_info), parse_get_device_info_result_xml);
 }
-JpfXmlMsg *parse_set_device_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_device_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2085,7 +2085,7 @@ JpfXmlMsg *parse_set_device_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_DEVICE_INFO_REQUEST_ID, 
 			sizeof(prx_device_info), parse_set_device_info_request_xml);
 }
-JpfXmlMsg *parse_set_device_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_device_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2093,7 +2093,7 @@ JpfXmlMsg *parse_set_device_info_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_DEVICE_INFO_RESULT_ID, 
 			sizeof(int), parse_set_device_info_result_xml);
 }
-JpfXmlMsg *parse_get_all_device_id_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_all_device_id_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2101,7 +2101,7 @@ JpfXmlMsg *parse_get_all_device_id_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_ALL_DEVICE_ID_REQUEST_ID, 
 			sizeof(int), parse_get_all_device_id_request_xml);
 }
-JpfXmlMsg *parse_get_all_device_id_result(char buf[], size_t size, 
+NmpXmlMsg *parse_get_all_device_id_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2109,7 +2109,7 @@ JpfXmlMsg *parse_get_all_device_id_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_ALL_DEVICE_ID_RESULT_ID, 
 			sizeof(prx_device_id_st), parse_get_all_device_id_result_xml);
 }
-JpfXmlMsg *parse_get_server_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_server_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2117,7 +2117,7 @@ JpfXmlMsg *parse_get_server_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_SERVER_CONFIG_REQUEST_ID, 
 			sizeof(prx_server_config), parse_get_server_config_request_xml);
 }
-JpfXmlMsg *parse_get_server_config_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_server_config_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2125,7 +2125,7 @@ JpfXmlMsg *parse_get_server_config_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_SERVER_CONFIG_RESPONSE_ID, 
 			sizeof(prx_server_config), parse_get_server_config_response_xml);
 }
-JpfXmlMsg *parse_set_server_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_server_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2133,7 +2133,7 @@ JpfXmlMsg *parse_set_server_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_SERVER_CONFIG_REQUEST_ID, 
 			sizeof(prx_server_config), parse_set_server_config_request_xml);
 }
-JpfXmlMsg *parse_set_server_config_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_server_config_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2141,7 +2141,7 @@ JpfXmlMsg *parse_set_server_config_result(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_SERVER_CONFIG_RESULT_ID, 
 			sizeof(int), parse_set_server_config_result_xml);
 }
-JpfXmlMsg *parse_download_request(char buf[], size_t size, 
+NmpXmlMsg *parse_download_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2149,7 +2149,7 @@ JpfXmlMsg *parse_download_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, DOWNLOAD_DATA_REQUEST_ID, 
 			sizeof(prx_backup), parse_download_request_xml);
 }
-JpfXmlMsg *parse_download_response(char buf[], size_t size, 
+NmpXmlMsg *parse_download_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2157,7 +2157,7 @@ JpfXmlMsg *parse_download_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, DOWNLOAD_DATA_RESPONSE_ID, 
 			sizeof(prx_backup), parse_download_response_xml);
 }
-JpfXmlMsg *parse_upload_request(char buf[], size_t size, 
+NmpXmlMsg *parse_upload_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2165,7 +2165,7 @@ JpfXmlMsg *parse_upload_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, UPLOAD_DATA_REQUEST_ID, 
 			sizeof(prx_backup), parse_upload_request_xml);
 }
-JpfXmlMsg *parse_upload_response(char buf[], size_t size, 
+NmpXmlMsg *parse_upload_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2173,7 +2173,7 @@ JpfXmlMsg *parse_upload_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, UPLOAD_DATA_RESPONSE_ID, 
 			sizeof(prx_backup), parse_upload_response_xml);
 }
-JpfXmlMsg *parse_limit_broadcast_status(char buf[], size_t size, 
+NmpXmlMsg *parse_limit_broadcast_status(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2184,154 +2184,154 @@ JpfXmlMsg *parse_limit_broadcast_status(char buf[], size_t size,
 
 
 //##########################################################################
-int create_add_user_request(JpfXmlMsg *msg, char buf[], 
+int create_add_user_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_add_user_request_xml(msg->priv_obj, buf, size);
 }
-int create_add_user_result(JpfXmlMsg *msg, char buf[], 
+int create_add_user_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_add_user_result_xml(msg->priv_obj, buf, size);
 }
-int create_del_user_request(JpfXmlMsg *msg, char buf[], 
+int create_del_user_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_del_user_request_xml(msg->priv_obj, buf, size);
 }
-int create_del_user_result(JpfXmlMsg *msg, char buf[], 
+int create_del_user_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_del_user_result_xml(msg->priv_obj, buf, size);
 }
-int create_user_list_info(JpfXmlMsg *msg, char buf[], 
+int create_user_list_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_proxy_user_list_xml(msg->priv_obj, buf, size);
 }
-int create_device_list_info(JpfXmlMsg *msg, char buf[], 
+int create_device_list_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_proxy_device_list_xml(msg->priv_obj, buf, size);
 }
-int create_factory_list_info(JpfXmlMsg *msg, char buf[], 
+int create_factory_list_info(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_proxy_factory_list_xml(msg->priv_obj, buf, size);
 }
-int create_get_factory_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_factory_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_factory_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_fuzzy_find_user_request(JpfXmlMsg *msg, char buf[], 
+int create_fuzzy_find_user_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_fuzzy_find_user_request_xml(msg->priv_obj, buf, size);
 }
-int create_fuzzy_find_user_result(JpfXmlMsg *msg, char buf[], 
+int create_fuzzy_find_user_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_fuzzy_find_user_result_xml(msg->priv_obj, buf, size);
 }
-int create_modify_password_request(JpfXmlMsg *msg, char buf[], 
+int create_modify_password_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_modify_password_request_xml(msg->priv_obj, buf, size);
 }
-int create_modify_password_result(JpfXmlMsg *msg, char buf[], 
+int create_modify_password_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_modify_password_result_xml(msg->priv_obj, buf, size);
 }
-int create_add_device_request(JpfXmlMsg *msg, char buf[], 
+int create_add_device_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_add_device_request_xml(msg->priv_obj, buf, size);
 }
-int create_add_device_result(JpfXmlMsg *msg, char buf[], 
+int create_add_device_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_add_device_result_xml(msg->priv_obj, buf, size);
 }
-int create_del_device_request(JpfXmlMsg *msg, char buf[], 
+int create_del_device_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_del_device_request_xml(msg->priv_obj, buf, size);
 }
-int create_del_device_result(JpfXmlMsg *msg, char buf[], 
+int create_del_device_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_del_device_result_xml(msg->priv_obj, buf, size);
 }
-int create_get_device_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_device_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_device_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_device_info_result(JpfXmlMsg *msg, char buf[], 
+int create_get_device_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_device_info_result_xml(msg->priv_obj, buf, size);
 }
-int create_set_device_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_device_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_device_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_device_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_device_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_device_info_result_xml(msg->priv_obj, buf, size);
 }
-int create_get_all_device_id_request(JpfXmlMsg *msg, char buf[], 
+int create_get_all_device_id_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_all_device_id_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_all_device_id_result(JpfXmlMsg *msg, char buf[], 
+int create_get_all_device_id_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2340,7 +2340,7 @@ int create_get_all_device_id_result(JpfXmlMsg *msg, char buf[],
 }
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-JpfXmlMsg *parse_proxy_page_user_request(char buf[], size_t size, 
+NmpXmlMsg *parse_proxy_page_user_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2348,7 +2348,7 @@ JpfXmlMsg *parse_proxy_page_user_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_USER_INFO_REQUEST_ID, 
 			sizeof(struct _prx_page_user), parse_proxy_page_user_request_xml);
 }
-int create_proxy_page_user_response(JpfXmlMsg *msg, char buf[], 
+int create_proxy_page_user_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {  
 	J_ASSERT(msg && size);
@@ -2356,70 +2356,70 @@ int create_proxy_page_user_response(JpfXmlMsg *msg, char buf[],
  	return merge_proxy_page_user_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_broadcast_add_user(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_add_user(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_add_user_xml(msg->priv_obj, buf, size);
 }
-int create_broadcast_del_user(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_del_user(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_del_user_xml(msg->priv_obj, buf, size);
 }
-int create_broadcast_add_device(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_add_device(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_add_device_xml(msg->priv_obj, buf, size);
 }
-int create_broadcast_del_device(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_del_device(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_del_device_xml(msg->priv_obj, buf, size);
 }
-int create_broadcast_modify_device(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_modify_device(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_modify_device_xml(msg->priv_obj, buf, size);
 }
-int create_broadcast_device_status(JpfXmlMsg *msg, char buf[], 
+int create_broadcast_device_status(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(buf && size);
 	
 	return merge_broadcast_device_status_xml(msg->priv_obj, buf, size);
 }
-int create_get_server_config_request(JpfXmlMsg *msg, char buf[], 
+int create_get_server_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_server_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_server_config_response(JpfXmlMsg *msg, char buf[], 
+int create_get_server_config_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_server_config_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_server_config_request(JpfXmlMsg *msg, char buf[], 
+int create_set_server_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_server_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_server_config_result(JpfXmlMsg *msg, char buf[], 
+int create_set_server_config_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2427,28 +2427,28 @@ int create_set_server_config_result(JpfXmlMsg *msg, char buf[],
 	return merge_set_server_config_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_download_request(JpfXmlMsg *msg, char buf[], 
+int create_download_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_download_request_xml(msg->priv_obj, buf, size);
 }
-int create_download_response(JpfXmlMsg *msg, char buf[], 
+int create_download_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_download_response_xml(msg->priv_obj, buf, size);
 }
-int create_upload_request(JpfXmlMsg *msg, char buf[], 
+int create_upload_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_upload_request_xml(msg->priv_obj, buf, size);
 }
-int create_upload_response(JpfXmlMsg *msg, char buf[], 
+int create_upload_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2460,7 +2460,7 @@ int create_upload_response(JpfXmlMsg *msg, char buf[],
 # endif
 
 //channel info
-JpfXmlMsg *parse_get_channel_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_channel_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2468,7 +2468,7 @@ JpfXmlMsg *parse_get_channel_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_channel_info_request_xml, 
 			GET_CHANNEL_INFO_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_channel_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_channel_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2476,7 +2476,7 @@ JpfXmlMsg *parse_get_channel_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_CHANNEL_INFO_RESPONSE_ID, 
 			sizeof(ChannelInfoPacket), parse_get_channel_info_response_xml);
 }
-JpfXmlMsg *parse_set_channel_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_channel_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2484,7 +2484,7 @@ JpfXmlMsg *parse_set_channel_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_CHANNEL_INFO_REQUEST_ID, 
 			sizeof(ChannelInfoPacket), parse_set_channel_info_request_xml);
 }
-JpfXmlMsg *parse_set_channel_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_channel_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2494,7 +2494,7 @@ JpfXmlMsg *parse_set_channel_info_result(char buf[], size_t size,
 }
 
 //picture info
-JpfXmlMsg *parse_get_picture_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_picture_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2502,7 +2502,7 @@ JpfXmlMsg *parse_get_picture_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_picture_info_request_xml, 
 			GET_PICTURE_INFO_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_picture_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_picture_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2510,7 +2510,7 @@ JpfXmlMsg *parse_get_picture_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_PICTURE_INFO_RESPONSE_ID, 
 			sizeof(PictureInfoPacket), parse_get_picture_info_response_xml);
 }
-JpfXmlMsg *parse_set_picture_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_picture_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2518,7 +2518,7 @@ JpfXmlMsg *parse_set_picture_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_PICTURE_INFO_REQUEST_ID, 
 			sizeof(PictureInfoPacket), parse_set_picture_info_request_xml);
 }
-JpfXmlMsg *parse_set_picture_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_picture_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2528,7 +2528,7 @@ JpfXmlMsg *parse_set_picture_info_result(char buf[], size_t size,
 }
 
 //hl picture info
-/*JpfXmlMsg *parse_get_hl_picture_info_request(char buf[], size_t size, 
+/*NmpXmlMsg *parse_get_hl_picture_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2536,7 +2536,7 @@ JpfXmlMsg *parse_set_picture_info_result(char buf[], size_t size,
 	return parse_get_info(parse_get_hl_picture_info_request_xml, 
 			GET_HL_PICTURE_INFO_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_hl_picture_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_hl_picture_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2544,7 +2544,7 @@ JpfXmlMsg *parse_get_hl_picture_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_HL_PICTURE_INFO_RESPONSE_ID, 
 			sizeof(HLPictureInfoPacket), parse_get_hl_picture_info_response_xml);
 }
-JpfXmlMsg *parse_set_hl_picture_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_hl_picture_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2552,7 +2552,7 @@ JpfXmlMsg *parse_set_hl_picture_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_HL_PICTURE_INFO_REQUEST_ID, 
 			sizeof(HLPictureInfoPacket), parse_set_hl_picture_info_request_xml);
 }
-JpfXmlMsg *parse_set_hl_picture_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_hl_picture_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2562,7 +2562,7 @@ JpfXmlMsg *parse_set_hl_picture_info_result(char buf[], size_t size,
 }*/
 
 //wifi config
-JpfXmlMsg *parse_get_wifi_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_wifi_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2570,7 +2570,7 @@ JpfXmlMsg *parse_get_wifi_config_request(char buf[], size_t size,
 	return parse_get_info(parse_get_wifi_config_request_xml, 
 			GET_WIFI_CONFIG_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_wifi_config_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_wifi_config_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2578,7 +2578,7 @@ JpfXmlMsg *parse_get_wifi_config_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_WIFI_CONFIG_RESPONSE_ID, 
 			sizeof(WifiConfigPacket), parse_get_wifi_config_response_xml);
 }
-JpfXmlMsg *parse_set_wifi_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_wifi_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2586,7 +2586,7 @@ JpfXmlMsg *parse_set_wifi_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_WIFI_CONFIG_REQUEST_ID, 
 			sizeof(WifiConfigPacket), parse_set_wifi_config_request_xml);
 }
-JpfXmlMsg *parse_set_wifi_config_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_wifi_config_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2596,7 +2596,7 @@ JpfXmlMsg *parse_set_wifi_config_result(char buf[], size_t size,
 }
 
 //wifi search
-JpfXmlMsg *parse_wifi_search_request(char buf[], size_t size, 
+NmpXmlMsg *parse_wifi_search_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2604,7 +2604,7 @@ JpfXmlMsg *parse_wifi_search_request(char buf[], size_t size,
 	return parse_get_info(parse_wifi_search_request_xml, 
 			WIFI_SEARCH_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_wifi_search_response(char buf[], size_t size, 
+NmpXmlMsg *parse_wifi_search_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2614,7 +2614,7 @@ JpfXmlMsg *parse_wifi_search_response(char buf[], size_t size,
 }
 
 //network status
-JpfXmlMsg *parse_get_network_status_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_network_status_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2622,7 +2622,7 @@ JpfXmlMsg *parse_get_network_status_request(char buf[], size_t size,
 	return parse_get_info(parse_get_network_status_request_xml, 
 			GET_NETWORK_STATUS_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_network_status_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_network_status_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2632,7 +2632,7 @@ JpfXmlMsg *parse_get_network_status_response(char buf[], size_t size,
 }
 
 //control device
-JpfXmlMsg *parse_control_device_request(char buf[], size_t size, 
+NmpXmlMsg *parse_control_device_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2642,7 +2642,7 @@ JpfXmlMsg *parse_control_device_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, CONTROL_DEVICE_REQUEST_ID, 
 			sizeof(ControlDevicePacket), parse_control_device_request_xml);
 }
-JpfXmlMsg *parse_control_device_result(char buf[], size_t size, 
+NmpXmlMsg *parse_control_device_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2654,7 +2654,7 @@ JpfXmlMsg *parse_control_device_result(char buf[], size_t size,
 }
 
 //ddns config
-JpfXmlMsg *parse_get_ddns_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_ddns_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2662,7 +2662,7 @@ JpfXmlMsg *parse_get_ddns_config_request(char buf[], size_t size,
 	return parse_get_info(parse_get_ddns_config_request_xml, 
 			GET_DDNS_CONFIG_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_ddns_config_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_ddns_config_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2670,7 +2670,7 @@ JpfXmlMsg *parse_get_ddns_config_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_DDNS_CONFIG_RESPONSE_ID, 
 			sizeof(DdnsConfigPacket), parse_get_ddns_config_response_xml);
 }
-JpfXmlMsg *parse_set_ddns_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_ddns_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2678,7 +2678,7 @@ JpfXmlMsg *parse_set_ddns_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_DDNS_CONFIG_REQUEST_ID, 
 			sizeof(DdnsConfigPacket), parse_set_ddns_config_request_xml);
 }
-JpfXmlMsg *parse_set_ddns_config_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_ddns_config_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2686,13 +2686,13 @@ JpfXmlMsg *parse_set_ddns_config_result(char buf[], size_t size,
 	return parse_set_result(parse_set_ddns_config_result_xml, 
 			SET_DDNS_CONFIG_RESULT_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_def_display_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_def_display_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	return parse_get_info(parse_get_def_display_info_request_xml, GET_DEF_DISPLAY_INFO_REQUEST_ID, 
 							buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_def_display_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_def_display_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2702,7 +2702,7 @@ JpfXmlMsg *parse_get_def_display_info_response(char buf[], size_t size,
 }
 
 //default picture info
-JpfXmlMsg *parse_get_def_picture_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_def_picture_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2710,7 +2710,7 @@ JpfXmlMsg *parse_get_def_picture_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_def_picture_info_request_xml, 
 			GET_DEF_PICTURE_INFO_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_def_picture_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_def_picture_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2720,7 +2720,7 @@ JpfXmlMsg *parse_get_def_picture_info_response(char buf[], size_t size,
 }
 
 //avd config
-JpfXmlMsg *parse_get_avd_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_avd_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2728,7 +2728,7 @@ JpfXmlMsg *parse_get_avd_config_request(char buf[], size_t size,
 	return parse_get_info(parse_get_avd_config_request_xml, 
 			GET_AVD_CONFIG_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_avd_config_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_avd_config_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2736,7 +2736,7 @@ JpfXmlMsg *parse_get_avd_config_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_AVD_CONFIG_RESPONSE_ID, 
 			sizeof(AvdConfigPacket), parse_get_avd_config_response_xml);
 }
-JpfXmlMsg *parse_set_avd_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_avd_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2744,7 +2744,7 @@ JpfXmlMsg *parse_set_avd_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_AVD_CONFIG_REQUEST_ID, 
 			sizeof(AvdConfigPacket), parse_set_avd_config_request_xml);
 }
-JpfXmlMsg *parse_set_avd_config_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_avd_config_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -2754,28 +2754,28 @@ JpfXmlMsg *parse_set_avd_config_result(char buf[], size_t size,
 }
 
 //channel info
-int create_get_channel_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_channel_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_channel_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_channel_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_channel_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_channel_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_channel_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_channel_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_channel_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_channel_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_channel_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2784,28 +2784,28 @@ int create_set_channel_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //picture info
-int create_get_picture_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_picture_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_picture_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_picture_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_picture_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_picture_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_picture_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_picture_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_picture_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_picture_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_picture_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2814,28 +2814,28 @@ int create_set_picture_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 //wifi config
-int create_get_wifi_config_request(JpfXmlMsg *msg, char buf[], 
+int create_get_wifi_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_wifi_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_wifi_config_response(JpfXmlMsg *msg, char buf[], 
+int create_get_wifi_config_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_wifi_config_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_wifi_config_request(JpfXmlMsg *msg, char buf[], 
+int create_set_wifi_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_wifi_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_wifi_config_result(JpfXmlMsg *msg, char buf[], 
+int create_set_wifi_config_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2844,14 +2844,14 @@ int create_set_wifi_config_result(JpfXmlMsg *msg, char buf[],
 }
 
 //wifi search
-int create_wifi_search_request(JpfXmlMsg *msg, char buf[], 
+int create_wifi_search_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_wifi_search_request_xml(msg->priv_obj, buf, size);
 }
-int create_wifi_search_response(JpfXmlMsg *msg, char buf[], 
+int create_wifi_search_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2860,14 +2860,14 @@ int create_wifi_search_response(JpfXmlMsg *msg, char buf[],
 }
 
 //network status
-int create_get_network_status_request(JpfXmlMsg *msg, char buf[], 
+int create_get_network_status_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_network_status_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_network_status_response(JpfXmlMsg *msg, char buf[], 
+int create_get_network_status_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2876,14 +2876,14 @@ int create_get_network_status_response(JpfXmlMsg *msg, char buf[],
 }
 
 //control device
-int create_control_device_request(JpfXmlMsg *msg, char buf[], 
+int create_control_device_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_control_device_request_xml(msg->priv_obj, buf, size);
 }
-int create_control_device_result(JpfXmlMsg *msg, char buf[], 
+int create_control_device_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2892,28 +2892,28 @@ int create_control_device_result(JpfXmlMsg *msg, char buf[],
 }
 
 //ddns config
-int create_get_ddns_config_request(JpfXmlMsg *msg, char buf[], 
+int create_get_ddns_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ddns_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_ddns_config_response(JpfXmlMsg *msg, char buf[], 
+int create_get_ddns_config_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ddns_config_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_ddns_config_request(JpfXmlMsg *msg, char buf[], 
+int create_set_ddns_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_ddns_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_ddns_config_result(JpfXmlMsg *msg, char buf[], 
+int create_set_ddns_config_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2922,14 +2922,14 @@ int create_set_ddns_config_result(JpfXmlMsg *msg, char buf[],
 }
 
 //default display_para
-int create_get_def_display_info_requst(JpfXmlMsg *msg, char buf[], 
+int create_get_def_display_info_requst(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_def_display_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_def_display_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_def_display_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2938,14 +2938,14 @@ int create_get_def_display_info_response(JpfXmlMsg *msg, char buf[],
 }
 
 //default picture info
-int create_get_def_picture_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_def_picture_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_def_picture_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_def_picture_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_def_picture_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -2954,28 +2954,28 @@ int create_get_def_picture_info_response(JpfXmlMsg *msg, char buf[],
 }
 
 //avd config
-int create_get_avd_config_request(JpfXmlMsg *msg, char buf[], 
+int create_get_avd_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_avd_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_avd_config_response(JpfXmlMsg *msg, char buf[], 
+int create_get_avd_config_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_avd_config_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_avd_config_request(JpfXmlMsg *msg, char buf[], 
+int create_set_avd_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_avd_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_avd_config_result(JpfXmlMsg *msg, char buf[], 
+int create_set_avd_config_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3017,7 +3017,7 @@ static void destory_transparent_param(void *priv_obj, size_t size)
 		j_xml_dealloc((void*)trans->data, trans->length);
 	j_xml_dealloc((void*)trans, sizeof(TransparentPacket));
 }
-static JpfXmlMsg *create_transparent_param_xml_msg(char buf[], 
+static NmpXmlMsg *create_transparent_param_xml_msg(char buf[], 
 		size_t buf_size, int data_id, parse_func func)
 {
 	int ret = -1;
@@ -3025,7 +3025,7 @@ static JpfXmlMsg *create_transparent_param_xml_msg(char buf[],
 	char *new_buf = NULL;
 	char page_buf[J_SDK_MAX_PAGE_SIZE];
 	
-	JpfXmlMsg *msg = NULL;
+	NmpXmlMsg *msg = NULL;
 	TransparentPacket *tran_packet = NULL;
 	
 	J_ASSERT(buf && buf_size);
@@ -3047,7 +3047,7 @@ static JpfXmlMsg *create_transparent_param_xml_msg(char buf[],
 	return msg;
 }
 
-JpfXmlMsg *parse_get_transparent_param_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_transparent_param_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3056,7 +3056,7 @@ JpfXmlMsg *parse_get_transparent_param_request(char buf[], size_t size,
 				GET_TRANSPARENTPARAM_REQUEST_ID, 
 				parse_get_transparent_param_request_xml);
 }
-JpfXmlMsg *parse_get_transparent_param_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_transparent_param_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3065,7 +3065,7 @@ JpfXmlMsg *parse_get_transparent_param_response(char buf[], size_t size,
 				GET_TRANSPARENTPARAM_RESPONSE_ID, 
 				parse_get_transparent_param_response_xml);
 }
-JpfXmlMsg *parse_set_transparent_param_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_transparent_param_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3074,7 +3074,7 @@ JpfXmlMsg *parse_set_transparent_param_request(char buf[], size_t size,
 				SET_TRANSPARENTPARAM_REQUEST_ID, 
 				parse_set_transparent_param_request_xml);
 }
-JpfXmlMsg *parse_set_transparent_param_response(char buf[], size_t size, 
+NmpXmlMsg *parse_set_transparent_param_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3082,7 +3082,7 @@ JpfXmlMsg *parse_set_transparent_param_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_TRANSPARENTPARAM_RESPONSE_ID, 
 			sizeof(int), parse_set_transparent_param_response_xml);
 }
-JpfXmlMsg *parse_transparent_notify_enevt(char buf[], size_t size, 
+NmpXmlMsg *parse_transparent_notify_enevt(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3091,7 +3091,7 @@ JpfXmlMsg *parse_transparent_notify_enevt(char buf[], size_t size,
 				TRANSPARENTPARAM_NOTIFYEVENT_ID, 
 				parse_transparent_notify_enevt_xml);
 }
-JpfXmlMsg *parse_transparent_control_device(char buf[], size_t size, 
+NmpXmlMsg *parse_transparent_control_device(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3100,42 +3100,42 @@ JpfXmlMsg *parse_transparent_control_device(char buf[], size_t size,
 				TRANSPARENTPARAM_CONTROLDEVICE_ID, 
 				parse_transparent_control_device_xml);
 }
-int create_get_transparent_param_request(JpfXmlMsg *msg, char buf[], 
+int create_get_transparent_param_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_transparent_param_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_transparent_param_response(JpfXmlMsg *msg, char buf[], 
+int create_get_transparent_param_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_transparent_param_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_transparent_param_request(JpfXmlMsg *msg, char buf[], 
+int create_set_transparent_param_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_transparent_param_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_transparent_param_response(JpfXmlMsg *msg, char buf[], 
+int create_set_transparent_param_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_transparent_param_response_xml(msg->priv_obj, buf, size);
 }
-int create_transparent_notify_enevt(JpfXmlMsg *msg, char buf[], 
+int create_transparent_notify_enevt(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_transparent_notify_enevt_xml(msg->priv_obj, buf, size);
 }
-int create_transparent_control_device(JpfXmlMsg *msg, char buf[], 
+int create_transparent_control_device(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3146,7 +3146,7 @@ int create_transparent_control_device(JpfXmlMsg *msg, char buf[],
 //##########################################################################
 # ifdef _USE_DECODER_PROTO_
 
-JpfXmlMsg *parse_query_division_mode_request(char buf[], size_t size, 
+NmpXmlMsg *parse_query_division_mode_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3154,7 +3154,7 @@ JpfXmlMsg *parse_query_division_mode_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, QUERY_DIVISION_MODE_REQUEST_ID, 
 			sizeof(DivisionModePacket), parse_query_division_mode_request_xml);
 }
-JpfXmlMsg *parse_query_division_mode_response(char buf[], size_t size, 
+NmpXmlMsg *parse_query_division_mode_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3163,14 +3163,14 @@ JpfXmlMsg *parse_query_division_mode_response(char buf[], size_t size,
 			sizeof(DivisionModePacket), parse_query_division_mode_response_xml);
 }
 
-int create_query_division_mode_request(JpfXmlMsg *msg, char buf[], 
+int create_query_division_mode_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_query_division_mode_request_xml(msg->priv_obj, buf, size);
 }
-int create_query_division_mode_response(JpfXmlMsg *msg, char buf[], 
+int create_query_division_mode_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3178,7 +3178,7 @@ int create_query_division_mode_response(JpfXmlMsg *msg, char buf[],
 	return merge_query_division_mode_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_screen_state_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_screen_state_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3186,7 +3186,7 @@ JpfXmlMsg *parse_get_screen_state_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_SCREEN_STATE_REQUEST_ID, 
 			sizeof(ScreenStatePacket), parse_get_screen_state_request_xml);
 }
-JpfXmlMsg *parse_get_screen_state_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_screen_state_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3195,14 +3195,14 @@ JpfXmlMsg *parse_get_screen_state_response(char buf[], size_t size,
 			sizeof(ScreenStatePacket), parse_get_screen_state_response_xml);
 }
 
-int create_get_screen_state_request(JpfXmlMsg *msg, char buf[], 
+int create_get_screen_state_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_screen_state_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_screen_state_response(JpfXmlMsg *msg, char buf[], 
+int create_get_screen_state_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3210,7 +3210,7 @@ int create_get_screen_state_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_screen_state_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_set_division_mode_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_division_mode_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3218,7 +3218,7 @@ JpfXmlMsg *parse_set_division_mode_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_DIVISION_MODE_REQUEST_ID, 
 			sizeof(ChangeDModePacket), parse_set_division_mode_request_xml);
 }
-JpfXmlMsg *parse_set_division_mode_response(char buf[], size_t size, 
+NmpXmlMsg *parse_set_division_mode_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3227,14 +3227,14 @@ JpfXmlMsg *parse_set_division_mode_response(char buf[], size_t size,
 			sizeof(int), parse_set_division_mode_response_xml);
 }
 
-int create_set_division_mode_request(JpfXmlMsg *msg, char buf[], 
+int create_set_division_mode_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_division_mode_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_division_mode_response(JpfXmlMsg *msg, char buf[], 
+int create_set_division_mode_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3242,7 +3242,7 @@ int create_set_division_mode_response(JpfXmlMsg *msg, char buf[],
 	return merge_set_division_mode_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_set_full_screen_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_full_screen_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3250,7 +3250,7 @@ JpfXmlMsg *parse_set_full_screen_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_FULL_SCREEN_REQUEST_ID, 
 			sizeof(FullScreenPacket), parse_set_full_screen_request_xml);
 }
-JpfXmlMsg *parse_set_full_screen_response(char buf[], size_t size, 
+NmpXmlMsg *parse_set_full_screen_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3259,14 +3259,14 @@ JpfXmlMsg *parse_set_full_screen_response(char buf[], size_t size,
 			sizeof(int), parse_set_full_screen_response_xml);
 }
 
-int create_set_full_screen_request(JpfXmlMsg *msg, char buf[], 
+int create_set_full_screen_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_full_screen_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_full_screen_response(JpfXmlMsg *msg, char buf[], 
+int create_set_full_screen_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3274,7 +3274,7 @@ int create_set_full_screen_response(JpfXmlMsg *msg, char buf[],
 	return merge_set_full_screen_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_exit_full_screen_request(char buf[], size_t size, 
+NmpXmlMsg *parse_exit_full_screen_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3282,7 +3282,7 @@ JpfXmlMsg *parse_exit_full_screen_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, EXIT_FULL_SCREEN_REQUEST_ID, 
 			sizeof(int), parse_exit_full_screen_request_xml);
 }
-JpfXmlMsg *parse_exit_full_screen_response(char buf[], size_t size, 
+NmpXmlMsg *parse_exit_full_screen_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3291,14 +3291,14 @@ JpfXmlMsg *parse_exit_full_screen_response(char buf[], size_t size,
 			sizeof(int), parse_exit_full_screen_response_xml);
 }
 
-int create_exit_full_screen_request(JpfXmlMsg *msg, char buf[], 
+int create_exit_full_screen_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_exit_full_screen_request_xml(msg->priv_obj, buf, size);
 }
-int create_exit_full_screen_response(JpfXmlMsg *msg, char buf[], 
+int create_exit_full_screen_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3306,7 +3306,7 @@ int create_exit_full_screen_response(JpfXmlMsg *msg, char buf[],
 	return merge_exit_full_screen_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_tv_wall_play_request(char buf[], size_t size, 
+NmpXmlMsg *parse_tv_wall_play_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3314,7 +3314,7 @@ JpfXmlMsg *parse_tv_wall_play_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, TV_WALL_PLAY_REQUEST_ID, 
 			sizeof(TVWallPlayPacket), parse_tv_wall_play_request_xml);
 }
-JpfXmlMsg *parse_tv_wall_play_response(char buf[], size_t size, 
+NmpXmlMsg *parse_tv_wall_play_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3323,14 +3323,14 @@ JpfXmlMsg *parse_tv_wall_play_response(char buf[], size_t size,
 			sizeof(TVWallPlayPacket), parse_tv_wall_play_response_xml);
 }
 
-int create_tv_wall_play_request(JpfXmlMsg *msg, char buf[], 
+int create_tv_wall_play_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_tv_wall_play_request_xml(msg->priv_obj, buf, size);
 }
-int create_tv_wall_play_response(JpfXmlMsg *msg, char buf[], 
+int create_tv_wall_play_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3338,7 +3338,7 @@ int create_tv_wall_play_response(JpfXmlMsg *msg, char buf[],
 	return merge_tv_wall_play_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_clear_division_request(char buf[], size_t size, 
+NmpXmlMsg *parse_clear_division_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3346,7 +3346,7 @@ JpfXmlMsg *parse_clear_division_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, CLEAR_DIVISION_REQUEST_ID, 
 			sizeof(ClearDivisionPacket), parse_clear_division_request_xml);
 }
-JpfXmlMsg *parse_clear_division_response(char buf[], size_t size, 
+NmpXmlMsg *parse_clear_division_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3355,14 +3355,14 @@ JpfXmlMsg *parse_clear_division_response(char buf[], size_t size,
 			sizeof(int), parse_clear_division_response_xml);
 }
 
-int create_clear_division_request(JpfXmlMsg *msg, char buf[], 
+int create_clear_division_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_clear_division_request_xml(msg->priv_obj, buf, size);
 }
-int create_clear_division_response(JpfXmlMsg *msg, char buf[], 
+int create_clear_division_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3372,14 +3372,14 @@ int create_clear_division_response(JpfXmlMsg *msg, char buf[],
 
 # endif //_USE_DECODER_PROTO_
 
-int create_get_operation_log_request(JpfXmlMsg *msg, char buf[], 
+int create_get_operation_log_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_operation_log_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_operation_log_response(JpfXmlMsg *msg, char buf[], 
+int create_get_operation_log_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3387,7 +3387,7 @@ int create_get_operation_log_response(JpfXmlMsg *msg, char buf[],
  	return merge_get_operation_log_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_operation_log_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_operation_log_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3395,7 +3395,7 @@ JpfXmlMsg *parse_get_operation_log_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_OPERATION_LOG_REQUEST_ID, 
 			sizeof(OperationLogPacket), parse_get_operation_log_request_xml);
 }
-JpfXmlMsg *parse_get_operation_log_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_operation_log_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3404,7 +3404,7 @@ JpfXmlMsg *parse_get_operation_log_response(char buf[], size_t size,
 			sizeof(OperationLogPacket), parse_get_operation_log_response_xml);
 }
 
-JpfXmlMsg *parse_set_alarm_upload_config_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_alarm_upload_config_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3412,7 +3412,7 @@ JpfXmlMsg *parse_set_alarm_upload_config_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_ALARM_UPLOAD_CONFIG_REQUEST_ID, 
 			sizeof(JAlarmUploadCfg), parse_set_alarm_upload_config_request_xml);
 }
-JpfXmlMsg *parse_set_alarm_upload_config_response(char buf[], size_t size, 
+NmpXmlMsg *parse_set_alarm_upload_config_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3421,14 +3421,14 @@ JpfXmlMsg *parse_set_alarm_upload_config_response(char buf[], size_t size,
 			sizeof(int), parse_set_alarm_upload_config_response_xml);
 }
 
-int create_set_alarm_upload_config_request(JpfXmlMsg *msg, char buf[], 
+int create_set_alarm_upload_config_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_alarm_upload_config_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_alarm_upload_config_response(JpfXmlMsg *msg, char buf[], 
+int create_set_alarm_upload_config_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3436,7 +3436,7 @@ int create_set_alarm_upload_config_response(JpfXmlMsg *msg, char buf[],
 	return merge_set_alarm_upload_config_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_preset_point_set_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_preset_point_set_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3444,7 +3444,7 @@ JpfXmlMsg *parse_get_preset_point_set_request(char buf[], size_t size,
 	return parse_get_info(parse_get_preset_point_set_request_xml, 
 			GET_PRESET_POINT_SET_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_preset_point_set_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_preset_point_set_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3452,7 +3452,7 @@ JpfXmlMsg *parse_get_preset_point_set_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_PRESET_POINT_SET_RESPONSE_ID, 
 			sizeof(PPSetPacket), parse_get_preset_point_set_response_xml);
 }
-JpfXmlMsg *parse_set_preset_point_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_preset_point_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3460,7 +3460,7 @@ JpfXmlMsg *parse_set_preset_point_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_PRESET_POINT_REQUEST_ID, 
 			sizeof(PPConfigPacket), parse_set_preset_point_request_xml);
 }
-JpfXmlMsg *parse_set_preset_point_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_preset_point_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3469,7 +3469,7 @@ JpfXmlMsg *parse_set_preset_point_result(char buf[], size_t size,
 			SET_PRESET_POINT_RESULT_ID, buf, size, err, flags);
 }
 
-JpfXmlMsg *parse_get_cruise_way_set_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_cruise_way_set_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3477,7 +3477,7 @@ JpfXmlMsg *parse_get_cruise_way_set_request(char buf[], size_t size,
 	return parse_get_info(parse_get_cruise_way_set_request_xml, 
 			GET_CRUISE_WAY_SET_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_cruise_way_set_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_cruise_way_set_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3485,7 +3485,7 @@ JpfXmlMsg *parse_get_cruise_way_set_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_CRUISE_WAY_SET_RESPONSE_ID, 
 			sizeof(CruiseWaySetPacket), parse_get_cruise_way_set_response_xml);
 }
-JpfXmlMsg *parse_set_cruise_way_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_cruise_way_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3493,7 +3493,7 @@ JpfXmlMsg *parse_set_cruise_way_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_CRUISE_WAY_REQUEST_ID, 
 			sizeof(CruiseConfigPacket), parse_set_cruise_way_request_xml);
 }
-JpfXmlMsg *parse_set_cruise_way_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_cruise_way_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3501,7 +3501,7 @@ JpfXmlMsg *parse_set_cruise_way_result(char buf[], size_t size,
 	return parse_set_result(parse_set_cruise_way_result_xml, 
 			SET_CRUISE_WAY_RESULT_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_cruise_way_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_cruise_way_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3509,7 +3509,7 @@ JpfXmlMsg *parse_get_cruise_way_request(char buf[], size_t size,
 	return parse_get_info(parse_get_cruise_way_request_xml, 
 			GET_CRUISE_WAY_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_cruise_way_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_cruise_way_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3517,7 +3517,7 @@ JpfXmlMsg *parse_get_cruise_way_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_CRUISE_WAY_RESPONSE_ID, 
 			sizeof(CruiseWayPacket), parse_get_cruise_way_response_xml);
 }
-JpfXmlMsg *parse_add_cruise_way_request(char buf[], size_t size, 
+NmpXmlMsg *parse_add_cruise_way_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3525,7 +3525,7 @@ JpfXmlMsg *parse_add_cruise_way_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, ADD_CRUISE_WAY_REQUEST_ID, 
 			sizeof(CruiseWayPacket), parse_add_cruise_way_request_xml);
 }
-JpfXmlMsg *parse_add_cruise_way_result(char buf[], size_t size, 
+NmpXmlMsg *parse_add_cruise_way_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3533,7 +3533,7 @@ JpfXmlMsg *parse_add_cruise_way_result(char buf[], size_t size,
 	return parse_set_result(parse_add_cruise_way_result_xml, 
 			ADD_CRUISE_WAY_RESULT_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_modify_cruise_way_request(char buf[], size_t size, 
+NmpXmlMsg *parse_modify_cruise_way_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3541,7 +3541,7 @@ JpfXmlMsg *parse_modify_cruise_way_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, MODIFY_CRUISE_WAY_REQUEST_ID, 
 			sizeof(CruiseWayPacket), parse_modify_cruise_way_request_xml);
 }
-JpfXmlMsg *parse_modify_cruise_way_result(char buf[], size_t size, 
+NmpXmlMsg *parse_modify_cruise_way_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3550,14 +3550,14 @@ JpfXmlMsg *parse_modify_cruise_way_result(char buf[], size_t size,
 			MODIFY_CRUISE_WAY_RESULT_ID, buf, size, err, flags);
 }
 
-int create_get_preset_point_set_request(JpfXmlMsg *msg, char buf[], 
+int create_get_preset_point_set_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_preset_point_set_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_preset_point_set_response(JpfXmlMsg *msg, char buf[], 
+int create_get_preset_point_set_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3565,14 +3565,14 @@ int create_get_preset_point_set_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_preset_point_set_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_set_preset_point_request(JpfXmlMsg *msg, char buf[], 
+int create_set_preset_point_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_preset_point_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_preset_point_result(JpfXmlMsg *msg, char buf[], 
+int create_set_preset_point_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3580,14 +3580,14 @@ int create_set_preset_point_result(JpfXmlMsg *msg, char buf[],
 	return merge_set_preset_point_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_cruise_way_set_request(JpfXmlMsg *msg, char buf[], 
+int create_get_cruise_way_set_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_cruise_way_set_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_cruise_way_set_response(JpfXmlMsg *msg, char buf[], 
+int create_get_cruise_way_set_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3595,14 +3595,14 @@ int create_get_cruise_way_set_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_cruise_way_set_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_set_cruise_way_request(JpfXmlMsg *msg, char buf[], 
+int create_set_cruise_way_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_cruise_way_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_cruise_way_result(JpfXmlMsg *msg, char buf[], 
+int create_set_cruise_way_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3610,14 +3610,14 @@ int create_set_cruise_way_result(JpfXmlMsg *msg, char buf[],
 	return merge_set_cruise_way_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_get_cruise_way_request(JpfXmlMsg *msg, char buf[], 
+int create_get_cruise_way_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_cruise_way_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_cruise_way_response(JpfXmlMsg *msg, char buf[], 
+int create_get_cruise_way_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3625,14 +3625,14 @@ int create_get_cruise_way_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_cruise_way_response_xml(msg->priv_obj, buf, size);
 }
 
-int create_add_cruise_way_request(JpfXmlMsg *msg, char buf[], 
+int create_add_cruise_way_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_add_cruise_way_request_xml(msg->priv_obj, buf, size);
 }
-int create_add_cruise_way_result(JpfXmlMsg *msg, char buf[], 
+int create_add_cruise_way_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3640,14 +3640,14 @@ int create_add_cruise_way_result(JpfXmlMsg *msg, char buf[],
 	return merge_add_cruise_way_result_xml(msg->priv_obj, buf, size);
 }
 
-int create_modify_cruise_way_request(JpfXmlMsg *msg, char buf[], 
+int create_modify_cruise_way_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_modify_cruise_way_request_xml(msg->priv_obj, buf, size);
 }
-int create_modify_cruise_way_result(JpfXmlMsg *msg, char buf[], 
+int create_modify_cruise_way_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3655,7 +3655,7 @@ int create_modify_cruise_way_result(JpfXmlMsg *msg, char buf[],
 	return merge_modify_cruise_way_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_3d_control_request(char buf[], size_t size, 
+NmpXmlMsg *parse_3d_control_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3663,7 +3663,7 @@ JpfXmlMsg *parse_3d_control_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, _3D_CONTROL_REQUEST_ID, 
 			sizeof(_3DControlPacket), parse_3d_control_request_xml);
 }
-JpfXmlMsg *parse_3d_control_result(char buf[], size_t size, 
+NmpXmlMsg *parse_3d_control_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3671,7 +3671,7 @@ JpfXmlMsg *parse_3d_control_result(char buf[], size_t size,
 	return parse_set_result(parse_3d_control_result_xml, 
 			_3D_CONTROL_RESULT_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_3d_goback_request(char buf[], size_t size, 
+NmpXmlMsg *parse_3d_goback_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3679,7 +3679,7 @@ JpfXmlMsg *parse_3d_goback_request(char buf[], size_t size,
 	return parse_get_info(parse_3d_goback_request_xml, 
 			_3D_GOBACK_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_3d_goback_result(char buf[], size_t size, 
+NmpXmlMsg *parse_3d_goback_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3687,28 +3687,28 @@ JpfXmlMsg *parse_3d_goback_result(char buf[], size_t size,
 	return parse_set_result(parse_3d_goback_result_xml, 
 			_3D_GOBACK_RESULT_ID, buf, size, err, flags);
 }
-int create_3d_control_request(JpfXmlMsg *msg, char buf[], 
+int create_3d_control_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_3d_control_request_xml(msg->priv_obj, buf, size);
 }
-int create_3d_control_result(JpfXmlMsg *msg, char buf[], 
+int create_3d_control_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_3d_control_result_xml(msg->priv_obj, buf, size);
 }
-int create_3d_goback_request(JpfXmlMsg *msg, char buf[], 
+int create_3d_goback_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_3d_goback_request_xml(msg->priv_obj, buf, size);
 }
-int create_3d_goback_result(JpfXmlMsg *msg, char buf[], 
+int create_3d_goback_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3716,7 +3716,7 @@ int create_3d_goback_result(JpfXmlMsg *msg, char buf[],
 	return merge_3d_goback_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_alarm_link_io_request(char buf[], size_t size, 
+NmpXmlMsg *parse_alarm_link_io_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3724,7 +3724,7 @@ JpfXmlMsg *parse_alarm_link_io_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, ALARM_LINK_IO_REQUEST_ID, 
 			sizeof(LinkIOPacket), parse_alarm_link_io_request_xml);
 }
-JpfXmlMsg *parse_alarm_link_io_result(char buf[], size_t size, 
+NmpXmlMsg *parse_alarm_link_io_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3732,14 +3732,14 @@ JpfXmlMsg *parse_alarm_link_io_result(char buf[], size_t size,
 	return parse_set_result(parse_alarm_link_io_result_xml, 
 			ALARM_LINK_IO_RESULT_ID, buf, size, err, flags);
 }
-int create_alarm_link_io_request(JpfXmlMsg *msg, char buf[], 
+int create_alarm_link_io_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_alarm_link_io_request_xml(msg->priv_obj, buf, size);
 }
-int create_alarm_link_io_result(JpfXmlMsg *msg, char buf[], 
+int create_alarm_link_io_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3747,7 +3747,7 @@ int create_alarm_link_io_result(JpfXmlMsg *msg, char buf[],
 	return merge_alarm_link_io_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_alarm_link_preset_request(char buf[], size_t size, 
+NmpXmlMsg *parse_alarm_link_preset_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3755,7 +3755,7 @@ JpfXmlMsg *parse_alarm_link_preset_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, ALARM_LINK_PRESET_REQUEST_ID, 
 			sizeof(LinkPresetPacket), parse_alarm_link_preset_request_xml);
 }
-JpfXmlMsg *parse_alarm_link_preset_result(char buf[], size_t size, 
+NmpXmlMsg *parse_alarm_link_preset_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3763,14 +3763,14 @@ JpfXmlMsg *parse_alarm_link_preset_result(char buf[], size_t size,
 	return parse_set_result(parse_alarm_link_preset_result_xml, 
 			ALARM_LINK_PRESET_RESULT_ID, buf, size, err, flags);
 }
-int create_alarm_link_preset_request(JpfXmlMsg *msg, char buf[], 
+int create_alarm_link_preset_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_alarm_link_preset_request_xml(msg->priv_obj, buf, size);
 }
-int create_alarm_link_preset_result(JpfXmlMsg *msg, char buf[], 
+int create_alarm_link_preset_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3778,7 +3778,7 @@ int create_alarm_link_preset_result(JpfXmlMsg *msg, char buf[],
 	return merge_alarm_link_preset_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_resolution_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_resolution_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3786,7 +3786,7 @@ JpfXmlMsg *parse_get_resolution_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_resolution_info_request_xml, 
 			GET_RESOLUTION_INFO_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_resolution_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_resolution_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3794,7 +3794,7 @@ JpfXmlMsg *parse_get_resolution_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_RESOLUTION_INFO_RESPONSE_ID, 
 			sizeof(ResolutionInfoPacket), parse_get_resolution_info_response_xml);
 }
-JpfXmlMsg *parse_set_resolution_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_resolution_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3802,7 +3802,7 @@ JpfXmlMsg *parse_set_resolution_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_RESOLUTION_INFO_REQUEST_ID, 
 			sizeof(ResolutionInfoPacket), parse_set_resolution_info_request_xml);
 }
-JpfXmlMsg *parse_set_resolution_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_resolution_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3811,28 +3811,28 @@ JpfXmlMsg *parse_set_resolution_info_result(char buf[], size_t size,
 			SET_RESOLUTION_INFO_RESULT_ID, buf, size, err, flags);
 }
 
-int create_get_resolution_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_resolution_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_resolution_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_resolution_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_resolution_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_resolution_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_resolution_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_resolution_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_resolution_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_resolution_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_resolution_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3840,7 +3840,7 @@ int create_set_resolution_info_result(JpfXmlMsg *msg, char buf[],
 	return merge_set_resolution_info_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_ircut_control_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_ircut_control_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3848,7 +3848,7 @@ JpfXmlMsg *parse_get_ircut_control_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_ircut_control_info_request_xml, 
 			GET_IRCUT_CONTROL_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_ircut_control_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_ircut_control_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3856,7 +3856,7 @@ JpfXmlMsg *parse_get_ircut_control_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_IRCUT_CONTROL_RESPONSE_ID, 
 			sizeof(IrcutControlPacket), parse_get_ircut_control_info_response_xml);
 }
-JpfXmlMsg *parse_set_ircut_control_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_ircut_control_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3864,7 +3864,7 @@ JpfXmlMsg *parse_set_ircut_control_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_IRCUT_CONTROL_REQUEST_ID, 
 			sizeof(IrcutControlPacket), parse_set_ircut_control_info_request_xml);
 }
-JpfXmlMsg *parse_set_ircut_control_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_ircut_control_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3873,28 +3873,28 @@ JpfXmlMsg *parse_set_ircut_control_info_result(char buf[], size_t size,
 			SET_IRCUT_CONTROL_RESULT_ID, buf, size, err, flags);
 }
 
-int create_get_ircut_control_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_ircut_control_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ircut_control_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_ircut_control_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_ircut_control_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_ircut_control_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_ircut_control_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_ircut_control_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_ircut_control_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_ircut_control_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_ircut_control_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3903,7 +3903,7 @@ int create_set_ircut_control_info_result(JpfXmlMsg *msg, char buf[],
 }
 
 
-JpfXmlMsg *parse_get_extranet_port_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_extranet_port_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3911,7 +3911,7 @@ JpfXmlMsg *parse_get_extranet_port_request(char buf[], size_t size,
 	return parse_get_info(parse_get_extranet_port_request_xml, 
 			GET_EXTRANET_PORT_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_extranet_port_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_extranet_port_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3919,14 +3919,14 @@ JpfXmlMsg *parse_get_extranet_port_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_EXTRANET_PORT_RESPONSE_ID, 
 			sizeof(ExtranetPortPacket), parse_get_extranet_port_response_xml);
 }
-int create_get_extranet_port_request(JpfXmlMsg *msg, char buf[], 
+int create_get_extranet_port_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 
 	return merge_get_extranet_port_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_extranet_port_response(JpfXmlMsg *msg, char buf[], 
+int create_get_extranet_port_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3934,7 +3934,7 @@ int create_get_extranet_port_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_extranet_port_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_herd_analyse_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_herd_analyse_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3942,7 +3942,7 @@ JpfXmlMsg *parse_get_herd_analyse_info_request(char buf[], size_t size,
 	return parse_get_info(parse_get_herd_analyse_info_request_xml, 
 			GET_HERD_ANALYSE_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_herd_analyse_info_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_herd_analyse_info_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3950,7 +3950,7 @@ JpfXmlMsg *parse_get_herd_analyse_info_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_HERD_ANALYSE_RESPONSE_ID, 
 			sizeof(IrcutControlPacket), parse_get_herd_analyse_info_response_xml);
 }
-JpfXmlMsg *parse_set_herd_analyse_info_request(char buf[], size_t size, 
+NmpXmlMsg *parse_set_herd_analyse_info_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3958,7 +3958,7 @@ JpfXmlMsg *parse_set_herd_analyse_info_request(char buf[], size_t size,
 	return create_xml_msg(buf, size, SET_HERD_ANALYSE_REQUEST_ID, 
 			sizeof(IrcutControlPacket), parse_set_herd_analyse_info_request_xml);
 }
-JpfXmlMsg *parse_set_herd_analyse_info_result(char buf[], size_t size, 
+NmpXmlMsg *parse_set_herd_analyse_info_result(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -3967,28 +3967,28 @@ JpfXmlMsg *parse_set_herd_analyse_info_result(char buf[], size_t size,
 			SET_HERD_ANALYSE_RESULT_ID, buf, size, err, flags);
 }
 
-int create_get_herd_analyse_info_request(JpfXmlMsg *msg, char buf[], 
+int create_get_herd_analyse_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_herd_analyse_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_herd_analyse_info_response(JpfXmlMsg *msg, char buf[], 
+int create_get_herd_analyse_info_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_herd_analyse_info_response_xml(msg->priv_obj, buf, size);
 }
-int create_set_herd_analyse_info_request(JpfXmlMsg *msg, char buf[], 
+int create_set_herd_analyse_info_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_set_herd_analyse_info_request_xml(msg->priv_obj, buf, size);
 }
-int create_set_herd_analyse_info_result(JpfXmlMsg *msg, char buf[], 
+int create_set_herd_analyse_info_result(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -3996,7 +3996,7 @@ int create_set_herd_analyse_info_result(JpfXmlMsg *msg, char buf[],
 	return merge_set_herd_analyse_info_result_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_grass_percent_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_grass_percent_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -4004,7 +4004,7 @@ JpfXmlMsg *parse_get_grass_percent_request(char buf[], size_t size,
 	return parse_get_info(parse_get_grass_percent_request_xml, 
 			GET_GRASS_PERCENT_REQUEST_ID, buf, size, err, flags);
 }
-JpfXmlMsg *parse_get_grass_percent_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_grass_percent_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -4012,14 +4012,14 @@ JpfXmlMsg *parse_get_grass_percent_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_GRASS_PERCENT_RESPONSE_ID, 
 			sizeof(GrassPercentPacket), parse_get_grass_percent_response_xml);
 }
-int create_get_grass_percent_request(JpfXmlMsg *msg, char buf[], 
+int create_get_grass_percent_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_grass_percent_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_grass_percent_response(JpfXmlMsg *msg, char buf[], 
+int create_get_grass_percent_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
@@ -4027,13 +4027,13 @@ int create_get_grass_percent_response(JpfXmlMsg *msg, char buf[],
 	return merge_get_grass_percent_response_xml(msg->priv_obj, buf, size);
 }
 
-JpfXmlMsg *parse_get_p2p_id_request(char buf[], size_t size, 
+NmpXmlMsg *parse_get_p2p_id_request(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	return create_xml_msg(buf, size, GET_P2P_ID_REQUEST_ID, 
 			sizeof(P2PIdPacket), parse_get_p2p_id_response_xml);
 }
-JpfXmlMsg *parse_get_p2p_id_response(char buf[], size_t size, 
+NmpXmlMsg *parse_get_p2p_id_response(char buf[], size_t size, 
 			int *err, unsigned int flags)
 {
 	J_ASSERT(buf && size);
@@ -4041,14 +4041,14 @@ JpfXmlMsg *parse_get_p2p_id_response(char buf[], size_t size,
 	return create_xml_msg(buf, size, GET_P2P_ID_RESPONSE_ID, 
 			sizeof(P2PIdPacket), parse_get_p2p_id_response_xml);
 }
-int create_get_p2p_id_request(JpfXmlMsg *msg, char buf[], 
+int create_get_p2p_id_request(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);
 	
 	return merge_get_p2p_id_request_xml(msg->priv_obj, buf, size);
 }
-int create_get_p2p_id_response(JpfXmlMsg *msg, char buf[], 
+int create_get_p2p_id_response(NmpXmlMsg *msg, char buf[], 
 		size_t size, unsigned int flags)
 {
 	J_ASSERT(msg && size);

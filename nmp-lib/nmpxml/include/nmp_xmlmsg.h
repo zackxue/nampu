@@ -365,30 +365,30 @@ typedef enum __CommandId
 
 
 typedef XmlCommand xmlid_t;
-typedef void (*JpfXmlMsgDes)(void *priv_obj, size_t size);
+typedef void (*NmpXmlMsgDes)(void *priv_obj, size_t size);
 
-typedef struct __JpfXmlMsg
+typedef struct __NmpXmlMsg
 {
 	xmlid_t		 id;
 	void		 *priv_obj;
 	int			 priv_size;
 	unsigned int flags;
 	
-	JpfXmlMsgDes destroy;
-}JpfXmlMsg;
+	NmpXmlMsgDes destroy;
+}NmpXmlMsg;
 
 
 INTERFACE void set_mem_handler(void *alloc, void *dealloc);
 INTERFACE void init_jpf_xml_msg();
 
-INTERFACE JpfXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_siz);
-INTERFACE JpfXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, size_t priv_sizee, 
-											JpfXmlMsgDes destroy);
-INTERFACE void jpf_xml_msg_destroy(JpfXmlMsg *msg);
-INTERFACE void jpf_xml_msg_destroy_2(JpfXmlMsg *msg);
+INTERFACE NmpXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_siz);
+INTERFACE NmpXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, size_t priv_sizee, 
+											NmpXmlMsgDes destroy);
+INTERFACE void jpf_xml_msg_destroy(NmpXmlMsg *msg);
+INTERFACE void jpf_xml_msg_destroy_2(NmpXmlMsg *msg);
 
-INTERFACE int create_xml(JpfXmlMsg *msg, char buf[], size_t size, unsigned int flags);
-INTERFACE JpfXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags);
+INTERFACE int create_xml(NmpXmlMsg *msg, char buf[], size_t size, unsigned int flags);
+INTERFACE NmpXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags);
 
 
 #ifdef __cplusplus

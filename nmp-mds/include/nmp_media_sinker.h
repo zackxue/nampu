@@ -16,13 +16,13 @@ typedef enum
 {
 	SINKER_WATCH_STAT_EMPTY,
 	SINKER_WATCH_STAT_PENDING
-}JpfSinkWatchState;
+}NmpSinkWatchState;
 
 
-typedef struct _JpfSinkerStream JpfSinkerStream;
-struct _JpfSinkerStream
+typedef struct _NmpSinkerStream NmpSinkerStream;
+struct _NmpSinkerStream
 {
-	JpfMediaSocket		sock_info;		/* stream socket infomation */
+	NmpMediaSocket		sock_info;		/* stream socket infomation */
 
 	gboolean			connected;		/* data link connected ? */
 	gboolean			rtp_over_rtsp;	/* over rtsp ? */
@@ -30,51 +30,51 @@ struct _JpfSinkerStream
 
 	GPollFD				rtp_read;		/* fd for recving */
 	GPollFD				rtp_write;		/* fd for sending */
-	JpfSmartBuffer		rtp_buffer;		/* for packet buffering */
+	NmpSmartBuffer		rtp_buffer;		/* for packet buffering */
 
 	gint				rtp_ch;			/* a union is perfect */
 
-	JpfSinkWatchState	state;			/* watch state */
-	JpfRingBuffer		*ring_buff;		/* ring buffer for data buffering */
+	NmpSinkWatchState	state;			/* watch state */
+	NmpRingBuffer		*ring_buff;		/* ring buffer for data buffering */
 
 #ifdef CONFIG_RTCP_SUPPORT
-	JpfRtcpControl		rtcp_control;	/* rtcp control block */
+	NmpRtcpControl		rtcp_control;	/* rtcp control block */
 #endif
 };
 
 
-typedef struct _JpfSinkerWatch JpfSinkerWatch;
-typedef struct _JpfSinkerWatchFuncs JpfSinkerWatchFuncs;
+typedef struct _NmpSinkerWatch NmpSinkerWatch;
+typedef struct _NmpSinkerWatchFuncs NmpSinkerWatchFuncs;
 
-struct _JpfSinkerWatchFuncs			/* sink watch functions set */
+struct _NmpSinkerWatchFuncs			/* sink watch functions set */
 {
-	gint (*send)(JpfSinkerWatch *sinker, JpfSinkerStream *stream);	/* send data out */
-	gint (*fill)(JpfSinkerWatch *sinker, JpfSinkerStream *stream,
+	gint (*send)(NmpSinkerWatch *sinker, NmpSinkerStream *stream);	/* send data out */
+	gint (*fill)(NmpSinkerWatch *sinker, NmpSinkerStream *stream,
 		gchar *data, gsize size);	/* fill sinker with data from src */
-	void (*error)(JpfSinkerWatch *sinker);	/* invoked when watch errors */
+	void (*error)(NmpSinkerWatch *sinker);	/* invoked when watch errors */
 };
 
 
-struct _JpfSinkerWatch
+struct _NmpSinkerWatch
 {
 	GSource				source;			/* GSource object */
 	GstRTSPLowerTrans	trans;			/* transport style */
-	JpfSinkerStream		streams[NSTREAMS]; /* streams of media */
+	NmpSinkerStream		streams[NSTREAMS]; /* streams of media */
 
 	gint				n_streams;
 
 	void				*tcp_sinker;	/* RTP/RTCP Over RTSP , pointer to client,
 	we make sure that the lifetime of client longer than sinker, so we don't ref it */
 
-	JpfSinkerWatchFuncs	*funcs;			/* sinker watch functions set */
+	NmpSinkerWatchFuncs	*funcs;			/* sinker watch functions set */
 
 	gboolean			sink_ready;		/* ready to comsume data */
 	GStaticMutex		lock;			/* watch lock */
 };
 
 
-typedef struct _JpfMediaSinkers JpfMediaSinkers;
-struct _JpfMediaSinkers
+typedef struct _NmpMediaSinkers NmpMediaSinkers;
+struct _NmpMediaSinkers
 {
 	gint				ref_count;
 	GPtrArray			*sinkers;		/* sinker watches set */
@@ -85,28 +85,28 @@ struct _JpfMediaSinkers
 };
 
 
-JpfMediaSinkers *nmp_media_sinkers_new(gpointer media, gint blockable);
-JpfMediaSinkers *nmp_media_sinkers_ref(JpfMediaSinkers *sinkers);
-void nmp_media_sinkers_unref(JpfMediaSinkers *sinkers);
+NmpMediaSinkers *nmp_media_sinkers_new(gpointer media, gint blockable);
+NmpMediaSinkers *nmp_media_sinkers_ref(NmpMediaSinkers *sinkers);
+void nmp_media_sinkers_unref(NmpMediaSinkers *sinkers);
 
-void nmp_media_sinkers_add(JpfMediaSinkers *sinkers, JpfSinkerWatch *w);
-gint nmp_media_sinkers_del(JpfMediaSinkers *sinkers, JpfSinkerWatch *w);
+void nmp_media_sinkers_add(NmpMediaSinkers *sinkers, NmpSinkerWatch *w);
+gint nmp_media_sinkers_del(NmpMediaSinkers *sinkers, NmpSinkerWatch *w);
 
-JpfSinkerWatch *nmp_media_sinker_create(GstRTSPLowerTrans trans,
+NmpSinkerWatch *nmp_media_sinker_create(GstRTSPLowerTrans trans,
 	gint streams, gint *err);
 
-void nmp_media_sinker_ref(JpfSinkerWatch *watch);
-void nmp_media_sinker_unref(JpfSinkerWatch *watch);
+void nmp_media_sinker_ref(NmpSinkerWatch *watch);
+void nmp_media_sinker_unref(NmpSinkerWatch *watch);
 
-gint nmp_media_sinker_set_transport(JpfSinkerWatch *sinker, gint i_stream,
+gint nmp_media_sinker_set_transport(NmpSinkerWatch *sinker, gint i_stream,
 	gchar *client_Ip, GstRTSPTransport *ct, gboolean b_nat, void *p);
 
-gint nmp_media_sinkers_recv_packet(JpfMediaSinkers *sinkers, gint stream,
+gint nmp_media_sinkers_recv_packet(NmpMediaSinkers *sinkers, gint stream,
 	gchar *data, gsize size);
 
-void nmp_media_sinker_play(JpfSinkerWatch *watch);
+void nmp_media_sinker_play(NmpSinkerWatch *watch);
 
-gint nmp_media_sinker_watch_write(JpfSinkerWatch *watch, gint stream,
+gint nmp_media_sinker_watch_write(NmpSinkerWatch *watch, gint stream,
 	gchar *data, gsize size);
 
 #endif	/* __NMP_MEDIA_SINKER_H__ */

@@ -19,22 +19,22 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-    JPF_DEV_STAT_NEW,           /* after created */
-    JPF_DEV_STAT_REGISTERED,
-    JPF_DEV_STAT_ILLEGAL
-}JpfDeviceState;
+    NMP_DEV_STAT_NEW,           /* after created */
+    NMP_DEV_STAT_REGISTERED,
+    NMP_DEV_STAT_ILLEGAL
+}NmpDeviceState;
 
 
-typedef struct _JpfMediaDevice JpfMediaDevice;
-typedef void (*JpfDeviceFin)(JpfMediaDevice *device);
-struct _JpfMediaDevice
+typedef struct _NmpMediaDevice NmpMediaDevice;
+typedef void (*NmpDeviceFin)(NmpMediaDevice *device);
+struct _NmpMediaDevice
 {
     gint                ref_count;      /* 引用计数 */
     gchar               id[MAX_DEVICE_ID_LEN];  /* 设备ID */
     gchar				localip[__MAX_IP_LEN];	/* 设备连接的MDS IP */
     gchar				devip[__MAX_IP_LEN];	/* 设备NAT IP */
-    JpfDeviceState      state;          /* 设备状态 */
-	JpfDeviceMediaType	media_type;		/* 设备流类型 */
+    NmpDeviceState      state;          /* 设备状态 */
+	NmpDeviceMediaType	media_type;		/* 设备流类型 */
     GstRtspWatch        *watch;         /* RTSP watch */
 
     GList               *live_medias;   /* 该设备的媒体 */
@@ -46,53 +46,53 @@ struct _JpfMediaDevice
     GMutex              *device_lock;
 
     gpointer            private_data;
-    JpfDeviceFin        finalize;
+    NmpDeviceFin        finalize;
 };
 
 
-JpfMediaDevice *nmp_rtsp_device_new( void );
-void nmp_rtsp_device_unref(JpfMediaDevice *device);
-JpfMediaDevice *nmp_rtsp_device_ref(JpfMediaDevice *device);
+NmpMediaDevice *nmp_rtsp_device_new( void );
+void nmp_rtsp_device_unref(NmpMediaDevice *device);
+NmpMediaDevice *nmp_rtsp_device_ref(NmpMediaDevice *device);
 
-gboolean nmp_rtsp_device_accept(JpfMediaDevice *device, 
+gboolean nmp_rtsp_device_accept(NmpMediaDevice *device, 
     GEvent *e_listen, gint *errp);
 
-gchar *nmp_rtsp_device_get_localip(JpfMediaDevice *device);
+gchar *nmp_rtsp_device_get_localip(NmpMediaDevice *device);
 
-void nmp_rtsp_device_set_info(JpfMediaDevice *device, gchar *id,
+void nmp_rtsp_device_set_info(NmpMediaDevice *device, gchar *id,
 	gchar *ip, gint ttd);
 
-void nmp_rtsp_device_set_media_type(JpfMediaDevice *device,
-	JpfDeviceMediaType mt);
+void nmp_rtsp_device_set_media_type(NmpMediaDevice *device,
+	NmpDeviceMediaType mt);
 
-void nmp_rtsp_device_update_ttd(JpfMediaDevice *device);
+void nmp_rtsp_device_update_ttd(NmpMediaDevice *device);
 
-void nmp_rtsp_device_attach(JpfMediaDevice *device, void *ctx);
+void nmp_rtsp_device_attach(NmpMediaDevice *device, void *ctx);
 
-void nmp_rtsp_device_send_response(JpfMediaDevice *device,
+void nmp_rtsp_device_send_response(NmpMediaDevice *device,
     GstRTSPMessage *response);
 
-gboolean nmp_rtsp_device_is_new(JpfMediaDevice *device);
-void nmp_rtsp_device_set_registered(JpfMediaDevice *device);
-void nmp_rtsp_device_set_illegal(JpfMediaDevice *device);
+gboolean nmp_rtsp_device_is_new(NmpMediaDevice *device);
+void nmp_rtsp_device_set_registered(NmpMediaDevice *device);
+void nmp_rtsp_device_set_illegal(NmpMediaDevice *device);
 
-gboolean nmp_rtsp_device_check_id(JpfMediaDevice *device, 
+gboolean nmp_rtsp_device_check_id(NmpMediaDevice *device, 
     const gchar *id, gint ttd);
 
-gint nmp_rtsp_device_request(JpfMediaDevice *device, 
-    JpfRtspMedia *media);
+gint nmp_rtsp_device_request(NmpMediaDevice *device, 
+    NmpRtspMedia *media);
 
-gint nmp_rtsp_device_extend_request(JpfMediaDevice *device, 
-	JpfRtspMedia *media, gint name, gpointer value);
+gint nmp_rtsp_device_extend_request(NmpMediaDevice *device, 
+	NmpRtspMedia *media, gint name, gpointer value);
 
-JpfRtspMedia *nmp_rtsp_device_find_media(JpfMediaDevice *device, 
-    JpfMediaUri *media_uri);
+NmpRtspMedia *nmp_rtsp_device_find_media(NmpMediaDevice *device, 
+    NmpMediaUri *media_uri);
 
-JpfRtspMedia *nmp_rtsp_device_get_media(JpfMediaDevice *device,
+NmpRtspMedia *nmp_rtsp_device_get_media(NmpMediaDevice *device,
     gint seq);
 
-void nmp_rtsp_device_remove_media(JpfMediaDevice *device,
-	JpfRtspMedia *media);
+void nmp_rtsp_device_remove_media(NmpMediaDevice *device,
+	NmpRtspMedia *media);
 
 G_END_DECLS
 

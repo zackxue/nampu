@@ -14,7 +14,7 @@ static gint total_client_objects = 0;
 static gint total_session_objects = 0;
 
 static __inline__ void
-nmp_rtsp_session_generate_id(JpfRtspSession *s)
+nmp_rtsp_session_generate_id(NmpRtspSession *s)
 {
 	static gint static_sid = 0;
 	gint sid, random;
@@ -34,12 +34,12 @@ nmp_rtsp_session_generate_id(JpfRtspSession *s)
 }
 
 
-JpfRtspSession *
+NmpRtspSession *
 nmp_rtsp_session_new( void )
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 
-	s = g_new0(JpfRtspSession, 1);
+	s = g_new0(NmpRtspSession, 1);
 	s->timeout = DEFAULT_SESSSION_TIMEOUT;
 	nmp_rtsp_session_generate_id(s);
 	g_atomic_int_add(&total_session_objects, 1);
@@ -55,8 +55,8 @@ nmp_rtsp_session_new( void )
 
 
 __export gint
-nmp_rtsp_session_attach_media(JpfRtspSession *s, 
-	JpfRtspMedia *media, JpfSinkerWatch *w)
+nmp_rtsp_session_attach_media(NmpRtspSession *s, 
+	NmpRtspMedia *media, NmpSinkerWatch *w)
 {
 	gint rc;
 	g_assert(s && media && w);
@@ -75,7 +75,7 @@ nmp_rtsp_session_attach_media(JpfRtspSession *s,
 
 
 static __inline__ void
-nmp_rtsp_session_detach_media(JpfRtspSession *s)
+nmp_rtsp_session_detach_media(NmpRtspSession *s)
 {
 	nmp_debug(
 		"Free session '%p', 'media %p', 'sinker %p', %d left.",
@@ -95,7 +95,7 @@ nmp_rtsp_session_detach_media(JpfRtspSession *s)
 
 
 void
-nmp_rtsp_session_release(JpfRtspSession *s)
+nmp_rtsp_session_release(NmpRtspSession *s)
 {
 	g_assert(s != NULL);
 
@@ -105,14 +105,14 @@ nmp_rtsp_session_release(JpfRtspSession *s)
 }
 
 
-JpfRtspClient *
+NmpRtspClient *
 nmp_rtsp_client_new( void )
 {
-	JpfRtspClient *client;
+	NmpRtspClient *client;
 	
-	client = g_new0(JpfRtspClient, 1);
+	client = g_new0(NmpRtspClient, 1);
 	client->ref_count = 1;
-	client->state = JPF_RTSP_STAT_NORMAL;
+	client->state = NMP_RTSP_STAT_NORMAL;
 	client->lock = g_mutex_new();
 	client->ttl = client->ttd = DEFAULT_SESSSION_TIMEOUT * 3;
 	g_atomic_int_add(&total_client_objects, 1);
@@ -125,10 +125,10 @@ static void
 nmp_rtsp_client_session_list_free(gpointer data,
 	gpointer user_data)
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 	g_assert(data != NULL);
 
-	s = (JpfRtspSession*)data;
+	s = (NmpRtspSession*)data;
 	nmp_rtsp_session_release(s);
 }
 
@@ -147,7 +147,7 @@ nmp_rtsp_client_sessions_free(GList *list)
 
 
 static __inline__ void
-nmp_rtsp_client_free(JpfRtspClient *client)
+nmp_rtsp_client_free(NmpRtspClient *client)
 {
 	g_assert(client != NULL);
 
@@ -173,8 +173,8 @@ nmp_rtsp_client_free(JpfRtspClient *client)
 }
 
 
-JpfRtspClient *
-nmp_rtsp_client_ref(JpfRtspClient *client)
+NmpRtspClient *
+nmp_rtsp_client_ref(NmpRtspClient *client)
 {
 	g_assert(client != NULL && 
 		g_atomic_int_get(&client->ref_count) > 0);
@@ -185,7 +185,7 @@ nmp_rtsp_client_ref(JpfRtspClient *client)
 
 
 void
-nmp_rtsp_client_unref(JpfRtspClient *client)
+nmp_rtsp_client_unref(NmpRtspClient *client)
 {
 	g_assert(client != NULL && 
 		g_atomic_int_get(&client->ref_count) > 0);
@@ -198,8 +198,8 @@ nmp_rtsp_client_unref(JpfRtspClient *client)
 
 
 static void
-__nmp_rtsp_client_set_state(JpfRtspClient *client, 
-	JpfClientState state)
+__nmp_rtsp_client_set_state(NmpRtspClient *client, 
+	NmpClientState state)
 {
 	GList *list;
 	GEvent *watch;
@@ -207,12 +207,12 @@ __nmp_rtsp_client_set_state(JpfRtspClient *client,
 	if (client->state == state)
 		return;
 
-	if (state == JPF_RTSP_STAT_NORMAL)
+	if (state == NMP_RTSP_STAT_NORMAL)
 		return;
 
-	if (state == JPF_RTSP_STAT_KILLED)
+	if (state == NMP_RTSP_STAT_KILLED)
 	{
-		client->state = JPF_RTSP_STAT_KILLED;
+		client->state = NMP_RTSP_STAT_KILLED;
 
 		list = client->sessions;
 		client->sessions = NULL;
@@ -247,7 +247,7 @@ __nmp_rtsp_client_set_state(JpfRtspClient *client,
 
 
 static void
-nmp_rtsp_client_set_state(JpfRtspClient *client, JpfClientState state)
+nmp_rtsp_client_set_state(NmpRtspClient *client, NmpClientState state)
 {
 	g_assert(client != NULL);
 
@@ -258,21 +258,21 @@ nmp_rtsp_client_set_state(JpfRtspClient *client, JpfClientState state)
 
                                               
 static __inline__ gboolean
-nmp_rtsp_client_killed(JpfRtspClient *client)
+nmp_rtsp_client_killed(NmpRtspClient *client)
 {
-	return client->state == JPF_RTSP_STAT_KILLED;
+	return client->state == NMP_RTSP_STAT_KILLED;
 }
 
 
 void
-nmp_rtsp_client_set_illegal(JpfRtspClient *client)
+nmp_rtsp_client_set_illegal(NmpRtspClient *client)
 {
-	nmp_rtsp_client_set_state(client, JPF_RTSP_STAT_KILLED);
+	nmp_rtsp_client_set_state(client, NMP_RTSP_STAT_KILLED);
 }
 
 
 static void
-nmp_rtsp_client_watch_finalize(JpfRtspClient *client)
+nmp_rtsp_client_watch_finalize(NmpRtspClient *client)
 {
 	g_assert(client != NULL);
 
@@ -286,9 +286,9 @@ nmp_rtsp_client_watch_finalize(JpfRtspClient *client)
 gint
 nmp_rtsp_client_timeout(gconstpointer c, gconstpointer  u)
 {
-	JpfRtspClient *client;
+	NmpRtspClient *client;
 
-	client = (JpfRtspClient*)c;
+	client = (NmpRtspClient*)c;
 
 	if (--client->ttd < 0)
 		return 0;
@@ -298,14 +298,14 @@ nmp_rtsp_client_timeout(gconstpointer c, gconstpointer  u)
 
 
 void
-nmp_rtsp_client_alive(JpfRtspClient *client)
+nmp_rtsp_client_alive(NmpRtspClient *client)
 {
 	client->ttd = client->ttl;
 }
 
 
 gboolean
-nmp_rtsp_client_accept(JpfRtspClient *client, GEvent *channel,
+nmp_rtsp_client_accept(NmpRtspClient *client, GEvent *channel,
 	gint *errp)
 {
   	gint sock, new_sock;
@@ -348,7 +348,7 @@ nmp_rtsp_client_accept(JpfRtspClient *client, GEvent *channel,
 
 
 void
-nmp_rtsp_client_attach(JpfRtspClient *client, void *context)
+nmp_rtsp_client_attach(NmpRtspClient *client, void *context)
 {
 	G_ASSERT(client != NULL);
 
@@ -357,7 +357,7 @@ nmp_rtsp_client_attach(JpfRtspClient *client, void *context)
 
 
 static GstRTSPResult
-nmp_rtsp_client_watch_send_message(JpfRtspClient *client,
+nmp_rtsp_client_watch_send_message(NmpRtspClient *client,
 	GstRTSPMessage *message)
 {
 	GstRTSPResult ret = GST_RTSP_ERROR;
@@ -373,13 +373,13 @@ nmp_rtsp_client_watch_send_message(JpfRtspClient *client,
 
 
 void
-nmp_rtsp_client_send_response(JpfRtspClient *client, JpfRtspSession *session,
+nmp_rtsp_client_send_response(NmpRtspClient *client, NmpRtspSession *session,
 	GstRTSPMessage *response)
 {
 	gchar *str;
 
 	gst_rtsp_message_add_header(response, GST_RTSP_HDR_SERVER, 
-		JPF_MEDIA_SERVER_LOGO);
+		NMP_MEDIA_SERVER_LOGO);
 	gst_rtsp_message_remove_header(response, GST_RTSP_HDR_SESSION, -1);
 
 	if (session)
@@ -405,16 +405,16 @@ nmp_rtsp_client_send_response(JpfRtspClient *client, JpfRtspSession *session,
 
 
 static __inline__ void
-__nmp_rtsp_client_add_session(JpfRtspClient *client, 
-	JpfRtspSession *session)
+__nmp_rtsp_client_add_session(NmpRtspClient *client, 
+	NmpRtspSession *session)
 {
 	client->sessions = g_list_prepend(client->sessions, session);
 }
 
 
 static __inline__ gint
-nmp_rtsp_client_add_session(JpfRtspClient *client, 
-	JpfRtspSession *session)
+nmp_rtsp_client_add_session(NmpRtspClient *client, 
+	NmpRtspSession *session)
 {
 	gint rc = -E_CKILLED;
 	g_assert(client != NULL && session != NULL);
@@ -442,10 +442,10 @@ static gint
 nmp_rtsp_client_session_id_equ(gconstpointer data, 
 	gconstpointer user_data)
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 	g_assert(data != NULL && user_data != NULL);
 
-	s = (JpfRtspSession*)data;
+	s = (NmpRtspSession*)data;
 	
 	if (!strcmp(s->sid, (gchar*)user_data))
 		return 0;
@@ -454,11 +454,11 @@ nmp_rtsp_client_session_id_equ(gconstpointer data,
 }
 
 
-JpfRtspSession *
-__nmp_rtsp_client_remove_session(JpfRtspClient *client, 
+NmpRtspSession *
+__nmp_rtsp_client_remove_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *session;
+	NmpRtspSession *session;
 	GList *list;
 
 	list = g_list_find_custom(
@@ -469,7 +469,7 @@ __nmp_rtsp_client_remove_session(JpfRtspClient *client,
 
 	if (list)
 	{
-		session = (JpfRtspSession*)list->data;
+		session = (NmpRtspSession*)list->data;
 		client->sessions = g_list_delete_link(
 			client->sessions, list);
 		return session;
@@ -480,11 +480,11 @@ __nmp_rtsp_client_remove_session(JpfRtspClient *client,
 
 
 
-static __inline__ JpfRtspSession *
-nmp_rtsp_client_remove_session(JpfRtspClient *client, 
+static __inline__ NmpRtspSession *
+nmp_rtsp_client_remove_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *s = NULL;
+	NmpRtspSession *s = NULL;
 
 	g_mutex_lock(client->lock);
 	if (!nmp_rtsp_client_killed(client))
@@ -500,10 +500,10 @@ nmp_rtsp_client_remove_session(JpfRtspClient *client,
 
 
 gint
-nmp_rtsp_client_delete_session(JpfRtspClient *client, 
+nmp_rtsp_client_delete_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 	g_assert(client != NULL && session_id != NULL);
 
 	s = nmp_rtsp_client_remove_session(client, session_id);
@@ -517,11 +517,11 @@ nmp_rtsp_client_delete_session(JpfRtspClient *client,
 }
 
 
-static __inline__ JpfRtspSession *
-__nmp_rtsp_client_find_session(JpfRtspClient *client, 
+static __inline__ NmpRtspSession *
+__nmp_rtsp_client_find_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *session;
+	NmpRtspSession *session;
 	GList *list;
 
 	list = g_list_find_custom(
@@ -532,7 +532,7 @@ __nmp_rtsp_client_find_session(JpfRtspClient *client,
 
 	if (list)
 	{
-		session = (JpfRtspSession*)list->data;
+		session = (NmpRtspSession*)list->data;
 		return session;
 	}
 
@@ -541,11 +541,11 @@ __nmp_rtsp_client_find_session(JpfRtspClient *client,
 
 
 
-JpfRtspSession *
-nmp_rtsp_client_find_session(JpfRtspClient *client, 
+NmpRtspSession *
+nmp_rtsp_client_find_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *s = NULL;
+	NmpRtspSession *s = NULL;
 	g_assert(client != NULL);
 
 	if (!session_id )
@@ -565,10 +565,10 @@ nmp_rtsp_client_find_session(JpfRtspClient *client,
 
 
 gint
-nmp_rtsp_client_play_failed(JpfRtspClient *client, 
+nmp_rtsp_client_play_failed(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 	gint ret = -E_CKILLED;
 	g_assert(client != NULL && session_id != NULL);
 
@@ -589,10 +589,10 @@ nmp_rtsp_client_play_failed(JpfRtspClient *client,
 
 
 gint
-nmp_rtsp_client_play_session(JpfRtspClient *client, 
+nmp_rtsp_client_play_session(NmpRtspClient *client, 
 	gchar *session_id)
 {
-	JpfRtspSession *s;
+	NmpRtspSession *s;
 	gint ret = -E_CKILLED;
 	g_assert(client != NULL && session_id != NULL);
 
@@ -613,12 +613,12 @@ nmp_rtsp_client_play_session(JpfRtspClient *client,
 }
 
 
-__export JpfRtspSession *
-nmp_rtsp_create_session(JpfRtspClient *client, JpfRtspMedia *media, 
+__export NmpRtspSession *
+nmp_rtsp_create_session(NmpRtspClient *client, NmpRtspMedia *media, 
 	GstRTSPTransport *ct)
 {
-	JpfRtspSession *s;
-	JpfSinkerWatch *w;
+	NmpRtspSession *s;
+	NmpSinkerWatch *w;
 	gint rc;
 
 	w = nmp_media_create_sinker(media, ct->lower_transport, NULL);
@@ -665,7 +665,7 @@ nmp_rtsp_create_session(JpfRtspClient *client, JpfRtspMedia *media,
 gint
 nmp_rtsp_client_send_message(void *cli, GstRTSPMessage *msg)
 {
-	JpfRtspClient *client = (JpfRtspClient*)cli;
+	NmpRtspClient *client = (NmpRtspClient*)cli;
 	GstRTSPResult res;
 
 	if (client->watch)
@@ -682,7 +682,7 @@ gboolean
 nmp_rtsp_client_would_block(void *cli)
 {
 	gboolean full = TRUE;	
-	JpfRtspClient *client = (JpfRtspClient*)cli;
+	NmpRtspClient *client = (NmpRtspClient*)cli;
 
 	if (client->watch)
 	{

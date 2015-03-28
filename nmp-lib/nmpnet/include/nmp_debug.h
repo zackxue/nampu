@@ -19,18 +19,18 @@
 #include <string.h>
 
 #undef  G_LOG_DOMAIN
-#define G_LOG_DOMAIN             "Jpf"
+#define G_LOG_DOMAIN             "Nmp"
 
-#define JPF_LOG_TITLE            "# Server Started At %s"
-#define JPF_LOG_TIME_FORMAT      "%04d-%02d-%02d-%02d:%02d:%02d"
+#define NMP_LOG_TITLE            "# Server Started At %s"
+#define NMP_LOG_TIME_FORMAT      "%04d-%02d-%02d-%02d:%02d:%02d"
 
-#define JPF_LOG_TITLE_SIZE      45
+#define NMP_LOG_TITLE_SIZE      45
 
 #define FATAL_ERR_CODE          -1
-#define JPF_DEBUG               1
+#define NMP_DEBUG               1
 #define MAX_MSG_SIZE            256
 
-#if defined JPF_DEBUG && !defined G_OS_WIN32
+#if defined NMP_DEBUG && !defined G_OS_WIN32
 /* snprintf() has different behavior on windows */
 #define jpf_print(...)   \
 G_STMT_START {\
@@ -90,7 +90,7 @@ G_STMT_START {\
             for (;;) ;                 \
         } G_STMT_END
 
-#endif  /* JPF_DEBUG & G_OS_WIN32 */
+#endif  /* NMP_DEBUG & G_OS_WIN32 */
 
 #define jpf_debug jpf_print
 

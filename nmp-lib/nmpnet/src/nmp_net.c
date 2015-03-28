@@ -175,7 +175,7 @@ __j_net_add_io(JNet *net, JNetIO *net_io, void *init_data, int notify)
         return -E_NETDIE;
     }
 
-#ifdef JPF_DEBUG
+#ifdef NMP_DEBUG
     BUG_ON(j_list_find(net->io_list, net_io));
 #else
 	list = j_list_find(net->io_list, net_io);

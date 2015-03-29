@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include "file.h"
 
@@ -181,7 +182,11 @@ int file_open(char *file_name)
 
 int file_close(int fd)
 {
-    if(fd) close(fd);
+    if(fd) 
+        return close(fd);
+    else
+	return -1;
+    
 }
 
 int file_read(int fd, char *buf, int size, int *fr_type)

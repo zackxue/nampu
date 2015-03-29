@@ -1,7 +1,6 @@
-# Makefile for h264pack
-#
+# Makefile for lib process_xml and rtsp-watch
 
-EXCLUDE_DIRS := include lib
+EXCLUDE_DIRS := include bin
 
 DIRS := ${shell find . -maxdepth 1 -type d}
 DIRS := ${basename ${patsubst ./%, %, ${DIRS}}}
@@ -10,7 +9,7 @@ DIRS := ${filter-out ${EXCLUDE_DIRS}, ${DIRS}}
 SUB_DIRS	:= ${DIRS}
 CLEAN_DIRS 	:= $(addprefix _cls_, $(SUB_DIRS))
 
-.PHONY: all clean ${SUB_DIRS} install uninstall
+.PHONY: all clean ${SUB_DIRS} ${CLEAN_DIRS}
 
 all: ${SUB_DIRS}
 
@@ -20,10 +19,6 @@ ${SUB_DIRS}:
 clean: ${CLEAN_DIRS}
 
 ${CLEAN_DIRS}: 
+	@echo "now clean directory $^"
 	${MAKE} -C $(patsubst _cls_%, %, $@) clean
-
-install:
-	${MAKE} -C ./src install
-
-uninstall:
-	${MAKE} -C ./src uninstall
+	@echo "now end clean directory $^"

@@ -2,26 +2,22 @@
 
 include ../Makefile.def
 
-PWD		:= $(shell pwd)
-
 SELF_CFLAGS   	+= $(PRJ_CFLAGS)
 SELF_DEFINE	+= $(PRJ_DEFINE) 
 
 SELF_INCLUDES	+= $(PRJ_INCLUDES)
 SELF_INCLUDES	+= -I../include
-SELF_INCLUDES	+= -I./include
 
 vpath %.h ../include
-vpath %.h ./include
 
-TARGET		= ../lib/rtsp-objs.lst
-DEPS		= Makefile.deps
+TARGET		:= ../lib/libtinyrain.a
+DEPS		:= Makefile.deps
 
-.PHONY: clean install uninstall
+.PHONY: clean cleanall install uninstall
 
-$(TARGET): $(C_OBJS)  
+$(TARGET): $(C_OBJS) ../lib/rtsp-objs.lst ../lib/sip-objs.lst
 	@test -z ../lib || mkdir -p ../lib
-	@echo $(addprefix "$(PWD)/", $(C_OBJS)) > $@
+	$(AR) -rs $@ $^ $(shell find ../lib -name "*.lst" -print | xargs cat)
 
 %.o: %.c $(DEPS)
 	$(CC) $(SELF_CFLAGS) $(SELF_DEFINE) -o $@ -c $< $(SELF_INCLUDES)
@@ -31,7 +27,20 @@ $(DEPS): $(C_SRCS)
 
 -include $(DEPS)
 
+../lib/rtsp-objs.lst:
+	make -C ../rtsp
+
+../lib/sip-objs.lst:
+	make -C ../sip
+
 clean:
+	@rm $(C_OBJS)
+	@rm $(DEPS)
+	@rm $(TARGET)
+
+cleanall:
+	make -C ../rtsp clean
+	make -C ../sip clean
 	@rm $(C_OBJS)
 	@rm $(DEPS)
 	@rm $(TARGET)
@@ -41,3 +50,4 @@ install:
 
 uninstall:
 	@echo "Sorry, uninstall command will be enable in the future.\n"
+

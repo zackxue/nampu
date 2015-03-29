@@ -3,6 +3,7 @@
 .PHONY: clean install uninstall
 
 ./src/nmp-mds:
+	test -z ./bin || mkdir -p ./bin
 	make -C ./src
 
 clean:

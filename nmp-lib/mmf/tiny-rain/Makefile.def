@@ -1,0 +1,29 @@
+# Makefile.def for nmp-cms
+
+C++	= g++
+CC 	= gcc
+AR 	= ar
+LD	= ld
+
+C_SRCS		= ${shell find . -name "*.c"}
+C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
+
+CPP_SRCS	= ${shell find . -name "*.cpp"}
+CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
+
+PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC -m32
+PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC -m32
+
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmplib
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/mmfrtsp
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/mmfh264pack
+
+PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib -lmmfh264pack -lmmfrtsp -lnmplib -lpthread -lev
+
+PRJ_LDFLAGS	+= -fPIC
+
+vpath %.h ${NMP_LIB_INSTALL}/include
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmplib
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/mmfrtsp
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/mmfh264pack

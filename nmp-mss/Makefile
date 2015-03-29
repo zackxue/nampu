@@ -3,6 +3,7 @@
 .PHONY: clean install uninstall
 
 ./bin/nmp-mss:
+	test -z ./bin || mkdir -p ./bin
 	make -C ./core
 
 clean:

@@ -1,53 +1,34 @@
-#
-#        Author:
-#        October 9th, 2012
+# Makefile for tinyrain
 #
 
-PROJ_ROOT := $(shell pwd)
-export PROJ_ROOT
-export INCS
+TARGET_EXE  := ./test/tiny-rain
+TARGET_LIB  := ./lib/libtinyrain.a
+LIB_HEADERS := ./include/tr_avs.h
 
-include $(PROJ_ROOT)/Rules.mk
 
-EXCLUDE_DIRS := inc lib docs si
+ifneq (${NMP_LIB_INSTALL},)
+	DESTDIR	:= ${NMP_LIB_INSTALL}
+else
+	DESTDIR	:= /usr/local
+endif
 
-DIRS := $(shell find . -maxdepth 1 -type d)
-DIRS := $(basename $(patsubst ./%, %, $(DIRS)))
-DIRS := $(filter-out $(EXCLUDE_DIRS), $(DIRS))
+.PHONY: all clean install uninstall
 
-SUB_DIRS := $(DIRS)
-CLEAN_DIRS := $(addprefix _cls_, $(SUB_DIRS))
+all:
+	make -C ./framework
+	make -C ./test
 
-TARG := $(PROJ_ROOT)/test/tiny-rain
-TAR_LIB := $(PROJ_ROOT)/lib/libtr.a
-TAR_INC := $(PROJ_ROOT)/inc/tr_avs.h
-
-INS_DIR := $(TAR_DIR)/tiny-rain
-
-.PHONY: ALL_SUB $(SUB_DIRS) clean install uninstall
-
-$(TARG): ALL_SUB
-	$(AR) -r $(TAR_LIB) $(shell find . -name "O_TARG" -print | xargs cat) 
-	$(CC) -o $@ $(EOBJ) $(shell find . -name "E_TARG" -print | xargs cat) -L$(PROJ_ROOT)/lib -ltr $(shell find . -name "L_TARG" -print | xargs cat) $(LIBS)
-
-ALL_SUB: $(SUB_DIRS)
-
-$(SUB_DIRS):
-	$(MAKE) -C $@
-
-clean: $(CLEAN_DIRS)
-	rm -rf $(TARG) $(TAR_LIB)
-
-$(CLEAN_DIRS):
-	$(MAKE) -C $(patsubst _cls_%, %, $@) clean
+clean: 
+	make -C ./framework cleanall
+	make -C ./test clean
 
 install:
-	test -z $(INS_DIR)/lib || mkdir -p $(INS_DIR)/lib
-	install -m 644 $(TAR_LIB) $(INS_DIR)/lib
-	test -z $(INS_DIR)/inc || mkdir -p $(INS_DIR)/inc
-	install -m 644 $(TAR_INC) $(INS_DIR)/inc
+	test -z $(DESTDIR)/lib || mkdir -p $(DESTDIR)/lib
+	install -m 644 $(TARGET_LIB) $(DESTDIR)/lib
+	test -z $(DESTDIR)/include/nampu/tinyrain || mkdir -p $(DESTDIR)/include/nampu/tinyrain
+	install -m 644 $(LIB_HEADERS) $(DESTDIR)/include/nampu/tinyrain
 
 uninstall:
-	rm -f $(INS_DIR)/lib/$(TAR_LIB)
-	rm -f $(INS_DIR)/inc/$(TAR_INC)
+	rm -f $(DESTDIR)/lib/$(TARGET_LIB)
+	rm -rf $(DESTDIR)/include/nampu/tinyrain
 

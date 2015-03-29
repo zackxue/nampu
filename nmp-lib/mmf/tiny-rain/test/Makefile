@@ -1,39 +1,45 @@
-#
-#        Author:
-#        October 9th, 2012
-#
+# Makefile for test
 
-include $(PROJ_ROOT)/Rules.mk
+include ../Makefile.def
 
-PWD := $(shell pwd)
-SRCS := $(shell find . -maxdepth 1 -name "*.c")
-OBJS := $(patsubst %.c, %.o, $(SRCS))
-DEPS := Makfile.deps
-TARG := E_TARG
-INCS += -I$(PWD)
-INCS += -I$(PWD)/inc
+SELF_CFLAGS   	+= ${PRJ_CFLAGS}
+SELF_DEFINE	+= ${PRJ_DEFINE} 
 
-EXCLUDE_DIRS := inc lib docs
-DIRS := $(filter-out $(EXCLUDE_DIRS), $(basename $(patsubst ./%, %, $(shell find . -maxdepth 1 -type d))))
-CLEAN_DIRS := $(addprefix _cls_, $(DIRS))
+SELF_INCLUDES	+= ${PRJ_INCLUDES}
 
-$(TARG): $(DEPS) $(OBJS) ALL_DIR
-	echo $(addprefix "$(PWD)/", $(OBJS)) > $@
+SELF_INCLUDES	+= -I../include
 
-$(DEPS): $(SRCS)
-	-${CC} -MM ${CFLAGS} $^ > $@ ${INCS}
+vpath %.h ../include
 
-.PHONY: ALL_DIR $(DIRS) clean $(CLEAN_DIRS)
+SELF_LIBS	+= -L../lib -ltinyrain
+SELF_LIBS	+= ${PRJ_LIBS}
 
-ALL_DIR: $(DIRS)
+TARGET		= ./test
+DEPS		= Makefile.deps
 
-$(DIRS):
-	$(MAKE) -C $@
+.PHONY: clean install uninstall 
+
+${TARGET}: ${C_OBJS} ../lib/libtinyrain.a
+	$(CC) -o $@ ${C_OBJS} ${SELF_LIBS}
+
+%.o: %.c ${DEPS}
+	${CC} ${SELF_CFLAGS} ${SELF_DEFINE} -o $@ -c $< ${SELF_INCLUDES}
+
+$(DEPS): $(C_SRCS)
+	${CC} -MM ${SELF_CFLAGS} ${SELF_DEFINE} $^ > $@ ${SELF_INCLUDES}
 
 -include $(DEPS)
 
-clean: $(CLEAN_DIRS)
-	-rm $(OBJS) $(DEPS) $(TARG) -rf
+../lib/libtinyrain.a:
+	make -C ../framework
 
-$(CLEAN_DIRS):
-	$(MAKE) -C $(patsubst _cls_%, %, $@) clean
+clean:
+	@rm ${C_OBJS}
+	@rm ${TARGET}
+	@rm ${DEPS}
+
+install:
+	@echo "Sorry, install command will be enable in the future.\n"
+
+uninstall:
+	@echo "Sorry, uninstall command will be enable in the future.\n"

@@ -14,7 +14,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "jlib.h"
+#include "nmplib.h"
 
 #define tr_assert(expr) assert(expr)
 

@@ -27,4 +27,6 @@ PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib -lnmpshar
 
 PRJ_LDFLASG	+= -fPIC
 
-vpath %h ${HOME}/usr/include/nampu
+vpath %.h ${NMP_LIB_INSTALL}/include
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/share
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/framework

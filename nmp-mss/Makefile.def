@@ -32,4 +32,10 @@ PRJ_LIBS	+= -lnmprtspclient -lnmprtspsvr -lnmprtspparser
 PRJ_LIBS	+= -lnmpev -lev -lnetembryo
 PRJ_LIBS	+= ${shell pkg-config --libs ${GLIB_LIBS}}
 
-vpath %h ${HOME}/usr/include/nampu
+vpath %.h ${NMP_LIB_INSTALL}/include
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmpev
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/share
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/framework
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/rtsp-parser
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/rtsp-server
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/rtsp-client

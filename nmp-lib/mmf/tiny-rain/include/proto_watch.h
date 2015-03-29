@@ -9,7 +9,7 @@
 #ifndef __TINY_RAIN_PROTO_WATCH_H__
 #define __TINY_RAIN_PROTO_WATCH_H__
 
-#include "jlib.h"
+#include "nmplib.h"
 #include "list.h"
 #include "proto_parser.h"
 

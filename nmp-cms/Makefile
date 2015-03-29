@@ -1,6 +1,7 @@
 .PHONY: nmp_cms clean install uninstall
 
 nmp-cms:
+	test -z ./bin || mkdir -p ./bin
 	make -C ./src/core
 
 clean:

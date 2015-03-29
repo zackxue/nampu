@@ -9,7 +9,7 @@
 #ifndef __TINY_RAIN_LISTENER_TEMPLATE_H__
 #define __TINY_RAIN_LISTENER_TEMPLATE_H__
 
-#include "jlib.h"
+#include "nmplib.h"
 #include "listener.h"
 
 BEGIN_NAMESPACE

@@ -1,0 +1,46 @@
+#!/bin/sh
+
+cd ./nmpev
+./autogen.sh
+make -j4
+make install
+
+cd ../nmplib
+./autogen.sh
+make -j4
+make install
+
+cd ../nmpxml
+./autogen.sh
+make -j4
+make install
+
+cd ../nmpnet
+./autogen.sh
+make -j4
+make install
+
+cd ../nmpmb
+./autogen.sh
+make -j4
+make install
+
+cd ../nmp-search-device
+./autogen.sh
+make -j4
+make install
+
+cd ../rtsp-parser
+./autogen.sh
+make -j4
+make install
+
+cd ../rtsp-server
+./autogen.sh
+make -j4
+make install
+
+cd ../rtsp-client
+./autogen.sh
+make -j4
+make install

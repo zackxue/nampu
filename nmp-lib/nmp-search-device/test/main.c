@@ -1,5 +1,5 @@
 /*
- * jpf-search-device:
+ * nmp-search-device:
  * Copyright (C) 2013 by hegui <heguijiss@163.com>
  */
 
@@ -15,7 +15,7 @@ user_info_t user_info = {"admin", "admin"};
 static void *search_thread1(void *data)
 {
     int ret;
-    jpf_redirect_t jpf_red;
+    nmp_redirect_t nmp_red;
     redirect_t *redirect;
     
     search_array_t *array;
@@ -26,10 +26,10 @@ static void *search_thread1(void *data)
     {printf("thread 1, count: %d\n", array->count);
         result = &array->result[0];
 
-        /*memcpy(&jpf_red.user_info, &user_info, sizeof(user_info_t));
-        redirect = &jpf_red.redirect;
-        snprintf(redirect->pu_id, NMP_SEARCH_ID_LEN, "JXJ-IPC-00000001");
-        snprintf(redirect->cms_ip, NMP_SEARCH_IP_LEN, "192.168.1.12");
+        /*memcpy(&nmp_red.user_info, &user_info, sizeof(user_info_t));
+        redirect = &nmp_red.redirect;
+        snprintf(redirect->pu_id, nmp_SEARCH_ID_LEN, "JXJ-IPC-00000001");
+        snprintf(redirect->cms_ip, nmp_SEARCH_IP_LEN, "192.168.1.12");
         redirect->cms_port = 9902;
         redirect->conn_cms = 1;
 
@@ -39,7 +39,7 @@ static void *search_thread1(void *data)
         printf("    cms_port: %d\n", redirect->cms_port);
         printf("    conn_cms: %d\n", redirect->conn_cms);
 
-//        ret = set_platform_info(result->dst_id, &jpf_red);
+//        ret = set_platform_info(result->dst_id, &nmp_red);
         printf("set_platform_info %s! error: %d\n", !ret ? "Successful" : "failure", ret);*/
     }
     destory_search_result(array);
@@ -47,7 +47,7 @@ static void *search_thread1(void *data)
 static void *search_thread2(void *data)
 {
     int ret;
-    jpf_redirect_t jpf_red;
+    nmp_redirect_t nmp_red;
     redirect_t *redirect;
 
     search_array_t *array;
@@ -58,14 +58,14 @@ static void *search_thread2(void *data)
     {printf("thread 2, count: %d\n", array->count);
         result = &array->result[0];
 
-        memcpy(&jpf_red.user_info, &user_info, sizeof(user_info_t));
-        redirect = &jpf_red.redirect;
-        snprintf(redirect->pu_id, NMP_SEARCH_ID_LEN, "JXJ-IPC-00000001");
-        snprintf(redirect->cms_ip, NMP_SEARCH_IP_LEN, "192.168.1.12");
+        memcpy(&nmp_red.user_info, &user_info, sizeof(user_info_t));
+        redirect = &nmp_red.redirect;
+        snprintf(redirect->pu_id, nmp_SEARCH_ID_LEN, "JXJ-IPC-00000001");
+        snprintf(redirect->cms_ip, nmp_SEARCH_IP_LEN, "192.168.1.12");
         redirect->cms_port = 9902;
         redirect->conn_cms = 1;
 
-//        ret = set_platform_info(result->dst_id, &jpf_red);
+//        ret = set_platform_info(result->dst_id, &nmp_red);
         printf("set_platform_info %s! error: %d\n", !ret ? "Successful" : "failure", ret);
     }
     destory_search_result(array);
@@ -78,7 +78,7 @@ int main()
     char tmp[32];
     sprintf(tmp, "%s", &i);
     //printf("%s, 0x%x, %s, %s\n", p, p, tmp, &i);exit(0);
-    printf("jpf-search-device\n");
+    printf("nmp-search-device\n");
 
     int tid1, tid2;
 

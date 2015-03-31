@@ -1,0 +1,21 @@
+#!/bin/sh
+
+cd ./h264bitstream-0.1.6
+./autogen.sh
+make -j4
+make install
+
+cd ../libev-4.19
+./autogen.sh
+make -j4
+make install
+
+cd ../mxml
+./autogen.sh
+make -j4
+make install
+
+cd ../netembryo-0.1.1
+./autogen.sh
+make -j4
+make install

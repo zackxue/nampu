@@ -1,15 +1,15 @@
 #! /bin/sh
 set -x
 
-touch AUTHORS NEWS README ChangeLog
+#touch AUTHORS NEWS README ChangeLog
 
-aclocal
+#aclocal
 
-libtoolize --force -f -c
+#libtoolize --force -f -c
 
-autoheader
+#autoheader
 
-automake -a #--foreign --add-missing --copy
+#automake -a #--foreign --add-missing --copy
 
 autoreconf -i
 

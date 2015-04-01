@@ -44,3 +44,8 @@ cd ../rtsp-client
 ./autogen.sh
 make -j4
 make install
+
+cd ../share
+./autogen.sh
+make -j4
+make install

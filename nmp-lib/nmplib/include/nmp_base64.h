@@ -1,6 +1,6 @@
 
-#ifndef __J_BASE_64_H__
-#define __J_BASE_64_H__
+#ifndef __NMP_BASE_64_H__
+#define __NMP_BASE_64_H__
 
 #include <stdio.h>
 #include <string.h>
@@ -10,10 +10,10 @@
 extern "C" {
 #endif
 
-int base64_encode(unsigned char *data, unsigned int dataLen, 
-		unsigned char **encData, unsigned int *encDataLen);
-int base64_decode(unsigned char *data, unsigned int dataLen, 
-		unsigned char **decData, unsigned int *decDataLen);
+int base64_encode(unsigned char *data, unsigned int data_len, 
+		unsigned char **enc_data, unsigned int *enc_data_len);
+int base64_decode(unsigned char *data, unsigned int data_len, 
+		unsigned char **dec_data, unsigned int *dec_data_len);
 
 void base64_free(void *data, size_t size);
 
@@ -22,5 +22,5 @@ void base64_free(void *data, size_t size);
 #endif
 
 
-#endif //__J_BASE_64_H__
+#endif //__NMP_BASE_64_H__
 

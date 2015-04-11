@@ -5,7 +5,7 @@
 #define ENABLE_DEBUG 0
 
 /* Define if ssl is enabled */
-#define ENABLE_SSL 1
+/* #undef ENABLE_SSL */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
@@ -20,7 +20,7 @@
 #define HAVE_MEMORY_H 1
 
 /* Define this if you have libsctp */
-#define HAVE_SCTP 1
+/* #undef HAVE_SCTP */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1

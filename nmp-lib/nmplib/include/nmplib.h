@@ -1,12 +1,12 @@
 /*
- *	jlib => Jxj Lib
- *  Copyright (c) fangy, fangyi@szjxj.net
+ *	nmplib => Nampu Lib
+ *  Copyright (c) nampu, 2012
  *
 */
 
 
-#ifndef __J_LIB_H__
-#define __J_LIB_H__
+#ifndef __NMP_LIB_H__
+#define __NMP_LIB_H__
 
 
 #ifdef __cplusplus
@@ -28,4 +28,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* __J_LIB_H__ */
+#endif	/* __NMP_LIB_H__ */

@@ -1,9 +1,8 @@
-#ifndef __J_MACROS_H__
-#define __J_MACROS_H__
-#include <assert.h>	////remove
-#include <stdio.h>	////remove
-#include <stdlib.h> ////remove
+#ifndef __NMP_MACROS_H__
+#define __NMP_MACROS_H__
 
+#include <assert.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,11 +20,11 @@ extern "C" {
 #endif
 
 #if defined (__GNUC__) && __GNUC__ > 2 /* since 2.9 */
-	# define J_LIKELY(expr) (__builtin_expect(!!(expr), 1))
-	# define J_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
+	# define NMP_LIKELY(expr) (__builtin_expect(!!(expr), 1))
+	# define NMP_UNLIKELY(expr) (__builtin_expect(!!(expr), 0))
 #else
-	# define J_LIKELY(expr) (expr)
-	# define J_UNLIKELY(expr) (expr)
+	# define NMP_LIKELY(expr) (expr)
+	# define NMP_UNLIKELY(expr) (expr)
 #endif
 
 #define container_of(ptr, struct_type, member) \
@@ -36,7 +35,7 @@ extern "C" {
 
 #define __export
 
-#define J_ASSERT(x) assert(x)
+#define NMP_ASSERT(x) assert(x)
 #define BUG() \
 do {\
 	fprintf(stderr, "BUG() at file:%s line:%d function:%s!\n", __FILE__, __LINE__, __FUNCTION__); \
@@ -57,4 +56,4 @@ do {\
 #endif
 
 
-#endif	/* __J_MACROS_H__ */
+#endif	/* __NMP_MACROS_H__ */

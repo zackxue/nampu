@@ -1,10 +1,14 @@
-#ifndef __J_TYPES_H__
-#define __J_TYPES_H__
+#ifndef __NMP_TYPES_H__
+#define __NMP_TYPES_H__
 
 
 #ifndef _WIN32
 # define __USE_GUN
 # include <pthread.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 typedef enum
@@ -16,21 +20,21 @@ typedef enum
 	FALSE,
 	TRUE
 #endif
-}JBool;
+}nmp_bool_t;
 
 
-typedef struct _JTimeVal JTimeVal;
+typedef struct _nmp_timeval nmp_timeval_t;
 
-struct _JTimeVal
+struct _nmp_timeval
 {
 	long tv_sec;	/* Ãë */
 	long tv_usec;	/* Î¢Ãë */
 };
 
 
-typedef struct _JSystemThread JSystemThread;
+typedef struct _nmp_system_thread nmp_system_thread_t;
 
-struct _JSystemThread
+struct _nmp_system_thread
 {
 #ifndef _WIN32
 	pthread_t	handle;
@@ -38,11 +42,6 @@ struct _JSystemThread
 	void *handle;
 #endif
 };
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 
 #if defined (__GNUC__) && __GNUC__ >= 4 /* since 4.1.2 */
@@ -78,11 +77,11 @@ typedef volatile int atomic_t;
 
 #endif	/* (__GNUC__) && __GNUC__ >= 4 */
 
-typedef int (*JCompareCustom)(void *data_orig, void *data_custom);
-typedef void (*JVisitCustom)(void *data_orig, void *data_custom);
+typedef int (*nmp_compare_custom)(void *data_orig, void *data_custom);
+typedef void (*nmp_visit_custom)(void *data_orig, void *data_custom);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __J_TYPES_H__ */
+#endif	/* __NMP_TYPES_H__ */

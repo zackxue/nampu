@@ -1,5 +1,5 @@
-#ifndef __J_ASYNCQUEUE_H__
-#define __J_ASYNCQUEUE_H__
+#ifndef __NMP_ASYNCQUEUE_H__
+#define __NMP_ASYNCQUEUE_H__
 
 #include "nmp_queue.h"
 #include "nmp_thread.h"
@@ -9,25 +9,25 @@
 extern "C" {
 #endif
 
-typedef struct _JAsyncQueue JAsyncQueue;
+typedef struct _nmp_async_queue nmp_async_queue_t;
 
-struct _JAsyncQueue
+struct _nmp_async_queue
 {
 	atomic_t ref_count;
-	JQueue queue;
-	JMutex *mutex;
-	JCond *cond;
+	nmp_queue_t queue;
+	nmp_mutex_t *mutex;
+	nmp_cond_t *cond;
 };
 
-JAsyncQueue *j_async_queue_new( void );
-JAsyncQueue *j_async_queue_ref(JAsyncQueue *queue);
-void j_async_queue_unref(JAsyncQueue *queue);
-void j_async_queue_push(JAsyncQueue *queue, void *data);
-void *j_async_queue_pop(JAsyncQueue *queue);
+nmp_async_queue_t *nmp_async_queue_new( void );
+nmp_async_queue_t *nmp_async_queue_ref(nmp_async_queue_t *queue);
+void nmp_async_queue_unref(nmp_async_queue_t *queue);
+void nmp_async_queue_push(nmp_async_queue_t *queue, void *data);
+void *nmp_async_queue_pop(nmp_async_queue_t *queue);
 
 #ifdef __cplusplus
 }
 #endif
 
 
-#endif	/* __J_ASYNCQUEUE_H__ */
+#endif	/* __NMP_ASYNCQUEUE_H__ */

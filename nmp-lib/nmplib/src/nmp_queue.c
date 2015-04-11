@@ -1,4 +1,5 @@
 //#include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include "nmp_queue.h"
 #include "nmp_mem.h"
@@ -7,53 +8,53 @@
 #include "dmalloc.h"
 #endif
 
-void j_queue_init(JQueue *queue)
+void nmp_queue_init(nmp_queue_t *queue)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
 	memset(queue, 0, sizeof(*queue));
 }
 
 
-JQueue *j_queue_new( void )
+nmp_queue_t *nmp_queue_new( void )
 {
-	JQueue *queue = j_new(JQueue, 1);
-	j_queue_init(queue);
+	nmp_queue_t *queue = nmp_new(nmp_queue_t, 1);
+	nmp_queue_init(queue);
 	return queue;
 }
 
 
-void j_queue_free(JQueue *queue)
+void nmp_queue_free(nmp_queue_t *queue)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
-	j_list_free(queue->head);
-	j_del(queue, JQueue, 1);
+	nmp_list_free(queue->head);
+	nmp_del(queue, nmp_queue_t, 1);
 }
 
 
-void j_queue_clear(JQueue *queue)
+void nmp_queue_clear(nmp_queue_t *queue)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
-	j_list_free(queue->head);
-	j_queue_init(queue);
+	nmp_list_free(queue->head);
+	nmp_queue_init(queue);
 }
 
 
-unsigned j_queue_length(JQueue *queue)
+unsigned nmp_queue_length(nmp_queue_t *queue)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
 	return queue->count;
 }
 
 
-void j_queue_push_tail(JQueue *queue, void *data)
+void nmp_queue_push_tail(nmp_queue_t *queue, void *data)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
-	queue->tail = j_list_add_tail(queue->tail, data);
+	queue->tail = nmp_list_add_tail(queue->tail, data);
 	if (queue->tail->next)
 		queue->tail = queue->tail->next;
 	else
@@ -62,25 +63,25 @@ void j_queue_push_tail(JQueue *queue, void *data)
 }
 
 
-void* j_queue_pop_head(JQueue *queue)
+void* nmp_queue_pop_head(nmp_queue_t *queue)
 {
-	JList *node;
+	nmp_list_t *node;
 	void *data;
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
 	if (queue->head)
 	{
 		node = queue->head;
-		data = j_list_data(node);
+		data = nmp_list_data(node);
 
-		queue->head = j_list_next(node);
+		queue->head = nmp_list_next(node);
 		if (queue->head)
 			queue->head->prev = NULL;
 		else
 			queue->tail = NULL;
 
 		--queue->count;
-		j_list_free_1(node);
+		nmp_list_free_1(node);
 		return data;
 	}
 
@@ -88,17 +89,17 @@ void* j_queue_pop_head(JQueue *queue)
 }
 
 
-void *j_queue_pop_tail(JQueue *queue)
+void *nmp_queue_pop_tail(nmp_queue_t *queue)
 {
-	JList *node;
+	nmp_list_t *node;
 	void *data;
 	
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
 	if(!queue->tail)	return NULL;
 
 	node = queue->tail ;
-	data = j_list_data(node);
+	data = nmp_list_data(node);
 	
 	if(queue->tail == queue->tail )
 	{
@@ -106,35 +107,36 @@ void *j_queue_pop_tail(JQueue *queue)
 	}
 	else
 	{
-		queue->tail = j_list_prev(node);
+		queue->tail = nmp_list_prev(node);
 	}
 	--queue->count;
-	j_list_free_1(node);
+	nmp_list_free_1(node);
 	return data;
 }
 
-void j_queue_push_head(JQueue *queue, void *data)
+void nmp_queue_push_head(nmp_queue_t *queue, void *data)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 
 	if(queue->head)
 	{
-		queue->head = j_list_add(queue->head, data);
+		queue->head = nmp_list_add(queue->head, data);
 	}
 	else
 	{
-		queue->head = j_list_add(queue->head, data);
+		queue->head = nmp_list_add(queue->head, data);
 		queue->tail = queue->head;
 	}
 	++queue->count;
 }
-void j_queue_foreach(JQueue *queue, JVisitCustom func, void *data)
+
+void nmp_queue_foreach(nmp_queue_t *queue, nmp_visit_custom func, void *data)
 {
-	J_ASSERT(queue != NULL);
+	NMP_ASSERT(queue != NULL);
 	
 	if(queue->head)
 	{
-		j_list_foreach(queue->head, func, data);
+		nmp_list_foreach(queue->head, func, data);
 	}
 }
 

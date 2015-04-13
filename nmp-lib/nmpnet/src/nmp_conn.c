@@ -14,7 +14,7 @@
 #define DNS_BUFFER_LEN			8192
 #define DEFAULT_TIMEOUT			(10 * 1000)
 
-struct _JConnection
+struct _nmp_connection
 {
 	int		fd;
 	int		timeout;	/* milli seconds, for event polling */
@@ -23,12 +23,12 @@ struct _JConnection
 
 
 static __inline__ int
-__j_connection_set_flags(JConnection *conn, int flgs)
+__nmp_conn_set_flags(nmp_conn_t *conn, int flgs)
 {
     int old_flgs;
 
     old_flgs = fcntl(conn->fd, F_GETFL, 0);
-    if (J_UNLIKELY(old_flgs < 0))
+    if (NMP_UNLIKELY(old_flgs < 0))
         return -errno;
 
     old_flgs |= flgs;
@@ -40,10 +40,10 @@ __j_connection_set_flags(JConnection *conn, int flgs)
 }
 
 
-__export JConnection *
-j_connection_new(struct sockaddr *sa, unsigned flags, int *errp)
+__export nmp_conn_t *
+nmp_conn_new(struct sockaddr *sa, unsigned flags, int *errp)
 {
-	JConnection *conn;
+	nmp_conn_t *conn;
 	unsigned mask = CF_TYPE_TCP | CF_TYPE_UDP;
 	int err, reuse = 1;
 
@@ -54,7 +54,7 @@ j_connection_new(struct sockaddr *sa, unsigned flags, int *errp)
 		return NULL;
 	}
 
-	conn = j_new0(JConnection, 1);	/* jlib has its own OOM facility */
+	conn = nmp_new0(nmp_conn_t, 1);	/* jlib has its own OOM facility */
 	conn->flags = flags;
 	conn->timeout = DEFAULT_TIMEOUT;
 
@@ -95,7 +95,7 @@ j_connection_new(struct sockaddr *sa, unsigned flags, int *errp)
 
 	if (flags & CF_FLGS_NONBLOCK)
 	{
-		err = __j_connection_set_flags(conn, O_NONBLOCK);
+		err = __nmp_conn_set_flags(conn, O_NONBLOCK);
 		if (err)
 			goto new_conn_failed;
 	}
@@ -109,15 +109,15 @@ new_conn_failed:
 	if (conn->fd > 0)
 		close(conn->fd);
 
-	j_del(conn, JConnection, 1);
+	nmp_del(conn, nmp_conn_t, 1);
 	return NULL;
 }
 
 
 __export int
-j_connection_listen(JConnection *conn)
+nmp_conn_listen(nmp_conn_t *conn)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	if (!(conn->flags & CF_TYPE_TCP))
 		return -EINVAL;
@@ -129,10 +129,10 @@ j_connection_listen(JConnection *conn)
 
 
 __export int
-j_connection_connect(JConnection *conn, struct sockaddr *sa)
+nmp_conn_connect(nmp_conn_t *conn, struct sockaddr *sa)
 {
 	int err;
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	if (connect(conn->fd, sa, sizeof(*sa)) < 0)
 	{
@@ -146,23 +146,23 @@ j_connection_connect(JConnection *conn, struct sockaddr *sa)
 
 
 __export int
-j_connection_get_fd(JConnection *conn)
+nmp_conn_get_fd(nmp_conn_t *conn)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	return conn->fd;
 }
 
 
 __export int
-j_connection_set_flags(JConnection *conn, unsigned flgs)
+nmp_conn_set_flags(nmp_conn_t *conn, unsigned flgs)
 {
 	int ret;
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	if (flgs & CF_FLGS_NONBLOCK)
 	{
-		ret =  __j_connection_set_flags(conn, O_NONBLOCK);
+		ret =  __nmp_conn_set_flags(conn, O_NONBLOCK);
 		if (!ret)
 			conn->flags |= CF_FLGS_NONBLOCK;
 		return 0;
@@ -173,20 +173,20 @@ j_connection_set_flags(JConnection *conn, unsigned flgs)
 
 
 __export int
-j_connection_is_blocked(JConnection *conn)
+nmp_conn_is_blocked(nmp_conn_t *conn)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	return !(conn->flags & CF_FLGS_NONBLOCK);
 }
 
 
-__export JConnection *
-j_connection_accept(JConnection *listen, int *errp)
+__export nmp_conn_t *
+nmp_conn_accept(nmp_conn_t *listen, int *errp)
 {
-	JConnection *conn;
+	nmp_conn_t *conn;
 	int ret;
-	J_ASSERT(listen != NULL);
+	NMP_ASSERT(listen != NULL);
 
 	if (!(listen->flags & CF_TYPE_TCP))
 	{
@@ -194,23 +194,23 @@ j_connection_accept(JConnection *listen, int *errp)
 		return NULL;
 	}
 
-	conn = j_new0(JConnection, 1);
+	conn = nmp_new0(nmp_conn_t, 1);
 	conn->fd = accept(listen->fd, NULL, NULL);
 	if (conn->fd < 0)
 	{
 		*errp = errno;
-		j_del(conn, JConnection, 1);
+		nmp_del(conn, nmp_conn_t, 1);
 		return NULL;
 	}
 
 	if (listen->flags & CF_FLGS_NONBLOCK)
 	{
-		ret = __j_connection_set_flags(conn, O_NONBLOCK);
+		ret = __nmp_conn_set_flags(conn, O_NONBLOCK);
 		if (ret < 0)
 		{
 			*errp = ret;
 			close(conn->fd);
-			j_del(conn, JConnection, 1);
+			nmp_del(conn, nmp_conn_t, 1);
 			return NULL;
 		}
 
@@ -223,9 +223,9 @@ j_connection_accept(JConnection *listen, int *errp)
 
 
 __export int
-j_connection_is_ingrogress(JConnection *conn, int clear)
+nmp_conn_is_ingrogress(nmp_conn_t *conn, int clear)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	if (conn->flags & CF_FLGS_CONN_INPROGRESS)
 	{
@@ -239,7 +239,7 @@ j_connection_is_ingrogress(JConnection *conn, int clear)
 
 
 __export int
-j_connection_read(JConnection *conn, char buf[], size_t size)
+nmp_conn_read(nmp_conn_t *conn, char buf[], size_t size)
 {
 	int ret;
 
@@ -263,7 +263,7 @@ j_connection_read(JConnection *conn, char buf[], size_t size)
 
 
 __export int
-j_connection_write(JConnection *conn, char *buf, size_t size)
+nmp_conn_write(nmp_conn_t *conn, char *buf, size_t size)
 {
 	size_t left = size;
 	int ret;
@@ -298,7 +298,7 @@ j_resolve_host(struct sockaddr_in *sin, char *host, int port)
 	struct hostent ht, *ret = NULL;
 	int err, rc;
 
-	J_ASSERT(sin != NULL && host != NULL);
+	NMP_ASSERT(sin != NULL && host != NULL);
 	bzero(sin, sizeof(*sin));
 
 	rc = gethostbyname_r(host, &ht, dns_buf, DNS_BUFFER_LEN,
@@ -321,19 +321,19 @@ j_resolve_host(struct sockaddr_in *sin, char *host, int port)
 
 
 __export int
-j_connection_get_timeout(JConnection *conn)
+nmp_conn_get_timeout(nmp_conn_t *conn)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	return conn->timeout;
 }
 
 
 __export void
-j_connection_set_timeout(JConnection *conn, int millisec)
+nmp_conn_set_timeout(nmp_conn_t *conn, int millisec)
 {
 	int max_timeout;
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	max_timeout = INT_MAX >> 10;
 
@@ -347,18 +347,18 @@ j_connection_set_timeout(JConnection *conn, int millisec)
 
 
 __export void
-j_connection_close(JConnection *conn)
+nmp_conn_close(nmp_conn_t *conn)
 {
-	J_ASSERT(conn != NULL);
+	NMP_ASSERT(conn != NULL);
 
 	if (conn->fd > 0)
 		close(conn->fd);
 
-	j_del(conn, JConnection, 1);
+	nmp_del(conn, nmp_conn_t, 1);
 }
 
 __export char *
-j_connection_get_host(JConnection *conn, char *ip)
+nmp_conn_get_host(nmp_conn_t *conn, char *ip)
 {
 	unsigned char *sa;
 	struct sockaddr_in addr;
@@ -383,7 +383,7 @@ j_connection_get_host(JConnection *conn, char *ip)
 }
 
 __export char *
-j_connection_get_peer(JConnection *conn, char *ip)
+nmp_conn_get_peer(nmp_conn_t *conn, char *ip)
 {
 	unsigned char *sa;
 	struct sockaddr_in addr;

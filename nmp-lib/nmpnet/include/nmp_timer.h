@@ -7,32 +7,32 @@
  * Author:
 */
 
-#ifndef __J_TIMER_H__
-#define __J_TIMER_H__
+#ifndef __NMP_TIMER_H__
+#define __NMP_TIMER_H__
 
 #include "nmplib.h"
 
-typedef int (*JOnTimer)(void *data);
+typedef int (*nmp_on_timer)(void *data);
 
-typedef struct _JTimer JTimer;
-struct _JTimer
+typedef struct _nmp_timer nmp_timer_t;
+struct _nmp_timer
 {
-	JEvent base;
-	JOnTimer on_timer;
-	void *data;
+	nmp_event_t     base;
+	nmp_on_timer    on_timer;
+	void            *data;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-JTimer *j_timer_new(int timeout, JOnTimer on_timer, void *data);
-int j_timer_attach(JEventLoop *loop, JTimer *timer);
-void j_timer_del(JTimer *timer);
+nmp_timer_t *nmp_timer_new(int timeout, nmp_on_timer on_timer, void *data);
+int nmp_timer_attach(nmp_event_loop_t *loop, nmp_timer_t *timer);
+void nmp_timer_del(nmp_timer_t *timer);
 
 #ifdef __cplusplus
 }
 #endif
 
 
-#endif	//__J_TIMER_H__
+#endif	//__NMP_TIMER_H__

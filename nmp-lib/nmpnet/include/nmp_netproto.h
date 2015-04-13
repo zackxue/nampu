@@ -1,5 +1,5 @@
 /*
- * j_netproto.h
+ * nmp_netproto.h
  *
  * This file describes interfaces of net protocol parser. 
  *
@@ -10,12 +10,12 @@
 #ifndef __NMP_NETPROTO_H__
 #define __NMP_NETPROTO_H__
 
-typedef struct _JNetPackInfo JNetPackInfo;
+typedef struct _nmp_net_packinfo nmp_net_packinfo_t;
 
 /*
  * Payload information.
 */
-struct _JNetPackInfo
+struct _nmp_net_packinfo
 {
 	unsigned	total_packets;			//@{total packets, for fragmentation}
 	unsigned	packet_no;				//@{current packet no, for fragmentation}
@@ -26,8 +26,8 @@ struct _JNetPackInfo
 };
 
 
-typedef struct _JPayloadProto JPayloadProto;
-struct _JPayloadProto
+typedef struct _nmp_payload_proto nmp_payload_proto_t;
+struct _nmp_payload_proto
 {
     /*
      * parse the payload information, it is always in XML format. return
@@ -53,8 +53,8 @@ struct _JPayloadProto
 };
 
 
-typedef struct _JPacketProto JPacketProto;
-struct _JPacketProto
+typedef struct _nmp_packet_proto nmp_packet_proto_t;
+struct _nmp_packet_proto
 {
     /*
      * check whether a full packet has come, if so, return
@@ -70,7 +70,7 @@ struct _JPacketProto
      * @Ret:  0 success, payload() will be invoked. 
      *       !0 error, it will be reported to upper layer.
     */
-    int (*unpack)(char *start, char *end,  JNetPackInfo *info);
+    int (*unpack)(char *start, char *end,  nmp_net_packinfo_t *info);
 
     /*
      * create net protocol packet.

@@ -1,12 +1,12 @@
 /*
- * j_netbuf.c
+ * nmp_netbuf.c
  *
  * This file implements net I/O ring buffers
  *
  * Copyright(c) by Nampu, 2010~2014
  * Author:
  *
- * JNetRealBuf supplies a classic model for production and 
+ * nmp_net_real_buf_t supplies a classic model for production and 
  * consumption issues. Each object contains several recycling
  * I/O bufferes, which are organized as a big ring buffer.
  * 
@@ -23,8 +23,8 @@
  * This describes one I/O buffer block.
 */
 
-typedef struct _JBufBlock JBufBlock;
-struct _JBufBlock
+typedef struct _nmp_buf_block nmp_buf_block_t;
+struct _nmp_buf_block
 {
     int            is_busy;        //@{buf in use}
     int            start_pos;      //@{index: [start_pos, end_pos)}
@@ -37,7 +37,7 @@ struct _JBufBlock
  * Generic buff head, for buffering management. 
 */
 
-struct _JNetBuf
+struct _nmp_net_buf
 {
     int            object_size;    //@{sizeof the entity object}
     int            num_buffers;    //@{buf counts}
@@ -45,8 +45,8 @@ struct _JNetBuf
     int            next_use;       //@{next buf to use}
     int            next_deal;      //@{next buf to flush}
     int            buffer_bytes;   //@{bytes in all buffers}
-    JMutex         *buf_lock;       //@{protect all above}
-    JNetBufFlush	flush;			//@{flush worker}
+    nmp_mutex_t    *buf_lock;       //@{protect all above}
+    nmp_net_buf_flush_func	flush;			//@{flush worker}
 };
 
 
@@ -54,17 +54,17 @@ struct _JNetBuf
  * Net real buffer description
 */
 
-typedef struct _JNetRealBuf JNetRealBuf;
-struct _JNetRealBuf
+typedef struct _nmp_net_real_buf nmp_net_real_buf_t;
+struct _nmp_net_real_buf
 {
-    JNetBuf		head;
-    JBufBlock		buff[0];
+    nmp_net_buf_t	head;
+    nmp_buf_block_t		buff[0];
 };
 
 
 static __inline__ void
-j_net_buf_init(JNetBuf *buff, size_t size, int n_blocks,
-	JNetBufFlush flush)
+nmp_net_buf_init(nmp_net_buf_t *buff, size_t size, int n_blocks,
+	nmp_net_buf_flush_func flush)
 {
 	memset(buff, 0, size);
 
@@ -74,42 +74,42 @@ j_net_buf_init(JNetBuf *buff, size_t size, int n_blocks,
     buff->next_use = 0;
     buff->next_deal = buff->num_buffers;
     buff->buffer_bytes = 0;
-    buff->buf_lock = j_mutex_new();
+    buff->buf_lock = nmp_mutex_new();
     buff->flush = flush;
 }
 
 
 /*
- * Release a JNetRealBuf object.
+ * Release a nmp_net_real_buf_t object.
 */
 __export void
-j_net_buf_free(JNetBuf *buf)
+nmp_net_buf_free(nmp_net_buf_t *buf)
 {
-    J_ASSERT(buf != NULL);
+    NMP_ASSERT(buf != NULL);
 
-    j_mutex_free(buf->buf_lock);
-	j_dealloc(buf, buf->object_size);
+    nmp_mutex_free(buf->buf_lock);
+	nmp_dealloc(buf, buf->object_size);
 }
 
 
 /*
- * Alloc a new JNetRealBuf object.
+ * Alloc a new nmp_net_real_buf_t object.
  *
  * $n_blocks: buf blocks count we want to use.
  * $flush: flusher
 */
-JNetBuf *
-j_net_buf_alloc(int n_blocks, JNetBufFlush flush)
+nmp_net_buf_t *
+nmp_net_buf_alloc(int n_blocks, nmp_net_buf_flush_func flush)
 {
-    JNetBuf *buf;
+    nmp_net_buf_t *buf;
     size_t size;
 
 	if (n_blocks <= 0 || !flush)
 		return NULL;
 
-    size = sizeof(JNetRealBuf) + (n_blocks * sizeof(JBufBlock));
-	buf = (JNetBuf*)j_alloc(size);	/* jlib has its own OOM facility */
-	j_net_buf_init(buf, size, n_blocks, flush);
+    size = sizeof(nmp_net_real_buf_t) + (n_blocks * sizeof(nmp_buf_block_t));
+	buf = (nmp_net_buf_t*)nmp_alloc(size);	/* jlib has its own OOM facility */
+	nmp_net_buf_init(buf, size, n_blocks, flush);
 
     return buf;
 }
@@ -119,17 +119,17 @@ j_net_buf_alloc(int n_blocks, JNetBufFlush flush)
  * Get index of last used I/O buffer.
 */
 static __inline__ int
-j_net_buf_last_pos(JNetBuf *buff)
+nmp_net_buf_last_pos(nmp_net_buf_t *buff)
 {
-    JBufBlock *b;
+    nmp_buf_block_t *b;
     int last;
-    J_ASSERT(buff != NULL);
+    NMP_ASSERT(buff != NULL);
 
     last = buff->next_use;
     if (--last < 0)
         last = buff->num_buffers - 1;
 
-    b = &((JNetRealBuf*)buff)->buff[last];
+    b = &((nmp_net_real_buf_t*)buff)->buff[last];
     if (b->is_busy)
         return last;
 
@@ -138,7 +138,7 @@ j_net_buf_last_pos(JNetBuf *buff)
 
 
 static __inline__ void
-j_net_buf_write_ok(JNetBuf *buff)
+nmp_net_buf_write_ok(nmp_net_buf_t *buff)
 {
     if (buff->next_deal == buff->num_buffers)
         buff->next_deal = buff->next_use;
@@ -152,11 +152,11 @@ j_net_buf_write_ok(JNetBuf *buff)
 
 
 static __inline__ void
-j_net_buf_flush_ok(JNetBuf *buff)
+nmp_net_buf_flush_ok(nmp_net_buf_t *buff)
 {
-    JBufBlock *b;
+    nmp_buf_block_t *b;
 
-    b = &((JNetRealBuf*)buff)->buff[buff->next_deal];
+    b = &((nmp_net_real_buf_t*)buff)->buff[buff->next_deal];
 
     b->is_busy = 0;
     b->start_pos = 0;
@@ -167,7 +167,7 @@ j_net_buf_flush_ok(JNetBuf *buff)
     if (++buff->next_deal >= buff->num_buffers)
         buff->next_deal = 0;
 
-    b = &((JNetRealBuf*)buff)->buff[buff->next_deal];
+    b = &((nmp_net_real_buf_t*)buff)->buff[buff->next_deal];
     if (!b->is_busy)
         buff->next_deal = buff->num_buffers;
 }
@@ -183,9 +183,9 @@ j_net_buf_flush_ok(JNetBuf *buff)
  *       > 0, bytes left in buffer.
 */
 int
-__j_net_buf_flush(JNetBuf *buff, void *user_data)
+__nmp_net_buf_flush(nmp_net_buf_t *buff, void *user_data)
 {
-    JBufBlock *b;
+    nmp_buf_block_t *b;
     int left, ret;
 
     while ( TRUE )
@@ -194,12 +194,12 @@ __j_net_buf_flush(JNetBuf *buff, void *user_data)
         if (buff->next_deal == buff->num_buffers)
             return 0;
 
-        b = &((JNetRealBuf*)buff)->buff[buff->next_deal];
-        if (J_UNLIKELY(!b->is_busy))
+        b = &((nmp_net_real_buf_t*)buff)->buff[buff->next_deal];
+        if (NMP_UNLIKELY(!b->is_busy))
             BUG();
 
         left = b->end_pos - b->start_pos;
-        if (J_UNLIKELY(left <= 0))
+        if (NMP_UNLIKELY(left <= 0))
             BUG();
 
         ret = (*buff->flush)(&b->raw_data[b->start_pos], left, user_data);
@@ -208,7 +208,7 @@ __j_net_buf_flush(JNetBuf *buff, void *user_data)
             buff->buffer_bytes -= ret;
 
             if (ret == left)
-                j_net_buf_flush_ok(buff);
+                nmp_net_buf_flush_ok(buff);
             else
             {
                 BUG_ON(ret > left);
@@ -231,14 +231,14 @@ __j_net_buf_flush(JNetBuf *buff, void *user_data)
  *       >=0, bytes left in buffer.
 */
 int
-j_net_buf_flush(JNetBuf *buff, void *user_data)
+nmp_net_buf_flush(nmp_net_buf_t *buff, void *user_data)
 {
     int ret;
-    J_ASSERT(buff != NULL);
+    NMP_ASSERT(buff != NULL);
 
-    j_mutex_lock(buff->buf_lock);
-    ret = __j_net_buf_flush(buff, user_data);
-    j_mutex_unlock(buff->buf_lock);
+    nmp_mutex_lock(buff->buf_lock);
+    ret = __nmp_net_buf_flush(buff, user_data);
+    nmp_mutex_unlock(buff->buf_lock);
 
     return ret;
 }
@@ -250,21 +250,21 @@ j_net_buf_flush(JNetBuf *buff, void *user_data)
  *       < 0, error code.
 */
 static __inline__ int
-j_net_buf_append(JNetBuf *buff, char *buf, size_t count,
+nmp_net_buf_append(nmp_net_buf_t *buff, char *buf, size_t count,
 	void *user_data, int *pending)
 {
     int last, left;
-    JBufBlock *b;
+    nmp_buf_block_t *b;
 
 	if (count > MAX_IO_BUFFER_SIZE)
 		return -E_PACKET2LONG;
 
-    if (J_UNLIKELY(!count))
+    if (NMP_UNLIKELY(!count))
         return 0;
 
 	*pending = 1;	/* we assume buffer is not empty */
 
-    last = j_net_buf_last_pos(buff);
+    last = nmp_net_buf_last_pos(buff);
     if (last < 0)	/* no data in buffer, try to send */
     {
     	left = (*buff->flush)(buf, count, user_data);
@@ -274,7 +274,7 @@ j_net_buf_append(JNetBuf *buff, char *buf, size_t count,
     	return left;
     }
 
-    b = &((JNetRealBuf*)buff)->buff[last];
+    b = &((nmp_net_real_buf_t*)buff)->buff[last];
     BUG_ON(!b->is_busy);
 
     left = MAX_IO_BUFFER_SIZE - b->end_pos;
@@ -292,14 +292,14 @@ j_net_buf_append(JNetBuf *buff, char *buf, size_t count,
 
 
 static __inline__ int
-__j_net_buf_write(JNetBuf *buff, char *buf, size_t count,
+__nmp_net_buf_write(nmp_net_buf_t *buff, char *buf, size_t count,
 	void *user_data, int *pending)
 {
 	size_t size;
 	int ret;
-    JBufBlock *b;
+    nmp_buf_block_t *b;
 
-    ret = j_net_buf_append(buff, buf, count, user_data, pending);
+    ret = nmp_net_buf_append(buff, buf, count, user_data, pending);
     if (ret < 0)
         return ret;
 
@@ -312,8 +312,8 @@ __j_net_buf_write(JNetBuf *buff, char *buf, size_t count,
     if (buff->no_blocks)
         return 0;
 
-    b = &((JNetRealBuf*)buff)->buff[buff->next_use];
-    if (J_UNLIKELY(b->is_busy))
+    b = &((nmp_net_real_buf_t*)buff)->buff[buff->next_use];
+    if (NMP_UNLIKELY(b->is_busy))
         BUG();
 
     b->is_busy = 1;
@@ -322,7 +322,7 @@ __j_net_buf_write(JNetBuf *buff, char *buf, size_t count,
     memcpy(&b->raw_data[b->start_pos], buf, size);
 
     buff->buffer_bytes += size;
-    j_net_buf_write_ok(buff);
+    nmp_net_buf_write_ok(buff);
 
     return count;
 }
@@ -336,16 +336,16 @@ __j_net_buf_write(JNetBuf *buff, char *buf, size_t count,
  *       < 0, error.
 */
 int
-j_net_buf_write(JNetBuf *buff, char *buf, size_t count,
+nmp_net_buf_write(nmp_net_buf_t *buff, char *buf, size_t count,
 	void *user_data, int *pending)
 {
     int ret;
-    J_ASSERT(buff != NULL && buf != NULL && pending != NULL);
+    NMP_ASSERT(buff != NULL && buf != NULL && pending != NULL);
 
-    j_mutex_lock(buff->buf_lock);
-    ret = __j_net_buf_write(buff, buf, count, user_data,
+    nmp_mutex_lock(buff->buf_lock);
+    ret = __nmp_net_buf_write(buff, buf, count, user_data,
     	pending);
-    j_mutex_unlock(buff->buf_lock);
+    nmp_mutex_unlock(buff->buf_lock);
 
     return ret;
 }

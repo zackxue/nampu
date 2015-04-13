@@ -11,12 +11,16 @@
 #ifndef __NMP_DEBUG_H__
 #define __NMP_DEBUG_H__
 
-#if 0
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#if 0
+
+#include <unistd.h>
 #include <glib.h>
 #include <string.h>
+
+
 
 #undef  G_LOG_DOMAIN
 #define G_LOG_DOMAIN             "Nmp"

@@ -1,5 +1,5 @@
 /*
- * j_watch.h
+ * nmp_watch.h
  *
  * This file declares watch structure and interfaces.
  *
@@ -7,46 +7,46 @@
  * Author:
 */
 
-#ifndef __J_WATCH_H__
-#define __J_WATCH_H__
+#ifndef __NMP_WATCH_H__
+#define __NMP_WATCH_H__
 
 #include "nmplib.h"
 #include "nmp_conn.h"
 #include "nmp_netbuf.h"
 
 
-#define j_error(...) fprintf(stderr, __VA_ARGS__);
-#define j_print j_error
-#define j_debug j_error
-#define j_warning j_error
+#define nmp_error(...) fprintf(stderr, __VA_ARGS__);
+#define nmp_print nmp_error
+#define nmp_debug nmp_error
+#define nmp_warning nmp_error
 
 
-typedef struct _JWatch JWatch;
-typedef struct _JWatchFuncs JWatchFuncs;
+typedef struct _nmp_watch nmp_watch_t;
+typedef struct _nmp_watch_funcs nmp_watch_funcs;
 
-struct _JWatchFuncs
+struct _nmp_watch_funcs
 {
-    JWatch *(*create)(JWatch *w, JConnection *conn);
+    nmp_watch_t *(*create)(nmp_watch_t *w, nmp_conn_t *conn);
 
-    int (*recv)(JWatch *w, char *buf, size_t size);
-    void (*error)(JWatch *w, int rw, int err);
-    void (*close)(JWatch *w, int async);
+    int (*recv)(nmp_watch_t *w, char *buf, size_t size);
+    void (*error)(nmp_watch_t *w, int rw, int err);
+    void (*close)(nmp_watch_t *w, int async);
 
-    int (*format)(JWatch *w, void *msg, char buf[], size_t size);
+    int (*format)(nmp_watch_t *w, void *msg, char buf[], size_t size);
 };
 
 
-struct _JWatch
+struct _nmp_watch
 {
-    JEvent             source;
+    nmp_event_t        source;
 
-    JMutex             *lock;
+    nmp_mutex_t        *lock;
 
-    JNetBuf            *buffer;
-    JConnection        *conn;
-    JWatchFuncs        *funcs;
+    nmp_net_buf_t      *buffer;
+    nmp_conn_t         *conn;
+    nmp_watch_funcs    *funcs;
 
-    JTimeVal           next_timeout;       /* timeout point */
+    nmp_timeval_t      next_timeout;       /* timeout point */
 
     int                w_pending;
     int                killed;
@@ -58,30 +58,30 @@ struct _JWatch
 extern "C" {
 #endif
 
-JWatch *j_watch_create(JConnection *conn,
-    JWatchFuncs *funcs, int size);
+nmp_watch_t *nmp_watch_create(nmp_conn_t *conn,
+    nmp_watch_funcs *funcs, int size);
 
-JWatch *j_listen_watch_create(JConnection *conn,
-    JWatchFuncs *funcs, int size);
+nmp_watch_t *j_listen_watch_create(nmp_conn_t *conn,
+    nmp_watch_funcs *funcs, int size);
 
-void j_watch_attach(JWatch *watch, JEventLoop *loop);
+void nmp_watch_attach(nmp_watch_t *watch, nmp_event_loop_t *loop);
 
-int j_watch_recv_message(JWatch *watch, void *msg);
-int j_watch_write_message(JWatch *watch, void *msg);
+int nmp_watch_recv_message(nmp_watch_t *watch, void *msg);
+int nmp_watch_write_message(nmp_watch_t *watch, void *msg);
 
-void j_watch_kill(JWatch *watch);
+void nmp_watch_kill(nmp_watch_t *watch);
 
-void j_watch_ref(JWatch *watch);
-void j_watch_unref(JWatch *watch);
+void nmp_watch_ref(nmp_watch_t *watch);
+void nmp_watch_unref(nmp_watch_t *watch);
 
-void j_watch_set_private(JWatch *watch, void *priv_data);
-JBool j_watch_set_conn_ttd(JWatch *watch, int milli_sec);
+void nmp_watch_set_private(nmp_watch_t *watch, void *priv_data);
+nmp_bool_t nmp_watch_set_conn_ttd(nmp_watch_t *watch, int milli_sec);
 
-char *j_watch_get_host(JWatch *watch, char *ip);
-char *j_watch_get_peer(JWatch *watch, char *ip);
+char *nmp_watch_get_host(nmp_watch_t *watch, char *ip);
+char *nmp_watch_get_peer(nmp_watch_t *watch, char *ip);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  //__J_WATCH_H__
+#endif  //__NMP_WATCH_H__

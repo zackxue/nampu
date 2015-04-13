@@ -9,7 +9,7 @@ libnmpnet_a_SOURCES=nmp_conn.c \
 	           nmp_scheduler.c \
 		   nmp_timer.c \
 		   nmp_watch.c
-libnmpnet_a_CFLAGS=-fPIC
+libnmpnet_a_CFLAGS=-fPIC -pthread
 libnmpnet_a_CXXFLAGS=
 
 libnmpnetincludedir=$(prefix)/include/nampu/nmpnet

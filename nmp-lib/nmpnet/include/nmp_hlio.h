@@ -1,5 +1,5 @@
 /*
- * j_hlio.h
+ * nmp_hlio.h
  *
  * This file declares high level io, payload layer.
  *
@@ -12,24 +12,24 @@
 
 #include "nmp_io.h"
 
-typedef struct _JHlIO JHlIO;
+typedef struct _nmp_hlio nmp_hlio_t;
 
-struct _JHlIO		/* High level IO, payload layer, for example: XML */
+struct _nmp_hlio		/* High level IO, payload layer, for example: XML */
 {
-	JIO			io;
+	nmpio_t			io;
 
-	JPayloadProto	*proto;
+	nmp_payload_proto_t	*proto;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-JHlIO *j_hl_io_new(JConnection *conn, JPacketProto *ll_proto,
-	JPayloadProto *hl_proto);
+nmp_hlio_t *nmp_hlio_io_new(nmp_conn_t *conn, nmp_packet_proto_t *ll_proto,
+	nmp_payload_proto_t *hl_proto);
 
-JHlIO *j_hl_listen_io_new(JConnection *conn, JPacketProto *ll_proto,
-	JPayloadProto *hl_proto);
+nmp_hlio_t *nmp_hlio_listen_io_new(nmp_conn_t *conn, nmp_packet_proto_t *ll_proto,
+	nmp_payload_proto_t *hl_proto);
 
 #ifdef __cplusplus
 }

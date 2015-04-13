@@ -14,34 +14,34 @@
 #include "nmp_timer.h"
 
 
-typedef struct _JWatchLoop JWatchLoop;
-struct _JWatchLoop
+typedef struct _nmp_watch_loop nmp_watch_loop_t;
+struct _nmp_watch_loop
 {
-	atomic_t	 watches_count;
-    JEventLoop  *loop;
-    JThread     *loop_thread;
-    JScheduler  *sched;
+	atomic_t			watches_count;
+    nmp_event_loop_t 	*loop;
+    nmp_thread_t		*loop_thread;
+    nmp_scheduler_t		*sched;
 };
 
 
-struct _JScheduler
+struct _nmp_scheduler
 {
 	atomic_t	ref_count;
 	int			loop_count;
 	int			next_loop;
-	JWatchLoop  *loops;
+	nmp_watch_loop_t  *loops;
 };
 
 
-static JWatchLoop  *timer_loop = NULL;
-static JThread *timer_th = NULL;
+static nmp_watch_loop_t  *timer_loop = NULL;
+static nmp_thread_t *timer_th = NULL;
 
 static void *
-j_scheduler_loop_thread(void *user_data)
+nmp_scheduler_loop_thread(void *user_data)
 {
-    JEventLoop *loop = (JEventLoop*)user_data;
+    nmp_event_loop_t *loop = (nmp_event_loop_t*)user_data;
 
-    j_event_loop_run(loop);
+    nmp_event_loop_run(loop);
     BUG_ON( TRUE );
 
     return NULL;
@@ -49,12 +49,12 @@ j_scheduler_loop_thread(void *user_data)
 
 
 static __inline__ void
-j_scheduler_init_loop(JWatchLoop *loop, JScheduler *sched)
+nmp_scheduler_init_loop(nmp_watch_loop_t *loop, nmp_scheduler_t *sched)
 {
 	atomic_set(&loop->watches_count, 0);
-	loop->loop = j_event_loop_new();
-	loop->loop_thread = j_thread_create(
-        j_scheduler_loop_thread,
+	loop->loop = nmp_event_loop_new();
+	loop->loop_thread = nmp_thread_create(
+        nmp_scheduler_loop_thread,
         loop->loop,
         FALSE,
         NULL
@@ -64,19 +64,19 @@ j_scheduler_init_loop(JWatchLoop *loop, JScheduler *sched)
 
 
 static __inline__ void
-j_scheduler_init_loops(JScheduler *sched, int loop_count)
+nmp_scheduler_init_loops(nmp_scheduler_t *sched, int loop_count)
 {
 	while (--loop_count >= 0)
 	{
-		j_scheduler_init_loop(&sched->loops[loop_count], sched);
+		nmp_scheduler_init_loop(&sched->loops[loop_count], sched);
 	}
 }
 
 
-JScheduler *
-j_scheduler_new(int loop_count)
+nmp_scheduler_t *
+nmp_scheduler_new(int loop_count)
 {
-	JScheduler *sched;
+	nmp_scheduler_t *sched;
 
 	if (loop_count <= 0)
 	{
@@ -86,20 +86,20 @@ j_scheduler_new(int loop_count)
 		loop_count = 1;
 	}
 
-	sched = j_new0(JScheduler, 1);
+	sched = nmp_new0(nmp_scheduler_t, 1);
 	atomic_set(&sched->ref_count, 1);
 	sched->loop_count = loop_count;
-	sched->loops = j_new0(JWatchLoop, loop_count);
-	j_scheduler_init_loops(sched, loop_count);
+	sched->loops = nmp_new0(nmp_watch_loop_t, loop_count);
+	nmp_scheduler_init_loops(sched, loop_count);
 
 	return sched;
 }
 
 
-JScheduler *
-j_scheduler_ref(JScheduler *sched)
+nmp_scheduler_t *
+nmp_scheduler_ref(nmp_scheduler_t *sched)
 {
-	J_ASSERT(sched && atomic_get(&sched->ref_count) > 0);
+	NMP_ASSERT(sched && atomic_get(&sched->ref_count) > 0);
 
 	atomic_inc(&sched->ref_count);
 	return sched;
@@ -107,9 +107,9 @@ j_scheduler_ref(JScheduler *sched)
 
 
 void
-j_scheduler_unref(JScheduler *sched)
+nmp_scheduler_unref(nmp_scheduler_t *sched)
 {
-	J_ASSERT(sched && atomic_get(&sched->ref_count) > 0);
+	NMP_ASSERT(sched && atomic_get(&sched->ref_count) > 0);
 
 	printf("unref scheduler!\n");
 
@@ -121,26 +121,26 @@ j_scheduler_unref(JScheduler *sched)
 
 
 static __inline__ void
-j_scheduler_kill(JScheduler *sched)
+nmp_scheduler_kill(nmp_scheduler_t *sched)
 {
 
 }
 
 
 void
-j_scheduler_release(JScheduler *sched)
+nmp_scheduler_release(nmp_scheduler_t *sched)
 {
-	J_ASSERT(sched != NULL);
+	NMP_ASSERT(sched != NULL);
 
-	j_scheduler_kill(sched);
-	j_scheduler_unref(sched);
+	nmp_scheduler_kill(sched);
+	nmp_scheduler_unref(sched);
 }
 
 
 static __inline__ void
-j_scheduler_find_best_loop(JScheduler *scheduler)
+nmp_scheduler_find_best_loop(nmp_scheduler_t *scheduler)
 {
-	JWatchLoop *loop;
+	nmp_watch_loop_t *loop;
 	int index, best_watches, watches;
 
 	if (scheduler->loop_count == 1)
@@ -167,30 +167,30 @@ j_scheduler_find_best_loop(JScheduler *scheduler)
 
 
 static void
-j_scheduler_remove_io(void *data)
+nmp_scheduler_remove_io(void *data)
 {
-	JWatchLoop *loop = (JWatchLoop*)data;
-	J_ASSERT(data != NULL);
+	nmp_watch_loop_t *loop = (nmp_watch_loop_t*)data;
+	NMP_ASSERT(data != NULL);
 
 	atomic_add(&loop->watches_count, -1);
-	j_scheduler_unref(loop->sched);
+	nmp_scheduler_unref(loop->sched);
 }
 
 
 static __inline__ void
-j_scheduler_add_to_loop(JWatchLoop *loop,  JNetIO *io)
+nmp_scheduler_add_to_loop(nmp_watch_loop_t *loop,  nmp_netio_t *io)
 {
 	atomic_inc(&loop->watches_count);
-	j_scheduler_ref(loop->sched);
-	j_net_io_attach(io, loop->loop);
-	j_net_io_on_destroy(io, j_scheduler_remove_io, loop);
+	nmp_scheduler_ref(loop->sched);
+	nmp_net_io_attach(io, loop->loop);
+	nmp_net_io_on_destroy(io, nmp_scheduler_remove_io, loop);
 }
 
 
 void
-j_scheduler_sched_io(JScheduler *sched, JNetIO *io)
+nmp_scheduler_sched_io(nmp_scheduler_t *sched, nmp_netio_t *io)
 {
-	J_ASSERT(sched != NULL && io != NULL);
+	NMP_ASSERT(sched != NULL && io != NULL);
 
 	if (sched->next_loop < 0)
 	{
@@ -198,17 +198,17 @@ j_scheduler_sched_io(JScheduler *sched, JNetIO *io)
 		return;
 	}
 
-	j_scheduler_find_best_loop(sched);
-	j_scheduler_add_to_loop(&sched->loops[sched->next_loop], io);
+	nmp_scheduler_find_best_loop(sched);
+	nmp_scheduler_add_to_loop(&sched->loops[sched->next_loop], io);
 }
 
 
 static __inline__ void
-j_scheduler_timer_init( void )
+nmp_scheduler_timer_init( void )
 {
-	timer_loop = (JWatchLoop*)j_event_loop_new();
-    timer_th = j_thread_create(
-        j_scheduler_loop_thread,
+	timer_loop = (nmp_watch_loop_t*)nmp_event_loop_new();
+    timer_th = nmp_thread_create(
+        nmp_scheduler_loop_thread,
         timer_loop,
         FALSE,
         NULL
@@ -218,26 +218,26 @@ j_scheduler_timer_init( void )
 }
 
 
-void *j_scheduler_add_timer(int timeout, int (*on_timer)(void*), void *data)
+void *nmp_scheduler_add_timer(int timeout, int (*on_timer)(void*), void *data)
 {
-	JTimer *timer;
+	nmp_timer_t *timer;
 
 	if (!timer_loop)
 	{
-		j_scheduler_timer_init();
+		nmp_scheduler_timer_init();
 	}
 
-	timer = j_timer_new(timeout, (JOnTimer)on_timer, data);
+	timer = nmp_timer_new(timeout, (nmp_on_timer)on_timer, data);
 	BUG_ON(!timer);
-	j_timer_attach((JEventLoop*)timer_loop, timer);
+	nmp_timer_attach((nmp_event_loop_t*)timer_loop, timer);
 
 	return timer;
 }
 
 
-void j_scheduler_del_timer(void *handle)
+void nmp_scheduler_del_timer(void *handle)
 {
-	j_timer_del((JTimer*)handle);
+	nmp_timer_del((nmp_timer_t*)handle);
 }
 
 

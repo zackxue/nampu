@@ -1,5 +1,5 @@
 /*
- * j_io.h
+ * nmp_io.h
  *
  * This file declares low level io, packet layer.
  *
@@ -13,27 +13,27 @@
 #include "nmp_watch.h"
 #include "nmp_netproto.h"
 
-typedef struct _JIO JIO;
-typedef struct _JIOFuncs JIOFuncs;
+typedef struct _nmpio nmpio_t;
+typedef struct _nmpio_funcs nmpio_funcs;
 
-struct _JIOFuncs
+struct _nmpio_funcs
 {
-	JWatch *(*create)(JIO *w, JConnection *conn);
+	nmp_watch_t *(*create)(nmpio_t *w, nmp_conn_t *conn);
 
-	int (*recv)(JIO *io, char *start, size_t size, void *from_lower);
-	void (*error)(JIO *io, int rw, int err);
-	void (*close)(JIO *io, int async);
+	int (*recv)(nmpio_t *io, char *start, size_t size, void *from_lower);
+	void (*error)(nmpio_t *io, int rw, int err);
+	void (*close)(nmpio_t *io, int async);
 
-	int (*format)(JIO *io, void *msg, char buf[], size_t size);
+	int (*format)(nmpio_t *io, void *msg, char buf[], size_t size);
 };
 
 
-struct _JIO			/* basic IO, packet layer */
+struct _nmpio			/* basic IO, packet layer */
 {
-	JWatch		watch;
+	nmp_watch_t		watch;
 
-	JPacketProto	*proto;
-	JIOFuncs		*funcs;
+	nmp_packet_proto_t	*proto;
+	nmpio_funcs		*funcs;
 
 	char			*buffer;
 
@@ -46,11 +46,11 @@ struct _JIO			/* basic IO, packet layer */
 extern "C" {
 #endif
 
-JIO *j_io_new(JConnection *conn, JPacketProto *proto,
-	JIOFuncs *funcs, size_t size);
+nmpio_t *nmp_io_new(nmp_conn_t *conn, nmp_packet_proto_t *proto,
+	nmpio_funcs *funcs, size_t size);
 
-JIO *j_listen_io_new(JConnection *conn, JPacketProto *proto,
-	JIOFuncs *funcs, size_t size);
+nmpio_t *j_listen_io_new(nmp_conn_t *conn, nmp_packet_proto_t *proto,
+	nmpio_funcs *funcs, size_t size);
 
 #ifdef __cplusplus
 }

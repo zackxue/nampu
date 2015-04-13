@@ -15,23 +15,23 @@
 #define BUFFER_BLOCKS		8
 
 static int
-j_watch_write_out(char *buf, size_t size, void *w)
+nmp_watch_write_out(char *buf, size_t size, void *w)
 {
-    JWatch *watch = (JWatch*)w;
+    nmp_watch_t *watch = (nmp_watch_t*)w;
 
-    return j_connection_write(watch->conn, buf, size);
+    return nmp_conn_write(watch->conn, buf, size);
 }
 
 
 static __inline__ void
-j_watch_add_child(JWatch *watch, JWatch *child)
+nmp_watch_add_child(nmp_watch_t *watch, nmp_watch_t *child)
 {
-    JNetIO *net_io;
+    nmp_netio_t *net_io;
 
-    net_io = (JNetIO*)watch->priv_data;
+    net_io = (nmp_netio_t*)watch->priv_data;
     if (net_io)
     {
-        j_net_io_add_child_watch(net_io, child);
+        nmp_net_io_add_child_watch(net_io, child);
     }
     else
     {
@@ -41,14 +41,14 @@ j_watch_add_child(JWatch *watch, JWatch *child)
 
 
 static __inline__ void
-j_watch_on_establish(JWatch *watch)
+nmp_watch_on_establish(nmp_watch_t *watch)
 {
-    JNetIO *net_io;
+    nmp_netio_t *net_io;
 
-    net_io = (JNetIO*)watch->priv_data;
+    net_io = (nmp_netio_t*)watch->priv_data;
     if (net_io)
     {
-        j_net_io_establish(net_io);
+        nmp_net_io_establish(net_io);
     }
     else
     {
@@ -58,24 +58,24 @@ j_watch_on_establish(JWatch *watch)
 
 
 static __inline__ void
-j_watch_on_clear(JWatch *watch, int err)
+nmp_watch_on_clear(nmp_watch_t *watch, int err)
 {
-    JNetIO *net_io;
+    nmp_netio_t *net_io;
 
-    net_io = (JNetIO*)watch->priv_data;
+    net_io = (nmp_netio_t*)watch->priv_data;
     if (net_io)
     {
-        j_mutex_unlock(watch->lock);    /* drop the lock */
-        j_net_io_async_kill(net_io, err);
-        j_mutex_lock(watch->lock);
+        nmp_mutex_unlock(watch->lock);    /* drop the lock */
+        nmp_net_io_async_kill(net_io, err);
+        nmp_mutex_lock(watch->lock);
     }
 }
 
 
 static __inline__ void
-__j_watch_close(JWatch *watch, int async)
+__nmp_watch_close(nmp_watch_t *watch, int async)
 {
-    JWatchFuncs *funcs;
+    nmp_watch_funcs *funcs;
 
     if (watch->killed++)
         return;
@@ -90,15 +90,15 @@ __j_watch_close(JWatch *watch, int async)
 
     if (async)
     {
-        j_watch_on_clear(watch, 0);
+        nmp_watch_on_clear(watch, 0);
     }
 }
 
 
 static __inline__ void
-__j_watch_error(JWatch *watch, int rw, int err)
+__nmp_watch_error(nmp_watch_t *watch, int rw, int err)
 {
-    JWatchFuncs *funcs;
+    nmp_watch_funcs *funcs;
 
     if (watch->killed++)
         return;
@@ -111,29 +111,29 @@ __j_watch_error(JWatch *watch, int rw, int err)
         (*funcs->error)(watch, rw, err);
     }
 
-    j_watch_on_clear(watch, err);
+    nmp_watch_on_clear(watch, err);
 }
 
 
 static __inline__ void
-j_watch_destroy_private(void *priv_data)
+nmp_watch_destroy_private(void *priv_data)
 {
-    JNetIO *net_io;
+    nmp_netio_t *net_io;
 
-    net_io = (JNetIO*)priv_data;
+    net_io = (nmp_netio_t*)priv_data;
     if (net_io)
     {
-        j_net_io_unref(net_io);
+        nmp_net_io_unref(net_io);
     }	
 }
 
 
-static __inline__ JBool
-__j_listen_watch_dispatch(JWatch *watch, int revents, void *user_data)
+static __inline__ nmp_bool_t
+__j_listen_watch_dispatch(nmp_watch_t *watch, int revents, void *user_data)
 {
-	JConnection *conn;
-	JWatch *child_watch;
-	JWatchFuncs *funcs;
+	nmp_conn_t *conn;
+	nmp_watch_t *child_watch;
+	nmp_watch_funcs *funcs;
 	int err;
 	socklen_t len = sizeof(err);
 
@@ -142,14 +142,14 @@ __j_listen_watch_dispatch(JWatch *watch, int revents, void *user_data)
 
     if (revents & EV_ERROR)
     {
-        getsockopt(j_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len);
+        getsockopt(nmp_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len);
         err = -err;
         goto listen_io_error;
     }
 
 	if (revents & EV_READ)
 	{
-        conn = j_connection_accept(watch->conn, &err);
+        conn = nmp_conn_accept(watch->conn, &err);
         if (!conn)
         {
         	if (E_AGAIN == err)
@@ -163,46 +163,46 @@ __j_listen_watch_dispatch(JWatch *watch, int revents, void *user_data)
             child_watch = (*funcs->create)(watch, conn);
             if (child_watch)
             {
-                j_mutex_unlock(watch->lock);    /* drop the lock */
-                j_watch_add_child(watch, child_watch);
-                j_mutex_lock(watch->lock);
+                nmp_mutex_unlock(watch->lock);    /* drop the lock */
+                nmp_watch_add_child(watch, child_watch);
+                nmp_mutex_lock(watch->lock);
             }
         }
         else
         {
-            j_connection_close(conn);
+            nmp_conn_close(conn);
         }
 	}
 
     return TRUE;
 
 listen_io_error:
-    __j_watch_error(watch, 0, err);
+    __nmp_watch_error(watch, 0, err);
     return FALSE;
 }
 
 
-static JBool
-j_listen_watch_dispatch(JEvent *ev, int revents, void *user_data)
+static nmp_bool_t
+j_listen_watch_dispatch(nmp_event_t *ev, int revents, void *user_data)
 {
-	JWatch *watch;
-	JBool ret;
-	J_ASSERT(ev != NULL);
+	nmp_watch_t *watch;
+	nmp_bool_t ret;
+	NMP_ASSERT(ev != NULL);
 
-	watch = (JWatch*)ev;
+	watch = (nmp_watch_t*)ev;
 
-	j_mutex_lock(watch->lock);
+	nmp_mutex_lock(watch->lock);
 	ret = __j_listen_watch_dispatch(watch, revents, user_data);
-	j_mutex_unlock(watch->lock);
+	nmp_mutex_unlock(watch->lock);
 
 	return ret;
 }
 
 
-static __inline__ JBool
-__j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
+static __inline__ nmp_bool_t
+__nmp_watch_rw_dispatch(nmp_watch_t *watch, int revents, void *user_data)
 {
-    JWatchFuncs *funcs;
+    nmp_watch_funcs *funcs;
     int err = 0;
     socklen_t len = sizeof(err);
     int buf[PAGE_SIZE/sizeof(int)]; // 4 ×Ö½Ú¶ÔÆë
@@ -212,7 +212,7 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
 
     if (revents & EV_ERROR)
     {
-        getsockopt(j_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len);
+        getsockopt(nmp_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len);
         err = -err;
         goto read_error;
     }
@@ -226,7 +226,7 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
                 return FALSE;
             }
 
-            err = j_connection_read(watch->conn, (char*)buf, PAGE_SIZE);
+            err = nmp_conn_read(watch->conn, (char*)buf, PAGE_SIZE);
             if (err == 0)
             {
                 goto conn_reset;
@@ -242,7 +242,7 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
                 }
                 else
                 {
-                	j_event_remove_events((JEvent*)watch, EV_READ);     /* no reader */
+                	nmp_event_remove_events((nmp_event_t*)watch, EV_READ);     /* no reader */
                     break;  /* data will stay in the sock buffer */
                 }
             }
@@ -258,11 +258,11 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
 
     if (revents & EV_WRITE)
     {
-		if (J_UNLIKELY(j_connection_is_ingrogress(watch->conn, 1)))
+		if (NMP_UNLIKELY(nmp_conn_is_ingrogress(watch->conn, 1)))
 		{
-			if (getsockopt(j_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len))
+			if (getsockopt(nmp_event_fd(watch), SOL_SOCKET, SO_ERROR, &err, &len))
 			{
-				j_warning("getsockopt() after connect() failed\n");
+				nmp_warning("getsockopt() after connect() failed\n");
 				err = -errno;
 				goto write_error;
 			}
@@ -273,19 +273,19 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
 				goto write_error;
 			}
 
-			j_event_remove_events((JEvent*)watch, EV_WRITE); 
-			j_event_add_events((JEvent*)watch, EV_READ);
+			nmp_event_remove_events((nmp_event_t*)watch, EV_WRITE); 
+			nmp_event_add_events((nmp_event_t*)watch, EV_READ);
 
-			j_mutex_unlock(watch->lock);	/* drop the lock*/
-			j_watch_on_establish(watch);
-			j_mutex_lock(watch->lock);
+			nmp_mutex_unlock(watch->lock);	/* drop the lock*/
+			nmp_watch_on_establish(watch);
+			nmp_mutex_lock(watch->lock);
 		}
 		else
 		{
-	        err = j_net_buf_flush(watch->buffer, watch);
+	        err = nmp_net_buf_flush(watch->buffer, watch);
 	        if (!err)   /* all data flushed */
 	        {
-				j_event_remove_events((JEvent*)watch, EV_WRITE);
+				nmp_event_remove_events((nmp_event_t*)watch, EV_WRITE);
 	            watch->w_pending = 0;
 	        }
 	        else
@@ -299,92 +299,92 @@ __j_watch_rw_dispatch(JWatch *watch, int revents, void *user_data)
     return TRUE;
 
 conn_reset:
-    __j_watch_close(watch, 1);
+    __nmp_watch_close(watch, 1);
     return FALSE;
 
 read_error:
-    __j_watch_error(watch, 0, err);
+    __nmp_watch_error(watch, 0, err);
     return FALSE;
 
 write_error:
-    __j_watch_error(watch, 1, err);
+    __nmp_watch_error(watch, 1, err);
     return FALSE;
 }
 
 
-static JBool
-j_watch_rw_dispatch(JEvent *ev, int revents, void *user_data)
+static nmp_bool_t
+nmp_watch_rw_dispatch(nmp_event_t *ev, int revents, void *user_data)
 {
-	JBool ret;
-	JWatch *watch;
-	J_ASSERT(ev != NULL);
+	nmp_bool_t ret;
+	nmp_watch_t *watch;
+	NMP_ASSERT(ev != NULL);
 
-	watch = (JWatch *)ev;
+	watch = (nmp_watch_t *)ev;
 
-	j_mutex_lock(watch->lock);
-	ret = __j_watch_rw_dispatch(watch, revents, user_data);
-	j_mutex_unlock(watch->lock);
+	nmp_mutex_lock(watch->lock);
+	ret = __nmp_watch_rw_dispatch(watch, revents, user_data);
+	nmp_mutex_unlock(watch->lock);
 
 	return ret;
 }
 
 
 static void
-j_watch_finalize(JEvent *ev)
+nmp_watch_finalize(nmp_event_t *ev)
 {
-	JWatch *watch;
-	J_ASSERT(ev != NULL);
+	nmp_watch_t *watch;
+	NMP_ASSERT(ev != NULL);
 
-	watch = (JWatch*)ev;
+	watch = (nmp_watch_t*)ev;
 
 /*    jpf_debug(
         "Net watch '%p' finalized. total %d left.",
         source, g_atomic_int_get(&total_watch_count)
     );
 */
-    j_watch_destroy_private(watch->priv_data);
+    nmp_watch_destroy_private(watch->priv_data);
     watch->priv_data = NULL;
 
     if (watch->conn)    /* we need to flush the rest of data!!! */
     {
-        j_connection_close(watch->conn);
+        nmp_conn_close(watch->conn);
     }
 
     if (watch->buffer)
     {
-        j_net_buf_free(watch->buffer);
+        nmp_net_buf_free(watch->buffer);
     }
 
-    j_mutex_free(watch->lock);
+    nmp_mutex_free(watch->lock);
 	//TODO;
 }
 
 
-JWatch *
-j_watch_create(JConnection *conn, JWatchFuncs *funcs, int size)
+nmp_watch_t *
+nmp_watch_create(nmp_conn_t *conn, nmp_watch_funcs *funcs, int size)
 {
-	JWatch *watch;
+	nmp_watch_t *watch;
 	int events;
-	J_ASSERT(conn != NULL && funcs != NULL && 
-		size >= sizeof(JWatch));
+	NMP_ASSERT(conn != NULL && funcs != NULL && 
+		size >= sizeof(nmp_watch_t));
 
-	events = j_connection_is_ingrogress(conn, 0) ? EV_WRITE : EV_READ;
+	events = nmp_conn_is_ingrogress(conn, 0) ? EV_WRITE : EV_READ;
 
-	watch = (JWatch*)j_event_new(size,
-		j_connection_get_fd(conn), events);
-	if (J_UNLIKELY(!watch))
+	watch = (nmp_watch_t*)nmp_event_new(size,
+		nmp_conn_get_fd(conn), events);
+	if (NMP_UNLIKELY(!watch))
 		return NULL;
 
-	watch->buffer = j_net_buf_alloc(BUFFER_BLOCKS,
-		j_watch_write_out);
-	if (J_UNLIKELY(!watch->buffer))
+	watch->buffer = nmp_net_buf_alloc(BUFFER_BLOCKS,
+		nmp_watch_write_out);
+	if (NMP_UNLIKELY(!watch->buffer))
 	{
-		j_warning("j_watch_create()->j_net_buf_alloc() failed.\n");
-		j_event_unref((JEvent*)watch);
+		nmp_warning("nmp_watch_create()->nmp_net_buf_alloc() failed.\n");
+		nmp_event_unref((nmp_event_t*)watch);
 		return NULL;
 	}
 
-	watch->lock = j_mutex_new();
+	watch->lock = nmp_mutex_new();
 	watch->conn = conn;
 	watch->funcs = funcs;
 	/* watch->next_timeout */
@@ -392,29 +392,29 @@ j_watch_create(JConnection *conn, JWatchFuncs *funcs, int size)
 	watch->killed = 0;
 	watch->priv_data = NULL;
 
-	j_event_set_callback((JEvent*)watch, j_watch_rw_dispatch,
-		NULL, j_watch_finalize);
+	nmp_event_set_callback((nmp_event_t*)watch, nmp_watch_rw_dispatch,
+		NULL, nmp_watch_finalize);
 
 	return watch;
 }
 
 
-JWatch *
-j_listen_watch_create(JConnection *conn,
-    JWatchFuncs *funcs, int size)
+nmp_watch_t *
+j_listen_watch_create(nmp_conn_t *conn,
+    nmp_watch_funcs *funcs, int size)
 {
-	JWatch *watch;
-	J_ASSERT(conn != NULL && funcs != NULL &&
-		size >= sizeof(JWatch));
+	nmp_watch_t *watch;
+	NMP_ASSERT(conn != NULL && funcs != NULL &&
+		size >= sizeof(nmp_watch_t));
 
-	watch = (JWatch*)j_event_new(size,
-		j_connection_get_fd(conn), EV_READ);
-	if (J_UNLIKELY(!watch))
+	watch = (nmp_watch_t*)nmp_event_new(size,
+		nmp_conn_get_fd(conn), EV_READ);
+	if (NMP_UNLIKELY(!watch))
 		return NULL;
 
 	watch->buffer = NULL;
 
-	watch->lock = j_mutex_new();
+	watch->lock = nmp_mutex_new();
 	watch->conn = conn;
 	watch->funcs = funcs;
 	/* watch->next_timeout */
@@ -422,52 +422,52 @@ j_listen_watch_create(JConnection *conn,
 	watch->killed = 0;
 	watch->priv_data = NULL;
 
-	j_event_set_callback((JEvent*)watch, j_listen_watch_dispatch,
-		NULL, j_watch_finalize);
+	nmp_event_set_callback((nmp_event_t*)watch, j_listen_watch_dispatch,
+		NULL, nmp_watch_finalize);
 
 	return watch;
 }
 
 
-void j_watch_attach(JWatch *watch, JEventLoop *loop)
+void nmp_watch_attach(nmp_watch_t *watch, nmp_event_loop_t *loop)
 {
-	J_ASSERT(watch != NULL && loop != NULL);
+	NMP_ASSERT(watch != NULL && loop != NULL);
 
-	j_event_loop_attach(loop, (JEvent*)watch);
+	nmp_event_loop_attach(loop, (nmp_event_t*)watch);
 }
 
 
 static __inline__ int
-j_watch_deliver_message(void *to, void *msg)
+nmp_watch_deliver_message(void *to, void *msg)
 {
-    JNetIO *net_io = (JNetIO*)to;
+    nmp_netio_t *net_io = (nmp_netio_t*)to;
 
-    return j_net_io_read_message(net_io, msg);
+    return nmp_net_io_read_message(net_io, msg);
 }
 
 
-int j_watch_recv_message(JWatch *watch, void *msg)
+int nmp_watch_recv_message(nmp_watch_t *watch, void *msg)
 {
     int rc;
-    J_ASSERT(watch != NULL && msg != NULL);
+    NMP_ASSERT(watch != NULL && msg != NULL);
 
     if (!watch->priv_data)
         return -E_WATCHDIE;
 
-    j_mutex_unlock(watch->lock);    /* drop the lock, watch->priv_data is destroyed in watch finalize() */
-    rc = j_watch_deliver_message(watch->priv_data, msg);
-    j_mutex_lock(watch->lock);
+    nmp_mutex_unlock(watch->lock);    /* drop the lock, watch->priv_data is destroyed in watch finalize() */
+    rc = nmp_watch_deliver_message(watch->priv_data, msg);
+    nmp_mutex_lock(watch->lock);
 
     return rc;
 }
 
 
 static __inline__ int
-__j_watch_write_message(JWatch *watch, void *msg)
+__nmp_watch_write_message(nmp_watch_t *watch, void *msg)
 {
     int packet[MAX_IO_BUFFER_SIZE/sizeof(int)];
     int ret = 0, pending = 0;
-    JWatchFuncs *funcs;
+    nmp_watch_funcs *funcs;
 
     funcs = watch->funcs;
     BUG_ON(!funcs);
@@ -478,41 +478,41 @@ __j_watch_write_message(JWatch *watch, void *msg)
             MAX_IO_BUFFER_SIZE);
         if (ret > 0)
         {
-            ret = j_net_buf_write(watch->buffer, (char*)packet, ret, 
+            ret = nmp_net_buf_write(watch->buffer, (char*)packet, ret, 
                 watch, &pending);
             if (!ret)
             {
-				j_print(
+				nmp_print(
 					"Net watch '%p' send buffer full, drop 1 packet.\n",
 					watch
 				);
 
 #if 0			/* Just report, without killing action */
-            	j_event_remove((JEvent*)watch);
-            	__j_watch_error(watch, 1, -E_SNDBUFFULL);
+            	nmp_event_remove((nmp_event_t*)watch);
+            	__nmp_watch_error(watch, 1, -E_SNDBUFFULL);
 #endif
             }
             else if (ret < 0)
             {
-                j_print(
+                nmp_print(
                     "Net watch '%p' send failed.\n", watch
                 );
 
-                j_event_remove((JEvent*)watch);
-                __j_watch_error(watch, 1, ret);
+                nmp_event_remove((nmp_event_t*)watch);
+                __nmp_watch_error(watch, 1, ret);
             }
             else
             {
                 if (pending && !watch->w_pending)
                 {
-                    j_event_add_events((JEvent*)watch, EV_WRITE);
+                    nmp_event_add_events((nmp_event_t*)watch, EV_WRITE);
                     watch->w_pending = 1;
                 }
             }
         }
         else
         {
-            j_print(
+            nmp_print(
                 "Net format packet failed while sending, drop.\n"
             );
         }
@@ -527,15 +527,15 @@ __j_watch_write_message(JWatch *watch, void *msg)
  * will be formatted to correct payload and packet data.
  * return the size written.
 */
-int j_watch_write_message(JWatch *watch, void *msg)
+int nmp_watch_write_message(nmp_watch_t *watch, void *msg)
 {
     int ret = -E_WATCHDIE;
-    J_ASSERT(watch != NULL);
+    NMP_ASSERT(watch != NULL);
 
-    j_mutex_lock(watch->lock);
+    nmp_mutex_lock(watch->lock);
 
     /**
-     *  if writes failed, __j_watch_error() has been invoked,
+     *  if writes failed, __nmp_watch_error() has been invoked,
      *  and the watch may be destroyed (because __finalize() can
      *  be called by this execute flow, just here. so, we must
      *  increase the watch ref-count before writing.
@@ -543,66 +543,66 @@ int j_watch_write_message(JWatch *watch, void *msg)
 
     if (!watch->killed)
     {
-        ret = __j_watch_write_message(watch, msg);
+        ret = __nmp_watch_write_message(watch, msg);
     }
-    j_mutex_unlock(watch->lock);
+    nmp_mutex_unlock(watch->lock);
 
     return ret;
 }
 
 
-void j_watch_kill(JWatch *watch)
+void nmp_watch_kill(nmp_watch_t *watch)
 {
-	J_ASSERT(watch != NULL);
+	NMP_ASSERT(watch != NULL);
 
     /* remove it from loop-conext */
-    j_event_remove((JEvent*)watch);
+    nmp_event_remove((nmp_event_t*)watch);
 
-    j_mutex_lock(watch->lock);
-    __j_watch_close(watch, 0);
-    j_mutex_unlock(watch->lock);	
+    nmp_mutex_lock(watch->lock);
+    __nmp_watch_close(watch, 0);
+    nmp_mutex_unlock(watch->lock);	
 }
 
 
-void j_watch_ref(JWatch *watch)
+void nmp_watch_ref(nmp_watch_t *watch)
 {
-	J_ASSERT(watch != NULL);
+	NMP_ASSERT(watch != NULL);
 
-	j_event_ref((JEvent*)watch);
+	nmp_event_ref((nmp_event_t*)watch);
 }
 
 
-void j_watch_unref(JWatch *watch)
+void nmp_watch_unref(nmp_watch_t *watch)
 {
-	J_ASSERT(watch != NULL);
+	NMP_ASSERT(watch != NULL);
 
-	j_event_unref((JEvent*)watch);
+	nmp_event_unref((nmp_event_t*)watch);
 }
 
 
-void j_watch_set_private(JWatch *watch, void *priv_data)
+void nmp_watch_set_private(nmp_watch_t *watch, void *priv_data)
 {
-	J_ASSERT(watch != NULL);
+	NMP_ASSERT(watch != NULL);
 
-	j_mutex_lock(watch->lock);
+	nmp_mutex_lock(watch->lock);
 	BUG_ON(watch->priv_data);
     watch->priv_data = priv_data;
-	j_mutex_unlock(watch->lock);
+	nmp_mutex_unlock(watch->lock);
 }
 
 
-JBool j_watch_set_conn_ttd(JWatch *watch, int milli_sec)
+nmp_bool_t nmp_watch_set_conn_ttd(nmp_watch_t *watch, int milli_sec)
 {
 	return TRUE;
 }
 
 
 static __inline__ char *
-__j_watch_get_host(JWatch *watch, char *ip)
+__nmp_watch_get_host(nmp_watch_t *watch, char *ip)
 {
 	if (watch->conn)
 	{
-		return j_connection_get_host(watch->conn, ip);
+		return nmp_conn_get_host(watch->conn, ip);
 	}
 
 	return NULL;
@@ -610,26 +610,26 @@ __j_watch_get_host(JWatch *watch, char *ip)
 
 
 __export char *
-j_watch_get_host(JWatch *watch, char *ip)
+nmp_watch_get_host(nmp_watch_t *watch, char *ip)
 {
 	char *addr = NULL;
-	j_mutex_lock(watch->lock);
+	nmp_mutex_lock(watch->lock);
 	if (!watch->killed)
 	{
-		addr = __j_watch_get_host(watch, ip);
+		addr = __nmp_watch_get_host(watch, ip);
 	}
-	j_mutex_unlock(watch->lock);
+	nmp_mutex_unlock(watch->lock);
 
 	return addr;
 }
 
 
 static __inline__ char *
-__j_watch_get_peer(JWatch *watch, char *ip)
+__nmp_watch_get_peer(nmp_watch_t *watch, char *ip)
 {
 	if (watch->conn)
 	{
-		return j_connection_get_peer(watch->conn, ip);
+		return nmp_conn_get_peer(watch->conn, ip);
 	}
 
 	return NULL;
@@ -637,15 +637,15 @@ __j_watch_get_peer(JWatch *watch, char *ip)
 
 
 __export char *
-j_watch_get_peer(JWatch *watch, char *ip)
+nmp_watch_get_peer(nmp_watch_t *watch, char *ip)
 {
 	char *addr = NULL;
-	j_mutex_lock(watch->lock);
+	nmp_mutex_lock(watch->lock);
 	if (!watch->killed)
 	{
-		addr = __j_watch_get_peer(watch, ip);
+		addr = __nmp_watch_get_peer(watch, ip);
 	}
-	j_mutex_unlock(watch->lock);
+	nmp_mutex_unlock(watch->lock);
 
 	return addr;
 }

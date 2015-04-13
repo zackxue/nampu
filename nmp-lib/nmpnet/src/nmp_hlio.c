@@ -12,13 +12,13 @@
 #include "nmp_errno.h"
 
 
-static JWatch *
-j_hl_io_create(JIO *io, JConnection *conn)
+static nmp_watch_t *
+nmp_hlio_io_create(nmpio_t *io, nmp_conn_t *conn)
 {
-	JHlIO *listen_io;
+	nmp_hlio_t *listen_io;
 
-	listen_io = (JHlIO*)io;
-	return (JWatch*)j_hl_io_new(
+	listen_io = (nmp_hlio_t*)io;
+	return (nmp_watch_t*)nmp_hlio_io_new(
 		conn,
 		io->proto,
 		listen_io->proto
@@ -27,9 +27,9 @@ j_hl_io_create(JIO *io, JConnection *conn)
 
 
 static void
-j_hl_listen_io_on_error(JIO *io, int rw, int why)
+nmp_hlio_listen_io_on_error(nmpio_t *io, int rw, int why)
 {
-	j_error(
+	nmp_error(
 		"Net Listen IO '%p' error, Err: '%d'.\n", io, why
 	);
 
@@ -37,23 +37,23 @@ j_hl_listen_io_on_error(JIO *io, int rw, int why)
 }
 
 
-static JIOFuncs jxj_high_level_listen_io_funcs =
+static nmpio_funcs nmp_high_level_listen_io_funcs =
 {
-	.create		= j_hl_io_create,
-	.error		= j_hl_listen_io_on_error
+	.create		= nmp_hlio_io_create,
+	.error		= nmp_hlio_listen_io_on_error
 };
 
 
 static int
-j_hl_io_recv(JIO *io, char *start, size_t size,
+nmp_hlio_io_recv(nmpio_t *io, char *start, size_t size,
 	void *from_lower)
 {
 	int rc;
-	JPayloadProto *proto;
-	JHlIO *hl_io;
+	nmp_payload_proto_t *proto;
+	nmp_hlio_t *hl_io;
 	void *msg;
 
-	hl_io = (JHlIO*)io;
+	hl_io = (nmp_hlio_t*)io;
 	proto = hl_io->proto;
 	BUG_ON(!proto);
 
@@ -62,7 +62,7 @@ j_hl_io_recv(JIO *io, char *start, size_t size,
 
 	if ((msg = (*proto->get_payload)(start, size, from_lower)))
 	{
-		rc = j_watch_recv_message((JWatch*)hl_io, msg);
+		rc = nmp_watch_recv_message((nmp_watch_t*)hl_io, msg);
 		if (rc)
 		{
 			BUG_ON(!proto->destroy_pointer);
@@ -75,13 +75,13 @@ j_hl_io_recv(JIO *io, char *start, size_t size,
 
 
 static int
-j_hl_io_format(JIO *io, void *msg, char buf[],
+nmp_hlio_io_format(nmpio_t *io, void *msg, char buf[],
 	size_t size)
 {
-	JPayloadProto *proto;
-	JHlIO *hl_io;
+	nmp_payload_proto_t *proto;
+	nmp_hlio_t *hl_io;
 
-	hl_io = (JHlIO*)io;
+	hl_io = (nmp_hlio_t*)io;
 	proto = hl_io->proto;
 
 	BUG_ON(!proto);
@@ -96,9 +96,9 @@ j_hl_io_format(JIO *io, void *msg, char buf[],
 
 
 static void
-j_hl_io_on_error(JIO *io, int rw, int why)
+nmp_hlio_io_on_error(nmpio_t *io, int rw, int why)
 {
-	j_warning(
+	nmp_warning(
 		"Net IO '%p' %s error, Err: '%d', report from hl layer.\n",
 		io, rw ? "write" : "read", why
 	);
@@ -106,36 +106,36 @@ j_hl_io_on_error(JIO *io, int rw, int why)
 
 
 static void
-j_hl_io_on_close(JIO *io, int async)
+nmp_hlio_io_on_close(nmpio_t *io, int async)
 {
-	j_print(
+	nmp_print(
 		"Net IO '%p' closed%s, report from hl layer.\n",
 		io, async ? " by peer" : ""
 	);
 }
 
 
-static JIOFuncs jxj_high_level_io_funcs =
+static nmpio_funcs jxj_high_level_io_funcs =
 {
-	.recv		= j_hl_io_recv,
-	.format		= j_hl_io_format,
-	.error		= j_hl_io_on_error,
-	.close		= j_hl_io_on_close
+	.recv		= nmp_hlio_io_recv,
+	.format		= nmp_hlio_io_format,
+	.error		= nmp_hlio_io_on_error,
+	.close		= nmp_hlio_io_on_close
 };
 
 
-JHlIO *
-j_hl_io_new(JConnection *conn, JPacketProto *ll_proto,
-	JPayloadProto *hl_proto)
+nmp_hlio_t *
+nmp_hlio_io_new(nmp_conn_t *conn, nmp_packet_proto_t *ll_proto,
+	nmp_payload_proto_t *hl_proto)
 {
-	JHlIO *hl_io;
-	J_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
+	nmp_hlio_t *hl_io;
+	NMP_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
 
-	hl_io = (JHlIO*)j_io_new(
+	hl_io = (nmp_hlio_t*)nmp_io_new(
 		conn,
 		ll_proto,
 		&jxj_high_level_io_funcs,
-		sizeof(JHlIO)
+		sizeof(nmp_hlio_t)
 	);
 
 	if (hl_io)
@@ -147,18 +147,18 @@ j_hl_io_new(JConnection *conn, JPacketProto *ll_proto,
 }
 
 
-JHlIO *
-j_hl_listen_io_new(JConnection *conn, JPacketProto *ll_proto,
-	JPayloadProto *hl_proto)
+nmp_hlio_t *
+nmp_hlio_listen_io_new(nmp_conn_t *conn, nmp_packet_proto_t *ll_proto,
+	nmp_payload_proto_t *hl_proto)
 {
-	JHlIO *hl_io;
-	J_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
+	nmp_hlio_t *hl_io;
+	NMP_ASSERT(conn != NULL && ll_proto != NULL && hl_proto != NULL);
 
-	hl_io = (JHlIO*)j_listen_io_new(
+	hl_io = (nmp_hlio_t*)j_listen_io_new(
 		conn,
 		ll_proto,
-		&jxj_high_level_listen_io_funcs,
-		sizeof(JHlIO)
+		&nmp_high_level_listen_io_funcs,
+		sizeof(nmp_hlio_t)
 	);
 
 	if (hl_io)

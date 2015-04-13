@@ -1,41 +1,41 @@
 #include "nmp_timer.h"
 
 
-static JBool
-j_on_timer_internal(JEvent *ev, int revents, void *user_data)
+static nmp_bool_t
+nmp_on_timer_internal(nmp_event_t *ev, int revents, void *user_data)
 {
-	JTimer *timer = (JTimer*)ev;
+	nmp_timer_t *timer = (nmp_timer_t*)ev;
 
 	return (*timer->on_timer)(timer->data) == 0 ? TRUE : FALSE;
 }
 
 
-JTimer *j_timer_new(int timeout, JOnTimer on_timer, void *data)
+nmp_timer_t *nmp_timer_new(int timeout, nmp_on_timer on_timer, void *data)
 {
-	JTimer *timer;
+	nmp_timer_t *timer;
 
-	timer = (JTimer*)j_event_new(sizeof(JTimer), -1, 0);
+	timer = (nmp_timer_t*)nmp_event_new(sizeof(nmp_timer_t), -1, 0);
 	timer->on_timer = on_timer;
 	timer->data = data;
 
-	j_event_set_callback((JEvent*)timer, j_on_timer_internal, NULL, NULL);
-	j_event_set_timeout((JEvent*)timer, timeout);
+	nmp_event_set_callback((nmp_event_t*)timer, nmp_on_timer_internal, NULL, NULL);
+	nmp_event_set_timeout((nmp_event_t*)timer, timeout);
 
 	return timer;
 }
 
 
-int j_timer_attach(JEventLoop *loop, JTimer *timer)
+int nmp_timer_attach(nmp_event_loop_t *loop, nmp_timer_t *timer)
 {
-	J_ASSERT(loop != NULL);
+	NMP_ASSERT(loop != NULL);
 
-	return !j_event_loop_attach(loop, (JEvent*)timer);
+	return !nmp_event_loop_attach(loop, (nmp_event_t*)timer);
 }
 
 
-void j_timer_del(JTimer *timer)
+void nmp_timer_del(nmp_timer_t *timer)
 {
-	j_event_remove((JEvent*)timer);
+	nmp_event_remove((nmp_event_t*)timer);
 }
 
 //:~ End
@@ -43,7 +43,7 @@ void j_timer_del(JTimer *timer)
 //for include some necessary file.o
 void test()
 {
-    j_thread_pool_new(NULL, NULL, 1, NULL);
+    nmp_thread_pool_new(NULL, NULL, 1, NULL);
     base64_free(NULL, 0);
     return ;
 }

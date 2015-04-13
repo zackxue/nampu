@@ -15,18 +15,18 @@
 
 
 static __inline__ int
-j_io_recv_packet(JIO *io, char *buf, size_t size);
+nmp_io_recv_packet(nmpio_t *io, char *buf, size_t size);
 
 
 static __inline__ void
-j_io_finalize(JIO *io);
+nmp_io_finalize(nmpio_t *io);
 
 
-static JWatch *
-j_io_create(JWatch *w, JConnection *conn)
+static nmp_watch_t *
+nmp_io_create(nmp_watch_t *w, nmp_conn_t *conn)
 {
-	JIOFuncs *funcs;
-	JIO *io = (JIO*)w;
+	nmpio_funcs *funcs;
+	nmpio_t *io = (nmpio_t*)w;
 
 	funcs = io->funcs;
 	BUG_ON(!funcs);
@@ -36,16 +36,16 @@ j_io_create(JWatch *w, JConnection *conn)
 		return (*funcs->create)(io, conn);
 	}
 
-	j_connection_close(conn);
+	nmp_conn_close(conn);
 	return NULL;
 }
 
 
 static void
-j_io_on_listen_error(JWatch *w, int rw, int why)
+nmp_io_on_listen_error(nmp_watch_t *w, int rw, int why)
 {
-	JIOFuncs *funcs;
-	JIO *io = (JIO*)w;
+	nmpio_funcs *funcs;
+	nmpio_t *io = (nmpio_t*)w;
 
 	funcs = io->funcs;
 	BUG_ON(!funcs);
@@ -57,34 +57,34 @@ j_io_on_listen_error(JWatch *w, int rw, int why)
 }
 
 
-static JWatchFuncs j_listen_io_watch_funcs =
+static nmp_watch_funcs j_listen_io_watch_funcs =
 {
-	.create		= j_io_create,
-	.error		= j_io_on_listen_error
+	.create		= nmp_io_create,
+	.error		= nmp_io_on_listen_error
 };
 
 
 static int
-j_io_recv_data(JWatch *w, char *buf, size_t size)
+nmp_io_recv_data(nmp_watch_t *w, char *buf, size_t size)
 {
-	JIO *io = (JIO*)w;
+	nmpio_t *io = (nmpio_t*)w;
 
 	if (io->buffer)	/* likely */
 	{
-		return j_io_recv_packet(io, buf, size);
+		return nmp_io_recv_packet(io, buf, size);
 	}
 	return 0;	/* nothing to do */
 }
 
 
 static int
-j_io_format_data(JWatch *w, void *msg, char buf[],
+nmp_io_format_data(nmp_watch_t *w, void *msg, char buf[],
 	size_t size)
 {
-	JIOFuncs *funcs;
-	JPacketProto *proto;
+	nmpio_funcs *funcs;
+	nmp_packet_proto_t *proto;
 	int pack_head_len, phl, payload_len = 0;
-	JIO *io = (JIO*)w;
+	nmpio_t *io = (nmpio_t*)w;
 
 	proto = io->proto;
 	BUG_ON(!proto);
@@ -125,14 +125,14 @@ j_io_format_data(JWatch *w, void *msg, char buf[],
 
 
 static void
-j_io_on_error(JWatch *w, int rw, int why)
+nmp_io_on_error(nmp_watch_t *w, int rw, int why)
 {
-	JIO *io;
-	JIOFuncs *funcs;
+	nmpio_t *io;
+	nmpio_funcs *funcs;
 
-	J_ASSERT(w != NULL);
+	NMP_ASSERT(w != NULL);
 
-	io = (JIO*)w;
+	io = (nmpio_t*)w;
 	funcs = io->funcs;
 	BUG_ON(!funcs);
 
@@ -141,19 +141,19 @@ j_io_on_error(JWatch *w, int rw, int why)
 		(*funcs->error)(io, rw, why);
 	}
 
-	j_io_finalize(io);
+	nmp_io_finalize(io);
 }
 
 
 static void
-j_io_on_close(JWatch *w, int async)
+nmp_io_on_close(nmp_watch_t *w, int async)
 {
-	JIO *io;
-	JIOFuncs *funcs;
+	nmpio_t *io;
+	nmpio_funcs *funcs;
 
-	J_ASSERT(w != NULL);
+	NMP_ASSERT(w != NULL);
 
-	io = (JIO*)w;
+	io = (nmpio_t*)w;
 	funcs = io->funcs;
 	BUG_ON(!funcs);
 
@@ -162,21 +162,21 @@ j_io_on_close(JWatch *w, int async)
 		(*funcs->close)(io, async);
 	}
 
-	j_io_finalize(io);
+	nmp_io_finalize(io);
 }
 
 
-static JWatchFuncs j_io_watch_funcs =
+static nmp_watch_funcs nmp_io_watch_funcs =
 {
-	.recv		= j_io_recv_data,
-	.format		= j_io_format_data,
-	.error		= j_io_on_error,
-	.close		= j_io_on_close
+	.recv		= nmp_io_recv_data,
+	.format		= nmp_io_format_data,
+	.error		= nmp_io_on_error,
+	.close		= nmp_io_on_close
 };
 
 
 static __inline__ int
-j_io_initialize(JIO *io, int listen)
+nmp_io_initialize(nmpio_t *io, int listen)
 {
 	if (listen)
 	{
@@ -187,7 +187,7 @@ j_io_initialize(JIO *io, int listen)
 	}
 	else
 	{
-		io->buffer = j_alloc(MAX_IO_BUFFER_SIZE);
+		io->buffer = nmp_alloc(MAX_IO_BUFFER_SIZE);
 		io->buff_size = MAX_IO_BUFFER_SIZE;
 		io->start_pos = 0;
 		io->end_pos = 0;
@@ -198,43 +198,43 @@ j_io_initialize(JIO *io, int listen)
 
 
 static __inline__ void
-j_io_finalize(JIO *io)
+nmp_io_finalize(nmpio_t *io)
 {
 	if (io->buffer)
 	{
-		j_dealloc(io->buffer, MAX_IO_BUFFER_SIZE);
+		nmp_dealloc(io->buffer, MAX_IO_BUFFER_SIZE);
 		io->buffer = NULL;
 	}
 };
 
 
-__export JIO *
-j_io_new(JConnection *conn, JPacketProto *proto, 
-	JIOFuncs *funcs, size_t size)
+__export nmpio_t *
+nmp_io_new(nmp_conn_t *conn, nmp_packet_proto_t *proto, 
+	nmpio_funcs *funcs, size_t size)
 {
-	JIO *io;
-	J_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
+	nmpio_t *io;
+	NMP_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
-	if (j_connection_is_blocked(conn))
+	if (nmp_conn_is_blocked(conn))
 	{
-		j_warning(
+		nmp_warning(
 			"Net create io on blocked connection '%p'.\n",
 			conn
 		);
 		return NULL;		
 	}
 
-	io = (JIO*)j_watch_create(
-		conn, &j_io_watch_funcs, size);
+	io = (nmpio_t*)nmp_watch_create(
+		conn, &nmp_io_watch_funcs, size);
 	if (!io)
 	{
-		j_warning(
+		nmp_warning(
 			"Net create watch failed.\n"
 		);
 		return NULL;
 	}
 
-	j_io_initialize(io, 0);
+	nmp_io_initialize(io, 0);
 
 	io->proto = proto;
 	io->funcs = funcs;
@@ -244,24 +244,24 @@ j_io_new(JConnection *conn, JPacketProto *proto,
 
 
 
-__export JIO *
-j_listen_io_new(JConnection *conn, JPacketProto *proto,
-	JIOFuncs *funcs, size_t size)
+__export nmpio_t *
+j_listen_io_new(nmp_conn_t *conn, nmp_packet_proto_t *proto,
+	nmpio_funcs *funcs, size_t size)
 {
-	JIO *io;
-	J_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
+	nmpio_t *io;
+	NMP_ASSERT(conn != NULL && proto != NULL && funcs != NULL);
 
-	io = (JIO*)j_listen_watch_create(
+	io = (nmpio_t*)j_listen_watch_create(
 		conn, &j_listen_io_watch_funcs, size);
 	if (!io)
 	{
-		j_warning(
+		nmp_warning(
 			"Net create watch failed.\n"
 		);
 		return NULL;
 	}
 
-	j_io_initialize(io, 1);
+	nmp_io_initialize(io, 1);
 
 	io->proto = proto;
 	io->funcs = funcs;
@@ -271,12 +271,12 @@ j_listen_io_new(JConnection *conn, JPacketProto *proto,
 
 
 static __inline__ int
-j_io_packet_proto_check(JIO *io)
+nmp_io_packet_proto_check(nmpio_t *io)
 {
-	JPacketProto *proto;
+	nmp_packet_proto_t *proto;
 	int effective, ret;
-    JNetPackInfo payload_raw, *npi;
-    JIOFuncs *funcs;
+    nmp_net_packinfo_t payload_raw, *npi;
+    nmpio_funcs *funcs;
 
 	proto = io->proto;
 	BUG_ON(!proto);
@@ -301,11 +301,11 @@ j_io_packet_proto_check(JIO *io)
                 &payload_raw
             );
 
-            if (J_UNLIKELY(ret))
+            if (NMP_UNLIKELY(ret))
                 return ret;
 
-			npi = j_net_packet_defrag(&payload_raw);
-			if (J_LIKELY(npi))
+			npi = nmp_net_packet_defrag(&payload_raw);
+			if (NMP_LIKELY(npi))
 			{
 				if (funcs->recv)
 				{
@@ -317,10 +317,10 @@ j_io_packet_proto_check(JIO *io)
 					);
 				}
 
-				if (J_UNLIKELY(npi != &payload_raw))
-					j_net_packet_release_npi(npi);
+				if (NMP_UNLIKELY(npi != &payload_raw))
+					nmp_net_packet_release_npi(npi);
 
-				if (J_UNLIKELY(ret))
+				if (NMP_UNLIKELY(ret))
 					return ret;
 
 				if (!io->buffer)		/* killed when we just dropped the watch lock in (->recv())*/
@@ -373,7 +373,7 @@ j_io_packet_proto_check(JIO *io)
 
 
 static __inline__ int
-j_io_recv_packet(JIO *io, char *buf, size_t size)
+nmp_io_recv_packet(nmpio_t *io, char *buf, size_t size)
 {
 	int ret, left;
 
@@ -397,7 +397,7 @@ j_io_recv_packet(JIO *io, char *buf, size_t size)
 			buf += left;
 		}
 
-		if (J_UNLIKELY((ret = j_io_packet_proto_check(io))))
+		if (NMP_UNLIKELY((ret = nmp_io_packet_proto_check(io))))
 			return ret;
 	}
 

@@ -17,8 +17,8 @@
 extern "C" {
 #endif
 
-static __inline__ void j_net_packet_release_npi(JNetPackInfo *npi){};
-static __inline__ JNetPackInfo *j_net_packet_defrag(JNetPackInfo *net_pack){return net_pack;};
+static __inline__ void nmp_net_packet_release_npi(nmp_net_packinfo_t *npi){};
+static __inline__ nmp_net_packinfo_t *nmp_net_packet_defrag(nmp_net_packinfo_t *net_pack){return net_pack;};
 
 #ifdef __cplusplus
 }

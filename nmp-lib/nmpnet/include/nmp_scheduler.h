@@ -1,20 +1,20 @@
-#ifndef __J_SCHEDULER_H__
-#define __J_SCHEDULER_H__
+#ifndef __NMP_SCHEDULER_H__
+#define __NMP_SCHEDULER_H__
 
 #include "nmp_netio.h"
-
-typedef struct _JScheduler JScheduler;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-JScheduler *j_scheduler_new(int loop_count);
-void j_scheduler_sched_io(JScheduler *sched, JNetIO *io);
-void j_scheduler_release(JScheduler *sched);
+typedef struct _nmp_scheduler nmp_scheduler_t;
 
-void *j_scheduler_add_timer(int timeout, int (*)(void*), void *data);
-void j_scheduler_del_timer(void *handle);
+nmp_scheduler_t *nmp_scheduler_new(int loop_count);
+void nmp_scheduler_sched_io(nmp_scheduler_t *sched, nmp_netio_t *io);
+void nmp_scheduler_release(nmp_scheduler_t *sched);
+
+void *nmp_scheduler_add_timer(int timeout, int (*)(void*), void *data);
+void nmp_scheduler_del_timer(void *handle);
 
 #ifdef __cplusplus
 }

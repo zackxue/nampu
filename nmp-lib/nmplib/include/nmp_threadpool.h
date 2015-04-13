@@ -1,5 +1,5 @@
-#ifndef __J_THREAD_POOL_H__
-#define __J_THREAD_POOL_H__
+#ifndef __NMP_THREAD_POOL_H__
+#define __NMP_THREAD_POOL_H__
 
 #include "nmp_error.h"
 #include "nmp_types.h"
@@ -9,23 +9,23 @@
 extern "C" {
 #endif
 
-typedef void (*JTPFunc)(void *data, void *user_data);
+typedef void (*nmp_threadpool_func)(void *data, void *user_data);
 
-typedef struct _JThreadPool JThreadPool;
+typedef struct _nmp_thread_pool nmp_threadpool_t;
 
-struct _JThreadPool
+struct _nmp_thread_pool
 {
-	JTPFunc func;
-	void *user_data;
+	nmp_threadpool_func func;
+	void    *user_data;
 };
 
-JThreadPool *j_thread_pool_new(JTPFunc func, void *data,
-	unsigned max_threads, JError **err);
-void j_thread_pool_push(JThreadPool *tp, void *data);
-void j_thread_pool_free(JThreadPool *tp, JBool drop, JBool wait);
+nmp_threadpool_t *nmp_threadpool_new(nmp_threadpool_func func, void *data,
+	unsigned max_threads, nmp_error_t **err);
+void nmp_threadpool_push(nmp_threadpool_t *tp, void *data);
+void nmp_threadpool_free(nmp_threadpool_t *tp, nmp_bool_t drop, nmp_bool_t wait);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __J_THREAD_POOL_H__ */
+#endif	/* __NMP_THREAD_POOL_H__ */

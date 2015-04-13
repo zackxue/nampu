@@ -5,8 +5,8 @@
 #include "nmp_mem.h"
 #include "nmp_macros.h"
 
-#define JLIB_MEM_DEBUG  1
-#define MAGIC		0xf1f2f3f4
+#define NMPLIB_MEME_DEBUG  1
+#define MAGIC		0xE1E2E3E4
 
 struct __alloc_cookie
 {
@@ -23,7 +23,7 @@ struct __tail_cookie
 static __inline__ void *
 __malloc(size_t size)
 {
-#ifndef JLIB_MEM_DEBUG
+#ifndef NMPLIB_MEME_DEBUG
 	return malloc(size);
 #else
 	struct __alloc_cookie *head;
@@ -52,10 +52,10 @@ __malloc(size_t size)
 static __inline__ void
 __free(void *ptr, size_t size)
 {
-	if (J_UNLIKELY(!ptr))
+	if (NMP_UNLIKELY(!ptr))
 		return;
 
-#ifndef JLIB_MEM_DEBUG
+#ifndef NMPLIB_MEME_DEBUG
 	free(ptr);
 #else
 	struct __alloc_cookie *head;
@@ -88,7 +88,7 @@ __free(void *ptr, size_t size)
 }
 
 
-void *j_alloc(size_t size)
+void *nmp_alloc(size_t size)
 {
 	void *ptr;
 
@@ -100,7 +100,7 @@ void *j_alloc(size_t size)
 }
 
 
-void *j_alloc0(size_t size)
+void *nmp_alloc0(size_t size)
 {
 	void *ptr;
 
@@ -113,7 +113,7 @@ void *j_alloc0(size_t size)
 }
 
 
-void _j_dealloc(void *ptr, size_t size)
+void _nmp_dealloc(void *ptr, size_t size)
 {
 	__free(ptr, size);
 }

@@ -5,7 +5,6 @@
  * See COPYING for more details
  *
  * */
-
 #include <unistd.h>
 #include "nmp_thread.h"
 #include "nmp_list.h"
@@ -16,50 +15,50 @@
 #define MIN_LOOP_COUNT			2
 
 
-typedef struct _JLoop JLoop;
-struct _JLoop
+typedef struct _nmp_loot nmp_loop_t;
+struct _nmp_loot
 {
 	unsigned			weight;
 
-	JEventLoop		*loop;
-	JThread			*loop_thread;
+	nmp_event_loop_t		*loop;
+	nmp_thread_t			*loop_thread;
 };
 
-typedef struct _JSrcWeight JSrcWeight;
-struct _JSrcWeight
+typedef struct _nmp_src_weight nmp_src_weight;
+struct _nmp_src_weight
 {
 	unsigned		w;		/* ШЈжи */
 
-	JEvent		*src;
-	JLoop		*loop;
+	nmp_event_t		*src;
+	nmp_loop_t		*loop;
 };
 
-struct _JLoopScher
+struct _nmp_loop_scher
 {
-	JLoop			*loops;
-	JMutex			*lock;
+	nmp_loop_t		*loops;
+	nmp_mutex_t		*lock;
 
 	unsigned		count;
 	unsigned		total_weight;
-	JList			*w_list;
+	nmp_list_t		*w_list;
 };
 
 
 static void*
-j_loop_thread_fun(JLoop *loop)
+nmp_loop_thread_fun(nmp_loop_t *loop)
 {
-	j_event_loop_run(loop->loop);
+	nmp_event_loop_run(loop->loop);
 	return NULL;
 }
 
 
 static __inline__ void
-j_loop_init(JLoop *loop)
+nmp_loop_init(nmp_loop_t *loop)
 {
 	loop->weight = 0;
-	loop->loop = j_event_loop_new();
-	loop->loop_thread = j_thread_create(
-  		(JThreadFunc)j_loop_thread_fun,
+	loop->loop = nmp_event_loop_new();
+	loop->loop_thread = nmp_thread_create(
+  		(nmp_thread_func)nmp_loop_thread_fun,
   		loop,
   		FALSE,
   		NULL
@@ -68,46 +67,46 @@ j_loop_init(JLoop *loop)
 
 
 static __inline__ void
-j_loop_add_source(JLoop *loop, JEvent *src, unsigned weight)
+nmp_loop_add_source(nmp_loop_t *loop, nmp_event_t *src, unsigned weight)
 {
-	j_event_loop_attach(loop->loop, src);
+	nmp_event_loop_attach(loop->loop, src);
 	loop->weight += weight;
 }
 
 
 static __inline__ void
-j_loop_del_source(JLoop *loop, JEvent *src, unsigned weight)
+nmp_loop_del_source(nmp_loop_t *loop, nmp_event_t *src, unsigned weight)
 {
-	j_event_remove(src);
+	nmp_event_remove(src);
 	loop->weight -= weight;
 }
 
 
-JLoopScher*
-j_sched_new(int loops)
+nmp_loop_scher_t*
+nmp_sched_new(int loops)
 {
-	JLoopScher *sched;
+	nmp_loop_scher_t *sched;
 	int size;
 
-	size = loops * sizeof(JLoop);
-	sched = j_new0(JLoopScher, 1);
-	sched->loops = (JLoop*)j_alloc0(size);
-	sched->lock = j_mutex_new();
+	size = loops * sizeof(nmp_loop_t);
+	sched = nmp_new0(nmp_loop_scher_t, 1);
+	sched->loops = (nmp_loop_t*)nmp_alloc0(size);
+	sched->lock = nmp_mutex_new();
 	sched->count = loops;
 	sched->total_weight = 0;
 	sched->w_list = NULL;
 
 	while (--loops >= 0)
 	{
-		j_loop_init(&sched->loops[loops]);
+		nmp_loop_init(&sched->loops[loops]);
 	}
 
 	return sched;
 }
 
 
-static __inline__ JLoop *
-j_find_best_loop(JLoopScher *sched)
+static __inline__ nmp_loop_t *
+nmp_find_best_loop(nmp_loop_scher_t *sched)
 {
 	unsigned w, best_w = sched->total_weight;
 	int best_i = 0, idx = 0;
@@ -127,46 +126,46 @@ j_find_best_loop(JLoopScher *sched)
 
 
 static __inline__ void
-j_sched_add_weight(JLoopScher *sched, JLoop *loop,
-	JEvent *src, unsigned weight)
+nmp_sched_add_weight(nmp_loop_scher_t *sched, nmp_loop_t *loop,
+	nmp_event_t *src, unsigned weight)
 {
-	JSrcWeight *sw;
+	nmp_src_weight *sw;
 
-	sw = j_new0(JSrcWeight, 1);
+	sw = nmp_new0(nmp_src_weight, 1);
 	sw->w = weight;
 	sw->src = src;
 	sw->loop = loop;
 
 	sched->total_weight += weight;
-	sched->w_list = j_list_add(sched->w_list, sw);
+	sched->w_list = nmp_list_add(sched->w_list, sw);
 }
 
 
 static int
-j_loop_find_sw(void *a, void *src)
+nmp_loop_find_sw(void *a, void *src)
 {
-	JSrcWeight *sw = (JSrcWeight*)a;
+	nmp_src_weight *sw = (nmp_src_weight*)a;
 
-	if (sw->src == (JEvent*)src)
+	if (sw->src == (nmp_event_t*)src)
 		return 0;
 	return 1;
 }
 
 
 static __inline__ int
-__j_sched_remove(JLoopScher *sched, JEvent *src)
+__nmp_sched_remove(nmp_loop_scher_t *sched, nmp_event_t *src)
 {
-	JSrcWeight *sw;
-	JList *list;
+	nmp_src_weight *sw;
+	nmp_list_t *list;
 
-	list = j_list_find_custom(sched->w_list, src, j_loop_find_sw);
+	list = nmp_list_find_custom(sched->w_list, src, nmp_loop_find_sw);
 	if (list)
 	{
-		sw = (JSrcWeight*)list->data;
+		sw = (nmp_src_weight*)list->data;
 		sched->total_weight -= sw->w;
-		sched->w_list = j_list_delete_link(sched->w_list, list);
-		j_loop_del_source(sw->loop, src, sw->w);
-		j_del(sw, JSrcWeight, 1);
+		sched->w_list = nmp_list_delete_link(sched->w_list, list);
+		nmp_loop_del_source(sw->loop, src, sw->w);
+		nmp_del(sw, nmp_src_weight, 1);
 		return 0;
 	}
 
@@ -175,38 +174,38 @@ __j_sched_remove(JLoopScher *sched, JEvent *src)
 
 
 static __inline__ void
-__j_sched_add(JLoopScher *sched, JEvent *src,
+__nmp_sched_add(nmp_loop_scher_t *sched, nmp_event_t *src,
 	unsigned weight)
 {
-	JLoop *loop = j_find_best_loop(sched);
-	j_loop_add_source(loop, src, weight);
-	j_sched_add_weight(sched, loop, src, weight);
+	nmp_loop_t *loop = nmp_find_best_loop(sched);
+	nmp_loop_add_source(loop, src, weight);
+	nmp_sched_add_weight(sched, loop, src, weight);
 }
 
 
 int
-j_sched_add(JLoopScher *sched, JEvent *src,
+nmp_sched_add(nmp_loop_scher_t *sched, nmp_event_t *src,
 	unsigned weight)
 {
-	J_ASSERT(sched != NULL);
+	NMP_ASSERT(sched != NULL);
 
-	j_mutex_lock(sched->lock);
-	__j_sched_add(sched, src, weight);
-	j_mutex_unlock(sched->lock);
+	nmp_mutex_lock(sched->lock);
+	__nmp_sched_add(sched, src, weight);
+	nmp_mutex_unlock(sched->lock);
 
 	return 0;
 }
 
 
 int
-j_sched_remove(JLoopScher *sched, JEvent *src)
+nmp_sched_remove(nmp_loop_scher_t *sched, nmp_event_t *src)
 {
 	int ret;
-	J_ASSERT(sched != NULL);
+	NMP_ASSERT(sched != NULL);
 
-	j_mutex_lock(sched->lock);
-	ret = __j_sched_remove(sched, src);
-	j_mutex_unlock(sched->lock);
+	nmp_mutex_lock(sched->lock);
+	ret = __nmp_sched_remove(sched, src);
+	nmp_mutex_unlock(sched->lock);
 
 	return ret;
 }

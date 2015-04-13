@@ -1,38 +1,51 @@
-
+#include <unistd.h>
 #include <stdio.h>
 #include <nmplib.h>
 
-JThreadPool *tp;
+nmp_threadpool_t *tp;
 
 
-void *th_func1(void *data)
-{
+void th_func1(void *data)
+{       
 	printf("pthread_pool==> data : %p\n", data);
 }
+
 void th_func(void *data, void *user_data)
 {
+    pthread_t thread_id = 0;
+
+    printf("pthread_pool==> id = %u\n", thread_id);
+    nmp_thread_self(&thread_id);
+
 	printf("pthread_pool==> data : %p, user_data : %p\n", data, user_data);
+	printf("pthread_pool==> id = %u\n", thread_id);
+
+    sleep(3);
 }
 
 
 void tp_test( void )
 {
-	tp = j_thread_pool_new(th_func, (void*)0xff, 1, NULL);
+	tp = nmp_threadpool_new(th_func, (void*)0xff, 4, NULL);
 	sleep(1);
-	j_thread_pool_push(tp, (void*)1);
+	nmp_threadpool_push(tp, (void*)1);
 	sleep(1);
-	j_thread_pool_push(tp, (void*)2);
+	nmp_threadpool_push(tp, (void*)2);
 	sleep(1);
-	j_thread_pool_push(tp, (void*)3);
+	nmp_threadpool_push(tp, (void*)3);
 	sleep(1);
 }
 
 int main(int argc, char *argv[])
 {
+    pthread_t t;
+
 	printf("\n\n******** Date: %s %s *********\n\n\n", __DATE__, __TIME__);
-	pthread_t t;
-        pthread_create(&t, NULL, th_func1, 10);
+    
+    pthread_create(&t, NULL, th_func1, 10);
 
 	tp_test();
+
+    pthread_join(t, NULL);
 	return 0;
 }

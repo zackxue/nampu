@@ -16,15 +16,15 @@ do {\
 
 #define posix_check_cmd(cmd) posix_check_err((cmd), #cmd)
 
-static int j_thread_priority_map[THREAD_PRIORITY_URGENT + 1] =
+static int nmp_thread_priority_map[THREAD_PRIORITY_URGENT + 1] =
 {	
 };
 
 
-static JMutex *
-j_mutex_new_posix_impl( void )
+static nmp_mutex_t *
+nmp_mutex_new_posix_impl( void )
 {
-	JMutex *result = (JMutex*)j_new(pthread_mutex_t, 1);
+	nmp_mutex_t *result = (nmp_mutex_t*)nmp_new(pthread_mutex_t, 1);
 	posix_check_cmd(
 		pthread_mutex_init((pthread_mutex_t*)result,
 		NULL)
@@ -34,14 +34,14 @@ j_mutex_new_posix_impl( void )
 
 
 static void
-j_mutex_lock_posix_impl(JMutex *mutex)
+nmp_mutex_lock_posix_impl(nmp_mutex_t *mutex)
 {
 	pthread_mutex_lock((pthread_mutex_t*)mutex);
 }
 
 
 static int
-j_mutex_trylock_posix_impl(JMutex *mutex)
+nmp_mutex_trylock_posix_impl(nmp_mutex_t *mutex)
 {
 	int result;
 
@@ -55,26 +55,26 @@ j_mutex_trylock_posix_impl(JMutex *mutex)
 
 
 static void
-j_mutex_unlock_posix_impl(JMutex *mutex)
+nmp_mutex_unlock_posix_impl(nmp_mutex_t *mutex)
 {
 	pthread_mutex_unlock((pthread_mutex_t*)mutex);
 }
 
 
 static void
-j_mutex_free_posix_impl(JMutex *mutex)
+nmp_mutex_free_posix_impl(nmp_mutex_t *mutex)
 {
 	posix_check_cmd(
 		pthread_mutex_destroy((pthread_mutex_t*)mutex)
 	);
-	j_del(mutex, pthread_mutex_t, 1);
+	nmp_del(mutex, pthread_mutex_t, 1);
 }
 
 
-static JCond *
-j_cond_new_posix_impl( void )
+static nmp_cond_t *
+nmp_cond_new_posix_impl( void )
 {
-	JCond *result = (JCond*)j_new(pthread_cond_t, 1);
+	nmp_cond_t *result = (nmp_cond_t*)nmp_new(pthread_cond_t, 1);
 	posix_check_cmd(
 		pthread_cond_init((pthread_cond_t*)result,
 			NULL)
@@ -85,21 +85,21 @@ j_cond_new_posix_impl( void )
 
 
 static void
-j_cond_signal_posix_impl(JCond *cond)
+nmp_cond_signal_posix_impl(nmp_cond_t *cond)
 {
 	pthread_cond_signal((pthread_cond_t*)cond);
 }
 
 
 static void
-j_cond_broadcast_posix_impl(JCond *cond)
+nmp_cond_broadcast_posix_impl(nmp_cond_t *cond)
 {
 	pthread_cond_broadcast((pthread_cond_t*)cond);
 }
 
 
 static void
-j_cond_wait_posix_impl(JCond *cond, JMutex *mutex)
+nmp_cond_wait_posix_impl(nmp_cond_t *cond, nmp_mutex_t *mutex)
 {
 	pthread_cond_wait((pthread_cond_t*)cond,
 		(pthread_mutex_t*)mutex);
@@ -107,8 +107,8 @@ j_cond_wait_posix_impl(JCond *cond, JMutex *mutex)
 
 
 static int
-j_cond_timed_wait_posix_impl(JCond *cond, JMutex *cond_mutex,
-	JTimeVal *abs_time)
+nmp_cond_timed_wait_posix_impl(nmp_cond_t *cond, nmp_mutex_t *cond_mutex,
+	nmp_timeval_t *abs_time)
 {
 	struct timespec end_time;
 	int result, timed_out;
@@ -144,19 +144,19 @@ j_cond_timed_wait_posix_impl(JCond *cond, JMutex *cond_mutex,
 
 
 static void
-j_cond_free_posix_impl(JCond *cond)
+nmp_cond_free_posix_impl(nmp_cond_t *cond)
 {
 	posix_check_cmd(
 		pthread_cond_destroy((pthread_cond_t*)cond)
 	);
-	j_del(cond, pthread_cond_t, 1);
+	nmp_del(cond, pthread_cond_t, 1);
 }
 
 
 static void
-j_thread_create_posix_impl(JThreadFunc func, void *arg,
+nmp_thread_create_posix_impl(nmp_thread_func func, void *arg,
 	unsigned long stack_size, int joinable, int bound,
-	JThreadPriority priority, void *thread, JError **error)
+	nmp_thread_priority priority, void *thread, nmp_error_t **error)
 {
 	pthread_attr_t attr;
 	int ret;
@@ -189,7 +189,7 @@ j_thread_create_posix_impl(JThreadFunc func, void *arg,
 #if 0	/* not support yet */
     struct sched_param sched;
     posix_check_cmd (pthread_attr_getschedparam(&attr, &sched));
-    sched.sched_priority = j_thread_priority_map[priority];
+    sched.sched_priority = nmp_thread_priority_map[priority];
     posix_check_cmd_prio(pthread_attr_setschedparam (&attr, &sched));
 #endif
 
@@ -200,7 +200,7 @@ j_thread_create_posix_impl(JThreadFunc func, void *arg,
 
 
 static void
-j_thread_yield_posix_impl(void)
+nmp_thread_yield_posix_impl(void)
 {
 #if 0
 	pthread_yield();
@@ -209,7 +209,7 @@ j_thread_yield_posix_impl(void)
 
 
 static void
-j_thread_join_posix_impl(void *thread)
+nmp_thread_join_posix_impl(void *thread)
 {
 	void *ignore;
 
@@ -220,14 +220,14 @@ j_thread_join_posix_impl(void *thread)
 
 
 static void
-j_thread_exit_posix_impl(void)
+nmp_thread_exit_posix_impl(void)
 {
 	pthread_exit(NULL);
 }
 
 
 static void
-j_thread_set_priority_posix_impl(void *thread, JThreadPriority priority)
+nmp_thread_set_priority_posix_impl(void *thread, nmp_thread_priority priority)
 {
 	struct sched_param sched;
 	int policy;
@@ -242,7 +242,7 @@ j_thread_set_priority_posix_impl(void *thread, JThreadPriority priority)
     	pthread_getschedparam(*(pthread_t*)thread, &policy, &sched)
     );
 
-    sched.sched_priority = j_thread_priority_map[priority];
+    sched.sched_priority = nmp_thread_priority_map[priority];
 
     posix_check_cmd(
     	pthread_setschedparam(*(pthread_t*)thread, policy,
@@ -252,24 +252,24 @@ j_thread_set_priority_posix_impl(void *thread, JThreadPriority priority)
 
 
 static void
-j_thread_self_posix_impl(void *thread)
+nmp_thread_self_posix_impl(void *thread)
 {
 	*(pthread_t*)thread = pthread_self();
 }
 
 
 static int
-j_thread_equal_posix_impl(void *thread1, void *thread2)
+nmp_thread_equal_posix_impl(void *thread1, void *thread2)
 {
 	return (pthread_equal(*(pthread_t*)thread1, 
 		*(pthread_t*)thread2) != 0);
 }
 
 
-static JPrivate *
-j_private_new_posix_impl(JDestroyNotify destructor)
+static nmp_private_t *
+nmp_private_new_posix_impl(nmp_destroy_notify destructor)
 {
-	JPrivate *result = (JPrivate*)j_new(pthread_key_t, 1);
+	nmp_private_t *result = (nmp_private_t*)nmp_new(pthread_key_t, 1);
 
 	posix_check_cmd(
 		pthread_key_create((pthread_key_t*)result, destructor)
@@ -280,7 +280,7 @@ j_private_new_posix_impl(JDestroyNotify destructor)
 
 
 static void *
-j_private_get_posix_impl(JPrivate *private_key)
+nmp_private_get_posix_impl(nmp_private_t *private_key)
 {
 	if (!private_key)
 		return NULL;
@@ -290,7 +290,7 @@ j_private_get_posix_impl(JPrivate *private_key)
 
 
 static void
-j_private_set_posix_impl(JPrivate *private_key, void *value)
+nmp_private_set_posix_impl(nmp_private_t *private_key, void *value)
 {
 	if (!private_key)
 		return;
@@ -299,34 +299,34 @@ j_private_set_posix_impl(JPrivate *private_key, void *value)
 }
 
 
-static JThreadInterfaces jlib_posix_thread_impl = 
+static nmp_thread_interfaces_t nmplib_posix_thread_impl = 
 {
-	j_mutex_new_posix_impl,
-	j_mutex_lock_posix_impl,
-	j_mutex_trylock_posix_impl,
-	j_mutex_unlock_posix_impl,
-	j_mutex_free_posix_impl,
+	nmp_mutex_new_posix_impl,
+	nmp_mutex_lock_posix_impl,
+	nmp_mutex_trylock_posix_impl,
+	nmp_mutex_unlock_posix_impl,
+	nmp_mutex_free_posix_impl,
 
-	j_cond_new_posix_impl,
-	j_cond_signal_posix_impl,
-	j_cond_broadcast_posix_impl,
-	j_cond_wait_posix_impl,
-	j_cond_timed_wait_posix_impl,
-	j_cond_free_posix_impl,
+	nmp_cond_new_posix_impl,
+	nmp_cond_signal_posix_impl,
+	nmp_cond_broadcast_posix_impl,
+	nmp_cond_wait_posix_impl,
+	nmp_cond_timed_wait_posix_impl,
+	nmp_cond_free_posix_impl,
 
-	j_thread_create_posix_impl,
-	j_thread_yield_posix_impl,
-	j_thread_join_posix_impl,
-	j_thread_exit_posix_impl,
-	j_thread_set_priority_posix_impl,
-	j_thread_self_posix_impl,
-	j_thread_equal_posix_impl,
+	nmp_thread_create_posix_impl,
+	nmp_thread_yield_posix_impl,
+	nmp_thread_join_posix_impl,
+	nmp_thread_exit_posix_impl,
+	nmp_thread_set_priority_posix_impl,
+	nmp_thread_self_posix_impl,
+	nmp_thread_equal_posix_impl,
 
-	j_private_new_posix_impl,
-	j_private_get_posix_impl,
-	j_private_set_posix_impl
+	nmp_private_new_posix_impl,
+	nmp_private_get_posix_impl,
+	nmp_private_set_posix_impl
 };
 
-JThreadInterfaces *jlib_thread_ops = &jlib_posix_thread_impl;
+nmp_thread_interfaces_t *nmplib_thread_ops = &nmplib_posix_thread_impl;
 
 //:~ End

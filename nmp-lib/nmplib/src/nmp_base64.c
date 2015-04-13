@@ -1,4 +1,3 @@
-
 #include "nmp_mem.h"
 #include "nmp_base64.h"
 
@@ -9,13 +8,13 @@ void base64_free(void *data, size_t size)
 	if (data && size>0)
 	{
 		//memset(data, 0, size);
-		j_dealloc(data, size);
+		nmp_dealloc(data, size);
 	}
 }
 
 static unsigned char *base64_malloc(size_t size)
 {
-	return (unsigned char *)j_alloc0(size);
+	return (unsigned char *)nmp_alloc0(size);
 
 	//static unsigned char base64[12*1024] = {0};
 	//return base64;
@@ -48,8 +47,8 @@ static void decodeQuantum(unsigned char *dest, unsigned char *src)
   dest[0] = (unsigned char)(x & 255);
 }
 
-int base64_decode(unsigned char *data, unsigned int dataLen, 
-		unsigned char **decData, unsigned int *decDataLen)
+int base64_decode(unsigned char *data, unsigned int data_len, 
+		unsigned char **dec_data, unsigned int *dec_data_len)
 {
   int equalsTerm = 0;
   int i;
@@ -58,30 +57,30 @@ int base64_decode(unsigned char *data, unsigned int dataLen,
   unsigned char lastQuantum[3];
   unsigned char *newstr;
 
-  if(dataLen % 4 != 0)
+  if(data_len % 4 != 0)
   {
 	  return -1;
   }
 
   /* Don't allocate a buffer if the decoded length is 0 */
-  numQuantums = dataLen / 4;
+  numQuantums = data_len / 4;
   if (numQuantums <= 0)
     return -1;
 
   /* A maximum of two = padding characters is allowed */
-  if(data[dataLen - 1] == '=') 
+  if(data[data_len - 1] == '=') 
   {
     equalsTerm++;
-    if(data[dataLen - 2] == '=')
+    if(data[data_len - 2] == '=')
       equalsTerm++;
   }  
 
-  *decDataLen = (numQuantums * 3) - equalsTerm;
+  *dec_data_len = (numQuantums * 3) - equalsTerm;
 
   /* The buffer must be large enough to make room for the last quantum
   (which may be partially thrown out) and the zero terminator. */
-  output_size = *decDataLen+4;
-  *decData = newstr = base64_malloc(output_size);
+  output_size = *dec_data_len+4;
+  *dec_data = newstr = base64_malloc(output_size);
   if(newstr == NULL)
     return -1;
 
@@ -106,8 +105,8 @@ int base64_decode(unsigned char *data, unsigned int dataLen,
 
 static const char table64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-int base64_encode(unsigned char *data, unsigned int dataLen, 
-		unsigned char **encData, unsigned int *encDataLen)
+int base64_encode(unsigned char *data, unsigned int data_len, 
+		unsigned char **enc_data, unsigned int *enc_data_len)
 {
   unsigned char ibuf[3];
   unsigned char obuf[4];
@@ -118,21 +117,21 @@ int base64_encode(unsigned char *data, unsigned int dataLen,
 
   //unsigned char *indata = data;
   
-  output_size = dataLen*4/3+4;
-  *encData = output = base64_malloc(output_size);
+  output_size = data_len*4/3+4;
+  *enc_data = output = base64_malloc(output_size);
   if(NULL == output)
     return -1;
 
-  while(dataLen > 0)
+  while(data_len > 0)
   {
     for (i = inputparts = 0; i < 3; i++) 
 	{
-      if(dataLen > 0) 
+      if(data_len > 0) 
 	  {
         inputparts++;
         ibuf[i] = *data;
         data++;
-        dataLen--;
+        data_len--;
       }
       else
         ibuf[i] = 0;
@@ -166,7 +165,7 @@ int base64_encode(unsigned char *data, unsigned int dataLen,
     output += 4;
   }
   *output=0;
-  *encDataLen = strlen((char*)*encData);
+  *enc_data_len = strlen((char*)*enc_data);
 
   return output_size; /* return the length of the new data */
 }

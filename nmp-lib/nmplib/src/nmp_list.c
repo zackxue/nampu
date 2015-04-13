@@ -1,5 +1,5 @@
 /*
- * j_list.c
+ * nmp_list.c
  *
  * This file implements list.
  *
@@ -11,16 +11,16 @@
 #include "nmp_mem.h"
 
 
-JList *j_list_alloc( void )
+nmp_list_t *nmp_list_alloc( void )
 {
-	JList *list = j_new(JList, 1);
+	nmp_list_t *list = nmp_new(nmp_list_t, 1);
 	return list;
 }
 
 
-JList *j_list_add(JList *list, void *data)
+nmp_list_t *nmp_list_add(nmp_list_t *list, void *data)
 {
-	JList *new_list = j_list_alloc();
+	nmp_list_t *new_list = nmp_list_alloc();
 
 	new_list->data = data;
 	new_list->next = list;
@@ -33,17 +33,17 @@ JList *j_list_add(JList *list, void *data)
 }
 
 
-JList *j_list_add_tail(JList *list, void *data)
+nmp_list_t *nmp_list_add_tail(nmp_list_t *list, void *data)
 {
-	JList *new_list = j_list_alloc();
-	JList *last;
+	nmp_list_t *new_list = nmp_list_alloc();
+	nmp_list_t *last;
 
 	new_list->data = data;
 	new_list->next = NULL;
 
 	if (list)
 	{
-		last = j_list_last(list);
+		last = nmp_list_last(list);
 		new_list->prev = last;
 		last->next = new_list;
 		return list;
@@ -56,9 +56,9 @@ JList *j_list_add_tail(JList *list, void *data)
 }
 
 
-JList *j_list_remove(JList *list, void *data)
+nmp_list_t *nmp_list_remove(nmp_list_t *list, void *data)
 {
-	JList *head = list;
+	nmp_list_t *head = list;
 
 	while (list)
 	{
@@ -74,7 +74,7 @@ JList *j_list_remove(JList *list, void *data)
 			if (head == list)
 				head = head->next;
 
-			j_list_free_1(list);
+			nmp_list_free_1(list);
 			break;
 		}
 	}
@@ -83,9 +83,9 @@ JList *j_list_remove(JList *list, void *data)
 }
 
 
-JList *j_list_remove_all(JList *list, void *data)
+nmp_list_t *nmp_list_remove_all(nmp_list_t *list, void *data)
 {
-	JList *next, *head = list;
+	nmp_list_t *next, *head = list;
 
 	while (list)
 	{
@@ -103,7 +103,7 @@ JList *j_list_remove_all(JList *list, void *data)
 			if (next)
 				next->prev = list->prev;
 
-			j_list_free_1(list);
+			nmp_list_free_1(list);
 			list = next;
 		}
 	}
@@ -112,7 +112,7 @@ JList *j_list_remove_all(JList *list, void *data)
 }
 
 
-JList *j_list_remove_link(JList *list, JList *link)
+nmp_list_t *nmp_list_remove_link(nmp_list_t *list, nmp_list_t *link)
 {
 	if (link)
 	{
@@ -132,22 +132,22 @@ JList *j_list_remove_link(JList *list, JList *link)
 }
 
 
-JList *j_list_delete_link(JList *list, JList *link)
+nmp_list_t *nmp_list_delete_link(nmp_list_t *list, nmp_list_t *link)
 {
-	list = j_list_remove_link(list, link);
-	j_list_free_1(link);
+	list = nmp_list_remove_link(list, link);
+	nmp_list_free_1(link);
 
 	return list;
 }
 
 
-JList *j_list_concat(JList *list1, JList *list2)
+nmp_list_t *nmp_list_concat(nmp_list_t *list1, nmp_list_t *list2)
 {
-	JList *last;
+	nmp_list_t *last;
 
 	if (list2)
 	{
-		last = j_list_last(list1);
+		last = nmp_list_last(list1);
 		if (last)
 			last->next = list2;
 		else
@@ -159,7 +159,7 @@ JList *j_list_concat(JList *list1, JList *list2)
 }
 
 
-JList *j_list_find(JList *list, void *data)
+nmp_list_t *nmp_list_find(nmp_list_t *list, void *data)
 {
 	while (list)
 	{
@@ -172,8 +172,8 @@ JList *j_list_find(JList *list, void *data)
 }
 
 
-JList *j_list_find_custom(JList *list, void *data,
-	JCompareCustom func)
+nmp_list_t *nmp_list_find_custom(nmp_list_t *list, void *data,
+	nmp_compare_custom func)
 {
 	while (list)
 	{
@@ -186,9 +186,9 @@ JList *j_list_find_custom(JList *list, void *data,
 }
 
 
-void j_list_foreach(JList *list, JVisitCustom func, void *data)
+void nmp_list_foreach(nmp_list_t *list, nmp_visit_custom func, void *data)
 {
-	JList *next;
+	nmp_list_t *next;
 
 	while (list)
 	{
@@ -199,28 +199,28 @@ void j_list_foreach(JList *list, JVisitCustom func, void *data)
 }
 
 
-void j_list_free_1(JList *list)
+void nmp_list_free_1(nmp_list_t *list)
 {
 	if (list)
-		j_del(list, JList, 1);
+		nmp_del(list, nmp_list_t, 1);
 }
 
 
-void j_list_free(JList *list)
+void nmp_list_free(nmp_list_t *list)
 {
-	JList *next;
+	nmp_list_t *next;
 
 	while (list)
 	{
 		next = list->next;
-		j_list_free_1(list);
+		nmp_list_free_1(list);
 		list = next;
 	}
 }
 
 
 
-JList *j_list_first(JList *list)
+nmp_list_t *nmp_list_first(nmp_list_t *list)
 {
 	if (list)
 	{
@@ -232,7 +232,7 @@ JList *j_list_first(JList *list)
 }
 
 
-JList *j_list_last(JList *list)
+nmp_list_t *nmp_list_last(nmp_list_t *list)
 {
 	if (list)
 	{

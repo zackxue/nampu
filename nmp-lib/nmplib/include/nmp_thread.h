@@ -1,5 +1,5 @@
-#ifndef __J_THREAD_H__
-#define __J_THREAD_H__
+#ifndef __NMP_THREAD_H__
+#define __NMP_THREAD_H__
 
 #include "nmp_error.h"
 #include "nmp_types.h"
@@ -9,13 +9,13 @@
 extern "C" {
 #endif
 
-typedef void *(*JThreadFunc)(void *data);
-typedef void (*JDestroyNotify)(void *data);
+typedef void *(*nmp_thread_func)(void *data);
+typedef void (*nmp_destroy_notify)(void *data);
 
-typedef struct _JThread JThread;
-typedef struct _JMutex JMutex;
-typedef struct _JCond JCond;
-typedef struct _JPrivate JPrivate;
+typedef struct _nmp_thread  nmp_thread_t;
+typedef struct _nmp_mutex   nmp_mutex_t;
+typedef struct _nmp_cond    nmp_cond_t;
+typedef struct _nmp_private nmp_private_t;
 
 typedef enum
 {
@@ -23,87 +23,88 @@ typedef enum
 	THREAD_PRIORITY_NORMAL,
 	THREAD_PRIORITY_HIGH,
 	THREAD_PRIORITY_URGENT
-}JThreadPriority;
+}nmp_thread_priority;
 
-struct _JThread
+struct _nmp_thread
 {
-	JThreadFunc func;
+	nmp_thread_func func;
 	void *data;
 	int joinable;
-	JThreadPriority priority;
+	nmp_thread_priority priority;
 };
 
-typedef struct _JThreadInterfaces JThreadInterfaces;
+typedef struct _nmp_thread_interfaces nmp_thread_interfaces_t;
 
-struct _JThreadInterfaces
+struct _nmp_thread_interfaces
 {
-	JMutex* (*mutex_new)(void);
-	void (*mutex_lock)(JMutex *mutex);
-	int  (*mutex_trylock)(JMutex *mutex);
-	void (*mutex_unlock)(JMutex *mutex);
-	void (*mutex_free)(JMutex *mutex);
+	nmp_mutex_t* (*mutex_new)(void);
+	void (*mutex_lock)(nmp_mutex_t *mutex);
+	int  (*mutex_trylock)(nmp_mutex_t *mutex);
+	void (*mutex_unlock)(nmp_mutex_t *mutex);
+	void (*mutex_free)(nmp_mutex_t *mutex);
 
-	JCond* (*cond_new)(void);
-	void (*cond_signal)(JCond *cond);
-	void (*cond_broadcast)(JCond *cond);
-	void (*cond_wait)(JCond *cond, JMutex *mutex);
-	int  (*cond_timed_wait)(JCond *cond, JMutex *mutex, JTimeVal *end_time);
-	void (*cond_free)(JCond *cond);
+	nmp_cond_t* (*cond_new)(void);
+	void (*cond_signal)(nmp_cond_t *cond);
+	void (*cond_broadcast)(nmp_cond_t *cond);
+	void (*cond_wait)(nmp_cond_t *cond, nmp_mutex_t *mutex);
+	int  (*cond_timed_wait)(nmp_cond_t *cond, nmp_mutex_t *mutex, nmp_timeval_t *end_time);
+	void (*cond_free)(nmp_cond_t *cond);
 
-	void (*thread_create)(JThreadFunc func, void *arg, unsigned long stack_size,
-						int joinable, int bound, JThreadPriority priority,
-                        void *thread, JError **error);
+	void (*thread_create)(nmp_thread_func func, void *arg, unsigned long stack_size,
+						int joinable, int bound, nmp_thread_priority priority,
+                        void *thread, nmp_error_t **error);
 
 	void (*thread_yield)(void);
 	void (*thread_join)(void *thread);
 	void (*thread_exit)(void);
-	void (*thread_set_priority)(void *thread, JThreadPriority priority);
+	void (*thread_set_priority)(void *thread, nmp_thread_priority priority);
 	void (*thread_self)(void *thread);
 	int  (*thread_equal)(void *thread1, void *thread2);
 
-	JPrivate* (*private_new)(JDestroyNotify destructor);
-	void* (*private_get)(JPrivate *private_key);
-	void (*private_set)(JPrivate *private_key, void *data);
+	nmp_private_t* (*private_new)(nmp_destroy_notify destructor);
+	void* (*private_get)(nmp_private_t *private_key);
+	void (*private_set)(nmp_private_t *private_key, void *data);
 };
 
-extern JThreadInterfaces *jlib_thread_ops;
+extern nmp_thread_interfaces_t *nmplib_thread_ops;
 
-#define J_THREAD_INVOKE(op, arglist) \
-	(*jlib_thread_ops->op) arglist
+#define NMP_THREAD_INVOKE(op, arglist) \
+	(*nmplib_thread_ops->op) arglist
 
-#define j_mutex_new() J_THREAD_INVOKE(mutex_new, ())
-#define j_mutex_lock(mutex) J_THREAD_INVOKE(mutex_lock, (mutex))
-#define j_mutex_trylock(mutex) J_THREAD_INVOKE(mutex_trylock, (mutex))
-#define j_mutex_unlock(mutex) J_THREAD_INVOKE(mutex_unlock, (mutex))
-#define j_mutex_free(mutex) J_THREAD_INVOKE(mutex_free, (mutex))
-#define j_cond_new() J_THREAD_INVOKE(cond_new, ())
-#define j_cond_signal(cond) J_THREAD_INVOKE(cond_signal, (cond))
-#define j_cond_broadcast(cond) J_THREAD_INVOKE(cond_broadcast, (cond))
-#define j_cond_wait(cond, mutex) J_THREAD_INVOKE(cond_wait, ((cond), (mutex)))
-#define j_cond_timed_wait(cond, mutex, abs_time) \
-	J_THREAD_INVOKE(cond_timed_wait, ((cond), (mutex), (abs_time)))
-#define j_cond_free(cond) J_THREAD_INVOKE(cond_free, (cond))
-#define j_thread_yield() J_THREAD_INVOKE(thread_yield, ())
-#define j_private_new(destructor) J_THREAD_INVOKE(private_new, (destructor))
-#define j_private_get(key) J_THREAD_INVOKE(private_get, (key))
-#define j_private_set(key, data) J_THREAD_INVOKE(private_set, ((key), (data)))
+#define nmp_mutex_new() NMP_THREAD_INVOKE(mutex_new, ())
+#define nmp_mutex_lock(mutex) NMP_THREAD_INVOKE(mutex_lock, (mutex))
+#define nmp_mutex_trylock(mutex) NMP_THREAD_INVOKE(mutex_trylock, (mutex))
+#define nmp_mutex_unlock(mutex) NMP_THREAD_INVOKE(mutex_unlock, (mutex))
+#define nmp_mutex_free(mutex) NMP_THREAD_INVOKE(mutex_free, (mutex))
+#define nmp_cond_new() NMP_THREAD_INVOKE(cond_new, ())
+#define nmp_cond_signal(cond) NMP_THREAD_INVOKE(cond_signal, (cond))
+#define nmp_cond_broadcast(cond) NMP_THREAD_INVOKE(cond_broadcast, (cond))
+#define nmp_cond_wait(cond, mutex) NMP_THREAD_INVOKE(cond_wait, ((cond), (mutex)))
+#define nmp_cond_timed_wait(cond, mutex, abs_time) \
+	NMP_THREAD_INVOKE(cond_timed_wait, ((cond), (mutex), (abs_time)))
+#define nmp_cond_free(cond) NMP_THREAD_INVOKE(cond_free, (cond))
+#define nmp_thread_yield() NMP_THREAD_INVOKE(thread_yield, ())
+#define nmp_private_new(destructor) NMP_THREAD_INVOKE(private_new, (destructor))
+#define nmp_private_get(key) NMP_THREAD_INVOKE(private_get, (key))
+#define nmp_private_set(key, data) NMP_THREAD_INVOKE(private_set, ((key), (data)))
 
-JThread *j_thread_create_internal(JThreadFunc func, void *arg, 
-	unsigned long stack_size,int joinable, int bound, JThreadPriority priority,
-	JError **error);
+#define nmp_thread_join(thread_id) NMP_THREAD_INVOKE(thread_join, (thread_id))
+#define nmp_thread_self(thread_id) NMP_THREAD_INVOKE(thread_self, (thread_id))
+#define nmp_thread_exit() NMP_THREAD_INVOKE(thread_exit, ())
 
-#define j_thread_create(func, arg, joinable, error) \
-	j_thread_create_internal(func, arg, 0, joinable, 0, THREAD_PRIORITY_NORMAL, error)
+nmp_thread_t *nmp_thread_create_internal(nmp_thread_func func, void *arg, 
+	unsigned long stack_size,int joinable, int bound, nmp_thread_priority priority,
+	nmp_error_t **error);
 
-void *j_thread_join(JThread *thread);
-void j_thread_exit(void *retval);
-void j_thread_set_priority(JThread *thread, JThreadPriority priority);
-JThread *j_thread_self( void );
-JBool j_thread_equal(JThread *thread1, JThread *thread2);
+#define nmp_thread_create(func, arg, joinable, error) \
+	nmp_thread_create_internal(func, arg, 0, joinable, 0, THREAD_PRIORITY_NORMAL, error)
+
+void nmp_thread_set_priority(nmp_thread_t *thread, nmp_thread_priority priority);
+nmp_bool_t nmp_thread_equal(nmp_thread_t *thread1, nmp_thread_t *thread2);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __J_THREAD_H__ */
+#endif	/* __NMP_THREAD_H__ */

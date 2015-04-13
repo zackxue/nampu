@@ -19,12 +19,14 @@ vpath %.h ./include
 vpath %.h ../include
 vpath %.h ../../include
 
-TARGET	= ../bin/libprocessxml.a
+TARGET_DIR = ../bin
+TARGET	= ${TARGET_DIR}/libprocessxml.a
 DEPS	= Makefile.deps
 
 .PHONY: clean install uninstall
 
 ${TARGET}: ${C_OBJS} 
+	test -z ${TARGET_DIR} || mkdir -p ${TARGET_DIR}
 	$(AR) -rs ${TARGET} ${C_OBJS}
 
 %.o: %.c ${DEPS}

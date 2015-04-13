@@ -11,7 +11,7 @@ libnmplib_a_SOURCES=nmp_mem.c \
 		   nmp_event.c \
 		   nmp_sched.c \
 		   nmp_base64.c
-libnmplib_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
+libnmplib_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC -pthread
 
 libnmplibincludedir=$(prefix)/include/nampu/nmplib
 libnmplibinclude_HEADERS=$(top_srcdir)/include/*.h

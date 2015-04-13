@@ -1,3 +1,1 @@
-log/libnmprtspsvr_a-rc_log.o: log/rc_log.c /usr/include/stdc-predef.h
-
-/usr/include/stdc-predef.h:
+log/libnmprtspsvr_a-rc_log.o: log/rc_log.c

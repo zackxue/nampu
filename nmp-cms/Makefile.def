@@ -11,8 +11,8 @@ C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
 CPP_SRCS	= ${shell find . -name "*.cpp"}
 CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
 
-PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC -m32
-PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC -m32
+PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC -m32 -pthread
+PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC -m32 -pthread
 
 GLIB_VERSION	:= 2.0
 GLIB_LIBS	:= glib-${GLIB_VERSION} gobject-${GLIB_VERSION} gthread-${GLIB_VERSION}

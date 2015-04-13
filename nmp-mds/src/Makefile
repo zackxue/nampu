@@ -13,7 +13,7 @@ SELF_INCLUDES	+= -I../lib/include
 vpath %.h ../include
 vpath %.h ../lib/include
 
-SELF_LIBS	+= -lev -lnmpev -lev -L../lib/bin -lprocessxml -lxml2 -lrtspwatch -lnmprtspparser
+SELF_LIBS	+= -lev -lnmpgev -lev -L../lib/bin -lprocessxml -lxml2 -lrtspwatch -lnmprtspparser
 SELF_LIBS	+= -rdynamic -ldl
 SELF_LIBS	+= ${PRJ_LIBS}
 

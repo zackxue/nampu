@@ -13,4 +13,4 @@ automake --foreign --add-missing --copy
 
 autoconf
 
-./configure --prefix=$NMP_LIB_INSTALL
+./configure --prefix=$NMP_LIB_INSTALL CFLAGS="-g"

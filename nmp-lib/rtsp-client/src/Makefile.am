@@ -21,7 +21,7 @@ libnmprtspclient_a_SOURCES=./rtp/rtp_fake.c \
 			rtsp-watch \
 			sock.c
 
-libnmprtspclient_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
+libnmprtspclient_a_CFLAGS=-Wall -fno-inline -fstack-protector -fPIC
 
 libnmprtspclientincludedir=$(prefix)/include/nampu/rtsp-client
 

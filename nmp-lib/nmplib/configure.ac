@@ -8,7 +8,7 @@ AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIR(m4)
 AM_INIT_AUTOMAKE(foreign)
 
-: ${CFLAGS=""}
+#: ${CFLAGS=""}
 
 # Checks for programs.
 AC_PROG_CC

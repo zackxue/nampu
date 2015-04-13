@@ -13,4 +13,4 @@ automake -a #--foreign --add-missing --copy
 
 autoconf
 
-./configure --prefix=$NMP_LIB_INSTALL CFLAGS=-fPIC
+./configure --prefix=$NMP_LIB_INSTALL CFLAGS="-fPIC -g"

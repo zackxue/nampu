@@ -34,7 +34,7 @@ AC_DEFINE_UNQUOTED(LIBNMPSHARE_MICRO_VERSION,$LIBNMPSHARE_MICRO_VERSION, [micro 
 AC_DEFINE_UNQUOTED(LIBNMPSHARE_VERSION,"$LIBNMPSHARE_VERSION",[LIBNMPSHARE version number])
 ##################################################################
 
-: ${CFLAGS=""}
+#: ${CFLAGS=""}
 
 # Checks for programs.
 AC_PROG_CC

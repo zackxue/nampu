@@ -5,7 +5,7 @@
 #define ENABLE_DEBUG 0
 
 /* Define if ssl is enabled */
-/* #undef ENABLE_SSL */
+#define ENABLE_SSL 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1

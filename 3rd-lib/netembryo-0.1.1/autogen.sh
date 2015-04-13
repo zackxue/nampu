@@ -13,4 +13,4 @@ set -x
 
 autoreconf -i
 
-./configure --prefix=$NMP_LIB_INSTALL
+./configure --prefix=$NMP_LIB_INSTALL CFLAGS="-fPIC -g"

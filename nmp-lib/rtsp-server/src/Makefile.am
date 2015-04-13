@@ -31,7 +31,7 @@ libnmprtspsvr_a_SOURCES=rtsp-server.c \
 			./utils/ports.c
 
 #libnmprtspsvr_a_LIBADD=
-libnmprtspsvr_a_CFLAGS=-Wall -g -fno-inline -fstack-protector -fPIC
+libnmprtspsvr_a_CFLAGS=-Wall -fno-inline -fstack-protector -fPIC
 #nmprtspsvr_a_CXXFLAGS=
 
 libnmprtspsvrincludedir=$(prefix)/include/nampu/rtsp-server

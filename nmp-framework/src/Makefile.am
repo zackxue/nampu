@@ -21,7 +21,7 @@ libnmpframework_la_LDFLAGS=-no-undefined -version-info $(LIBNMPFRAMEWORK_SO_VERS
 libnmpframework_la_LIBFLAGS=
 
 
-libnmpframework_la_CFLAGS=-Wall -g -fno-inline -fstack-protector -pthread
+libnmpframework_la_CFLAGS=-Wall -fno-inline -fstack-protector -pthread
 
 libnmpframeworkincludedir=$(prefix)/include/nampu/framework
 libnmpframeworkinclude_HEADERS=$(top_srcdir)/include/*.h

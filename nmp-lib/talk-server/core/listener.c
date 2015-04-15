@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "unix_sock.h"
 #include "client.h"
 #include "loop.h"

@@ -65,7 +65,6 @@ void *__get_main_loop()
     return g_loop;
 }
 
-#define MAX_LOOP_NUM (1)
 
 void *__get_main_sched()
 {

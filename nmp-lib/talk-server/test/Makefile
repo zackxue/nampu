@@ -3,37 +3,37 @@
 #        October 9th, 2012
 #
 
-include $(PROJ_ROOT)/Rules.mk
+include ../Makefile.def
 
-PWD := $(shell pwd)
-SRCS := $(shell find . -maxdepth 1 -name "*.c")
-OBJS := $(patsubst %.c, %.o, $(SRCS))
-DEPS := Makfile.deps
-TARG := E_TARG
-INCS += -I$(PWD)
-INCS += -I$(PWD)/inc
+SELF_CFLAGS   	+= ${PRJ_CFLAGS}
+SELF_DEFINE	+= ${PRJ_DEFINE} 
 
-EXCLUDE_DIRS := inc lib docs
-DIRS := $(filter-out $(EXCLUDE_DIRS), $(basename $(patsubst ./%, %, $(shell find . -maxdepth 1 -type d))))
-CLEAN_DIRS := $(addprefix _cls_, $(DIRS))
+SELF_INCLUDES	+= -I../include
 
-$(TARG): $(DEPS) $(OBJS) ALL_DIR
-	echo $(addprefix "$(PWD)/", $(OBJS)) > $@
+vpath %.h ../include
 
-$(DEPS): $(SRCS)
-	-${CC} -MM ${CFLAGS} $^ > $@ ${INCS}
+SELF_LIBS	+= -L../core -ltalksvr
 
-.PHONY: ALL_DIR $(DIRS) clean $(CLEAN_DIRS)
+SELF_LIBS	+= ${PRJ_LIBS}
+SELF_LIBS	+= -lnmplib
 
-ALL_DIR: $(DIRS)
+SELF_LDFLAGS	+= ${PRJ_LDFLAGS}
 
-$(DIRS):
-	$(MAKE) -C $@
+TARGET	= ./test
+DEPS	= Makefile.deps
+
+.PHONY: clean
+
+$(TARGET): $(C_OBJS)
+	${CC} -o $@ ${SELF_LDFLAGS} $^ ${SELF_LIBS}
+
+%.o : %.c ${DEPS}
+	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}
+
+$(DEPS): ${C_SRCS}
+	${CC} -MM ${SELF_CFLAGS} ${SELF_DEFINE} $^ > $@ ${SELF_INCLUDES}
 
 -include $(DEPS)
 
-clean: $(CLEAN_DIRS)
-	-rm $(OBJS) $(DEPS) $(TARG) -rf
-
-$(CLEAN_DIRS):
-	$(MAKE) -C $(patsubst _cls_%, %, $@) clean
+clean:
+	@rm -rf ${C_OBJS} ${DEPS} ${TARGET}

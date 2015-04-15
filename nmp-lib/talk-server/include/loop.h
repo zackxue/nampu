@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include "jlib.h"
+#include "nmplib.h"
 #include "fd_set.h"
 
 typedef struct loop_s 

@@ -1,4 +1,5 @@
-
+#include <arpa/inet.h>
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <sys/types.h>
@@ -11,6 +12,7 @@
 #include "listener.h"
 #include "media_set.h"
 #include "client.h"
+#include "unix_sock.h"
 
 #ifdef AUDIO_TRANSMIT_MODE
 talk_handle_t *talk_handle_ref(talk_handle_t *hdl)

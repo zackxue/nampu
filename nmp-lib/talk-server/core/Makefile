@@ -1,39 +1,38 @@
-#
-#        Author:
-#        October 9th, 2012
-#
+# Makefile for talk-server core
 
-include $(PROJ_ROOT)/Rules.mk
+include ../Makefile.def
 
-PWD := $(shell pwd)
-SRCS := $(shell find . -maxdepth 1 -name "*.c")
-OBJS := $(patsubst %.c, %.o, $(SRCS))
-DEPS := Makfile.deps
-TARG := O_TARG
-INCS += -I$(PWD)
-INCS += -I$(PWD)/inc
+SELF_CFLAGS   	+= ${PRJ_CFLAGS}
+SELF_DEFINE	+= ${PRJ_DEFINE} 
 
-EXCLUDE_DIRS := inc lib docs
-DIRS := $(filter-out $(EXCLUDE_DIRS), $(basename $(patsubst ./%, %, $(shell find . -maxdepth 1 -type d))))
-CLEAN_DIRS := $(addprefix _cls_, $(DIRS))
+SELF_INCLUDES	+= ${PRJ_INCLUDES}
+SELF_INCLUDES	+= -I../include
 
-$(TARG): $(DEPS) $(OBJS) ALL_DIR
-	echo $(addprefix "$(PWD)/", $(OBJS)) > $@
+vpath %.h ../include
 
-$(DEPS): $(SRCS)
-	-${CC} -MM ${CFLAGS} $^ > $@ ${INCS}
+TARGET		= libtalksvr.a
+DEPS		= Makefile.deps
 
-.PHONY: ALL_DIR $(DIRS) clean $(CLEAN_DIRS)
+.PHONY: clean install uninstall
 
-ALL_DIR: $(DIRS)
+${TARGET}: ${C_OBJS}
+	$(AR) -rs $@ ${C_OBJS}
 
-$(DIRS):
-	$(MAKE) -C $@
+%.o: %.c ${DEPS}
+	${CC} ${SELF_CFLAGS} -o $@ -c $< ${SELF_INCLUDES}
+
+$(DEPS): $(C_SRCS)
+	${CC} -MM ${SELF_CFLAGS} ${SELF_DEFINE} $^ > $@ ${SELF_INCLUDES}
 
 -include $(DEPS)
 
-clean: $(CLEAN_DIRS)
-	-rm $(OBJS) $(DEPS) $(TARG) -rf
+clean:
+	@rm ${C_OBJS}
+	@rm ${TARGET}
+	@rm ${DEPS}
 
-$(CLEAN_DIRS):
-	$(MAKE) -C $(patsubst _cls_%, %, $@) clean
+install:
+	@echo "Sorry, install command will be enable in the future.\n"
+
+uninstall:
+	@echo "Sorry, uninstall command will be enable in the future.\n"

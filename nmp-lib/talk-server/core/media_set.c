@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "log.h"
 #include "media_set.h"
 

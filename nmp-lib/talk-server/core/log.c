@@ -1,5 +1,6 @@
 #include <stdarg.h>
-#include "jlib.h"
+#include <stdlib.h>
+#include <nmplib.h>
 #include "macros.h"
 #include "alloc.h"
 
@@ -19,7 +20,7 @@ struct __log_item
 static log_handler_t log_it = NULL; 
 static int32_t log_verbose = LVL_DEBUG;
 static atomic_t backlog = ATOMIC_INIT;
-static JThreadPool *log_tp = NULL;		/* For log service task */
+static nmp_threadpool_t *log_tp = NULL;		/* For log service task */
 
 
 static void
@@ -81,7 +82,7 @@ void ___tr_log(int32_t level, char *file, int32_t line, const char *fmt, ...)
 		li->err = 1;
 	else
 		li->err = 0;
-	j_thread_pool_push(log_tp, li);
+	nmp_threadpool_push(log_tp, li);
 }
 
 
@@ -90,7 +91,7 @@ void init_log_facility( void )
 	if (log_tp)
 		return;
 
-	log_tp = j_thread_pool_new(log_service_op_fun, NULL, 1, NULL);
+	log_tp = nmp_threadpool_new(log_service_op_fun, NULL, 1, NULL);
 	BUG_ON(!log_tp);
 }
 

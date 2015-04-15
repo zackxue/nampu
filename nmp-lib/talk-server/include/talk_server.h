@@ -13,6 +13,8 @@ talk_hdl* talk_server_new();
 int talk_server_start(talk_hdl *s, int port);
 void talk_server_free(talk_hdl *s);
 
+talk_ops_t *__get_talk_ops();
+
 #ifdef __cplusplus
 }
 #endif

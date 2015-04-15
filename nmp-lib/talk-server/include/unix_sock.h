@@ -38,5 +38,6 @@ int32_t unix_sock_get_peer(int32_t sock, uint8_t *ip, int32_t size);
 int socket_write(int fd, char *buf, int size);
 int socket_read(int fd, char *buf, int size);
 int socket_set_noblock(int fd);
+int socket_set_linger(int fd);
 
 #endif	//__TINY_RAIN_UNIX_SOCK_H__

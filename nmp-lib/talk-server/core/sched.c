@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "loop.h"
 #include "log.h"
 #include "sched.h"

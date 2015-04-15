@@ -1,4 +1,5 @@
-
+#include <stdlib.h>
+#include <unistd.h>
 #include "watcher.h"
 
 #ifndef NULL

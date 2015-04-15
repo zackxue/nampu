@@ -3,7 +3,7 @@
 #define __MEDIA_SET_H__
 
 #include "def.h"
-#include "jlib.h"
+#include "nmplib.h"
 #include "list.h"
 #include "client.h"
 

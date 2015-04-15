@@ -1,0 +1,27 @@
+# Makefile.def for talk server
+
+C++	= g++
+CC 	= gcc
+AR 	= ar
+LD	= ld
+
+C_SRCS		= ${shell find . -name "*.c"}
+C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
+
+CPP_SRCS	= ${shell find . -name "*.cpp"}
+CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
+
+PRJ_CFLAGS	+= ${CFLAGS}
+PRJ_CFLAGS	+= -Wall -g -fno-inline -fstack-protector -fPIC -pthread
+
+PRJ_CPPFLAGS	+= ${CPPFLAGS}
+PRJ_CPPFLAGS 	+= -Wall -g -fno-inline -fstack-protector -fPIC -pthread
+
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmplib
+
+PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib
+
+PRJ_LDFLAGS	+= -fPIC -pthread
+
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmplib

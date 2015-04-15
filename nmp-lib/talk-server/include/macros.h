@@ -5,7 +5,7 @@
 #include <sys/syscall.h>  
 #define gettid() syscall(__NR_gettid)
 
-#include "jlib.h"
+#include "nmplib.h"
 
 #define POINTER_BACK_TO(x) \
 	void*	owner;

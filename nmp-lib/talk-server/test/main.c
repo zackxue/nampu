@@ -1,7 +1,11 @@
-
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
+#include "file.h"
 #include "media_struct.h"
 #include "talk_api.h"
 #include "talk_server.h"

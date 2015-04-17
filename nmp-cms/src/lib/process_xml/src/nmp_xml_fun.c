@@ -68,7 +68,7 @@
 #include "nmp_xml_fun.h"
 #include "nmp_cmd_type.h"
 #include "nmp_msg_share.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_xml.h"
 
 #define NODE_VALUE_LEN  64

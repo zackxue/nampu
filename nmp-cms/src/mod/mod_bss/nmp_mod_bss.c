@@ -1,10 +1,10 @@
 #include <pthread.h>
 #include "nmp_mod_bss.h"
 #include "nmp_ports.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_bss_struct.h"
 #include "message/nmp_msg_bss.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_message.h"
 #include "nmp_memory.h"
 #include "nmp_proto.h"

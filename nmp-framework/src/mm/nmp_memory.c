@@ -1,5 +1,5 @@
 #include "nmp_memory.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 
 #define MAX_MEM_SIZE		(2 << 20)
 

@@ -21,7 +21,6 @@ struct _nmp_connection
 	int		flags;
 };
 
-
 static __inline__ int
 __nmp_conn_set_flags(nmp_conn_t *conn, int flgs)
 {
@@ -292,7 +291,7 @@ nmp_conn_write(nmp_conn_t *conn, char *buf, size_t size)
 
 
 __export int
-j_resolve_host(struct sockaddr_in *sin, char *host, int port)
+nmp_resolve_host(struct sockaddr_in *sin, char *host, int port)
 {
 	char dns_buf[DNS_BUFFER_LEN];
 	struct hostent ht, *ret = NULL;

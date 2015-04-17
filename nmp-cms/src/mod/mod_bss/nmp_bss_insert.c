@@ -1,4 +1,4 @@
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_appcore.h"
 #include "nmp_mod_bss.h"
 

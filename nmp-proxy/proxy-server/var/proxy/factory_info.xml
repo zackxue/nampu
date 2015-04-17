@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<message type="FactoryListInfo">
+    <factory>
+        <factoryName>Hikvision</factoryName>
+        <machineList count="2">
+            <machine>
+                <machineType>0</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+            <machine>
+                <machineType>6</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+        </machineList>
+    </factory>
+    <factory>
+        <factoryName>Dahua</factoryName>
+        <machineList count="2">
+            <machine>
+                <machineType>0</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+            <machine>
+                <machineType>6</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+        </machineList>
+    </factory>
+    <factory>
+        <factoryName>Hbgk</factoryName>
+        <machineList count="2">
+            <machine>
+                <machineType>0</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+            <machine>
+                <machineType>6</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+        </machineList>
+    </factory>
+    <factory>
+        <factoryName>XiongMaiTech</factoryName>
+        <machineList count="2">
+            <machine>
+                <machineType>0</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+            <machine>
+                <machineType>6</machineType>
+                <versionList count="1">
+                    <sdkVersion>2.0.1</sdkVersion>
+                </versionList>
+            </machine>
+        </machineList>
+    </factory>
+</message>

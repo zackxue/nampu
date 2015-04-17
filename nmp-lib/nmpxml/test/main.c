@@ -245,16 +245,16 @@ static int create_xml_file_from_buffer(const char *buffer, size_t buf_size, cons
 	snprintf(request->domain_id, sizeof(request->domain_id), "%s", "JXJ-DOMAIN-ID-0001");
 	snprintf(request->pu_or_gu_id, sizeof(request->pu_or_gu_id), "%s", "JXJ-PU-ID-000000000001");
 
-	msg = jpf_xml_msg_new_2(cmd_type, request, sizeof(*request));
+	msg = nmp_xml_msg_new_2(cmd_type, request, sizeof(*request));
 	j_xml_dealloc(request, sizeof(*request));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), path);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_result(int cmd_type, const char *path)
@@ -273,16 +273,16 @@ static void test_set_result(int cmd_type, const char *path)
 	snprintf(result->pu_or_gu_id, sizeof(result->pu_or_gu_id), "%s", "JXJ-PU-ID-000000001");
 	result->result.code = 1;
 	
-	msg = jpf_xml_msg_new_2(cmd_type, result, sizeof(*result));
+	msg = nmp_xml_msg_new_2(cmd_type, result, sizeof(*result));
 	j_xml_dealloc(result, sizeof(*result));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), path);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }*/
 
@@ -304,13 +304,13 @@ static void test_register_request()
 	snprintf(reg_request->cms_ip, sizeof(reg_request->cms_ip), "%s", "192.168.1.12");
 	reg_request->pu_type = 1;
 	
-	msg = jpf_xml_msg_new_2(REGISTER_REQUEST_ID, reg_request, sizeof(*reg_request));
+	msg = nmp_xml_msg_new_2(REGISTER_REQUEST_ID, reg_request, sizeof(*reg_request));
 	j_xml_dealloc(reg_request, sizeof(*reg_request));
 
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_REGISTER_REQUEST_PATH);
 	//printf("%d.buf: %s\n", ret, buf);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	/*reg_request = (PuRegister*)msg->priv_obj;
@@ -320,7 +320,7 @@ static void test_register_request()
 	printf("reg->cms_ip : %s<<<<.\n", reg->cms_ip);
 	printf("reg->pu_type: %d<<<<.\n", reg->pu_type);//*/	
 
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -342,16 +342,16 @@ static void test_register_response()
 	snprintf(reg_response->mds_ip, sizeof(reg_response->mds_ip), "%s", "192.168.1.12");
 	reg_response->mds_port = 1234;
 	
-	msg = jpf_xml_msg_new_2(REGISTER_RESPONSE_ID, reg_response, sizeof(*reg_response));
+	msg = nmp_xml_msg_new_2(REGISTER_RESPONSE_ID, reg_response, sizeof(*reg_response));
 	j_xml_dealloc(reg_response, sizeof(*reg_response));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_REGISTER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_heart_beat_request()
@@ -367,16 +367,16 @@ static void test_heart_beat_request()
 
 	snprintf(pu_heart->pu_id, sizeof(pu_heart->pu_id), "%s", "JXJ-PU-ID-000000000001");
 	
-	msg = jpf_xml_msg_new_2(HEART_BEAT_REQUEST_ID, pu_heart, sizeof(*pu_heart));
+	msg = nmp_xml_msg_new_2(HEART_BEAT_REQUEST_ID, pu_heart, sizeof(*pu_heart));
 	j_xml_dealloc(pu_heart, sizeof(*pu_heart));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_HEART_BEAT_REQUEST_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_heart_beat_response()
@@ -393,16 +393,16 @@ static void test_heart_beat_response()
 	hrt_beat_resp->result.code = 1;
 	get_local_time(&(hrt_beat_resp->server_time));
 	
-	msg = jpf_xml_msg_new_2(HEART_BEAT_RESPONSE_ID, hrt_beat_resp, sizeof(*hrt_beat_resp));
+	msg = nmp_xml_msg_new_2(HEART_BEAT_RESPONSE_ID, hrt_beat_resp, sizeof(*hrt_beat_resp));
 	j_xml_dealloc(hrt_beat_resp, sizeof(*hrt_beat_resp));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_HEART_BEAT_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_change_dispatch_request()
@@ -422,16 +422,16 @@ static void test_change_dispatch_request()
 	snprintf(change_disp->mds_ip, sizeof(change_disp->mds_ip), "%s", "192.168.1.12");
 	change_disp->mds_port = 4321;
 	
-	msg = jpf_xml_msg_new_2(CHANGE_DISPATCH_REQUEST_ID, change_disp, sizeof(*change_disp));
+	msg = nmp_xml_msg_new_2(CHANGE_DISPATCH_REQUEST_ID, change_disp, sizeof(*change_disp));
 	j_xml_dealloc(change_disp, sizeof(*change_disp));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_CHANGE_DISPATCH_REQUEST_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_change_dispatch_result()
@@ -471,16 +471,16 @@ static void test_device_info_response()
 	dev_info->rs485_num = 1;
 	dev_info->rs232_num = 1;	
 	
-	msg = jpf_xml_msg_new_2(DEVICE_INFO_RESPONSE_ID, dev_info, sizeof(*dev_info));
+	msg = nmp_xml_msg_new_2(DEVICE_INFO_RESPONSE_ID, dev_info, sizeof(*dev_info));
 	j_xml_dealloc(dev_info, sizeof(*dev_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "./get_device_info.xml");
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_get_device_ntp_info()
@@ -511,12 +511,12 @@ static void test_device_ntp_info_response()
 	ntp_info->dst_enable = 1;
 	ntp_info->reserve = 0;
 	
-	msg = jpf_xml_msg_new_2(DEVICE_NTP_INFO_RESPONSE_ID, ntp_info, sizeof(*ntp_info));
+	msg = nmp_xml_msg_new_2(DEVICE_NTP_INFO_RESPONSE_ID, ntp_info, sizeof(*ntp_info));
 	j_xml_dealloc(ntp_info, sizeof(*ntp_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_DEVICE_NTP_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
@@ -535,7 +535,7 @@ static void test_device_ntp_info_response()
 	printf("session_id: %d\n", dev_pltf_info.cms_port);
 	exit(0);//*/
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_device_ntp_info()
@@ -561,16 +561,16 @@ static void test_set_device_ntp_info()
 	ntp_info->dst_enable = 1;
 	ntp_info->reserve = 0;
 	
-	msg = jpf_xml_msg_new_2(SET_DEVICE_NTP_INFO_ID, ntp_info, sizeof(*ntp_info));
+	msg = nmp_xml_msg_new_2(SET_DEVICE_NTP_INFO_ID, ntp_info, sizeof(*ntp_info));
 	j_xml_dealloc(ntp_info, sizeof(*ntp_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_DEVICE_NTP_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_device_ntp_info_result()
@@ -596,16 +596,16 @@ static void test_set_device_time()
 	dev_time->time_zone = 8;
 	dev_time->sync_enable = 1;
 	
-	msg = jpf_xml_msg_new_2(SET_DEVICE_TIME_ID, dev_time, sizeof(*dev_time));
+	msg = nmp_xml_msg_new_2(SET_DEVICE_TIME_ID, dev_time, sizeof(*dev_time));
 	j_xml_dealloc(dev_time, sizeof(*dev_time));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_DEVICE_TIME_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_device_time_result()
@@ -638,16 +638,16 @@ static void test_platform_info_response()
 	pltf_info->mds_port = 4321;
 	pltf_info->protocol = 1;
 	
-	msg = jpf_xml_msg_new_2(PLATFORM_INFO_RESPONSE_ID, pltf_info, sizeof(*pltf_info));
+	msg = nmp_xml_msg_new_2(PLATFORM_INFO_RESPONSE_ID, pltf_info, sizeof(*pltf_info));
 	j_xml_dealloc(pltf_info, sizeof(*pltf_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_PLATFORM_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_platform_info()
@@ -672,16 +672,16 @@ static void test_set_platform_info()
 	pltf_info->mds_port = 4321;
 	pltf_info->protocol = 1;
 	
-	msg = jpf_xml_msg_new_2(SET_PLATFORM_INFO_ID, pltf_info, sizeof(*pltf_info));
+	msg = nmp_xml_msg_new_2(SET_PLATFORM_INFO_ID, pltf_info, sizeof(*pltf_info));
 	j_xml_dealloc(pltf_info, sizeof(*pltf_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_PLATFORM_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_platform_info_result()
@@ -724,16 +724,16 @@ static void test_network_info_response()
 	net_info->server_port = 4321;
 	net_info->web_port = 4322;
 	
-	msg = jpf_xml_msg_new_2(NETWORK_INFO_RESPONSE_ID, net_info, sizeof(*net_info));
+	msg = nmp_xml_msg_new_2(NETWORK_INFO_RESPONSE_ID, net_info, sizeof(*net_info));
 	j_xml_dealloc(net_info, sizeof(*net_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_NETWORK_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_network_info()
@@ -769,12 +769,12 @@ static void test_set_network_info()
 	net_info->server_port = 4321;
 	net_info->web_port = 4322;
 	
-	msg = jpf_xml_msg_new_2(SET_NETWORK_INFO_ID, net_info, sizeof(*net_info));
+	msg = nmp_xml_msg_new_2(SET_NETWORK_INFO_ID, net_info, sizeof(*net_info));
 	j_xml_dealloc(net_info, sizeof(*net_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_NETWORK_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
@@ -808,7 +808,7 @@ printf("ip		   : %s\n", packet->network[J_SDK_3G].ip);
 printf("netmask    : %s\n", packet->network[J_SDK_3G].netmask);
 printf("gateway    : %s\n", packet->network[J_SDK_3G].gateway);
 
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_network_info_result()
@@ -838,16 +838,16 @@ static void test_pppoe_info_response()
 	pppoe_info->result.code = 1;
 	pppoe_info->type = 1;
 	
-	msg = jpf_xml_msg_new_2(PPPOE_INFO_RESPONSE_ID, pppoe_info, sizeof(*pppoe_info));
+	msg = nmp_xml_msg_new_2(PPPOE_INFO_RESPONSE_ID, pppoe_info, sizeof(*pppoe_info));
 	j_xml_dealloc(pppoe_info, sizeof(*pppoe_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_PPPOE_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_pppoe_info()
@@ -869,16 +869,16 @@ static void test_set_pppoe_info()
 	pppoe_info->result.code = 1;
 	pppoe_info->type = 1;
 	
-	msg = jpf_xml_msg_new_2(SET_PPPOE_INFO_ID, pppoe_info, sizeof(*pppoe_info));
+	msg = nmp_xml_msg_new_2(SET_PPPOE_INFO_ID, pppoe_info, sizeof(*pppoe_info));
 	j_xml_dealloc(pppoe_info, sizeof(*pppoe_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_PPPOE_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_pppoe_info_result()
@@ -920,16 +920,16 @@ static void test_encode_parameter_response()
 	encode_para = (EncodeParameterPacket*)j_xml_alloc(sizeof(*encode_para));	
 	get_encode_parameter(encode_para);
 	
-	msg = jpf_xml_msg_new_2(ENCODE_PARAMETER_RESPONSE_ID, encode_para, sizeof(*encode_para));
+	msg = nmp_xml_msg_new_2(ENCODE_PARAMETER_RESPONSE_ID, encode_para, sizeof(*encode_para));
 	j_xml_dealloc(encode_para, sizeof(*encode_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_ENCODE_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_encode_parameter()
@@ -944,16 +944,16 @@ static void test_set_encode_parameter()
 	encode_para = (EncodeParameterPacket*)j_xml_alloc(sizeof(*encode_para));
 	get_encode_parameter(encode_para);
 	
-	msg = jpf_xml_msg_new_2(SET_ENCODE_PARAMETER_ID, encode_para, sizeof(*encode_para));
+	msg = nmp_xml_msg_new_2(SET_ENCODE_PARAMETER_ID, encode_para, sizeof(*encode_para));
 	j_xml_dealloc(encode_para, sizeof(*encode_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_ENCODE_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_encode_parameter_result()
@@ -988,16 +988,16 @@ static void test_display_parameter_response()
 	display_para = (DisplayParameterPacket*)j_xml_alloc(sizeof(*display_para));
 	get_display_parameter(display_para);
 	
-	msg = jpf_xml_msg_new_2(DISPLAY_PARAMETER_RESPONSE_ID, display_para, sizeof(*display_para));
+	msg = nmp_xml_msg_new_2(DISPLAY_PARAMETER_RESPONSE_ID, display_para, sizeof(*display_para));
 	j_xml_dealloc(display_para, sizeof(*display_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_DISPLAY_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_display_parameter()
@@ -1012,16 +1012,16 @@ static void test_set_display_parameter()
 	display_para = (DisplayParameterPacket*)j_xml_alloc(sizeof(*display_para));
 	get_display_parameter(display_para);
 	
-	msg = jpf_xml_msg_new_2(SET_DISPLAY_PARAMETER_ID, display_para, sizeof(*display_para));
+	msg = nmp_xml_msg_new_2(SET_DISPLAY_PARAMETER_ID, display_para, sizeof(*display_para));
 	j_xml_dealloc(display_para, sizeof(*display_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_DISPLAY_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_display_parameter_result()
@@ -1079,12 +1079,12 @@ static void test_record_parameter_response()
 	record_para = (RecordParameterPacket*)j_xml_alloc(sizeof(*record_para));
 	get_record_parameter(record_para);
 	
-	msg = jpf_xml_msg_new_2(RECORD_PARAMETER_RESPONSE_ID, record_para, sizeof(*record_para));
+	msg = nmp_xml_msg_new_2(RECORD_PARAMETER_RESPONSE_ID, record_para, sizeof(*record_para));
 	j_xml_dealloc(record_para, sizeof(*record_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_RECORD_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);*/
 	
 		
@@ -1115,7 +1115,7 @@ static void test_record_parameter_response()
 		}
 	}
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_record_parameter()
@@ -1130,16 +1130,16 @@ static void test_set_record_parameter()
 	record_para = (RecordParameterPacket*)j_xml_alloc(sizeof(*record_para));
 	get_record_parameter(record_para);
 	
-	msg = jpf_xml_msg_new_2(SET_RECORD_PARAMETER_ID, record_para, sizeof(*record_para));
+	msg = nmp_xml_msg_new_2(SET_RECORD_PARAMETER_ID, record_para, sizeof(*record_para));
 	j_xml_dealloc(record_para, sizeof(*record_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_RECORD_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_record_parameter_result()
@@ -1172,16 +1172,16 @@ static void test_hide_parameter_response()
 	hide_para = (HideParameterPacket*)j_xml_alloc(sizeof(*hide_para));
 	get_hide_parameter(hide_para);
 	
-	msg = jpf_xml_msg_new_2(HIDE_PARAMETER_RESPONSE_ID, hide_para, sizeof(*hide_para));
+	msg = nmp_xml_msg_new_2(HIDE_PARAMETER_RESPONSE_ID, hide_para, sizeof(*hide_para));
 	j_xml_dealloc(hide_para, sizeof(*hide_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_HIDE_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_hide_parameter()
@@ -1196,16 +1196,16 @@ static void test_set_hide_parameter()
 	hide_para = (HideParameterPacket*)j_xml_alloc(sizeof(*hide_para));
 	get_hide_parameter(hide_para);
 	
-	msg = jpf_xml_msg_new_2(SET_HIDE_PARAMETER_ID, hide_para, sizeof(*hide_para));
+	msg = nmp_xml_msg_new_2(SET_HIDE_PARAMETER_ID, hide_para, sizeof(*hide_para));
 	j_xml_dealloc(hide_para, sizeof(*hide_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_HIDE_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_hide_parameter_result()
@@ -1240,16 +1240,16 @@ static void test_serial_parameter_response()
 	serial_para = (SerialParameterPacket*)j_xml_alloc(sizeof(*serial_para));
 	get_serial_parameter(serial_para);
 	
-	msg = jpf_xml_msg_new_2(SERIAL_PARAMETER_RESPONSE_ID, serial_para, sizeof(*serial_para));
+	msg = nmp_xml_msg_new_2(SERIAL_PARAMETER_RESPONSE_ID, serial_para, sizeof(*serial_para));
 	j_xml_dealloc(serial_para, sizeof(*serial_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SERIAL_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_serial_parameter()
@@ -1264,16 +1264,16 @@ static void test_set_serial_parameter()
 	serial_para = (SerialParameterPacket*)j_xml_alloc(sizeof(*serial_para));
 	get_serial_parameter(serial_para);
 	
-	msg = jpf_xml_msg_new_2(SET_SERIAL_PARAMETER_ID, serial_para, sizeof(*serial_para));
+	msg = nmp_xml_msg_new_2(SET_SERIAL_PARAMETER_ID, serial_para, sizeof(*serial_para));
 	j_xml_dealloc(serial_para, sizeof(*serial_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_SERIAL_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_serial_parameter_result()
@@ -1311,16 +1311,16 @@ static void test_osd_parameter_response()
 	osd_para = (OSDParameterPacket*)j_xml_alloc(sizeof(*osd_para));
 	get_osd_parameter(osd_para);
 	
-	msg = jpf_xml_msg_new_2(OSD_PARAMETER_RESPONSE_ID, osd_para, sizeof(*osd_para));
+	msg = nmp_xml_msg_new_2(OSD_PARAMETER_RESPONSE_ID, osd_para, sizeof(*osd_para));
 	j_xml_dealloc(osd_para, sizeof(*osd_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_OSD_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_osd_parameter()
@@ -1335,16 +1335,16 @@ static void test_set_osd_parameter()
 	osd_para = (OSDParameterPacket*)j_xml_alloc(sizeof(*osd_para));
 	get_osd_parameter(osd_para);
 	
-	msg = jpf_xml_msg_new_2(SET_OSD_PARAMETER_ID, osd_para, sizeof(*osd_para));
+	msg = nmp_xml_msg_new_2(SET_OSD_PARAMETER_ID, osd_para, sizeof(*osd_para));
 	j_xml_dealloc(osd_para, sizeof(*osd_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_OSD_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_osd_parameter_result()
@@ -1377,16 +1377,16 @@ static void test_ptz_parameter_response()
 	ptz_para = (PTZParameterPacket*)j_xml_alloc(sizeof(*ptz_para));
 	get_ptz_parameter(ptz_para);
 	
-	msg = jpf_xml_msg_new_2(PTZ_PARAMETER_RESPONSE_ID, ptz_para, sizeof(*ptz_para));
+	msg = nmp_xml_msg_new_2(PTZ_PARAMETER_RESPONSE_ID, ptz_para, sizeof(*ptz_para));
 	j_xml_dealloc(ptz_para, sizeof(*ptz_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "./test.xml");
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_ptz_parameter()
@@ -1401,16 +1401,16 @@ static void test_set_ptz_parameter()
 	ptz_para = (PTZParameterPacket*)j_xml_alloc(sizeof(*ptz_para));
 	get_ptz_parameter(ptz_para);
 	
-	msg = jpf_xml_msg_new_2(SET_PTZ_PARAMETER_ID, ptz_para, sizeof(*ptz_para));
+	msg = nmp_xml_msg_new_2(SET_PTZ_PARAMETER_ID, ptz_para, sizeof(*ptz_para));
 	j_xml_dealloc(ptz_para, sizeof(*ptz_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_PTZ_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_ptz_parameter_result()
@@ -1445,16 +1445,16 @@ static void test_ftp_parameter_response()
 	ftp_para = (FTPParameterPacket*)j_xml_alloc(sizeof(*ftp_para));
 	get_ftp_parameter(ftp_para);
 	
-	msg = jpf_xml_msg_new_2(FTP_PARAMETER_RESPONSE_ID, ftp_para, sizeof(*ftp_para));
+	msg = nmp_xml_msg_new_2(FTP_PARAMETER_RESPONSE_ID, ftp_para, sizeof(*ftp_para));
 	j_xml_dealloc(ftp_para, sizeof(*ftp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_FTP_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_ftp_parameter()
@@ -1469,16 +1469,16 @@ static void test_set_ftp_parameter()
 	ftp_para = (FTPParameterPacket*)j_xml_alloc(sizeof(*ftp_para));
 	get_ftp_parameter(ftp_para);
 	
-	msg = jpf_xml_msg_new_2(SET_FTP_PARAMETER_ID, ftp_para, sizeof(*ftp_para));
+	msg = nmp_xml_msg_new_2(SET_FTP_PARAMETER_ID, ftp_para, sizeof(*ftp_para));
 	j_xml_dealloc(ftp_para, sizeof(*ftp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_FTP_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_ftp_parameter_result()
@@ -1516,16 +1516,16 @@ static void test_smtp_parameter_response()
 	smtp_para = (SMTPParameterPacket*)j_xml_alloc(sizeof(*smtp_para));
 	get_smtp_parameter(smtp_para);
 	
-	msg = jpf_xml_msg_new_2(SMTP_PARAMETER_RESPONSE_ID, smtp_para, sizeof(*smtp_para));
+	msg = nmp_xml_msg_new_2(SMTP_PARAMETER_RESPONSE_ID, smtp_para, sizeof(*smtp_para));
 	j_xml_dealloc(smtp_para, sizeof(*smtp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SMTP_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_smtp_parameter()
@@ -1540,16 +1540,16 @@ static void test_set_smtp_parameter()
 	smtp_para = (SMTPParameterPacket*)j_xml_alloc(sizeof(*smtp_para));
 	get_smtp_parameter(smtp_para);
 	
-	msg = jpf_xml_msg_new_2(SET_SMTP_PARAMETER_ID, smtp_para, sizeof(*smtp_para));
+	msg = nmp_xml_msg_new_2(SET_SMTP_PARAMETER_ID, smtp_para, sizeof(*smtp_para));
 	j_xml_dealloc(smtp_para, sizeof(*smtp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_SMTP_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_smtp_parameter_result()
@@ -1588,16 +1588,16 @@ static void test_upnp_parameter_response()
 	upnp_para = (UPNPParameterPacket*)j_xml_alloc(sizeof(*upnp_para));
 	get_upnp_parameter(upnp_para);
 	
-	msg = jpf_xml_msg_new_2(UPNP_PARAMETER_RESPONSE_ID, upnp_para, sizeof(*upnp_para));
+	msg = nmp_xml_msg_new_2(UPNP_PARAMETER_RESPONSE_ID, upnp_para, sizeof(*upnp_para));
 	j_xml_dealloc(upnp_para, sizeof(*upnp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_UPNP_PARAMETER_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_upnp_parameter()
@@ -1612,16 +1612,16 @@ static void test_set_upnp_parameter()
 	upnp_para = (UPNPParameterPacket*)j_xml_alloc(sizeof(*upnp_para));
 	get_upnp_parameter(upnp_para);
 	
-	msg = jpf_xml_msg_new_2(SET_UPNP_PARAMETER_ID, upnp_para, sizeof(*upnp_para));
+	msg = nmp_xml_msg_new_2(SET_UPNP_PARAMETER_ID, upnp_para, sizeof(*upnp_para));
 	j_xml_dealloc(upnp_para, sizeof(*upnp_para));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_UPNP_PARAMETER_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_upnp_parameter_result()
@@ -1661,16 +1661,16 @@ static void test_disk_info_response()
 	disk_info->disk[1].disk_type = 2;
 	disk_info->disk[1].status = 2;
 	
-	msg = jpf_xml_msg_new_2(DEVICE_DISK_INFO_RESPONSE_ID, disk_info, sizeof(*disk_info));
+	msg = nmp_xml_msg_new_2(DEVICE_DISK_INFO_RESPONSE_ID, disk_info, sizeof(*disk_info));
 	j_xml_dealloc(disk_info, sizeof(*disk_info));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_DISK_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void get_format_disk_info(FormatDiskPacket *format_disk)
@@ -1694,16 +1694,16 @@ static void test_format_disk_request()
 	format_disk = (FormatDiskPacket*)j_xml_alloc(sizeof(*format_disk));
 	get_format_disk_info(format_disk);
 	
-	msg = jpf_xml_msg_new_2(FORMAT_DISK_REQUEST_ID, format_disk, sizeof(*format_disk));
+	msg = nmp_xml_msg_new_2(FORMAT_DISK_REQUEST_ID, format_disk, sizeof(*format_disk));
 	j_xml_dealloc(format_disk, sizeof(*format_disk));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_FORMAT_DISK_REQUEST_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_format_disk_result()
@@ -1726,16 +1726,16 @@ static void test_format_progress_response()
 	format_disk = (FormatDiskPacket*)j_xml_alloc(sizeof(*format_disk));
 	get_format_disk_info(format_disk);
 	
-	msg = jpf_xml_msg_new_2(FORMAT_PROGRESS_RESPONSE_ID, format_disk, sizeof(*format_disk));
+	msg = nmp_xml_msg_new_2(FORMAT_PROGRESS_RESPONSE_ID, format_disk, sizeof(*format_disk));
 	j_xml_dealloc(format_disk, sizeof(*format_disk));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_FORMAT_PROGRESS_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_get_move_alarm_info()
@@ -1768,17 +1768,17 @@ static void test_move_alarm_info_response()
 	/*move_alarm = (MoveAlarmPacket*)j_xml_alloc(sizeof(*move_alarm));
 	get_move_alarm_info(move_alarm);
 	
-	msg = jpf_xml_msg_new_2(MOVE_ALARM_INFO_RESPONSE_ID, move_alarm, sizeof(*move_alarm));
+	msg = nmp_xml_msg_new_2(MOVE_ALARM_INFO_RESPONSE_ID, move_alarm, sizeof(*move_alarm));
 	j_xml_dealloc(move_alarm, sizeof(*move_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_MOVE_ALARM_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);*/
 	
 	get_xml_info_from_file("aaa.xml", buf, sizeof(buf));
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_move_alarm_info()
@@ -1793,16 +1793,16 @@ static void test_set_move_alarm_info()
 	move_alarm = (MoveAlarmPacket*)j_xml_alloc(sizeof(*move_alarm));
 	get_move_alarm_info(move_alarm);
 	
-	msg = jpf_xml_msg_new_2(SET_MOVE_ALARM_INFO_ID, move_alarm, sizeof(*move_alarm));
+	msg = nmp_xml_msg_new_2(SET_MOVE_ALARM_INFO_ID, move_alarm, sizeof(*move_alarm));
 	j_xml_dealloc(move_alarm, sizeof(*move_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_MOVE_ALARM_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_move_alarm_info_result()
@@ -1837,16 +1837,16 @@ static void test_lost_alarm_info_response()
 	lost_alarm = (LostAlarmPacket*)j_xml_alloc(sizeof(*lost_alarm));
 	get_lost_alarm_info(lost_alarm);
 	
-	msg = jpf_xml_msg_new_2(LOST_ALARM_INFO_RESPONSE_ID, lost_alarm, sizeof(*lost_alarm));
+	msg = nmp_xml_msg_new_2(LOST_ALARM_INFO_RESPONSE_ID, lost_alarm, sizeof(*lost_alarm));
 	j_xml_dealloc(lost_alarm, sizeof(*lost_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_LOST_ALARM_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_lost_alarm_info()
@@ -1861,16 +1861,16 @@ static void test_set_lost_alarm_info()
 	lost_alarm = (LostAlarmPacket*)j_xml_alloc(sizeof(*lost_alarm));
 	get_lost_alarm_info(lost_alarm);
 	
-	msg = jpf_xml_msg_new_2(SET_LOST_ALARM_INFO_ID, lost_alarm, sizeof(*lost_alarm));
+	msg = nmp_xml_msg_new_2(SET_LOST_ALARM_INFO_ID, lost_alarm, sizeof(*lost_alarm));
 	j_xml_dealloc(lost_alarm, sizeof(*lost_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_LOST_ALARM_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_lost_alarm_info_result()
@@ -1908,16 +1908,16 @@ static void test_hide_alarm_info_response()
 	hide_alarm = (HideAlarmPacket*)j_xml_alloc(sizeof(*hide_alarm));
 	get_hide_alarm_info(hide_alarm);
 	
-	msg = jpf_xml_msg_new_2(HIDE_ALARM_INFO_RESPONSE_ID, hide_alarm, sizeof(*hide_alarm));
+	msg = nmp_xml_msg_new_2(HIDE_ALARM_INFO_RESPONSE_ID, hide_alarm, sizeof(*hide_alarm));
 	j_xml_dealloc(hide_alarm, sizeof(*hide_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_HIDE_ALARM_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_hide_alarm_info()
@@ -1932,16 +1932,16 @@ static void test_set_hide_alarm_info()
 	hide_alarm = (HideAlarmPacket*)j_xml_alloc(sizeof(*hide_alarm));
 	get_hide_alarm_info(hide_alarm);
 	
-	msg = jpf_xml_msg_new_2(SET_HIDE_ALARM_INFO_ID, hide_alarm, sizeof(*hide_alarm));
+	msg = nmp_xml_msg_new_2(SET_HIDE_ALARM_INFO_ID, hide_alarm, sizeof(*hide_alarm));
 	j_xml_dealloc(hide_alarm, sizeof(*hide_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_HIDE_ALARM_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_hide_alarm_info_result()
@@ -1976,16 +1976,16 @@ static void test_io_alarm_info_response()
 	io_alarm = (IoAlarmPacket*)j_xml_alloc(sizeof(*io_alarm));
 	get_io_alarm_info(io_alarm);
 	
-	msg = jpf_xml_msg_new_2(IO_ALARM_INFO_RESPONSE_ID, io_alarm, sizeof(*io_alarm));
+	msg = nmp_xml_msg_new_2(IO_ALARM_INFO_RESPONSE_ID, io_alarm, sizeof(*io_alarm));
 	j_xml_dealloc(io_alarm, sizeof(*io_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_IO_ALARM_INFO_RESPONSE_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_io_alarm_info()
@@ -2000,16 +2000,16 @@ static void test_set_io_alarm_info()
 	io_alarm = (IoAlarmPacket*)j_xml_alloc(sizeof(*io_alarm));
 	get_io_alarm_info(io_alarm);
 	
-	msg = jpf_xml_msg_new_2(SET_IO_ALARM_INFO_ID, io_alarm, sizeof(*io_alarm));
+	msg = nmp_xml_msg_new_2(SET_IO_ALARM_INFO_ID, io_alarm, sizeof(*io_alarm));
 	j_xml_dealloc(io_alarm, sizeof(*io_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SET_IO_ALARM_INFO_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_io_alarm_info_result()
@@ -2035,16 +2035,16 @@ static void test_submit_alarm_request()
 	sub_alarm->alarm = 1;
 	get_local_time(&(sub_alarm->alarm_time));
 	
-	msg = jpf_xml_msg_new_2(SUBMIT_ALARM_REQUEST_ID, sub_alarm, sizeof(*sub_alarm));
+	msg = nmp_xml_msg_new_2(SUBMIT_ALARM_REQUEST_ID, sub_alarm, sizeof(*sub_alarm));
 	j_xml_dealloc(sub_alarm, sizeof(*sub_alarm));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), MERGE_SUBMIT_ALARM_REQUEST_PATH);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);*/
+	nmp_xml_msg_destroy(msg);*/
 	printf("***************************************************\n");
 }
 static void test_submit_alarm_result()
@@ -2070,16 +2070,16 @@ static void test_get_media_url_response()
 	snprintf(media_url->gu_id, sizeof(media_url->gu_id), "%s", "JXJ-PU-ID-000000000001");
 	snprintf(media_url->url, sizeof(media_url->url), "%s", "JXJ-URI-000000000001");
 	
-	msg = jpf_xml_msg_new_2(GET_MEDIA_URL_RESPONSE_ID, media_url, sizeof(*media_url));
+	msg = nmp_xml_msg_new_2(GET_MEDIA_URL_RESPONSE_ID, media_url, sizeof(*media_url));
 	j_xml_dealloc(media_url, sizeof(*media_url));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "get_media_url_response.xml");
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//printf("%d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2197,14 +2197,14 @@ static void test_user_login_request()
 	snprintf(login_info.username, sizeof(login_info.username), "%s", "JXJ-USER-NAME");
 	snprintf(login_info.password, sizeof(login_info.password), "%s", "JXJ-PASSWORD");
 	
-	msg = jpf_xml_msg_new_2(USER_LONGI_REQUEST_ID, &login_info, sizeof(struct __UserInfo));	
+	msg = nmp_xml_msg_new_2(USER_LONGI_REQUEST_ID, &login_info, sizeof(struct __UserInfo));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "user_login_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2217,16 +2217,16 @@ static void test_user_login_result()
 	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
-	msg = jpf_xml_msg_new_2(USER_LONGI_RESULT_ID, (void*)&result, sizeof(result));	
+	msg = nmp_xml_msg_new_2(USER_LONGI_RESULT_ID, (void*)&result, sizeof(result));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "user_login_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2239,16 +2239,16 @@ static void test_add_user_info_result()
 	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
-	msg = jpf_xml_msg_new_2(ADD_USER_RESULT_ID, (void*)&result, sizeof(result));	
+	msg = nmp_xml_msg_new_2(ADD_USER_RESULT_ID, (void*)&result, sizeof(result));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "add_user_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2261,14 +2261,14 @@ static void test_proxy_heart_request()
 	NmpXmlMsg *msg = NULL;
 	struct __UserHeart heart;
 	
-	msg = jpf_xml_msg_new_2(USER_HEART_REQUEST_ID, &heart, sizeof(struct __UserHeart));	
+	msg = nmp_xml_msg_new_2(USER_HEART_REQUEST_ID, &heart, sizeof(struct __UserHeart));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "proxy_heart_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2283,16 +2283,16 @@ static void test_proxy_heart_result()
 	
 	get_local_time(&(heart.server_time));
 	
-	msg = jpf_xml_msg_new_2(USER_HEART_RESPONSE_ID, (void*)&heart, sizeof(struct __UserHeart));	
+	msg = nmp_xml_msg_new_2(USER_HEART_RESPONSE_ID, (void*)&heart, sizeof(struct __UserHeart));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "proxy_heart_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2322,21 +2322,21 @@ static void test_user_list_info()
 	snprintf(user_info->password, sizeof(user_info->password), 
 		"%s", "JXJ-222");
 	
-	msg = jpf_xml_msg_new_2(USER_LIST_INFO_ID, 
+	msg = nmp_xml_msg_new_2(USER_LIST_INFO_ID, 
 			(void*)&user_list, sizeof(struct _prx_user_st));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "user_list_info.xml");
 	
 	j_xml_dealloc(user_list.user_info, user_list.count * sizeof(struct __UserInfo));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	struct _prx_user_st *user = XML_MSG_DATA(msg);
 	printf("%d\n", user->count);
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2380,21 +2380,21 @@ static void test_device_list_info()
 	snprintf(dev_info->username, sizeof(dev_info->username), "%s", "username");
 	snprintf(dev_info->password, sizeof(dev_info->password), "%s", "password");
 	
-	msg = jpf_xml_msg_new_2(DEVICE_LIST_INFO_ID, 
+	msg = nmp_xml_msg_new_2(DEVICE_LIST_INFO_ID, 
 			(void*)&device_list, sizeof(struct _prx_device_st));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "device_list_info.xml");
 	
 	j_xml_dealloc(device_list.device_info, device_list.count * sizeof(struct _prx_device_info));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	struct _prx_device_st *device = XML_MSG_DATA(msg);
 	printf("%d\n", device->count);
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2430,14 +2430,14 @@ static void test_factory_list_info()
 	snprintf(fct_info->sdk_version[1], sizeof(fct_info->sdk_version[1]), "%s", "2.0.1");
 	snprintf(fct_info->factory_name, sizeof(fct_info->factory_name), "%s", "szjxj");
 	
-	msg = jpf_xml_msg_new_2(FACTORY_LIST_INFO_ID, 
+	msg = nmp_xml_msg_new_2(FACTORY_LIST_INFO_ID, 
 			(void*)&fct_list, sizeof(struct _prx_factory_list));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "factory_list_info.xml");
 	
 	j_xml_dealloc(fct_list.factory, fct_list.count * sizeof(struct _prx_factory_info));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);*/
 	
 	get_xml_info_from_file("factory_info.xml", buf, MAX_XML_LEN);
@@ -2463,7 +2463,7 @@ static void test_factory_list_info()
 	}
 
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2481,18 +2481,18 @@ static void test_fuzzy_find_user_request()
 	snprintf(user_info.username, sizeof(user_info.username), 
 		"%s", "JXJ-111");
 	
-	msg = jpf_xml_msg_new_2(FUZZY_FIND_USER_REQUEST_ID, 
+	msg = nmp_xml_msg_new_2(FUZZY_FIND_USER_REQUEST_ID, 
 			(void*)&user_info, sizeof(struct __UserInfo));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "fuzzy_find_user_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2518,20 +2518,20 @@ static void test_fuzzy_find_user_result()
 	snprintf(user_info->username, sizeof(user_info->username), 
 		"%s", "JXJ-222");
 
-	msg = jpf_xml_msg_new_2(FUZZY_FIND_USER_RESULT_ID, 
+	msg = nmp_xml_msg_new_2(FUZZY_FIND_USER_RESULT_ID, 
 			(void*)&user_list, sizeof(struct _prx_user_st));
 
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "fuzzy_find_user_result.xml");
 	
 	j_xml_dealloc(user_list.user_info, user_list.count * sizeof(struct __UserInfo));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2553,18 +2553,18 @@ static void test_modify_password_request()
 	snprintf(modify_pwd.new_pwd, sizeof(modify_pwd.new_pwd), 
 		"%s", "JXJ-333");
 	
-	msg = jpf_xml_msg_new_2(MODIFY_PASSWORD_REQUEST_ID, 
+	msg = nmp_xml_msg_new_2(MODIFY_PASSWORD_REQUEST_ID, 
 			(void*)&modify_pwd, sizeof(struct _prx_modify_pwd));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "modify_password_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2577,16 +2577,16 @@ static void test_modify_password_result()
 	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
-	msg = jpf_xml_msg_new_2(MODIFY_PASSWORD_RESULT_ID, (void*)&result, sizeof(int));	
+	msg = nmp_xml_msg_new_2(MODIFY_PASSWORD_RESULT_ID, (void*)&result, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "modify_password_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2612,14 +2612,14 @@ static void test_add_device_request()
 	snprintf(dev_info.platform_ip, sizeof(dev_info.platform_ip), "%s", "192.168.1.12");
 
 	
-	msg = jpf_xml_msg_new_2(ADD_DEVICE_REQUEST_ID, &dev_info, sizeof(prx_device_info));	
+	msg = nmp_xml_msg_new_2(ADD_DEVICE_REQUEST_ID, &dev_info, sizeof(prx_device_info));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "add_device_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2632,16 +2632,16 @@ static void test_add_device_result()
 	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
-	msg = jpf_xml_msg_new_2(ADD_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
+	msg = nmp_xml_msg_new_2(ADD_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "add_device_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2654,16 +2654,16 @@ static void test_del_device_request()
 	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
-	msg = jpf_xml_msg_new_2(DEL_DEVICE_REQUEST_ID, (void*)&device_id, sizeof(int));	
+	msg = nmp_xml_msg_new_2(DEL_DEVICE_REQUEST_ID, (void*)&device_id, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "del_device_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2676,16 +2676,16 @@ static void test_del_device_result()
 	NmpXmlMsg *msg = NULL;
 	int result = 1;
 	
-	msg = jpf_xml_msg_new_2(DEL_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
+	msg = nmp_xml_msg_new_2(DEL_DEVICE_RESULT_ID, (void*)&result, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "del_device_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2698,10 +2698,10 @@ static void test_get_device_info_request()
 	NmpXmlMsg *msg = NULL;
 	/*int device_id = 1;
 	
-	msg = jpf_xml_msg_new_2(GET_DEVICE_INFO_REQUEST_ID, (void*)&device_id, sizeof(int));	
+	msg = nmp_xml_msg_new_2(GET_DEVICE_INFO_REQUEST_ID, (void*)&device_id, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "get_device_info_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);*/
 	
 	get_xml_info_from_file("get_page_device_request.xml", buf, MAX_XML_LEN);
@@ -2715,7 +2715,7 @@ static void test_get_device_info_request()
 	printf("%d\n", page_dev->offset);
 
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_get_device_info_result()
@@ -2767,16 +2767,16 @@ static void test_get_device_info_result()
 	snprintf(dev_info->device_ip, sizeof(dev_info->device_ip), "%s", "192.168.1.12");
 	snprintf(dev_info->platform_ip, sizeof(dev_info->platform_ip), "%s", "192.168.1.12");
 
-	msg = jpf_xml_msg_new_2(GET_DEVICE_INFO_RESULT_ID, &page_dev, sizeof(prx_page_device));	
+	msg = nmp_xml_msg_new_2(GET_DEVICE_INFO_RESULT_ID, &page_dev, sizeof(prx_page_device));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	
 	create_xml_file_from_buffer(buf, strlen(buf), "get_device_info_result.xml");
 	j_xml_dealloc(page_dev.dev_info, sizeof(struct _prx_device_info)*2);
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_set_device_info_request()
@@ -2800,14 +2800,14 @@ static void test_set_device_info_request()
 	snprintf(dev_info.device_ip, sizeof(dev_info.device_ip), "%s", "192.168.1.12");
 	snprintf(dev_info.platform_ip, sizeof(dev_info.platform_ip), "%s", "192.168.1.12");
 	
-	msg = jpf_xml_msg_new_2(SET_DEVICE_INFO_REQUEST_ID, &dev_info, sizeof(prx_device_info));	
+	msg = nmp_xml_msg_new_2(SET_DEVICE_INFO_REQUEST_ID, &dev_info, sizeof(prx_device_info));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "set_device_info_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2820,16 +2820,16 @@ static void test_set_device_info_result()
 	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
-	msg = jpf_xml_msg_new_2(SET_DEVICE_INFO_RESULT_ID, (void*)&device_id, sizeof(int));	
+	msg = nmp_xml_msg_new_2(SET_DEVICE_INFO_RESULT_ID, (void*)&device_id, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "set_device_info_result.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);	
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2842,10 +2842,10 @@ static void test_get_all_device_id_request()
 	NmpXmlMsg *msg = NULL;
 	int device_id = 1;
 	
-	msg = jpf_xml_msg_new_2(GET_ALL_DEVICE_ID_REQUEST_ID, (void*)&device_id, sizeof(int));	
+	msg = nmp_xml_msg_new_2(GET_ALL_DEVICE_ID_REQUEST_ID, (void*)&device_id, sizeof(int));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "get_all_device_id_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
@@ -2853,7 +2853,7 @@ static void test_get_all_device_id_request()
 		printf("parse_xml() failer!\n");
 	void *priv = XML_MSG_DATA(msg);
 	printf("priv: %d\n", *((int*)priv));
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 static void test_get_all_device_id_result()
@@ -2870,15 +2870,15 @@ static void test_get_all_device_id_result()
 	id_list.device_id[0] = 1;
 	id_list.device_id[1] = 2;
 	
-	msg = jpf_xml_msg_new_2(GET_ALL_DEVICE_ID_RESULT_ID, &id_list, sizeof(prx_device_id_st));
+	msg = nmp_xml_msg_new_2(GET_ALL_DEVICE_ID_RESULT_ID, &id_list, sizeof(prx_device_id_st));
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "get_all_device_id_result.xml");
 	j_xml_dealloc(id_list.device_id, id_list.count * sizeof(int));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2897,10 +2897,10 @@ static void test_get_page_user_request()
 	page_user.offset = 0;
 	page_user.count = 5;
 
-	msg = jpf_xml_msg_new_2(GET_USER_INFO_REQUEST_ID, &page_user, sizeof(struct _prx_page_user));	
+	msg = nmp_xml_msg_new_2(GET_USER_INFO_REQUEST_ID, &page_user, sizeof(struct _prx_page_user));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "get_page_user_request.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);*/
 
 	get_xml_info_from_file("get_page_user_request.xml", buf, MAX_XML_LEN);
@@ -2911,7 +2911,7 @@ static void test_get_page_user_request()
 	printf("%d\n", one_page_user->offset);
 	printf("%d\n", one_page_user->count);
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2938,16 +2938,16 @@ static void test_get_page_user_response()
 	user_info = &page_user.user_info[1];
 	snprintf(user_info->username, sizeof(user_info->username), "%s", "JXJ-USER-NAME-1");
 	
-	msg = jpf_xml_msg_new_2(GET_USER_INFO_RESPONSE_ID, &page_user, sizeof(struct _prx_page_user));	
+	msg = nmp_xml_msg_new_2(GET_USER_INFO_RESPONSE_ID, &page_user, sizeof(struct _prx_page_user));	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	j_xml_dealloc(page_user.user_info, sizeof(struct __UserInfo)*2);
 	
 	create_xml_file_from_buffer(buf, strlen(buf), "get_page_user_response.xml");
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);
 	
 	//msg = parse_xml(buf, sizeof(buf), &err, 0);
-	//jpf_xml_msg_destroy(msg);
+	//nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -2989,7 +2989,7 @@ static int test_store_log_request()
   store_log_packet->beg_node = 1;
   store_log_packet->end_node = 10;
     
-  msg = jpf_xml_msg_new_2(GET_STORE_LOG_REQUEST_ID, store_log_packet, sizeof(struct __StoreLogPacket));
+  msg = nmp_xml_msg_new_2(GET_STORE_LOG_REQUEST_ID, store_log_packet, sizeof(struct __StoreLogPacket));
   j_xml_dealloc(store_log_packet, sizeof(struct __StoreLogPacket));
    
   ret = create_xml(msg, buf, sizeof(buf), 0);
@@ -2999,7 +2999,7 @@ static int test_store_log_request()
     return ret;
   }  
   
-  jpf_xml_msg_destroy_2(msg);
+  nmp_xml_msg_destroy_2(msg);
   printf("%d.buf: %s\n", ret, buf);
   
   msg = parse_xml(buf, sizeof(buf), &err, 0);
@@ -3028,7 +3028,7 @@ static int test_store_log_request()
   printf("begNode=%d\n", store_log_packet->beg_node);
   printf("endNode=%d\n", store_log_packet->end_node);
 
-  jpf_xml_msg_destroy(msg);
+  nmp_xml_msg_destroy(msg);
   printf("***************************************************\n");
   
 }
@@ -3064,7 +3064,7 @@ static int test_store_log_result()
 	store_log_info->store[1].file_size = 444;
 #endif
     
-	msg = jpf_xml_msg_new_2(GET_STORE_LOG_RESPONSE_ID, store_log_info, sizeof(struct __StoreLogPacket));
+	msg = nmp_xml_msg_new_2(GET_STORE_LOG_RESPONSE_ID, store_log_info, sizeof(struct __StoreLogPacket));
     j_xml_dealloc(store_log_info, sizeof(struct __StoreLogPacket));
 
     printf("buf:%s\n", buf);
@@ -3078,7 +3078,7 @@ static int test_store_log_result()
 
     printf("ret:%d\n", ret);
     
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	
 	msg = parse_xml(buf, sizeof(buf), &err, 0);
 	void *priv = XML_MSG_DATA(msg);
@@ -3100,7 +3100,7 @@ static int test_store_log_result()
 	              (&((struct __StoreLogPacket *)(priv))->store[0].end_time));
 	printf("%s\n", time_buffer);
 
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 
 }
@@ -3123,7 +3123,7 @@ static int test_firmware_upgrade_request()
 
 	upgrade_info->data_len = 128;
 
-	msg = jpf_xml_msg_new_2(FIRMWARE_UPGRADE_REQUEST_ID, upgrade_info, sizeof(FirmwareUpgradePacket));
+	msg = nmp_xml_msg_new_2(FIRMWARE_UPGRADE_REQUEST_ID, upgrade_info, sizeof(FirmwareUpgradePacket));
 	j_xml_dealloc(upgrade_info, sizeof(FirmwareUpgradePacket));
 
 	ret = create_xml(msg, buf, sizeof(buf), 0);
@@ -3133,7 +3133,7 @@ static int test_firmware_upgrade_request()
 		return ret;
 	}  
 
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("%d.buf: %s\n", ret, buf);
 
 	msg = parse_xml(buf, strlen(buf), &err, 0);
@@ -3149,7 +3149,7 @@ static int test_firmware_upgrade_request()
 	printf("puId=%s\n", upgrade_info->pu_id);
 	printf("data_len=%d\n", upgrade_info->data_len);*/
 
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -3187,14 +3187,14 @@ static void test_factory_list_info()
 	snprintf(fct_info->sdk_version[1], sizeof(fct_info->sdk_version[1]), "%s", "2.0.1");
 	snprintf(fct_info->factory_name, sizeof(fct_info->factory_name), "%s", "szjxj");
 	
-	msg = jpf_xml_msg_new_2(FACTORY_LIST_INFO_ID, 
+	msg = nmp_xml_msg_new_2(FACTORY_LIST_INFO_ID, 
 			(void*)&fct_list, sizeof(struct _prx_factory_list));
 	
 	ret = create_xml(msg, buf, sizeof(buf), 0);
 	create_xml_file_from_buffer(buf, strlen(buf), "factory_list_info.xml");
 	
 	j_xml_dealloc(fct_list.factory, fct_list.count * sizeof(struct _prx_factory_info));
-	jpf_xml_msg_destroy_2(msg);
+	nmp_xml_msg_destroy_2(msg);
 	printf("return: %d.buf: %s\n", ret, buf);*/
 	
 	get_xml_info_from_file("factory_info.xml", buf, MAX_XML_LEN);
@@ -3220,7 +3220,7 @@ static void test_factory_list_info()
 	}
 
 	
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	printf("***************************************************\n");
 }
 
@@ -3229,7 +3229,7 @@ static void test_factory_list_info()
 
 int main(int argc, char *argv[])
 {
-	init_jpf_xml_msg();
+	init_nmp_xml_msg();
 
 	///////////////////////////////////////////////////////////////////////////
 	/*int err;
@@ -3262,7 +3262,7 @@ int main(int argc, char *argv[])
 	printf("*************************************************************************\n");
 	create_xml(msg, buffer, sizeof(buffer), 0);
 
-	jpf_xml_msg_destroy(msg);
+	nmp_xml_msg_destroy(msg);
 	//////////////////////////////////////////////////////////////////////////*/
 	
 	//set_mem_handler(m_malloc, f_free);

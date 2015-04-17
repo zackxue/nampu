@@ -1,8 +1,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "nmp_mod_tw.h"
-#include "nmp_debug.h"
-#include "nmp_errno.h"
+#include "nmp_share_debug.h"
+#include "nmp_share_errno.h"
 #include "nmp_ports.h"
 #include "nmp_proto.h"
 #include "nmp_message.h"

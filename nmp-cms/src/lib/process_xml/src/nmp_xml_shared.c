@@ -8,7 +8,7 @@
 #include "nmp_xml_fun.h"
 #include "nmp_xml_shared.h"
 #include "nmp_cmd_type.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_share_struct.h"
 
 void

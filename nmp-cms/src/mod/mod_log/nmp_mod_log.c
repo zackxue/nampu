@@ -1,6 +1,6 @@
 #include "nmp_mod_log.h"
-#include "nmp_debug.h"
-#include "nmp_errno.h"
+#include "nmp_share_debug.h"
+#include "nmp_share_errno.h"
 #include "nmp_ports.h"
 #include "nmp_mods.h"
 #include "db_connect_pool.h"

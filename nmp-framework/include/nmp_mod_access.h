@@ -11,7 +11,7 @@
 #define __NMP_MOD_ACCESS_H__
 
 #include "nmp_appmod.h"
-#include "nmp_net.h"
+#include "nmp_share_net.h"
 
 G_BEGIN_DECLS
 

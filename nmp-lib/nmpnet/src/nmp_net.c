@@ -30,7 +30,7 @@ struct _nmp_net
 
 
 static __inline__ void
-nmp_net_init(nmp_net *self, int loops)
+nmp_net_init(nmp_net_t *self, int loops)
 {
     atomic_set(&self->ref_count, 1);
     self->killed = 0;
@@ -43,31 +43,31 @@ nmp_net_init(nmp_net *self, int loops)
 }
 
 
-__export nmp_net *
+__export nmp_net_t *
 nmp_net_new(int loops)
 {
-    nmp_net *net;
+    nmp_net_t *net;
 
-    net = nmp_new0(nmp_net, 1);
+    net = nmp_new0(nmp_net_t, 1);
     nmp_net_init(net, loops);
 
     return net;
 }
 
 static __inline__ void
-nmp_net_free(nmp_net *net)
+nmp_net_free(nmp_net_t *net)
 {
     BUG_ON(!net->killed);
     BUG_ON(net->io_list);
     BUG_ON(net->io_list);
 
     nmp_mutex_free(net->lock);
-    nmp_del(net, nmp_net, 1);
+    nmp_del(net, nmp_net_t, 1);
 }
 
 
-__export nmp_net *
-nmp_net_ref(nmp_net *net)
+__export nmp_net_t *
+nmp_net_ref(nmp_net_t *net)
 {
     NMP_ASSERT(net != NULL && 
         atomic_get(&net->ref_count) > 0);
@@ -78,7 +78,7 @@ nmp_net_ref(nmp_net *net)
 
 
 __export void
-nmp_net_unref(nmp_net *net)
+nmp_net_unref(nmp_net_t *net)
 {
     NMP_ASSERT(net != NULL && 
         atomic_get(&net->ref_count) > 0);
@@ -91,14 +91,14 @@ nmp_net_unref(nmp_net *net)
 
 
 static __inline__ void
-nmp_net_kill(nmp_net *net)
+nmp_net_kill(nmp_net_t *net)
 {
 	//BUG();
 }
 
 
 __export void
-nmp_net_release(nmp_net *net)
+nmp_net_release(nmp_net_t *net)
 {//TODO:
     NMP_ASSERT(net != NULL);
 
@@ -108,7 +108,7 @@ nmp_net_release(nmp_net *net)
 
 
 __export void 
-nmp_net_set_funcs(nmp_net *net, nmp_io_init_func init, nmp_io_fin_func fin)
+nmp_net_set_funcs(nmp_net_t *net, nmp_io_init_func init, nmp_io_fin_func fin)
 {
     NMP_ASSERT(net != NULL);
 
@@ -118,7 +118,7 @@ nmp_net_set_funcs(nmp_net *net, nmp_io_init_func init, nmp_io_fin_func fin)
 
 
 static __inline__ int
-__nmp_net_kill_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, 
+__nmp_net_kill_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, 
 	int notify, int err)
 {
     nmp_list_t *list;
@@ -144,7 +144,7 @@ __nmp_net_kill_io(nmp_net *net, nmp_netio_t *net_io, void *init_data,
 
 
 static __inline__ int
-_nmp_net_kill_io(nmp_net *net, nmp_netio_t *net_io,
+_nmp_net_kill_io(nmp_net_t *net, nmp_netio_t *net_io,
     int notify, int err)
 {
     int found;
@@ -165,7 +165,7 @@ _nmp_net_kill_io(nmp_net *net, nmp_netio_t *net_io,
 
 
 static __inline__ int
-__nmp_net_add_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int notify)
+__nmp_net_add_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, int notify)
 {
 	nmp_list_t *list;
     int rc = 0;
@@ -208,7 +208,7 @@ __nmp_net_add_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int notify)
 
 
 __export int
-nmp_net_add_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int notify)
+nmp_net_add_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, int notify)
 {
     int rc;
     NMP_ASSERT(net != NULL && net_io != NULL);
@@ -227,7 +227,7 @@ nmp_net_add_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int notify)
 
 
 __export nmp_netio_t *
-nmp_net_create_io(nmp_net *net, nmp_conn_t *conn, nmp_2proto_t *proto,
+nmp_net_create_io(nmp_net_t *net, nmp_conn_t *conn, nmp_2proto_t *proto,
 	nmp_io_est_func on_est, int *err)
 {
     nmp_netio_t *io;
@@ -259,7 +259,7 @@ nmp_net_create_io(nmp_net *net, nmp_conn_t *conn, nmp_2proto_t *proto,
 
 
 __export nmp_netio_t *
-nmp_net_create_listen_io(nmp_net *net, nmp_conn_t *conn, nmp_2proto_t *proto,
+nmp_net_create_listen_io(nmp_net_t *net, nmp_conn_t *conn, nmp_2proto_t *proto,
     int *err)
 {
     nmp_netio_t *io;
@@ -290,7 +290,7 @@ nmp_net_create_listen_io(nmp_net *net, nmp_conn_t *conn, nmp_2proto_t *proto,
 
 
 __export nmp_netio_t *
-nmp_net_create_listen_io_2(nmp_net *net, struct sockaddr *sa, nmp_2proto_t *proto, int *err)
+nmp_net_create_listen_io_2(nmp_net_t *net, struct sockaddr *sa, nmp_2proto_t *proto, int *err)
 {
     nmp_conn_t *conn;
     int rc;
@@ -350,7 +350,7 @@ nmp_net_set_io_reader(nmp_netio_t *net_io, nmp_io_reader_func reader, void *init
 
 
 static __inline__ void
-__nmp_net_establish_io(nmp_net *net, nmp_netio_t *net_io)
+__nmp_net_establish_io(nmp_net_t *net, nmp_netio_t *net_io)
 {
 	nmp_list_t *list;
 
@@ -366,7 +366,7 @@ __nmp_net_establish_io(nmp_net *net, nmp_netio_t *net_io)
 
 
 __export void
-nmp_net_establish_io(nmp_net *net, nmp_netio_t *net_io)
+nmp_net_establish_io(nmp_net_t *net, nmp_netio_t *net_io)
 {
 	NMP_ASSERT(net != NULL && net_io != NULL);
 
@@ -377,7 +377,7 @@ nmp_net_establish_io(nmp_net *net, nmp_netio_t *net_io)
 
 
 __export void
-nmp_net_async_kill_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int err)
+nmp_net_async_kill_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, int err)
 {
     int found;
 
@@ -393,7 +393,7 @@ nmp_net_async_kill_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int er
 
 
 __export int
-nmp_net_kill_io(nmp_net *net, nmp_netio_t *net_io)
+nmp_net_kill_io(nmp_net_t *net, nmp_netio_t *net_io)
 {
     NMP_ASSERT(net != NULL && net_io != NULL);
 

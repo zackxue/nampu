@@ -11,13 +11,13 @@ C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
 CPP_SRCS	= ${shell find . -name "*.cpp"}
 CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
 
-PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC -m32 -pthread
-PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC -m32 -pthread
+PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC
+PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC
 
 GLIB_VERSION	:= 2.0
 GLIB_LIBS	:= glib-${GLIB_VERSION} gobject-${GLIB_VERSION} gthread-${GLIB_VERSION}
 
-PRJ_INCLUDES	+= -I${shell pkg-config --cflags ${GLIB_LIBS}}
+PRJ_INCLUDES	+= ${shell pkg-config --cflags ${GLIB_LIBS}}
 PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include
 PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/share
 PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/framework

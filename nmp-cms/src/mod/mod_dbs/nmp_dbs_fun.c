@@ -1,6 +1,6 @@
 #include "nmp_mysql_fun.h"
 #include "nmp_internal_msg.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_shared.h"
 #include "nmp_dbs_fun.h"
 #include "nmp_memory.h"

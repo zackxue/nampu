@@ -1,6 +1,6 @@
 
-#ifndef __J_XML_API_H__
-#define __J_XML_API_H__
+#ifndef __NMP_XML_API_H__
+#define __NMP_XML_API_H__
 
 
 #include "nmp_packet.h"
@@ -745,6 +745,6 @@ int merge_get_p2p_id_response_xml(void *pvalue, char *buffer, size_t size);
 #endif /* __cplusplus */
 
 
-#endif //__J_XML_API_H__
+#endif //__NMP_XML_API_H__
 
 

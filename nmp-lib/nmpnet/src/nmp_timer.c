@@ -43,7 +43,7 @@ void nmp_timer_del(nmp_timer_t *timer)
 //for include some necessary file.o
 void test()
 {
-    nmp_thread_pool_new(NULL, NULL, 1, NULL);
+    nmp_threadpool_new(NULL, NULL, 1, NULL);
     base64_free(NULL, 0);
     return ;
 }

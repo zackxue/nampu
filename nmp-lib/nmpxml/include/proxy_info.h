@@ -2,8 +2,8 @@
 #define __PROXY_INFO_H__
 
 
-#include "j_sdk.h"
-#include "j_xmlmsg.h"
+#include "nmp_sdk.h"
+#include "nmp_xmlmsg.h"
 
 #define GET_USER_INFO_REQUEST_CMD		"GetUserInfo"
 #define GET_USER_INFO_RESPONSE_CMD		"GetUserInfoResponse"

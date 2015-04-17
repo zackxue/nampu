@@ -8,8 +8,8 @@
 */
 
 #include "nmp_mods.h"
-#include "nmp_debug.h"
-#include "nmp_errno.h"
+#include "nmp_share_debug.h"
+#include "nmp_share_errno.h"
 
 guint msg_seq_generator = 0;
 

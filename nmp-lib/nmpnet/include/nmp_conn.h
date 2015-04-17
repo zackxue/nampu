@@ -6,7 +6,8 @@
 
 typedef struct _nmp_connection nmp_conn_t;
 
-enum _JConnFlags
+
+enum _nmp_conn_flags
 {
 	CF_TYPE_TCP = 0x01,
 	CF_TYPE_UDP = 0x02,
@@ -18,7 +19,7 @@ enum _JConnFlags
 extern "C" {
 #endif
 
-int j_resolve_host(struct sockaddr_in *sin, char *host, int port);
+int nmp_resolve_host(struct sockaddr_in *sin, char *host, int port);
 
 nmp_conn_t *nmp_conn_new(struct sockaddr *sa,
 	unsigned flags, int *errp);

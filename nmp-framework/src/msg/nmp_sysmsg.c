@@ -5,10 +5,10 @@
  * Author:
 */
 
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_sysmsg.h"
 #include "nmp_memory.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 
 G_DEFINE_TYPE(NmpSysMsg, nmp_sysmsg, NMP_TYPE_DATA);
 static gint total_sysmsg_count = 0;

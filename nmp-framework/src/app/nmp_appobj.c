@@ -1,5 +1,5 @@
-#include "nmp_errno.h"
-#include "nmp_debug.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_debug.h"
 #include "nmp_appobj.h"
 
 G_DEFINE_TYPE(NmpAppObj, nmp_app_obj, NMP_TYPE_OBJECT);

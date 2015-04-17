@@ -1,4 +1,4 @@
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_islot.h"
 
 /*

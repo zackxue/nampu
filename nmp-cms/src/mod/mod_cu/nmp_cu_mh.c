@@ -1,7 +1,7 @@
 #include "nmp_mod_cu.h"
 #include "nmp_message.h"
 #include "nmp_internal_msg.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_shared.h"
 #include "nmp_cu_msg.h"
 #include "nmp_version.h"

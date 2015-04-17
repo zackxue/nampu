@@ -11,7 +11,7 @@
 #include "nmp_appobj.h"
 #include "nmp_modio.h"
 #include "nmp_msgengine.h"
-#include "nmp_timer.h"
+#include "nmp_share_timer.h"
 #include "nmp_etable.h"
 
 G_BEGIN_DECLS

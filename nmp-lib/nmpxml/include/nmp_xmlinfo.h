@@ -1,6 +1,6 @@
 
-#ifndef __J_XML_INFO_H__
-#define __J_XML_INFO_H__
+#ifndef __NMP_XML_INFO_H__
+#define __NMP_XML_INFO_H__
 
 #define PU_GET_CSS_REQUEST_CMD				"PuGetCss"
 #define PU_GET_CSS_RESPONSE_CMD				"PuGetCssResponse"
@@ -782,6 +782,6 @@
 
 
 
-#endif //__J_XML_INFO_H__
+#endif //__NMP_XML_INFO_H__
 
 

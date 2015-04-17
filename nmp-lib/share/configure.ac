@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.68])
 AC_INIT([libnmpshare], [2.8.0], [bugs@nampu.com])
-AC_CONFIG_SRCDIR([src/nmp_io.c])
+AC_CONFIG_SRCDIR([src/nmp_share_io.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(foreign)

@@ -1,7 +1,7 @@
 #include <sys/unistd.h>
 #include "nmp_mod_tw.h"
 #include "nmp_message.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_memory.h"
 #include "nmp_shared.h"
 #include "nmp_msg_tw.h"

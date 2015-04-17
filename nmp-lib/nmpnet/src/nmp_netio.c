@@ -17,7 +17,7 @@ struct _nmp_netio
     atomic_t   ref_count;
 
     nmp_watch_t  *io_watch;
-    nmp_net      *net;
+    nmp_net_t      *net;
     nmp_mutex_t  *lock;
 
 	nmp_io_reader_func  on_read;
@@ -32,11 +32,11 @@ struct _nmp_netio
 	void      *user_data;
 };
 
-extern void nmp_net_establish_io(nmp_net *net, nmp_netio_t *net_io);
-extern int nmp_net_add_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int notify);
-extern nmp_net *nmp_net_ref(nmp_net *net);
-extern void nmp_net_unref(nmp_net *net);
-extern void nmp_net_async_kill_io(nmp_net *net, nmp_netio_t *net_io, void *init_data, int err);
+extern void nmp_net_establish_io(nmp_net_t *net, nmp_netio_t *net_io);
+extern int nmp_net_add_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, int notify);
+extern nmp_net_t *nmp_net_ref(nmp_net_t *net);
+extern void nmp_net_unref(nmp_net_t *net);
+extern void nmp_net_async_kill_io(nmp_net_t *net, nmp_netio_t *net_io, void *init_data, int err);
 
 static atomic_t total_net_io_count = ATOMIC_INIT;
 
@@ -118,7 +118,7 @@ __export void
 nmp_net_io_kill(nmp_netio_t *net_io)
 {
     nmp_watch_t *watch;
-    nmp_net *net;
+    nmp_net_t *net;
     NMP_ASSERT(net_io != NULL);
 
     nmp_mutex_lock(net_io->lock);
@@ -147,7 +147,7 @@ __export void
 nmp_net_io_async_kill(nmp_netio_t *net_io, int err)
 {
     nmp_watch_t *watch;
-    nmp_net *net;
+    nmp_net_t *net;
     NMP_ASSERT(net_io != NULL);
 
     nmp_mutex_lock(net_io->lock);
@@ -237,7 +237,7 @@ nmp_net_listen_io_new(nmp_conn_t *conn, nmp_packet_proto_t *ll_proto,
 
 
 static __inline__ void
-__nmp_net_io_set_owner(nmp_netio_t *net_io, nmp_net *owner)
+__nmp_net_io_set_owner(nmp_netio_t *net_io, nmp_net_t *owner)
 {
     if (owner)
     {
@@ -258,7 +258,7 @@ nmp_net_io_set_owner(nmp_netio_t *net_io, void *owner)
     NMP_ASSERT(net_io != NULL);
 
     nmp_mutex_lock(net_io->lock);
-    __nmp_net_io_set_owner(net_io, (nmp_net*)owner);
+    __nmp_net_io_set_owner(net_io, (nmp_net_t*)owner);
     nmp_mutex_unlock(net_io->lock);
 }
 
@@ -314,7 +314,7 @@ nmp_net_io_write_message(nmp_netio_t *net_io, void *msg)
 static __inline__ int
 nmp_net_io_add_child(nmp_netio_t *net_io, nmp_netio_t *new_io)
 {
-    nmp_net *net = NULL;
+    nmp_net_t *net = NULL;
     int rc = -E_NETIODIE;
 
     nmp_mutex_lock(net_io->lock);
@@ -366,7 +366,7 @@ nmp_net_io_add_child_watch(nmp_netio_t *net_io, void *watch)
 __export void
 nmp_net_io_establish(nmp_netio_t *net_io)
 {
-	nmp_net *net = NULL;
+	nmp_net_t *net = NULL;
 	NMP_ASSERT(net_io != NULL);
 
 	nmp_mutex_lock(net_io->lock);

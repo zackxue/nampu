@@ -9,10 +9,10 @@
 
 #include "nmp_etable.h"
 #include "nmp_appmod.h"
-#include "nmp_errno.h"
-#include "nmp_wait.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_wait.h"
 #include "nmp_list_head.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_memory.h"
 
 typedef struct _NmpEvent NmpEvent;

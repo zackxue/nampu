@@ -19,10 +19,10 @@
 #include <errno.h>
 #include <mysqld_error.h>
 #include <errmsg.h>
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_log_mysql_fun.h"
 #include "db_connect_pool.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "message/nmp_msg_share.h"
 #include "nmp_mods.h"
 #include "nmp_mod_log.h"

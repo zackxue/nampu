@@ -3,7 +3,7 @@
 #include "nmp_sysmsg.h"
 #include "nmp_message.h"
 #include "nmp_proc_xml.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 
 USING_MSG_ID_MAP(cms);
 

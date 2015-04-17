@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 #include "encrypt.h"
 #include "ET199_32.h"
-//#include "nmp_debug.h"
+//#include "nmp_share_debug.h"
 #include "nmp_wdd.h"
 
 //#define DEBUG

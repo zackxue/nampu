@@ -19,7 +19,7 @@
 #include "nmp_cmd_type.h"
 #include "nmp_mds_xml.h"
 #include "nmp_msg_struct.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_xml_shared.h"
 
 

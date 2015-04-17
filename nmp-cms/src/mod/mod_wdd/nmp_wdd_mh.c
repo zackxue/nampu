@@ -1,6 +1,6 @@
 #include "nmp_mod_wdd.h"
 #include "nmp_message.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_memory.h"
 #include "nmp_internal_msg.h"
 

@@ -5,8 +5,8 @@
  * Author:
 */
 
-#include "nmp_errno.h"
-#include "nmp_debug.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_debug.h"
 #include "nmp_appmod.h"
 
 G_DEFINE_TYPE(NmpAppMod, nmp_app_mod, NMP_TYPE_APPOBJ);

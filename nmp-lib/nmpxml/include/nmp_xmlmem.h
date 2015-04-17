@@ -1,5 +1,5 @@
-#ifndef __J_XML_MEMORY_H__
-#define __J_XML_MEMORY_H__
+#ifndef __NMP_XML_MEMORY_H__
+#define __NMP_XML_MEMORY_H__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,4 +25,4 @@ extern "C" {
 }
 #endif
 
-#endif	//__J_XML_MEMORY_H__
+#endif	//__NMP_XML_MEMORY_H__

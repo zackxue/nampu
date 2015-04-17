@@ -188,7 +188,7 @@ create_xml_msg(char buf[], size_t buf_size,
 	
 	if (0 == ret)
 	{
-		msg = jpf_xml_msg_new(data_id, pri_data, data_size);
+		msg = nmp_xml_msg_new(data_id, pri_data, data_size);
 	}
 	j_xml_dealloc(pri_data, data_size);
 	
@@ -217,7 +217,7 @@ create_xml_msg_2(char buf[], size_t buf_size,
 	
 	if (0 == ret)
 	{
-		msg = jpf_xml_msg_new_2(data_id, xml_data, data_size, fin);
+		msg = nmp_xml_msg_new_2(data_id, xml_data, data_size, fin);
 	}	
 	
 	return msg;
@@ -1112,7 +1112,7 @@ parse_get_info(ParseRequestFunc request_func,
 	if (1 == ret)
 		j_xml_dealloc(new_buf, size+1);
 	
-	msg = jpf_xml_msg_new(XML_DATA_ID(xml_data), 
+	msg = nmp_xml_msg_new(XML_DATA_ID(xml_data), 
 			(void*)XML_DATA(xml_data), XML_DATA_SIZE(xml_data));
 	
 	xml_data_destroy(xml_data);
@@ -1140,7 +1140,7 @@ static __inline__ NmpXmlMsg *
 	if (1 == ret)
 		j_xml_dealloc(new_buf, size+1);
 	
-	msg = jpf_xml_msg_new(XML_DATA_ID(xml_data), 
+	msg = nmp_xml_msg_new(XML_DATA_ID(xml_data), 
 			(void*)XML_DATA(xml_data), XML_DATA_SIZE(xml_data));
 
 	xml_data_destroy(xml_data);
@@ -3040,7 +3040,7 @@ static NmpXmlMsg *create_transparent_param_xml_msg(char buf[],
 	
 	if (0 == ret)
 	{
-		msg = jpf_xml_msg_new_2(data_id, (void*)tran_packet, 
+		msg = nmp_xml_msg_new_2(data_id, (void*)tran_packet, 
 				sizeof(TransparentPacket), destory_transparent_param);
 	}
 	

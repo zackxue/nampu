@@ -9,8 +9,8 @@
 #include <glib.h>
 #include <time.h>
 #include "nmp_shared.h"
-#include "nmp_errno.h"
-#include "nmp_debug.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_debug.h"
 #include "nmp_msg_share.h"
 #include "nmp_shared.h"
 #include "nmp_sysctl.h"

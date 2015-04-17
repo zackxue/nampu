@@ -5,8 +5,8 @@
  * Author:
 */
 
-#include "nmp_errno.h"
-#include "nmp_debug.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_debug.h"
 #include "nmp_mod_access.h"
 
 

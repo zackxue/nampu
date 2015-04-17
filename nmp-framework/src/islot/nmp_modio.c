@@ -1,4 +1,4 @@
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_modio.h"
 #include "nmp_appmod.h"
 

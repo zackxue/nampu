@@ -18,7 +18,7 @@ extern char *parse_xml_cmd_by_mxml(const char *xml_buf,
 				char cmd_buf[], size_t size);
 
 
-static __inline__ void jpf_xml_msg_init(NmpXmlMsg *self)
+static __inline__ void nmp_xml_msg_init(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 
@@ -34,7 +34,7 @@ void set_mem_handler(void *alloc, void *dealloc)
 	g_dealloc = (dealloc_t)dealloc;
 }
 
-void init_jpf_xml_msg()
+void init_nmp_xml_msg()
 {
 	XmlTable *table = NULL;
 
@@ -1125,7 +1125,7 @@ static __inline__ void jpf_priv_obj_destroy(void *priv, size_t size)
 }
 
 static __inline__ NmpXmlMsg* 
-__jpf_xml_msg_new(xmlid_t id, void *priv_obj, 
+__nmp_xml_msg_new(xmlid_t id, void *priv_obj, 
 		size_t priv_size, NmpXmlMsgDes destroy)
 {
 	NmpXmlMsg *msg = NULL;
@@ -1133,7 +1133,7 @@ __jpf_xml_msg_new(xmlid_t id, void *priv_obj,
 	J_ASSERT(priv_obj && priv_size && destroy);
 	
 	msg = j_xml_alloc(sizeof(NmpXmlMsg));
-	jpf_xml_msg_init(msg);
+	nmp_xml_msg_init(msg);
 	
 	msg->id = id;
 	msg->priv_obj = priv_obj;
@@ -1143,7 +1143,7 @@ __jpf_xml_msg_new(xmlid_t id, void *priv_obj,
 	return msg;
 }
 
-NmpXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
+NmpXmlMsg* nmp_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
 {
 	void *copy_obj = NULL;
 	NmpXmlMsgDes destroy = NULL;
@@ -1155,16 +1155,16 @@ NmpXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_size)
 		destroy = jpf_priv_obj_destroy;
 	}
 	
-	return __jpf_xml_msg_new(id, copy_obj, priv_size, destroy);
+	return __nmp_xml_msg_new(id, copy_obj, priv_size, destroy);
 }
 
-NmpXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, 
+NmpXmlMsg* nmp_xml_msg_new_2(xmlid_t id, void *priv_obj, 
 		size_t priv_size, NmpXmlMsgDes destroy)
 {
-	return __jpf_xml_msg_new(id, priv_obj, priv_size, destroy);
+	return __nmp_xml_msg_new(id, priv_obj, priv_size, destroy);
 }
 
-void jpf_xml_msg_destroy(NmpXmlMsg *self)
+void nmp_xml_msg_destroy(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 
@@ -1174,7 +1174,7 @@ void jpf_xml_msg_destroy(NmpXmlMsg *self)
 	return j_xml_dealloc(self, sizeof(NmpXmlMsg));
 }
 
-void jpf_xml_msg_destroy_2(NmpXmlMsg *self)
+void nmp_xml_msg_destroy_2(NmpXmlMsg *self)
 {
 	J_ASSERT(self);
 

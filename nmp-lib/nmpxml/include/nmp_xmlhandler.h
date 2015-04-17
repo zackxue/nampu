@@ -1,5 +1,5 @@
-#ifndef __J_XML_HANDLER_H__
-#define __J_XML_HANDLER_H__
+#ifndef __NMP_XML_HANDLER_H__
+#define __NMP_XML_HANDLER_H__
 
 #include <stdio.h>
 
@@ -857,4 +857,4 @@ int create_get_p2p_id_response(NmpXmlMsg *msg, char buf[],
 		size_t size, unsigned int flags);
 
 
-#endif //__J_XML_HANDLER_H__
+#endif //__NMP_XML_HANDLER_H__

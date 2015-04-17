@@ -3,7 +3,7 @@
 #include "nmp_mods.h"
 #include "nmp_ams_policy.h"
 #include "nmp_msg_ams.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 #include "nmp_utility.h"
 #include "nmp_res_ctl.h"
 #include "nmp_shared.h"

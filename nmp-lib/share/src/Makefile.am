@@ -1,22 +1,22 @@
 AUTOMAKE_OPTIONS=foreign
 lib_LTLIBRARIES=libnmpshare.la
-libnmpshare_la_SOURCES=nmp_debug.c	\
-                      nmp_signal.c \
-                      nmp_conn.c \
-                      nmp_fragments.c \
-                      nmp_fragments.h \
-                      nmp_hlio.c \
-                      nmp_hlio.h \
-                      nmp_io.c \
-                      nmp_io.h \
-                      nmp_netbuf.c \
-                      nmp_netbuf.h \
-                      nmp_net.c \
-                      nmp_netio.c \
-                      nmp_watch.c \
-                      nmp_watch.h \
-                      nmp_rw_file.c \
-                      nmp_timer.c
+libnmpshare_la_SOURCES=nmp_share_debug.c	\
+                      nmp_share_signal.c \
+                      nmp_share_conn.c \
+                      nmp_share_fragments.c \
+                      nmp_share_fragments.h \
+                      nmp_share_hlio.c \
+                      nmp_share_hlio.h \
+                      nmp_share_io.c \
+                      nmp_share_io.h \
+                      nmp_share_netbuf.c \
+                      nmp_share_netbuf.h \
+                      nmp_share_net.c \
+                      nmp_share_netio.c \
+                      nmp_share_watch.c \
+                      nmp_share_watch.h \
+                      nmp_share_rw_file.c \
+                      nmp_share_timer.c
 
 libnmpshare_la_LIBADD=
 

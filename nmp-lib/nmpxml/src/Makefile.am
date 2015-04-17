@@ -7,7 +7,7 @@ libnmpxml_la_CFLAGS=-fPIC
 libnmpxml_la_CXXFLAGS=-fPIC
 
 
-libnmpxmlincludedir=$(prefix)/include/nampu
+libnmpxmlincludedir=$(prefix)/include/nampu/nmpxml
 libnmpxmlinclude_HEADERS=$(top_srcdir)/include/nmp_sdk.h \
 		       $(top_srcdir)/include/nmp_packet.h \
 		       $(top_srcdir)/include/nmp_xmlmsg.h \

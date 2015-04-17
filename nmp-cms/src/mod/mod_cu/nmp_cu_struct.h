@@ -2,7 +2,7 @@
 #define __NMP_CU_STRUCT_H__
 
 #include "nmp_mods.h"
-#include "nmp_wait.h"
+#include "nmp_share_wait.h"
 #include "nmp_list_head.h"
 
 #define MAX_NAME_LEN				32

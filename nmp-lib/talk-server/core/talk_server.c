@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "sched.h"
+#include "talk_sched.h"
 
 #include "log.h"
 #include "media_struct.h"
 #include "talk_api.h"
 #include "fd_set.h"
 #include "loop.h"
-#include "sched.h"
+#include "talk_sched.h"
 #include "media.h"
 #include "listener.h"
 #include "client.h"

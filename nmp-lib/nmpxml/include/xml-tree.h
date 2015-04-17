@@ -1,7 +1,7 @@
 
 
-#ifndef __J_XML_TREE_H__
-#define __J_XML_TREE_H__
+#ifndef __NMP_XML_TREE_H__
+#define __NMP_XML_TREE_H__
 
 
 
@@ -49,5 +49,5 @@ typedef enum __ContactType
 }ContactType;
 
 
-#endif	//__J_XML_TREE_H__
+#endif	//__NMP_XML_TREE_H__
 

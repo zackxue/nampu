@@ -11,7 +11,7 @@
 #define __NMP_PROTO_H__
 
 #include <stdint.h>
-#include "nmp_netproto.h"
+#include "nmp_share_netproto.h"
 
 #define NMP_PROTO_HEAD_MAGIC	0x6a786a2d
 

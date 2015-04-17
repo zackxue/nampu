@@ -10,8 +10,8 @@
 
 #include <string.h>
 #include "nmp_data.h"
-#include "nmp_net.h"
-#include "nmp_debug.h"
+#include "nmp_share_net.h"
+#include "nmp_share_debug.h"
 
 G_BEGIN_DECLS
 

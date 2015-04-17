@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProxyClient", "ProxyClient3.vcproj", "{6E069B71-4C6E-4518-B2B3-754A0E223C3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release_Netutral|Win32 = Release_Netutral|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Debug|Win32.Build.0 = Debug|Win32
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Release_Netutral|Win32.ActiveCfg = Release_Netutral|Win32
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Release_Netutral|Win32.Build.0 = Release_Netutral|Win32
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Release|Win32.ActiveCfg = Release|Win32
+		{6E069B71-4C6E-4518-B2B3-754A0E223C3F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

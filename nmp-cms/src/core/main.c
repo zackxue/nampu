@@ -5,8 +5,8 @@
 #include <glib.h>
 #include <assert.h>
 #include <getopt.h>
-#include "nmp_debug.h"
-#include "nmp_signal.h"
+#include "nmp_share_debug.h"
+#include "nmp_share_signal.h"
 #include "nmp_appcore.h"
 #include "nmp_sysctl.h"
 #include "nmp_args.h"

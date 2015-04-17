@@ -1,0 +1,632 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(中华人民共和国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\ProxyClient3.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""          // 标准组件\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""l.CHS\\afxprint.rc""                // 打印/打印预览资源\r\n"
+    "#include ""l.CHS\\afxribbon.rc""               // MFC 功能区和控件条资源\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\ProxyClient3.ico"
+IDI_ICON2               ICON                    "..\\output\\images\\q.ico"
+IDI_CLIENT              ICON                    "..\\output\\images\\Client.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+IDR_MAINFRAME_256       BITMAP                  "res\\Toolbar256.bmp"
+IDB_CLOSEHOTBTN         BITMAP                  "..\\output\\images\\cu_sel_title_close.bmp"
+IDB_CLOSEBTN            BITMAP                  "..\\output\\images\\cu_title_close.bmp"
+IDB_BAND                BITMAP                  "..\\output\\images\\band.bmp"
+IDB_TITLE               BITMAP                  "..\\output\\images\\top.bmp"
+IDB_LISTHEAD            BITMAP                  "..\\output\\images\\list_head.bmp"
+IDB_HEAD                BITMAP                  "..\\output\\images\\head.bmp"
+IDB_BITMAP1             BITMAP                  "..\\output\\images\\sel_device_btn.bmp"
+IDB_BOTTOMBK            BITMAP                  "..\\output\\images\\bottombk.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_FILE_NEW
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+IDR_MAINFRAME_256 TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_FILE_NEW
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "退出(&X)",                      ID_APP_EXIT
+    END
+    POPUP "编辑(&E)"
+    BEGIN
+        MENUITEM "撤消(&U)\tCtrl+Z",              ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
+        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
+        MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于 ProxyClient3(&A)...",      ID_APP_ABOUT
+    END
+END
+
+IDR_POPUP_EDIT MENU 
+BEGIN
+    POPUP "编辑"
+    BEGIN
+        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
+        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
+        MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
+    END
+END
+
+IDR_THEME_MENU MENU 
+BEGIN
+    MENUITEM "Office 2007 (蓝色样式)(&B)",      ID_VIEW_APPLOOK_OFF_2007_BLUE
+    MENUITEM "Office 2007 (黑色样式)(&L)",      ID_VIEW_APPLOOK_OFF_2007_BLACK
+    MENUITEM "Office 2007 (银色样式)(&S)",      ID_VIEW_APPLOOK_OFF_2007_SILVER
+    MENUITEM "Office 2007 (水绿色样式)(&A)",     ID_VIEW_APPLOOK_OFF_2007_AQUA
+END
+
+IDR_DEVICE MENU 
+BEGIN
+    POPUP "DEVICE"
+    BEGIN
+        MENUITEM "刷新",                          ID_DEVICE_UPDATE
+        MENUITEM "添加",                          ID_DEVICE_ADD
+        MENUITEM "删除",                          ID_DEVICE_DEL
+        MENUITEM "修改",                          ID_DEVICE_MODIFY
+        MENUITEM "查询",                          ID_DEVICE_QUERY
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 171, 63
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 ProxyClient3"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            "",IDC_STATIC,14,14,20,20
+    LTEXT           "ProxyClient，1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2012",IDC_STATIC,42,26,114,8
+    DEFPUSHBUTTON   "确定",IDOK,114,42,50,14,WS_GROUP
+END
+
+IDD_MAINDEVICE DIALOGEX 0, 0, 481, 205
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "添加",IDC_ADD,23,185,29,11
+    PUSHBUTTON      "删除",IDC_DEL,58,185,29,11
+    PUSHBUTTON      "修改",IDC_MODIFY,95,185,29,11
+    PUSHBUTTON      "设备查询",IDC_FIND,143,184,36,11
+    PUSHBUTTON      "上一页",IDC_BACK,237,184,36,11
+    PUSHBUTTON      "下一页",IDC_NEXT,301,184,36,11
+    PUSHBUTTON      "跳转",IDCOK,391,184,36,11
+    EDITTEXT        IDC_PAGECOUNT,368,184,19,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_DEVICELIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,38,22,213,125
+    PUSHBUTTON      "首页",IDC_FIRST,202,186,22,11
+    PUSHBUTTON      "尾页",IDC_TAIL,347,186,13,10
+    EDITTEXT        IDC_SHOWPAGE,281,185,15,9,ES_CENTER | ES_AUTOHSCROLL | NOT WS_BORDER
+END
+
+IDD_MAINUSER DIALOGEX 0, 0, 483, 240
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Microsoft Sans Serif", 400, 0, 0x0
+BEGIN
+    PUSHBUTTON      "添加",IDC_ADD,23,188,31,11
+    PUSHBUTTON      "删除",IDC_DEL,57,188,31,11
+    PUSHBUTTON      "修改",IDC_MODIFY,92,188,31,11
+    EDITTEXT        IDC_FINDNAME,131,189,54,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "查询",IDC_FIND,196,188,31,11
+    PUSHBUTTON      "上一页",IDC_BACK,281,186,31,11
+    PUSHBUTTON      "下一页",IDC_NEXT,341,186,31,11
+    EDITTEXT        IDC_PAGECOUNT,407,186,18,12,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "跳转",IDOK,444,186,31,11
+    CONTROL         "",IDC_USERLIST,"SysListView32",LVS_REPORT | LVS_SORTASCENDING | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,69,44,185,81
+    PUSHBUTTON      "首页",IDC_FIRST,250,187,23,10
+    PUSHBUTTON      "尾页",IDC_TAIL,379,184,22,10
+    EDITTEXT        IDC_SHOWPAGE,318,188,17,8,ES_CENTER | ES_AUTOHSCROLL | NOT WS_BORDER
+END
+
+IDD_LOGIN DIALOGEX 0, 0, 343, 180
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_IP,68,95,91,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PORT,194,95,91,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_NAME,68,118,91,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PWD,194,118,91,12,ES_PASSWORD | ES_AUTOHSCROLL
+    PUSHBUTTON      "登录",IDOK,125,145,34,12
+    PUSHBUTTON      "退出",IDCANCEL,182,145,34,12
+    RTEXT           "服务器IP",IDC_STATIC,23,98,40,12
+    RTEXT           "用 户 名 ",IDC_STATIC,9,121,54,12
+    RTEXT           "密 码",IDC_STATIC,162,121,28,12
+    RTEXT           "端 口",IDC_STATIC,162,98,28,13
+    CTEXT           "正在登录请稍候...",IDC_WAITING,89,81,138,14,NOT WS_VISIBLE
+END
+
+IDD_USER_ADD DIALOGEX 0, 0, 167, 133
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,58,106,28,12
+    PUSHBUTTON      "取消",IDCANCEL,99,106,28,12
+    RTEXT           "用 户 名：",IDC_STATIC,28,39,33,8
+    RTEXT           "密    码：",IDC_STATIC,28,59,33,8
+    RTEXT           "确认密码：",IDC_STATIC,26,79,35,8
+    EDITTEXT        IDC_NAME,66,37,75,13,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PWD,66,56,75,13,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PWDCONFIRM,66,76,75,13,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    PUSHBUTTON      "",IDC_CLOSE,148,3,13,12
+END
+
+IDD_DEVICE_ADD DIALOGEX 0, 0, 185, 300
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_FACTORY,64,34,96,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP,WS_EX_STATICEDGE
+    COMBOBOX        IDC_DEVICETYPE,64,56,96,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP,WS_EX_STATICEDGE
+    COMBOBOX        IDC_VERSION,64,77,96,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP,WS_EX_STATICEDGE
+    EDITTEXT        IDC_USERNAME,64,99,96,12,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PWD,64,121,96,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_DEVICEIP,64,142,96,12,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_DEVICEPORT,64,162,96,12,ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PLIP,64,224,96,12,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PLPORT,64,240,96,12,ES_AUTOHSCROLL | ES_NUMBER | NOT WS_BORDER,WS_EX_STATICEDGE
+    PUSHBUTTON      "确定",IDOK,75,269,37,13
+    PUSHBUTTON      "取消",IDCANCEL,112,269,37,13
+    RTEXT           "厂家",IDC_STATIC,17,37,40,13
+    RTEXT           "设备类型",IDC_STATIC,17,58,40,13
+    RTEXT           "设备版本号",IDC_STATIC,17,81,40,13
+    RTEXT           "设备端口",IDC_STATIC,17,164,40,13
+    RTEXT           "设备用户名",IDC_STATIC,17,102,40,13
+    RTEXT           "设备密码",IDC_STATIC,17,123,40,13
+    RTEXT           "设备IP",IDC_STATIC,17,146,40,13
+    RTEXT           "PUID",IDC_STATIC,17,210,40,13
+    RTEXT           "平台IP",IDC_STATIC,17,227,40,13
+    RTEXT           "平台端口",IDC_STATIC,17,244,40,13
+    GROUPBOX        "设备信息",IDC_STATIC,12,21,160,164
+    GROUPBOX        "平台信息",IDC_STATIC,12,197,160,62
+    PUSHBUTTON      "",IDC_CLOSE,166,3,13,12
+    EDITTEXT        IDC_PLID,64,207,96,12,ES_AUTOHSCROLL
+END
+
+IDD_USER_MODIFY1 DIALOGEX 0, 0, 167, 128
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_OLDPWD,62,28,77,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_NEWPWD,62,49,77,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_VERIFYPWD,62,70,77,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "确定",IDOK,58,95,29,14
+    PUSHBUTTON      "取消",IDCANCEL,97,95,29,14
+    RTEXT           "原始密码：",IDC_STATIC,26,31,34,12
+    RTEXT           "新 密 码：",IDC_STATIC,20,52,40,12
+    PUSHBUTTON      "",IDC_CLOSE,147,2,13,12
+    RTEXT           "确认密码：",IDC_STATIC,26,73,34,12
+END
+
+IDD_USER_MODIFY2 DIALOGEX 0, 0, 162, 129
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_PWD,65,62,67,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_VERIFYPWD,65,78,67,12,ES_PASSWORD | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "确定",IDOK,60,106,28,13
+    PUSHBUTTON      "取消",IDCANCEL,97,106,28,13
+    RTEXT           "用户名：",IDC_STATIC,29,50,33,11
+    RTEXT           "新密码：",IDC_STATIC,29,65,33,11
+    GROUPBOX        "修改普通用户信息",IDC_TIP,22,30,121,64
+    PUSHBUTTON      "",IDC_CLOSE,143,3,13,11
+    LTEXT           "",IDC_NAME,68,50,60,12
+    RTEXT           "确认密码：",IDC_STATIC,25,80,37,11
+END
+
+IDD_DEVICE_FIND DIALOGEX 0, 0, 177, 141
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_FACTORY,60,36,86,95,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_DEVICETYPE,60,62,86,95,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_VERSION,60,87,86,95,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "查询",IDOK,73,119,36,13
+    PUSHBUTTON      "取消",IDCANCEL,109,119,36,13
+    RTEXT           "厂家",IDC_STATIC,18,39,33,11
+    RTEXT           "设备类型",IDC_STATIC,19,64,33,11
+    RTEXT           "版本号",IDC_STATIC,20,89,33,11
+    GROUPBOX        "请输入条件",IDC_STATIC,13,24,151,87
+    PUSHBUTTON      "",IDC_CLOSE,157,3,13,12
+END
+
+IDD_SERVERCONFIG DIALOGEX 0, 0, 200, 160
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 9, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "保存",IDOK,92,136,27,12
+    PUSHBUTTON      "取消",IDCANCEL,130,136,27,12
+    RTEXT           "服 务 器 IP：",IDC_STATIC,37,50,42,12
+    RTEXT           "信 令 端 口：",IDC_STATIC,37,77,42,12
+    RTEXT           "流媒体端口：",IDC_STATIC,37,104,42,12
+    EDITTEXT        IDC_IP,82,48,96,13,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_LISTENPORT,82,74,96,13,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+    EDITTEXT        IDC_RTSPPORT,82,101,96,13,ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
+END
+
+IDD_DATA_SAFE DIALOGEX 0, 0, 316, 85
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "备份",IDC_BACKUP,45,32,50,14
+    PUSHBUTTON      "恢复",IDC_UPLOAD,46,53,50,14
+    CONTROL         "",IDC_PROGRESS_BG,"msctls_progress32",WS_BORDER,109,33,173,14
+    CONTROL         "",IDC_PROGRESS_UL,"msctls_progress32",WS_BORDER,109,52,173,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,0,1,4
+ PRODUCTVERSION 2,0,1,4
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "CompanyName", "深圳市佳信捷技术股份有限公司"
+            VALUE "FileDescription", "ProxyClient"
+            VALUE "FileVersion", "2.0.1.5"
+            VALUE "InternalName", "ProxyClient.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2013"
+            VALUE "OriginalFilename", "ProxyClient.exe"
+            VALUE "ProductName", "ProxyClient   "
+            VALUE "ProductVersion", "2.0.1.5"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 164
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 56
+    END
+
+    IDD_MAINDEVICE, DIALOG
+    BEGIN
+        RIGHTMARGIN, 477
+        TOPMARGIN, 7
+    END
+
+    IDD_MAINUSER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 475
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
+
+    IDD_LOGIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 336
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_USER_ADD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        BOTTOMMARGIN, 123
+    END
+
+    IDD_DEVICE_ADD, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 293
+    END
+
+    IDD_USER_MODIFY1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 162
+        BOTTOMMARGIN, 123
+    END
+
+    IDD_USER_MODIFY2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 156
+        BOTTOMMARGIN, 122
+    END
+
+    IDD_DEVICE_FIND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+    END
+
+    IDD_SERVERCONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        BOTTOMMARGIN, 153
+    END
+
+    IDD_DATA_SAFE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 78
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDP_OLE_INIT_FAILED     "OLE 初始化失败。请确保 OLE 库是正确的版本。"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           " "
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "ProxyClient"
+    AFX_IDS_IDLEMESSAGE     "就绪"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "显示程序信息、版本号和版权\n关于"
+    ID_APP_EXIT             "退出应用程序；提示保存文档\n退出"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "切换到下一个窗格\n下一窗格"
+    ID_PREV_PANE            "切换回上一个窗格\n上一窗格"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_SPLIT         "将活动窗口拆分为多个窗格\n拆分"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "清除选定内容\n清除"
+    ID_EDIT_CLEAR_ALL       "清除全部内容\n全部清除"
+    ID_EDIT_COPY            "复制选定内容并将其放到剪贴板上\n复制"
+    ID_EDIT_CUT             "剪切选定内容并将其放到剪贴板上\n剪切"
+    ID_EDIT_FIND            "查找指定的文本\n查找"
+    ID_EDIT_PASTE           "插入剪贴板内容\n粘贴"
+    ID_EDIT_REPEAT          "重复上一操作\n重复"
+    ID_EDIT_REPLACE         "用其他文本替换特定的文本\n替换"
+    ID_EDIT_SELECT_ALL      "选定整个文档\n全选"
+    ID_EDIT_UNDO            "撤消上一操作\n撤消"
+    ID_EDIT_REDO            "恢复上次撤消的操作\n重做"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "更改窗口大小"
+    AFX_IDS_SCMOVE          "更改窗口位置"
+    AFX_IDS_SCMINIMIZE      "将窗口缩小为图标"
+    AFX_IDS_SCMAXIMIZE      "使窗口最大化显示"
+    AFX_IDS_SCNEXTWINDOW    "切换到下一个文档窗口"
+    AFX_IDS_SCPREVWINDOW    "切换到前一个文档窗口"
+    AFX_IDS_SCCLOSE         "关闭活动窗口并提示保存文档"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "将窗口恢复到正常大小"
+    AFX_IDS_SCTASKLIST      "激活任务列表"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATUS_PANE1        "窗格 1"
+    IDS_STATUS_PANE2        "窗格 2"
+    IDS_TOOLBAR_STANDARD    "标准"
+    IDS_TOOLBAR_CUSTOMIZE   "自定义..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_EDIT_MENU           "编辑"
+END
+
+#endif    // 中文(中华人民共和国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\ProxyClient3.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"          // 标准组件
+#if !defined(_AFXDLL)
+#include "l.CHS\afxprint.rc"                // 打印/打印预览资源
+#include "l.CHS\afxribbon.rc"               // MFC 功能区和控件条资源
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

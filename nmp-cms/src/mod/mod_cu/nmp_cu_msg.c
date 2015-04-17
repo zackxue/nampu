@@ -2,7 +2,7 @@
 #include "nmp_internal_msg.h"
 #include "nmp_sysmsg.h"
 #include "nmp_mod_cu.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 
 //static guint msg_seq_generator = 0;
 

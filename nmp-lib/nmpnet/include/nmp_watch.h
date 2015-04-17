@@ -81,7 +81,7 @@ char *nmp_watch_get_host(nmp_watch_t *watch, char *ip);
 char *nmp_watch_get_peer(nmp_watch_t *watch, char *ip);
 
 #ifdef __cplusplus
-}
+};
 #endif
 
 #endif  //__NMP_WATCH_H__

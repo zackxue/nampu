@@ -1,0 +1,127 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by ProxyClient3.rc
+//
+#define IDD_ABOUTBOX                    100
+#define IDP_OLE_INIT_FAILED             100
+#define IDR_POPUP_EDIT                  119
+#define ID_STATUSBAR_PANE1              120
+#define ID_STATUSBAR_PANE2              121
+#define IDS_STATUS_PANE1                122
+#define IDS_STATUS_PANE2                123
+#define IDS_TOOLBAR_STANDARD            124
+#define IDS_TOOLBAR_CUSTOMIZE           125
+#define ID_VIEW_CUSTOMIZE               126
+#define IDR_MAINFRAME                   128
+#define IDR_MAINFRAME_256               129
+#define IDR_ProxyClient3TYPE            130
+#define IDR_THEME_MENU                  200
+#define ID_SET_STYLE                    201
+#define ID_VIEW_APPLOOK_WIN_2000        210
+#define ID_VIEW_APPLOOK_OFF_XP          211
+#define ID_VIEW_APPLOOK_WIN_XP          212
+#define ID_VIEW_APPLOOK_OFF_2003        213
+#define ID_VIEW_APPLOOK_VS_2005         214
+#define ID_VIEW_APPLOOK_OFF_2007_BLUE   215
+#define ID_VIEW_APPLOOK_OFF_2007_BLACK  216
+#define ID_VIEW_APPLOOK_OFF_2007_SILVER 217
+#define ID_VIEW_APPLOOK_OFF_2007_AQUA   218
+#define IDS_EDIT_MENU                   306
+#define IDD_MAINDEVICE                  312
+#define IDD_MAINUSER                    313
+#define IDD_LOGIN                       314
+#define IDD_USER_ADD                    315
+#define IDD_DEVICE_ADD                  316
+#define IDD_USER_MODIFY1                317
+#define IDD_USER_MODIFY2                318
+#define IDD_DEVICE_FIND                 319
+#define IDB_CLOSEHOTBTN                 320
+#define IDB_CLOSEBTN                    321
+#define IDB_BAND                        322
+#define IDB_TITLE                       323
+#define IDD_SERVERCONFIG                324
+#define IDR_MENU1                       327
+#define IDR_DEVICE                      327
+#define IDI_ICON1                       330
+#define IDI_ICON2                       330
+#define IDB_LISTHEAD                    331
+#define IDB_HEAD                        332
+#define IDB_BITMAP1                     335
+#define IDB_BOTTOMBK                    337
+#define IDI_ICON3                       343
+#define IDI_CLIENT                      343
+#define IDD_DATA_SAFE                   344
+#define IDC_IP                          1004
+#define IDC_NAME                        1005
+#define IDC_PORT                        1006
+#define IDC_PWD                         1007
+#define IDC_VERFYPWD                    1008
+#define IDC_CANCEL                      1009
+#define IDCCANCEL                       1009
+#define IDC_ADD                         1010
+#define IDC_DEL                         1011
+#define IDC_DEL2                        1012
+#define IDC_MODIFY                      1012
+#define IDC_FINDNAME                    1014
+#define IDC_PWDCONFIRM                  1015
+#define IDC_FIND                        1015
+#define IDC_BACK                        1016
+#define IDC_NEXT                        1017
+#define IDC_GOTO                        1018
+#define IDCOK                           1018
+#define IDC_BUTTON2                     1020
+#define IDC_TAIL                        1020
+#define IDC_DEVICEPORT                  1024
+#define IDC_FACTORY                     1025
+#define IDC_DEVICETYPE                  1026
+#define IDC_LIST1                       1026
+#define IDC_VERSION                     1027
+#define IDC_OLDPWD                      1028
+#define IDC_NEWPWD                      1029
+#define IDC_VERIFYPWD                   1030
+#define IDC_PAGECOUNT                   1033
+#define IDC_SHOWPAGE                    1035
+#define IDC_TIP                         1036
+#define IDC_SHOUPAGE                    1037
+#define IDC_CLOSE                       1039
+#define IDC_BUTTON1                     1042
+#define IDC_FIRST                       1042
+#define IDC_BACKUP                      1042
+#define IDC_WAITING                     1043
+#define IDC_UPLOAD                      1043
+#define IDC_EDIT1                       1045
+#define IDC_LISTENPORT                  1046
+#define IDC_RTSPPORT                    1047
+#define IDC_PROGRESS_BG                 1048
+#define IDC_COMBO3                      1049
+#define IDC_PROGRESS2                   1049
+#define IDC_PROGRESS_UL                 1049
+#define IDC_USERNAME                    1050
+#define IDC_DEVICEIP                    1052
+#define IDC_PLID                        1053
+#define IDC_PLIP                        1054
+#define IDC_PLPORT                      1055
+#define IDC_DEVICELIST                  2000
+#define IDC_USERLIST                    2001
+#define ID_DEVICE_32771                 32771
+#define ID_DEVICE_UPDATE                32772
+#define ID_DEVICE_32773                 32773
+#define ID_DEVICE_ADD                   32774
+#define ID_DEVICE_32775                 32775
+#define ID_DEVICE_DEL                   32776
+#define ID_DEVICE_32777                 32777
+#define ID_DEVICE_32778                 32778
+#define ID_DEVICE_MODIFY                32779
+#define ID_DEVICE_                      32780
+#define ID_DEVICE_QUERY                 32781
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE        345
+#define _APS_NEXT_COMMAND_VALUE         32782
+#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_SYMED_VALUE           327
+#endif
+#endif

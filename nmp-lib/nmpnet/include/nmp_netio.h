@@ -16,7 +16,7 @@
 
 
 typedef struct _nmp_netio nmp_netio_t;
-typedef struct _nmp_net nmp_net;
+typedef struct _nmp_net nmp_net_t;
 
 typedef void (*nmp_netio_fin_func)(void *priv);
 typedef int (*nmp_io_reader_func)(nmp_netio_t *net_io, void *msg, void *init_data);

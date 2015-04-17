@@ -2,7 +2,7 @@
 #include "nmp_mod_pu.h"
 #include "nmp_pu_struct.h"
 #include "nmp_message.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_memory.h"
 #include "nmp_shared.h"
 #include "nmp_internal_msg.h"

@@ -2,7 +2,7 @@
 #define __NMP_MSG_ID_TABLE_H__
 
 #include <string.h>
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 
 #define MESSAGE_RANGE_LOWER                         -1  /* {{Range lower */
 #define MESSAGE_RANGE_UPPER                         512 /* Range upper}} */

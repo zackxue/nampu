@@ -1,6 +1,6 @@
 
-#ifndef __J_XML_PACKET_H__
-#define __J_XML_PACKET_H__
+#ifndef __NMP_XML_PACKET_H__
+#define __NMP_XML_PACKET_H__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -891,5 +891,5 @@ typedef struct __P2PIdPacketReq
 	int channel_count;
 }P2PIdPacketReq;
 
-#endif	//__J_XML_PACKET_H__
+#endif	//__NMP_XML_PACKET_H__
 

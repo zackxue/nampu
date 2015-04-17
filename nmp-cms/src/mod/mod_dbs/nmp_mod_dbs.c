@@ -1,5 +1,5 @@
-#include "nmp_debug.h"
-#include "nmp_errno.h"
+#include "nmp_share_debug.h"
+#include "nmp_share_errno.h"
 #include "nmp_ports.h"
 #include "nmp_mod_dbs.h"
 #include "nmp_mods.h"

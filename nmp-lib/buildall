@@ -49,3 +49,7 @@ cd ../share
 ./autogen.sh
 make -j4
 make install
+
+cd ../talk-server
+./make -j4
+make install

@@ -1,6 +1,6 @@
 
-#ifndef __J_XML_MSG_H__
-#define __J_XML_MSG_H__
+#ifndef __NMP_XML_MSG_H__
+#define __NMP_XML_MSG_H__
 
 #include <stdio.h>
 
@@ -379,13 +379,13 @@ typedef struct __NmpXmlMsg
 
 
 INTERFACE void set_mem_handler(void *alloc, void *dealloc);
-INTERFACE void init_jpf_xml_msg();
+INTERFACE void init_nmp_xml_msg();
 
-INTERFACE NmpXmlMsg* jpf_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_siz);
-INTERFACE NmpXmlMsg* jpf_xml_msg_new_2(xmlid_t id, void *priv_obj, size_t priv_sizee, 
+INTERFACE NmpXmlMsg* nmp_xml_msg_new(xmlid_t id, void *priv_obj, size_t priv_siz);
+INTERFACE NmpXmlMsg* nmp_xml_msg_new_2(xmlid_t id, void *priv_obj, size_t priv_sizee, 
 											NmpXmlMsgDes destroy);
-INTERFACE void jpf_xml_msg_destroy(NmpXmlMsg *msg);
-INTERFACE void jpf_xml_msg_destroy_2(NmpXmlMsg *msg);
+INTERFACE void nmp_xml_msg_destroy(NmpXmlMsg *msg);
+INTERFACE void nmp_xml_msg_destroy_2(NmpXmlMsg *msg);
 
 INTERFACE int create_xml(NmpXmlMsg *msg, char buf[], size_t size, unsigned int flags);
 INTERFACE NmpXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int flags);
@@ -396,6 +396,6 @@ INTERFACE NmpXmlMsg *parse_xml(char buf[], size_t size, int *err, unsigned int f
 #endif
 
 
-#endif //__J_XML_MSG_H__
+#endif //__NMP_XML_MSG_H__
 
 

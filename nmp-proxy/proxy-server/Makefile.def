@@ -1,0 +1,48 @@
+# Makefile.def for proxy-server
+
+C++	= g++
+CC	= gcc
+AR	= ar
+LD	= ld
+
+C_SRCS		= ${shell find . -name "*.c"}
+C_OBJS		= ${patsubst %.c, %.o, ${C_SRCS}}
+
+CPP_SRCS	= ${shell find . -name "*.cpp"}
+CPP_OBJS	= ${patsubst %.cpp, %.o, ${CPP_SRCS}}
+
+PRJ_CFLAGS	= -Wall -g -fno-inline -fstack-protector -fPIC
+PRJ_CPPFLAGS 	= -Wall -g -fno-inline -fstack-protector -fPIC
+
+PRJ_DEFINE	= -DHAVE_PROXY_INFO -D_DEBUG_ -D_OPEN_CORE_ -DHI_OS_LINUX -D_LINUX
+
+GLIB_VERSION := 2.0
+GLIB_LIBS := glib-${GLIB_VERSION} gobject-${GLIB_VERSION} gthread-${GLIB_VERSION}
+
+PRJ_INCLUDES	+= ${shell pkg-config --cflags ${GLIB_LIBS}}
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/share
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmpev
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmplib
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmpnet
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/nmpxml
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/rtsp-server
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/rtsp-parser
+PRJ_INCLUDES	+= -I${NMP_LIB_INSTALL}/include/nampu/talksvr
+
+PRJ_LIBS	+= -Wl,-rpath=${NMP_LIB_INSTALL}/lib -L${NMP_LIB_INSTALL}/lib
+PRJ_LIBS	+= -lnmprtspsvr -lnmprtspparser -ltalksvr -lnmpshare -lnmpnet -lnmplib -lnmpev -lev -lnmpxml 
+PRJ_LIBS	+= ${shell pkg-config --libs ${GLIB_LIBS}}
+
+PRJ_LDFLAGS	+= -fPIC 
+
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/share
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmpev
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmplib
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmpnet
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/nmpxml
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/rtsp-server
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/rtsp-parser
+vpath %.h ${NMP_LIB_INSTALL}/include/nampu/talksvr
+
+PRJ_ROOT	= $(shell pwd)

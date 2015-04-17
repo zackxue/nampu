@@ -4,6 +4,7 @@
 #include "loop.h"
 #include "log.h"
 #include "listener.h"
+#include "talk_sched.h"
 
 #define MAX_SNDBUF  (100*1024)
 

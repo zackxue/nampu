@@ -3,7 +3,7 @@
 #include "nmp_mod_dbs.h"
 #include "nmp_dbs_struct.h"
 #include "nmp_message.h"
-#include "nmp_errno.h"
+#include "nmp_share_errno.h"
 #include "nmp_memory.h"
 #include "nmp_shared.h"
 #include "nmp_tw_interface.h"

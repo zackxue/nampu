@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "nmp_errno.h"
-#include "nmp_debug.h"
+#include "nmp_share_errno.h"
+#include "nmp_share_debug.h"
 #include "nmp_msgbus.h"
 #include "nmp_busslot.h"
 

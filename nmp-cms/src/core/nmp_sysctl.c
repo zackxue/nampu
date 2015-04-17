@@ -1,12 +1,12 @@
 #include <string.h>
 #include <stdlib.h>
-#include <nmp_rw_file.h>
+#include <nmp_share_rw_file.h>
 #include <syslog.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <libgen.h>
 #include "nmp_sysctl.h"
-#include "nmp_debug.h"
+#include "nmp_share_debug.h"
 
 
 #define SC_PORT_LEN                             32

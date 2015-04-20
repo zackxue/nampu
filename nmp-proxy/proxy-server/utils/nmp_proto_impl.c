@@ -33,18 +33,18 @@ get_local_time(JTime *ts)
 static int nmp_proto_private_check(char *start, char *end)
 {
     int packet_size;
-    jpf_proto_head_t *head;
+    nmp_proto_head_t *head;
 
     NMP_ASSERT(start && end);
 
-    if (NMP_UNLIKELY(end - start <= sizeof(jpf_proto_head_t)))
+    if (NMP_UNLIKELY(end - start <= sizeof(nmp_proto_head_t)))
         return 0;
 
-    head = (jpf_proto_head_t*)start;
+    head = (nmp_proto_head_t*)start;
     if (!VALID_PROTO_HEAD(head))
         return -E_PACKET;
 
-    packet_size = GET_PROTO_HEAD_L(head) + sizeof(jpf_proto_head_t);
+    packet_size = GET_PROTO_HEAD_L(head) + sizeof(nmp_proto_head_t);
     if (end - start >= packet_size)
         return packet_size;
 
@@ -54,15 +54,15 @@ static int nmp_proto_private_check(char *start, char *end)
 static int 
 nmp_proto_private_unpack(char *start, char *end, nmp_net_packinfo_t *info)
 {
-    jpf_proto_head_t *head;
+    nmp_proto_head_t *head;
 
     NMP_ASSERT(start && end && info);
 
-    head = (jpf_proto_head_t*)start;
+    head = (nmp_proto_head_t*)start;
 
     info->total_packets = GET_PROTO_PACKETS(head);
     info->packet_no = GET_PROTO_PACKNO(head);
-    info->start = start + sizeof(jpf_proto_head_t);
+    info->start = start + sizeof(nmp_proto_head_t);
     info->size = GET_PROTO_HEAD_L(head);
     info->private_from_low_layer = (void*)GET_PROTO_HEAD_S(head);
 
@@ -74,13 +74,13 @@ nmp_proto_private_pack(void *pack_data, size_t payload_size, char buff[], size_t
 {
     int seq;
     msg_t *msg;
-    jpf_proto_head_t *head;
+    nmp_proto_head_t *head;
     NMP_ASSERT(pack_data != NULL && buff != NULL);
 
-    if (NMP_UNLIKELY(buff_size < sizeof(jpf_proto_head_t)))
+    if (NMP_UNLIKELY(buff_size < sizeof(nmp_proto_head_t)))
         return -E_BUFFSIZE;
 
-    head = (jpf_proto_head_t*)buff;
+    head = (nmp_proto_head_t*)buff;
     msg = (msg_t*)pack_data;
     seq = MSG_SEQ(msg);
 
@@ -90,7 +90,7 @@ nmp_proto_private_pack(void *pack_data, size_t payload_size, char buff[], size_t
     SET_PROTO_HEAD_P(head, 1);
     SET_PROTO_HEAD_N(head, 1);
 
-    return sizeof(jpf_proto_head_t);
+    return sizeof(nmp_proto_head_t);
 }
 
 

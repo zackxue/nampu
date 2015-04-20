@@ -6,18 +6,18 @@
  *          May 16th, 2013
  */
 
-#ifndef __PROTO_IMPL_H__
-#define __PROTO_IMPL_H__
+#ifndef __NMP_PROTO_IMPL_H__
+#define __NMP_PROTO_IMPL_H__
 
 #include <stdint.h>
 
 #include "nmp_net.h"
 #include "nmp_msg_impl.h"
 
-#define JPF_PROTO_HEAD_MAGIC    0x6a786a2d
+#define NMP_PROTO_HEAD_MAGIC    0x6a786a2d
 
 #define SET_PROTO_HEAD_M(head) \
-    (head)->magic = htonl(JPF_PROTO_HEAD_MAGIC)
+    (head)->magic = htonl(NMP_PROTO_HEAD_MAGIC)
 #define SET_PROTO_HEAD_S(head, seq) \
     (head)->seq = htonl(seq)
 #define SET_PROTO_HEAD_L(head, len) \
@@ -28,7 +28,7 @@
     (head)->packet_no = no
 
 #define VALID_PROTO_HEAD(head)  \
-    ntohl((head)->magic) == JPF_PROTO_HEAD_MAGIC
+    ntohl((head)->magic) == NMP_PROTO_HEAD_MAGIC
 #define GET_PROTO_HEAD_S(head) \
     ntohl((head)->seq)
 #define GET_PROTO_HEAD_L(head) \
@@ -49,9 +49,9 @@ typedef enum
     PACK_PLT_GETMDSINFO,
 }PACKID_E;
 
-typedef struct jpf_proto_head jpf_proto_head_t;
+typedef struct _nmp_proto_head nmp_proto_head_t;
 
-struct jpf_proto_head
+struct _nmp_proto_head
 {
     uint32_t magic;
     uint32_t seq;
@@ -74,6 +74,6 @@ struct packet_opt
 extern packet_opt_t pkt_opt;
 
 
-#endif  //__PROTO_IMPL_H__
+#endif  //__NMP_PROTO_IMPL_H__
 
 

@@ -8,8 +8,8 @@
 #include "rtsp-server.h"
 #include "standard_frame.h"
 
-#include "j_hie_service.h"
-#include "j_hie_channel.h"
+#include "nmp_hie_service.h"
+#include "nmp_hie_channel.h"
 
 
 static __inline__ int 

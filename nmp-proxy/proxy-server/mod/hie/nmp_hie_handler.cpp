@@ -1,9 +1,9 @@
 
 #include "nmp_proxy_sdk.h"
 
-#include "j_hie_swap.h"
-#include "j_hie_service.h"
-#include "j_hie_handler.h"
+#include "nmp_hie_swap.h"
+#include "nmp_hie_service.h"
+#include "nmp_hie_handler.h"
 
 
 #define DEF_HIE_TIME_ZOE            8

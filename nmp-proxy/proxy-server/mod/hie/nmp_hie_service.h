@@ -11,7 +11,7 @@
 #include "nmp_proxy_server.h"
 #include "nmp_proxy_device.h"
 
-#include "j_hie_sdkinfo.h"
+#include "nmp_hie_sdkinfo.h"
 
 
 

@@ -6,7 +6,7 @@
 #include "HieClient_Configure.h"
 
 #include "nmp_sdk.h"
-#include "j_hie_sdkinfo.h"
+#include "nmp_hie_sdkinfo.h"
 
 #ifdef __cplusplus
 extern "C" {

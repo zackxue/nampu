@@ -1,5 +1,5 @@
 #include <arpa/inet.h>
-#include "j_hie_swap.h"
+#include "nmp_hie_swap.h"
 
 void hie_swap_device_info(HY_DVR_DEVICE_INFO *dev_cfg, JDeviceInfo *dev_info, int flag)
 {

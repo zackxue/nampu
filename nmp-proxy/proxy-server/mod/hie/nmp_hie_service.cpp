@@ -4,9 +4,9 @@
 #include "nmp_proxy_sdk.h"
 #include "nmp_resolve_host.h"
 
-#include "j_hie_handler.h"
-#include "j_hie_channel.h"
-#include "j_hie_service.h"
+#include "nmp_hie_handler.h"
+#include "nmp_hie_channel.h"
+#include "nmp_hie_service.h"
 //#include "nmp_hie_talk.h"
 
 
